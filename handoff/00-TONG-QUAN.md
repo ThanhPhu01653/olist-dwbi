@@ -1,6 +1,7 @@
 # Tổng quan dự án Olist – Kho dữ liệu & BI (cập nhật 05/11/2026, sau P7)
 
 > 📘 **Bộ hướng dẫn cho cả nhóm: [`huong-dan/00-BAT-DAU-TU-DAY.md`](../huong-dan/00-BAT-DAU-TU-DAY.md)** – lộ trình đọc theo việc (dựng dashboard / viết báo cáo / làm slide), pipeline bằng lời, thuật ngữ, từ điển dữ liệu, 40 câu hỏi đáp, nghiệp vụ (nháp) và hướng dẫn từng dashboard D1–D7.
+> 📝 **Báo cáo LaTeX (khung, đã biên dịch được): [`report/README.md`](../report/README.md)** · **Kịch bản 114 slide: [`slides/slide-script.md`](../slides/slide-script.md)**.
 
 *Dành cho cả nhóm, **không cần biết lập trình**. Mọi số liệu lấy từ truy vấn thật trên trạng thái cuối của kho; chi tiết và cách truy ngược nằm ở các file `handoff/2026-11-05-P0.md` … `P7-*.md`. Hình hiển thị ngay trong trang này khi mở trên GitHub.*
 

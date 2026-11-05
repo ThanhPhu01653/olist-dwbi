@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering\small
+\caption{Các bảng chiều: grain, số dòng (gồm dòng Unknown $-1$) và loại SCD}
+\label{tab:dims}
+\begin{tabular}{llrc}
+\toprule
+\textbf{Chiều} & \textbf{Grain} & \textbf{Số dòng} & \textbf{SCD} \\
+\midrule
+dim\_date & 1 ngày (2016-01-01 → 2020-12-31) & 1.828 & -- \\
+dim\_geography & 1 mã bưu chính (zip) & 19.178 & 1 \\
+dim\_customer & 1 phiên bản địa chỉ của 1 khách thật & 96.339 & 2 \\
+dim\_seller & 1 seller (chiều dùng chung) & 3.558 & 1 \\
+dim\_product & 1 sản phẩm & 32.952 & 1 \\
+dim\_order\_status & 1 trạng thái đơn & 9 & 1 \\
+dim\_payment\_type & 1 hình thức thanh toán & 6 & 1 \\
+dim\_lead\_origin & 1 giá trị origin của MQL & 11 & 1 \\
+dim\_lead\_profile & 1 tổ hợp thuộc tính deal (junk dimension) & 503 & -- \\
+dim\_sales\_rep & 1 nhân viên và vai trò (SDR/SR) & 55 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}

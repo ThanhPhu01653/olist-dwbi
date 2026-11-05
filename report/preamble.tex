@@ -1,0 +1,24 @@
+% Gói và cấu hình chung. Font Times New Roman (nếu máy không có thì dùng TeX Gyre Termes, có sẵn trên Overleaf).
+\usepackage{fontspec}
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{TeX Gyre Termes}}
+\IfFontExistsTF{Courier New}{\setmonofont{Courier New}[Scale=0.88]}{\setmonofont{TeX Gyre Cursor}[Scale=0.95]}
+\usepackage[vietnamese]{babel}
+\usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{setspace}
+\setstretch{1.3}
+\usepackage{graphicx,booktabs,longtable,array,tabularx,float,caption,xcolor,amssymb,enumitem,fancyhdr,titlesec,listings}
+\usepackage[colorinlistoftodos,textsize=small]{todonotes}
+\presetkeys{todonotes}{inline}{}   % mọi \todo hiện ngay trong dòng văn bản (khung vàng), dễ thấy khi soát
+\usepackage[hidelinks]{hyperref}
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+\setlist{itemsep=2pt,topsep=3pt}
+\emergencystretch=3em
+\setlength{\parindent}{1.0cm}
+\setlength{\parskip}{3pt}
+\pagestyle{plain}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\hinh}[4]{\begin{figure}[htbp]\centering\includegraphics[width=#4\textwidth,keepaspectratio]{figures/#1}\caption{#2}\label{#3}\end{figure}}
+\newcommand{\khunganh}[2]{\begin{figure}[htbp]\centering\fbox{\parbox[c][5.5cm][c]{0.9\textwidth}{\centering\textit{#1}}}\caption{#2}\end{figure}}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true,breakatwhitespace=false,columns=fullflexible,frame=single,framesep=3pt,numbers=none,keepspaces=true,showstringspaces=false,
+  upquote=false,xleftmargin=0pt,literate={→}{{$\rightarrow$}}1 {≤}{{$\leq$}}1 {≥}{{$\geq$}}1}
+\lstdefinelanguage{SQLvi}{morekeywords={SELECT,FROM,WHERE,GROUP,BY,ORDER,JOIN,LEFT,ON,AND,OR,NOT,NULL,CASE,WHEN,THEN,ELSE,END,AS,WITH,INSERT,INTO,UPDATE,SET,DELETE,CREATE,OR,REPLACE,PROCEDURE,FUNCTION,LANGUAGE,BEGIN,DECLARE,RETURNS,DISTINCT,ROLLUP,CUBE,GROUPING,SETS,FILTER,COUNT,SUM,AVG,OVER,PARTITION,UNION,ALL,EXISTS,IN,IS,CONFLICT,DO,NOTHING,USING,INOUT,CALL,RETURNING,HAVING,LIMIT},sensitive=false,morecomment=[l]{--},morestring=[b]'}

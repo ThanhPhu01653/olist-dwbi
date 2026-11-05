@@ -1,0 +1,395 @@
+\subsection*{GMV}
+\begin{lstlisting}[language={}]
+GMV =
+CALCULATE (
+    SUM ( fact_order_item[price] ),
+    KEEPFILTERS ( dim_order_status[status_group] <> "Failed" )
+)
+\end{lstlisting}
+Tổng giá hàng của các đơn không bị hủy / không khả dụng. Định dạng: Decimal, 2 chữ số, phân cách hàng nghìn (\#,0.00).
+
+\subsection*{Orders}
+\begin{lstlisting}[language={}]
+Orders =
+CALCULATE (
+    DISTINCTCOUNT ( fact_order_item[order_id] ),
+    KEEPFILTERS ( dim_order_status[status_group] <> "Failed" )
+)
+\end{lstlisting}
+Số đơn có doanh thu (đếm mã đơn khác nhau). Định dạng: Whole number, \#,0.
+
+\subsection*{Items}
+\begin{lstlisting}[language={}]
+Items =
+CALCULATE (
+    COUNTROWS ( fact_order_item ),
+    KEEPFILTERS ( dim_order_status[status_group] <> "Failed" )
+)
+\end{lstlisting}
+Số dòng sản phẩm đã bán. Định dạng: \#,0.
+
+\subsection*{AOV}
+\begin{lstlisting}[language={}]
+AOV = DIVIDE ( [GMV], [Orders] )
+\end{lstlisting}
+Giá trị trung bình mỗi đơn (GMV chia số đơn). Định dạng: \#,0.00.
+
+\subsection*{Freight}
+\begin{lstlisting}[language={}]
+Freight =
+CALCULATE (
+    SUM ( fact_order_item[freight_value] ),
+    KEEPFILTERS ( dim_order_status[status_group] <> "Failed" )
+)
+\end{lstlisting}
+Tổng phí vận chuyển của các đơn có doanh thu. Định dạng: \#,0.00.
+
+\subsection*{Freight ratio}
+\begin{lstlisting}[language={}]
+Freight ratio = DIVIDE ( [Freight], [GMV] )
+\end{lstlisting}
+Phí vận chuyển trên giá hàng (Σ freight ÷ Σ price). Định dạng: Percentage, 1 chữ số thập phân (0.0\%).
+
+\subsection*{Avg items per order}
+\begin{lstlisting}[language={}]
+Avg items per order = DIVIDE ( [Items], [Orders] )
+\end{lstlisting}
+Số dòng hàng trung bình mỗi đơn. Định dạng: 0.00.
+
+\subsection*{GMV by seller state (vai trò địa lý seller)}
+\begin{lstlisting}[language={}]
+GMV by seller state =
+CALCULATE (
+    [GMV],
+    USERELATIONSHIP ( fact_order_item[seller_geography_key], dim_geography[geography_key] )
+)
+\end{lstlisting}
+GMV nhưng gắn theo địa lý của seller thay vì của khách (dùng khi dim\_geography đặt ở bang của seller). Định dạng: \#,0.00.
+
+\subsection*{GMV by shipping limit date}
+\begin{lstlisting}[language={}]
+GMV by shipping limit date =
+CALCULATE (
+    [GMV],
+    USERELATIONSHIP ( fact_order_item[shipping_limit_date_key], dim_date[date_key] )
+)
+\end{lstlisting}
+GMV theo ngày hạn bàn giao cho vận chuyển (role-playing date). Định dạng: \#,0.00.
+
+\subsection*{Orders placed}
+\begin{lstlisting}[language={}]
+Orders placed = COUNTROWS ( fact_order_fulfillment )
+\end{lstlisting}
+Tổng số đơn đã đặt, mọi trạng thái. Định dạng: \#,0.
+
+\subsection*{Failed orders}
+\begin{lstlisting}[language={}]
+Failed orders =
+CALCULATE (
+    COUNTROWS ( fact_order_fulfillment ),
+    KEEPFILTERS ( dim_order_status[status_group] = "Failed" )
+)
+\end{lstlisting}
+Số đơn thuộc nhóm Failed (canceled + unavailable). Định dạng: \#,0.
+
+\subsection*{Cancel rate}
+\begin{lstlisting}[language={}]
+Cancel rate = DIVIDE ( [Failed orders], [Orders placed] )
+\end{lstlisting}
+Tỷ lệ đơn hủy / không khả dụng trên tổng đơn. Định dạng: 0.00\%.
+
+\subsection*{Delivered orders}
+\begin{lstlisting}[language={}]
+Delivered orders = SUM ( fact_order_fulfillment[is_delivered] )
+\end{lstlisting}
+Số đơn đã giao (trạng thái delivered và có ngày giao). Định dạng: \#,0.
+
+\subsection*{Late orders}
+\begin{lstlisting}[language={}]
+Late orders = SUM ( fact_order_fulfillment[is_late] )
+\end{lstlisting}
+Số đơn giao trễ so với ngày dự kiến. Định dạng: \#,0.
+
+\subsection*{On-time rate}
+\begin{lstlisting}[language={}]
+On-time rate = DIVIDE ( [Delivered orders] - [Late orders], [Delivered orders] )
+\end{lstlisting}
+Tỷ lệ đơn đã giao đúng hoặc sớm hơn ngày dự kiến (delay\_days ≤ 0). Định dạng: 0.0\%.
+
+\subsection*{Late rate}
+\begin{lstlisting}[language={}]
+Late rate = 1 - [On-time rate]
+\end{lstlisting}
+Tỷ lệ đơn giao trễ. Định dạng: 0.0\%.
+
+\subsection*{Avg lead days}
+\begin{lstlisting}[language={}]
+Avg lead days =
+CALCULATE ( AVERAGE ( fact_order_fulfillment[lead_days] ), fact_order_fulfillment[is_delivered] = 1 )
+\end{lstlisting}
+Số ngày trung bình từ mua đến giao khách (đơn đã giao). Định dạng: 0.0.
+
+\subsection*{Avg approval hours}
+\begin{lstlisting}[language={}]
+Avg approval hours =
+CALCULATE ( AVERAGE ( fact_order_fulfillment[approval_hours] ), fact_order_fulfillment[is_delivered] = 1 )
+\end{lstlisting}
+Số giờ trung bình từ mua đến duyệt thanh toán. Định dạng: 0.0.
+
+\subsection*{Avg handling days}
+\begin{lstlisting}[language={}]
+Avg handling days =
+CALCULATE ( AVERAGE ( fact_order_fulfillment[handling_days] ), fact_order_fulfillment[is_delivered] = 1 )
+\end{lstlisting}
+Số ngày trung bình từ duyệt đến bàn giao cho vận chuyển (seller xử lý). Định dạng: 0.0.
+
+\subsection*{Avg transit days}
+\begin{lstlisting}[language={}]
+Avg transit days =
+CALCULATE ( AVERAGE ( fact_order_fulfillment[transit_days] ), fact_order_fulfillment[is_delivered] = 1 )
+\end{lstlisting}
+Số ngày trung bình vận chuyển đến khách. Định dạng: 0.0.
+
+\subsection*{Avg promised days}
+\begin{lstlisting}[language={}]
+Avg promised days =
+CALCULATE ( AVERAGE ( fact_order_fulfillment[promised_days] ), fact_order_fulfillment[is_delivered] = 1 )
+\end{lstlisting}
+Số ngày Olist hứa giao trung bình (ngày dự kiến trừ ngày mua) của các đơn đã giao. Định dạng: 0.0.
+
+\subsection*{Avg delay days}
+\begin{lstlisting}[language={}]
+Avg delay days =
+CALCULATE ( AVERAGE ( fact_order_fulfillment[delay_days] ), fact_order_fulfillment[is_delivered] = 1 )
+\end{lstlisting}
+Chênh lệch ngày giao thực tế so với dự kiến (âm = giao sớm). Định dạng: 0.0.
+
+\subsection*{Promised vs actual (days)}
+\begin{lstlisting}[language={}]
+Promised vs actual (days) =
+AVERAGEX (
+    FILTER (
+        fact_order_fulfillment,
+        fact_order_fulfillment[is_delivered] = 1
+            && NOT ISBLANK ( fact_order_fulfillment[lead_days] )
+            && NOT ISBLANK ( fact_order_fulfillment[promised_days] )
+    ),
+    fact_order_fulfillment[promised_days] - fact_order_fulfillment[lead_days]
+)
+\end{lstlisting}
+KPI "ngày hứa giao so với ngày giao thực tế": trung bình (số ngày hứa − số ngày thực tế); dương = giao sớm hơn lời hứa. Dùng cho D3. Định dạng: 0.0.
+
+\subsection*{Early delivery rate}
+\begin{lstlisting}[language={}]
+Early delivery rate =
+DIVIDE (
+    CALCULATE ( COUNTROWS ( fact_order_fulfillment ), fact_order_fulfillment[is_delivered] = 1, fact_order_fulfillment[delay_days] < 0 ),
+    [Delivered orders]
+)
+\end{lstlisting}
+Tỷ lệ đơn giao sớm hơn ngày dự kiến. Định dạng: 0.0\%.
+
+\subsection*{Delivered orders by delivery date}
+\begin{lstlisting}[language={}]
+Delivered orders by delivery date =
+CALCULATE ( [Delivered orders], USERELATIONSHIP ( fact_order_fulfillment[delivered_date_key], dim_date[date_key] ) )
+\end{lstlisting}
+Số đơn tính theo ngày giao thay vì ngày mua (role-playing date). Định dạng: \#,0.
+
+\subsection*{Payment value}
+\begin{lstlisting}[language={}]
+Payment value = SUM ( fact_payment[payment_value] )
+\end{lstlisting}
+Tổng giá trị thanh toán (BRL). Định dạng: \#,0.00.
+
+\subsection*{Payments}
+\begin{lstlisting}[language={}]
+Payments = COUNTROWS ( fact_payment )
+\end{lstlisting}
+Số lần thanh toán. Định dạng: \#,0.
+
+\subsection*{Avg installments}
+\begin{lstlisting}[language={}]
+Avg installments = AVERAGE ( fact_payment[payment_installments] )
+\end{lstlisting}
+Số kỳ trả góp trung bình. Định dạng: 0.00.
+
+\subsection*{Payment share}
+\begin{lstlisting}[language={}]
+Payment share =
+DIVIDE ( [Payment value], CALCULATE ( [Payment value], ALL ( dim_payment_type ) ) )
+\end{lstlisting}
+Tỷ trọng giá trị của một hình thức thanh toán trong tổng (đặt dim\_payment\_type[display\_name] lên trục). Định dạng: 0.0\%.
+
+\subsection*{Reviews}
+\begin{lstlisting}[language={}]
+Reviews = COUNTROWS ( fact_review )
+\end{lstlisting}
+Số review. Định dạng: \#,0.
+
+\subsection*{Avg review}
+\begin{lstlisting}[language={}]
+Avg review = AVERAGE ( fact_review[review_score] )
+\end{lstlisting}
+Điểm review trung bình (1–5). Định dạng: 0.00.
+
+\subsection*{\% negative}
+\begin{lstlisting}[language={}]
+% negative = DIVIDE ( SUM ( fact_review[is_negative] ), [Reviews] )
+\end{lstlisting}
+Tỷ lệ review tiêu cực (điểm ≤ 2). Định dạng: 0.0\%.
+
+\subsection*{Avg review - late delivery}
+\begin{lstlisting}[language={}]
+Avg review - late delivery = CALCULATE ( [Avg review], fact_review[delivered_late] = 1 )
+\end{lstlisting}
+Điểm trung bình của các đơn giao trễ. Định dạng: 0.00.
+
+\subsection*{Avg review - on time}
+\begin{lstlisting}[language={}]
+Avg review - on time = CALCULATE ( [Avg review], fact_review[delivered_late] = 0 )
+\end{lstlisting}
+Điểm trung bình của các đơn không trễ. Định dạng: 0.00.
+
+\subsection*{Customers}
+\begin{lstlisting}[language={}]
+Customers =
+COUNTROWS (
+    FILTER ( VALUES ( dim_customer[customer_unique_id] ), CALCULATE ( COUNTROWS ( fact_order_fulfillment ) ) > 0 )
+)
+\end{lstlisting}
+Số khách thật (theo customer\_unique\_id, không đếm các phiên bản địa chỉ SCD2) có ít nhất một đơn. Chạy vài giây vì duyệt gần 100 nghìn khách. Định dạng: \#,0.
+
+\subsection*{Repeat customers}
+\begin{lstlisting}[language={}]
+Repeat customers =
+COUNTROWS (
+    FILTER ( VALUES ( dim_customer[customer_unique_id] ), CALCULATE ( COUNTROWS ( fact_order_fulfillment ) ) >= 2 )
+)
+\end{lstlisting}
+Số khách có từ 2 đơn trở lên (mọi trạng thái). Định dạng: \#,0.
+
+\subsection*{Repeat customer rate}
+\begin{lstlisting}[language={}]
+Repeat customer rate = DIVIDE ( [Repeat customers], [Customers] )
+\end{lstlisting}
+Tỷ lệ khách quay lại mua (≥ 2 đơn ÷ tổng khách). Định dạng: 0.00\%.
+
+\subsection*{MQLs}
+\begin{lstlisting}[language={}]
+MQLs = COUNTROWS ( fact_lead_funnel )
+\end{lstlisting}
+Số khách tiềm năng (MQL). Định dạng: \#,0.
+
+\subsection*{Won deals}
+\begin{lstlisting}[language={}]
+Won deals = SUM ( fact_lead_funnel[is_won] )
+\end{lstlisting}
+Số MQL đã được chốt thành seller. Định dạng: \#,0.
+
+\subsection*{MQL to won rate}
+\begin{lstlisting}[language={}]
+MQL to won rate = DIVIDE ( [Won deals], [MQLs] )
+\end{lstlisting}
+Tỷ lệ chuyển đổi MQL → seller (đã chốt). Định dạng: 0.0\%.
+
+\subsection*{Avg days to close}
+\begin{lstlisting}[language={}]
+Avg days to close = AVERAGE ( fact_lead_funnel[days_to_close] )
+\end{lstlisting}
+Số ngày trung bình từ liên hệ đầu đến chốt deal (chỉ các deal đã chốt). Định dạng: 0.0.
+
+\subsection*{Sellers with first sale}
+\begin{lstlisting}[language={}]
+Sellers with first sale = SUM ( fact_lead_funnel[has_first_sale] )
+\end{lstlisting}
+Số seller đã chốt và đã có đơn hàng. Định dạng: \#,0.
+
+\subsection*{Won to first sale rate}
+\begin{lstlisting}[language={}]
+Won to first sale rate = DIVIDE ( [Sellers with first sale], [Won deals] )
+\end{lstlisting}
+Tỷ lệ seller đã chốt mà có đơn đầu tiên. Định dạng: 0.0\%.
+
+\subsection*{Avg days won to first sale}
+\begin{lstlisting}[language={}]
+Avg days won to first sale = AVERAGE ( fact_lead_funnel[days_won_to_first_sale] )
+\end{lstlisting}
+Số ngày trung bình từ chốt deal đến đơn đầu tiên. Định dạng: 0.0.
+
+\subsection*{Seller GMV first 90d}
+\begin{lstlisting}[language={}]
+Seller GMV first 90d = SUM ( fact_lead_funnel[seller_gmv_first_90d] )
+\end{lstlisting}
+GMV của các seller từ funnel trong 90 ngày đầu kể từ đơn đầu tiên. Định dạng: \#,0.00.
+
+\subsection*{Won deals by won date}
+\begin{lstlisting}[language={}]
+Won deals by won date =
+CALCULATE ( [Won deals], USERELATIONSHIP ( fact_lead_funnel[won_date_key], dim_date[date_key] ) )
+\end{lstlisting}
+Số deal tính theo ngày chốt (role-playing date) – dùng để xem deal chốt mỗi tháng. Định dạng: \#,0.
+
+\subsection*{Active sellers}
+\begin{lstlisting}[language={}]
+Active sellers =
+CALCULATE ( DISTINCTCOUNT ( fact_seller_monthly[seller_key] ), fact_seller_monthly[is_active] = 1 )
+\end{lstlisting}
+Số seller có ít nhất một đơn trong kỳ đang chọn. Định dạng: \#,0.
+
+\subsection*{Seller GMV (monthly)}
+\begin{lstlisting}[language={}]
+Seller GMV (monthly) = SUM ( fact_seller_monthly[gmv] )
+\end{lstlisting}
+Tổng GMV từ bảng seller-tháng (bằng GMV khi cùng phạm vi thời gian). Định dạng: \#,0.00.
+
+\subsection*{Seller late rate}
+\begin{lstlisting}[language={}]
+Seller late rate =
+DIVIDE ( SUM ( fact_seller_monthly[late_orders] ), SUM ( fact_seller_monthly[delivered_orders] ) )
+\end{lstlisting}
+Tỷ lệ giao trễ tính trên bảng seller-tháng. Định dạng: 0.0\%.
+
+\subsection*{Small sample warning}
+\begin{lstlisting}[language={}]
+Small sample warning =
+IF ( [Active sellers] < 30, "⚠ Mẫu nhỏ (dưới 30 seller)", "" )
+\end{lstlisting}
+Hiện cảnh báo khi một nhóm (ví dụ kênh thu hút) có quá ít seller để kết luận. Định dạng: Text.
+
+\subsection*{GMV last month}
+\begin{lstlisting}[language={}]
+GMV last month = CALCULATE ( [GMV], DATEADD ( dim_date[full_date], -1, MONTH ) )
+\end{lstlisting}
+GMV của tháng liền trước. Định dạng: \#,0.00.
+
+\subsection*{GMV MoM \%}
+\begin{lstlisting}[language={}]
+GMV MoM % = DIVIDE ( [GMV] - [GMV last month], [GMV last month] )
+\end{lstlisting}
+Tăng trưởng so với tháng trước. Định dạng: +0.0\%;-0.0\%;0.0\%.
+
+\subsection*{GMV last year}
+\begin{lstlisting}[language={}]
+GMV last year = CALCULATE ( [GMV], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+\end{lstlisting}
+GMV cùng kỳ năm trước. Định dạng: \#,0.00.
+
+\subsection*{GMV YoY \%}
+\begin{lstlisting}[language={}]
+GMV YoY % = DIVIDE ( [GMV] - [GMV last year], [GMV last year] )
+\end{lstlisting}
+Tăng trưởng so với cùng kỳ năm trước. Định dạng: +0.0\%;-0.0\%;0.0\%.
+
+\subsection*{GMV YTD}
+\begin{lstlisting}[language={}]
+GMV YTD = TOTALYTD ( [GMV], dim_date[full_date] )
+\end{lstlisting}
+GMV luỹ kế từ đầu năm. Định dạng: \#,0.00.
+
+\subsection*{Orders MoM \%}
+\begin{lstlisting}[language={}]
+Orders MoM % =
+DIVIDE ( [Orders] - CALCULATE ( [Orders], DATEADD ( dim_date[full_date], -1, MONTH ) ), CALCULATE ( [Orders], DATEADD ( dim_date[full_date], -1, MONTH ) ) )
+\end{lstlisting}
+Tăng trưởng số đơn so với tháng trước. Định dạng: +0.0\%;-0.0\%;0.0\%.

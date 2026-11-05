@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering\small
+\caption{Thời gian thực thi trung bình của 4 truy vấn (mili giây, trung bình 5 lần EXPLAIN ANALYZE)}
+\label{tab:benchmark}
+\begin{tabular}{p{4.6cm}rrrrr}
+\toprule
+\textbf{Truy vấn} & \textbf{oltp (chuẩn hoá)} & \textbf{dw (star, có index FK)} & \textbf{dw không index FK} & \textbf{View thường} & \textbf{Materialized view} \\
+\midrule
+Q1 GMV theo bang × tháng & 657.4 & 506.1 & 494.0 & 770.4 & 0.056 \\
+Q2 Lead time theo bang & 85.7 & 53.8 & 51.5 & 165.8 & 0.042 \\
+Q3 Scorecard seller & 375.1 & 386.8 & 391.3 & 196.3 & 0.193 \\
+Q4 GMV của một seller (tra cứu chọn lọc) & 6.3 & 0.8 & 7.3 & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}

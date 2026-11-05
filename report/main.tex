@@ -1,0 +1,63 @@
+% Báo cáo bài tập lớn - Kho dữ liệu và Kinh doanh thông minh (MI4214). Biên dịch: XeLaTeX (latexmk -xelatex main.tex)
+\documentclass[12pt,a4paper]{report}
+\input{preamble}
+\begin{document}
+\pagenumbering{roman}
+\input{chapters/00-bia}
+\input{chapters/00-loi-mo-dau}
+\input{chapters/00-danh-gia-thanh-vien}
+\input{chapters/00-tu-danh-gia}
+\tableofcontents
+\listoffigures
+\listoftables
+\input{chapters/00-viet-tat}
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\chapter{Tổng quan về kho dữ liệu}
+\input{chapters/01-tong-quan-dw}
+\chapter{Tổng quan về kinh doanh thông minh}
+\input{chapters/02-tong-quan-bi}
+
+\chapter{Ứng dụng kho dữ liệu và BI vào bài toán quản lý đơn hàng Olist}
+\section{Giới thiệu bài toán}
+\input{chapters/3-1-gioi-thieu}
+\section{Khảo sát nghiệp vụ và dữ liệu}
+\input{chapters/3-2-1-quy-trinh}
+\input{chapters/3-2-2-yeu-cau}
+\input{chapters/3-2-3-he-thong-du-lieu}
+\input{chapters/3-2-4-erd-oltp}
+\section{Phân tích và thiết kế}
+\input{chapters/3-3-1-kham-pha}
+\input{chapters/3-3-2-kien-truc}
+\input{chapters/3-3-3-ods}
+\input{chapters/3-3-4-thiet-ke-kho}
+\input{chapters/3-3-5-kpi}
+\section{Xây dựng hệ thống}
+\input{chapters/3-4-1-moi-truong}
+\input{chapters/3-4-2-staging-ods}
+\input{chapters/3-4-3-doi-soat-tang-dan}
+\input{chapters/3-4-4-mart-olap}
+\input{chapters/3-4-5-dashboard}
+\section{Các nội dung mở rộng}
+\input{chapters/3-5-1-hieu-nang}
+\input{chapters/3-5-2-dia-ly}
+
+\chapter{Kết luận và bài học kinh nghiệm}
+\input{chapters/04-ket-luan}
+
+\bibliographystyle{plain}
+\renewcommand{\bibname}{Tài liệu tham khảo}
+\bibliography{refs}
+\addcontentsline{toc}{chapter}{Tài liệu tham khảo}
+
+\appendix
+\chapter{Thư viện measure DAX}
+\input{chapters/phu-luc-dax}
+\chapter{SQL tiêu biểu}
+\input{chapters/phu-luc-sql}
+\chapter{Ánh xạ ODS sang kho dữ liệu}
+\input{tables/mapping}
+% \listoftodos   % bỏ dấu % để xem danh sách việc còn lại (todonotes)
+\end{document}

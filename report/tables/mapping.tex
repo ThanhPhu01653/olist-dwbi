@@ -1,0 +1,121 @@
+{\small\begin{longtable}{p{2.4cm}p{3.1cm}p{3.6cm}p{5.4cm}}
+\caption{Ánh xạ ODS → kho (cột đích, nguồn, phép biến đổi)}\label{tab:mapping}\\
+\toprule
+\textbf{Bảng đích} & \textbf{Cột đích} & \textbf{Nguồn} & \textbf{Phép biến đổi} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Bảng đích} & \textbf{Cột đích} & \textbf{Nguồn} & \textbf{Phép biến đổi} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+dim\_date & date\_key & (lịch): full\_date & Số yyyymmdd; -1 = Unknown \\
+dim\_date & full\_date & (lịch): - & Mỗi ngày 2016-01-01 … 2020-12-31 \\
+dim\_date & day\_of\_week & (lịch): full\_date & isoweekday: 1 = Thứ Hai \\
+dim\_date & week\_of\_year & (lịch): full\_date & Tuần ISO \\
+dim\_date & year\_month / year\_quarter & (lịch): full\_date & 'YYYY-MM' / 'YYYY-Qn' \\
+dim\_date & is\_weekend & (lịch): full\_date & Thứ Bảy, Chủ Nhật \\
+dim\_date & is\_holiday\_br / holiday\_name & (package holidays): holidays.Brazil & Ngày lễ quốc gia Brazil \\
+dim\_date & is\_black\_friday & (lịch): full\_date & Thứ Sáu sau thứ Năm thứ 4 của tháng 11 \\
+dim\_geography & geography\_key & -: - & Khoá thay thế tự sinh (identity); dòng Unknown có key -1 \\
+dim\_geography & zip\_code\_prefix & ods.geolocation\_zip ∪ ods.customers ∪ ods.sellers: zip\_code\_prefix & Hợp nhất mọi zip (khoá tự nhiên, UNIQUE) \\
+dim\_geography & city / state\_code & ods.geolocation\_zip (ưu tiên) hoặc ods.customers/sellers: city, state\_code & Lấy từ geolocation\_zip; zip chỉ có ở customers/sellers thì lấy mode \\
+dim\_geography & state\_name / region & ods.ref\_state\_region: state\_name, region & Tra theo state\_code; không có → 'Unknown' \\
+dim\_geography & latitude / longitude & ods.geolocation\_zip: latitude, longitude & Giữ median; NULL nếu zip không có toạ độ hợp lệ (không có trong geolocation hoặc mọi điểm nằm ngoài bbox) \\
+dim\_geography & country & -: - & Hằng 'Brazil' \\
+dim\_customer & customer\_key & -: - & Khoá thay thế tự sinh (identity); dòng Unknown có key -1 (mỗi phiên bản một key) \\
+dim\_customer & customer\_unique\_id & ods.customers: customer\_unique\_id & Khoá tự nhiên của khách thật \\
+dim\_customer & zip\_code\_prefix / city / state\_code & ods.customers: zip\_code\_prefix, city, state\_code & Thuộc tính của phiên bản (từ đơn mở phiên bản) \\
+dim\_customer & geography\_key & dw.dim\_geography: geography\_key & Tra theo zip; không có → -1 \\
+dim\_customer & effective\_from / effective\_to / is\_current / version\_no & ods.orders + ods.customers: order\_purchase\_timestamp, zip & SCD2: mỗi lần zip đổi so với đơn trước mở phiên bản mới (effective\_from = ngày mua; phiên bản đầu 1900-01-01; hiện hành 9999-12-31) \\
+dim\_seller & seller\_key & -: - & Khoá thay thế tự sinh (identity); dòng Unknown có key -1 \\
+dim\_seller & seller\_id & ods.sellers ∪ ods.closed\_deals: seller\_id & Khoá tự nhiên; seller chỉ có trong CRM vẫn có dòng \\
+dim\_seller & zip\_code\_prefix / city / state\_code & ods.sellers: zip\_code\_prefix, city, state\_code & NULL / 'unknown' nếu seller chỉ có trong CRM \\
+dim\_seller & geography\_key & dw.dim\_geography: geography\_key & Tra theo zip; không có → -1 \\
+dim\_seller & is\_from\_funnel / mql\_id & ods.closed\_deals: mql\_id & true nếu seller có trong closed\_deals \\
+dim\_seller & acquisition\_origin & ods.mql: origin & origin của MQL; 'not\_from\_funnel' nếu không từ funnel \\
+dim\_seller & acquisition\_channel & ods.ref\_lead\_origin\_group: channel\_group & Nhóm kênh; 'Not from funnel' nếu không từ funnel \\
+dim\_seller & business\_segment / lead\_type / business\_type & ods.closed\_deals: business\_segment, lead\_type, business\_type & Giữ nguyên \\
+dim\_seller & won\_date & ods.closed\_deals: won\_date & cast date \\
+dim\_seller & first\_sale\_date & dw.fact\_order\_item: purchase\_date\_key & min(ngày mua) của các dòng fact\_order\_item có seller này (cập nhật sau khi nạp fact) \\
+dim\_product & product\_key & -: - & Khoá thay thế tự sinh (identity); dòng Unknown có key -1 \\
+dim\_product & product\_id & ods.products: product\_id & Khoá tự nhiên \\
+dim\_product & category\_name\_pt & ods.products: product\_category\_name & Giữ nguyên ('unknown' nếu rỗng) \\
+dim\_product & category\_name\_en & ods.category\_translation / ods.ref\_category\_translation\_extra: product\_category\_name\_english & Bản dịch gốc, thiếu thì lấy seed bổ sung \\
+dim\_product & category\_group & ods.ref\_category\_group: category\_group & Tra theo category\_name\_pt; không có → 'Unknown' \\
+dim\_product & weight\_g / length\_cm / height\_cm / width\_cm / photos\_qty / name\_length / description\_length & ods.products: cùng tên & Giữ nguyên \\
+dim\_product & volume\_cm3 & ods.products: length\_cm, height\_cm, width\_cm & dài × cao × rộng; NULL nếu thiếu \\
+dim\_product & size\_class & ods.products: weight\_g & S < 500 g; M < 2 kg; L < 10 kg; XL ≥ 10 kg; Unknown nếu thiếu hoặc 0 \\
+dim\_order\_status & order\_status / status\_group / is\_final & ods.ref\_order\_status: cùng tên & Giữ nguyên từ seed order\_status.csv \\
+dim\_payment\_type & payment\_type / payment\_group / display\_name & ods.ref\_payment\_type: cùng tên & Giữ nguyên từ seed payment\_type.csv \\
+dim\_lead\_origin & origin / channel\_group & ods.ref\_lead\_origin\_group: cùng tên & Giữ nguyên từ seed; 'unknown' là nhóm kênh Unknown riêng, không gộp với 'other' \\
+dim\_lead\_profile & business\_segment … average\_stock (7 cột) & ods.closed\_deals: cùng tên & Junk dimension: mỗi tổ hợp khác nhau của 7 thuộc tính một dòng; dòng -1 cho MQL chưa chốt \\
+dim\_sales\_rep & rep\_id / rep\_role & ods.closed\_deals: sdr\_id → 'SDR'; sr\_id → 'SR' & Tách hai vai trò thành các dòng (rep\_id, rep\_role) \\
+fact\_order\_item & order\_id / order\_item\_id & ods.order\_items: order\_id, order\_item\_id & Giữ nguyên (degenerate dimension, khoá chính) \\
+fact\_order\_item & purchase\_date\_key & ods.orders: order\_purchase\_timestamp & Ngày → yyyymmdd (dim\_date); NULL hoặc ngoài 2016–2020 → -1 \\
+fact\_order\_item & shipping\_limit\_date\_key & ods.order\_items: shipping\_limit\_date & Ngày → yyyymmdd (dim\_date); NULL hoặc ngoài 2016–2020 → -1 \\
+fact\_order\_item & customer\_key & ods.orders, ods.customers, dw.dim\_customer: customer\_id & ods.orders.customer\_id → ods.customers.customer\_unique\_id → dw.dim\_customer: phiên bản SCD2 có hiệu lực tại ngày mua; không có → -1 \\
+fact\_order\_item & customer\_geography\_key & dw.dim\_customer: geography\_key & geography\_key của phiên bản khách tìm được ở trên \\
+fact\_order\_item & seller\_geography\_key & dw.dim\_seller: geography\_key & Tra theo seller\_id \\
+fact\_order\_item & seller\_key / product\_key & dw.dim\_seller, dw.dim\_product: seller\_id, product\_id & Tra khoá thay thế theo khoá tự nhiên; không có → -1 \\
+fact\_order\_item & order\_status\_key & ods.orders, dw.dim\_order\_status: order\_status & Tra theo trạng thái đơn; không có → -1 \\
+fact\_order\_item & price / freight\_value & ods.order\_items: price, freight\_value & Giữ nguyên (additive) \\
+fact\_order\_item & item\_total & ods.order\_items: price, freight\_value & price + freight\_value \\
+fact\_order\_item & etl\_batch\_id & -: - & Lô ETL đã nạp (UPSERT: ghi đè nếu có cột khác đổi) \\
+fact\_order\_fulfillment & order\_id & ods.orders: order\_id & Giữ nguyên (khoá chính; UPSERT theo order\_id) \\
+fact\_order\_fulfillment & customer\_key / customer\_geography\_key & ods.orders, ods.customers, dw.dim\_customer: customer\_id & ods.orders.customer\_id → ods.customers.customer\_unique\_id → dw.dim\_customer: phiên bản SCD2 có hiệu lực tại ngày mua; không có → -1; geography\_key lấy từ phiên bản đó \\
+fact\_order\_fulfillment & order\_status\_key & ods.orders, dw.dim\_order\_status: order\_status & Tra theo trạng thái đơn; không có → -1 \\
+fact\_order\_fulfillment & purchase\_date\_key / approved\_date\_key / carrier\_date\_key / delivered\_date\_key / estimated\_date\_key & ods.orders: order\_purchase\_timestamp, order\_approved\_at, order\_delivered\_carrier\_date, order\_delivered\_customer\_date, order\_estimated\_delivery\_date & Ngày → yyyymmdd (dim\_date); NULL hoặc ngoài 2016–2020 → -1 (mốc chưa xảy ra = NULL → -1) \\
+fact\_order\_fulfillment & purchase\_ts … estimated\_ts (5 cột) & ods.orders: 5 cột mốc thời gian & Giữ nguyên timestamp gốc \\
+fact\_order\_fulfillment & approval\_hours & ods.orders: order\_approved\_at − order\_purchase\_timestamp & Số giờ; NULL nếu thiếu mốc hoặc âm (lỗi nguồn, ghi etl\_log.fact\_load\_issue) \\
+fact\_order\_fulfillment & handling\_days & ods.orders: order\_delivered\_carrier\_date − order\_approved\_at & Số ngày (2 chữ số thập phân); NULL nếu thiếu mốc hoặc âm \\
+fact\_order\_fulfillment & transit\_days & ods.orders: order\_delivered\_customer\_date − order\_delivered\_carrier\_date & Số ngày; NULL nếu thiếu mốc hoặc âm \\
+fact\_order\_fulfillment & lead\_days & ods.orders: order\_delivered\_customer\_date − order\_purchase\_timestamp & Số ngày; NULL nếu thiếu mốc hoặc âm \\
+fact\_order\_fulfillment & delay\_days & ods.orders: order\_delivered\_customer\_date, order\_estimated\_delivery\_date & delivered::date − estimated::date (âm = giao sớm); NULL nếu chưa giao \\
+fact\_order\_fulfillment & promised\_days & ods.orders: order\_estimated\_delivery\_date, order\_purchase\_timestamp & estimated::date − purchase::date; NULL nếu âm \\
+fact\_order\_fulfillment & is\_delivered & ods.orders: order\_status, order\_delivered\_customer\_date & 1 nếu status = 'delivered' và có ngày giao \\
+fact\_order\_fulfillment & is\_late & (tính từ delay\_days): is\_delivered, delay\_days & 1 nếu is\_delivered = 1 và delay\_days > 0 \\
+fact\_order\_fulfillment & is\_canceled & ods.orders: order\_status & 1 nếu status = 'canceled' \\
+fact\_order\_fulfillment & item\_count / seller\_count & ods.order\_items: order\_item\_id, seller\_id & count(*) và count(distinct seller\_id) theo đơn \\
+fact\_order\_fulfillment & order\_value / freight\_total & ods.order\_items: price, freight\_value & Σ theo đơn (0 nếu đơn không có dòng hàng) \\
+fact\_order\_fulfillment & payment\_total & ods.order\_payments: payment\_value & Σ theo đơn \\
+fact\_order\_fulfillment & dq\_flag\_count & ods.orders: dq\_flag\_count & Số cờ lỗi ODS của đơn + số khoảng thời gian bị đặt NULL vì âm \\
+fact\_order\_fulfillment & etl\_batch\_id & -: - & Lô ETL cuối cùng ghi dòng \\
+fact\_payment & order\_id / payment\_sequential & ods.order\_payments: order\_id, payment\_sequential & Giữ nguyên (khoá chính) \\
+fact\_payment & purchase\_date\_key & ods.orders: order\_purchase\_timestamp & Ngày → yyyymmdd (dim\_date); NULL hoặc ngoài 2016–2020 → -1 \\
+fact\_payment & customer\_key & ods.orders, ods.customers, dw.dim\_customer: customer\_id & ods.orders.customer\_id → ods.customers.customer\_unique\_id → dw.dim\_customer: phiên bản SCD2 có hiệu lực tại ngày mua; không có → -1 \\
+fact\_payment & payment\_type\_key & ods.order\_payments, dw.dim\_payment\_type: payment\_type & Tra theo loại thanh toán; không có → -1 \\
+fact\_payment & payment\_installments / payment\_value & ods.order\_payments: payment\_installments, payment\_value & Giữ nguyên (installments đã chuẩn hoá ≥ 1 ở ODS) \\
+fact\_review & review\_id / order\_id & ods.order\_reviews: review\_id, order\_id & Giữ nguyên (khoá chính; đã khử trùng ở ODS) \\
+fact\_review & review\_creation\_date\_key / review\_answer\_date\_key & ods.order\_reviews: review\_creation\_date, review\_answer\_timestamp & Ngày → yyyymmdd (dim\_date); NULL hoặc ngoài 2016–2020 → -1 \\
+fact\_review & customer\_key & ods.orders, ods.customers, dw.dim\_customer: customer\_id & ods.orders.customer\_id → ods.customers.customer\_unique\_id → dw.dim\_customer: phiên bản SCD2 có hiệu lực tại ngày mua; không có → -1 \\
+fact\_review & review\_score & ods.order\_reviews: review\_score & Giữ nguyên (CHECK 1–5) \\
+fact\_review & is\_negative & ods.order\_reviews: review\_score & 1 nếu điểm ≤ 2 \\
+fact\_review & has\_comment\_title / has\_comment\_message & ods.order\_reviews: review\_comment\_title, review\_comment\_message & 1 nếu khác rỗng sau trim \\
+fact\_review & comment\_length & ods.order\_reviews: review\_comment\_message & Số ký tự sau trim (0 nếu không có) \\
+fact\_review & response\_hours & ods.order\_reviews: review\_answer\_timestamp − review\_creation\_date & Số giờ; NULL nếu thiếu hoặc âm \\
+fact\_review & delivered\_late & dw.fact\_order\_fulfillment: is\_late & Lấy từ fulfillment của cùng đơn; không có → 0 \\
+fact\_lead\_funnel & mql\_id / landing\_page\_id & ods.mql: mql\_id, landing\_page\_id & Giữ nguyên (mỗi MQL một dòng) \\
+fact\_lead\_funnel & first\_contact\_date\_key & ods.mql: first\_contact\_date & Ngày → yyyymmdd (dim\_date); NULL hoặc ngoài 2016–2020 → -1 \\
+fact\_lead\_funnel & won\_date\_key & ods.closed\_deals: won\_date & Ngày → yyyymmdd (dim\_date); NULL hoặc ngoài 2016–2020 → -1; MQL chưa chốt → -1 \\
+fact\_lead\_funnel & first\_sale\_date\_key & dw.dim\_seller: first\_sale\_date & Ngày → yyyymmdd (dim\_date); NULL hoặc ngoài 2016–2020 → -1; seller chưa có đơn → -1 \\
+fact\_lead\_funnel & lead\_origin\_key & ods.mql, dw.dim\_lead\_origin: origin & Tra theo origin; không có → -1 \\
+fact\_lead\_funnel & lead\_profile\_key & ods.closed\_deals, dw.dim\_lead\_profile: 7 thuộc tính của deal & Tra theo tổ hợp 7 thuộc tính; MQL chưa chốt → -1 \\
+fact\_lead\_funnel & seller\_key & ods.closed\_deals, dw.dim\_seller: seller\_id & Tra theo seller\_id; MQL chưa chốt → -1 \\
+fact\_lead\_funnel & sdr\_key / sr\_key & ods.closed\_deals, dw.dim\_sales\_rep: sdr\_id, sr\_id & Tra theo (rep\_id, vai trò); không có → -1 \\
+fact\_lead\_funnel & is\_won / has\_first\_sale & ods.closed\_deals, dw.dim\_seller: mql\_id, first\_sale\_date & 1 nếu có deal / nếu seller đã có đơn \\
+fact\_lead\_funnel & days\_to\_close & ods.closed\_deals, ods.mql: won\_date, first\_contact\_date & won::date − first\_contact\_date; NULL nếu chưa chốt hoặc âm \\
+fact\_lead\_funnel & days\_won\_to\_first\_sale & dw.dim\_seller, ods.closed\_deals: first\_sale\_date, won\_date & first\_sale\_date − won::date; NULL nếu chưa có hoặc âm \\
+fact\_lead\_funnel & declared\_product\_catalog\_size / declared\_monthly\_revenue & ods.closed\_deals: cùng tên & Giữ nguyên (non-additive) \\
+fact\_lead\_funnel & seller\_gmv\_first\_90d & dw.fact\_order\_item: price & Σ price của đơn không Failed của seller trong 90 ngày kể từ ngày đơn đầu; NULL nếu chưa có đơn \\
+fact\_seller\_monthly & month\_date\_key & dw.fact\_order\_item: purchase\_date\_key & Ngày 1 của tháng mua; dày đặc từ tháng đơn đầu của seller đến tháng cuối có đơn \\
+fact\_seller\_monthly & seller\_key & dw.fact\_order\_item: seller\_key & Giữ nguyên \\
+fact\_seller\_monthly & orders / items & dw.fact\_order\_item: order\_id & count(distinct order\_id) / count(*) trong tháng, mọi trạng thái; 0 nếu tháng không có đơn \\
+fact\_seller\_monthly & gmv / freight & dw.fact\_order\_item: price, freight\_value & Σ của đơn không thuộc nhóm Failed \\
+fact\_seller\_monthly & delivered\_orders / late\_orders / canceled\_orders & dw.fact\_order\_fulfillment: is\_delivered, is\_late, is\_canceled & Σ theo đơn của seller trong tháng \\
+fact\_seller\_monthly & late\_rate & (tính): late\_orders, delivered\_orders & late\_orders ÷ delivered\_orders; NULL nếu chưa có đơn giao \\
+fact\_seller\_monthly & avg\_review\_score & dw.fact\_review: review\_score & avg theo review của các đơn trong tháng; NULL nếu không có \\
+fact\_seller\_monthly & is\_active & (tính): orders & 1 nếu orders > 0 \\
+fact\_seller\_monthly & months\_since\_first\_sale & (tính): month\_date\_key & Số tháng kể từ tháng có đơn đầu của seller (0 = tháng đầu) \\
+\end{longtable}}

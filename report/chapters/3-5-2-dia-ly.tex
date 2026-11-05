@@ -1,0 +1,16 @@
+\subsection{Cơ sở dữ liệu địa lý}
+Dự án không dùng PostGIS nên khoảng cách giữa seller và khách được tính bằng công thức haversine viết thành hàm SQL trên hai cột vĩ độ và kinh độ của mã bưu chính (lấy trung vị các điểm hợp lệ của từng mã). Với 112.650 dòng hàng, 555 dòng (0,49\%) không tính được khoảng cách vì thiếu toạ độ và được giữ lại với giá trị trống thay vì bị loại âm thầm. Khoảng cách trung bình là 598 km và 36\% dòng hàng có seller và khách cùng bang. Khi khoảng cách tăng từ dưới 100 km lên trên 1.000 km, phí vận chuyển trung bình tăng từ 11,75 lên 31,65 BRL (từ 24\% lên 43\% giá hàng), lead time từ 6,5 lên 19,0 ngày và tỷ lệ giao trễ từ 4,5\% lên 10,3\%; tương quan Spearman giữa khoảng cách với phí vận chuyển là 0,63 và với lead time là 0,54. So với PostGIS, haversine thuần không cần cài thêm nhưng không có chỉ mục không gian GiST nên không phù hợp với các truy vấn bán kính hoặc láng giềng gần nhất trên dữ liệu lớn.
+
+\input{tables/distance}
+\hinh{3-5-2_distance_vs_freight.png}{Khoảng cách seller -- khách và phí vận chuyển}{fig:dist-freight}{1.0}
+\hinh{3-5-2_distance_vs_leadtime.png}{Khoảng cách seller -- khách, lead time và tỷ lệ trễ}{fig:dist-lead}{1.0}
+\begin{table}[htbp]\centering\small\caption{So sánh haversine bằng SQL thuần và PostGIS}\label{tab:haversine-postgis}
+\begin{tabular}{p{2.6cm}p{6cm}p{6cm}}\toprule
+ & \textbf{Haversine SQL thuần} & \textbf{PostGIS}\\\midrule
+Dữ liệu & hai cột vĩ độ, kinh độ kiểu số thực & kiểu \code{geometry} hoặc \code{geography}\\
+Khoảng cách & công thức cầu, sai số tối đa khoảng 0,5\% & có tính trên ellipsoid chính xác hơn\\
+Chỉ mục & chỉ B-tree, không hỗ trợ truy vấn bán kính hay láng giềng gần nhất & chỉ mục không gian GiST (cây R)\\
+Phép toán & khoảng cách điểm--điểm & đa giác, giao cắt, diện tích, hệ toạ độ\\
+Chi phí & không cần cài thêm & cần cài extension\\\bottomrule
+\end{tabular}\end{table}
+\todo{Nhóm bổ sung phần lý thuyết cơ sở dữ liệu địa lý (mô hình vector/raster, kiểu dữ liệu không gian, chỉ mục không gian) từ tài liệu PostGIS \cite{postgis_docs} và công thức haversine \cite{sinnott1984}; thêm bản đồ bong bóng từ dashboard D4 khi dựng xong. Hàm dw.haversine\_km: Phụ lục B.}
