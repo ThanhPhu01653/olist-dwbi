@@ -1,0 +1,6 @@
+payment_type,payment_group,display_name
+credit_card,Card,Credit card
+debit_card,Card,Debit card
+boleto,Bank slip,Boleto
+voucher,Voucher,Voucher
+not_defined,Unknown,Not defined

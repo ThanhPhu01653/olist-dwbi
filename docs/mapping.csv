@@ -1,0 +1,80 @@
+﻿layer,source_table,source_column,target_table,target_column,transformation
+nguồn → ods,oltp.product_category_name_translation,product_category_name,ods.category_translation,product_category_name,Giữ nguyên giá trị
+nguồn → ods,oltp.product_category_name_translation,product_category_name_english,ods.category_translation,product_category_name_english,Giữ nguyên giá trị
+nguồn → ods,crm.closed_deals,mql_id,ods.closed_deals,mql_id,Giữ nguyên giá trị
+nguồn → ods,crm.closed_deals,seller_id,ods.closed_deals,seller_id,Giữ nguyên giá trị
+nguồn → ods,crm.closed_deals,sdr_id,ods.closed_deals,sdr_id,Giữ nguyên giá trị
+nguồn → ods,crm.closed_deals,sr_id,ods.closed_deals,sr_id,Giữ nguyên giá trị
+nguồn → ods,crm.closed_deals,won_date,ods.closed_deals,won_date,Giữ nguyên giá trị
+nguồn → ods,crm.closed_deals,business_segment,ods.closed_deals,business_segment,trim; NULL/rỗng → 'unknown'
+nguồn → ods,crm.closed_deals,lead_type,ods.closed_deals,lead_type,trim; NULL/rỗng → 'unknown'
+nguồn → ods,crm.closed_deals,lead_behaviour_profile,ods.closed_deals,lead_behaviour_profile,trim; NULL/rỗng → 'unknown'
+nguồn → ods,crm.closed_deals,business_type,ods.closed_deals,business_type,trim; NULL/rỗng → 'unknown'
+nguồn → ods,crm.closed_deals,has_company,ods.closed_deals,has_company,boolean → text 'true'/'false'; NULL → 'unknown'
+nguồn → ods,crm.closed_deals,has_gtin,ods.closed_deals,has_gtin,boolean → text 'true'/'false'; NULL → 'unknown'
+nguồn → ods,crm.closed_deals,average_stock,ods.closed_deals,average_stock,trim; NULL/rỗng → 'unknown'
+nguồn → ods,crm.closed_deals,declared_product_catalog_size,ods.closed_deals,declared_product_catalog_size,Giữ nguyên giá trị
+nguồn → ods,crm.closed_deals,declared_monthly_revenue,ods.closed_deals,declared_monthly_revenue,Giữ nguyên giá trị
+nguồn → ods,crm.closed_deals,"declared_monthly_revenue, declared_product_catalog_size, won_date",ods.closed_deals,dq_flags,"Cờ: declared_revenue_zero, declared_catalog_zero, won_before_first_contact (so với mql.first_contact_date)"
+nguồn → ods,oltp.customers,customer_id,ods.customers,customer_id,Giữ nguyên giá trị
+nguồn → ods,oltp.customers,customer_unique_id,ods.customers,customer_unique_id,Giữ nguyên giá trị
+nguồn → ods,oltp.customers,customer_zip_code_prefix,ods.customers,zip_code_prefix,"Chuẩn hoá char(5): bỏ ký tự không phải số, lpad(…,5,'0')"
+nguồn → ods,oltp.customers,customer_city,ods.customers,city,lower(unaccent(trim())); rỗng → NULL
+nguồn → ods,oltp.customers,customer_state,ods.customers,state_code,"upper(trim()), 2 ký tự"
+nguồn → ods,crm.mql,mql_id,ods.mql,mql_id,Giữ nguyên giá trị
+nguồn → ods,crm.mql,first_contact_date,ods.mql,first_contact_date,Giữ nguyên giá trị
+nguồn → ods,crm.mql,landing_page_id,ods.mql,landing_page_id,Giữ nguyên giá trị
+nguồn → ods,crm.mql,origin,ods.mql,origin,lower(trim()); NULL/rỗng → 'unknown'
+nguồn → ods,oltp.order_items,order_id,ods.order_items,order_id,Giữ nguyên giá trị
+nguồn → ods,oltp.order_items,order_item_id,ods.order_items,order_item_id,Giữ nguyên giá trị
+nguồn → ods,oltp.order_items,product_id,ods.order_items,product_id,Giữ nguyên giá trị
+nguồn → ods,oltp.order_items,seller_id,ods.order_items,seller_id,Giữ nguyên giá trị
+nguồn → ods,oltp.order_items,shipping_limit_date,ods.order_items,shipping_limit_date,Giữ nguyên giá trị
+nguồn → ods,oltp.order_items,price,ods.order_items,price,Giữ nguyên giá trị
+nguồn → ods,oltp.order_items,freight_value,ods.order_items,freight_value,Giữ nguyên giá trị
+nguồn → ods,oltp.order_payments,order_id,ods.order_payments,order_id,Giữ nguyên giá trị
+nguồn → ods,oltp.order_payments,payment_sequential,ods.order_payments,payment_sequential,Giữ nguyên giá trị
+nguồn → ods,oltp.order_payments,payment_type,ods.order_payments,payment_type,lower(trim())
+nguồn → ods,oltp.order_payments,payment_installments,ods.order_payments,payment_installments,"NULL hoặc 0 → 1 (greatest(...,1))"
+nguồn → ods,oltp.order_payments,payment_value,ods.order_payments,payment_value,Giữ nguyên giá trị
+nguồn → ods,oltp.order_payments,"payment_installments, payment_type, payment_value",ods.order_payments,dq_flags,"Cờ: installments_zero_set_to_1, payment_type_not_defined, payment_value_zero"
+nguồn → ods,oltp.order_reviews,review_id,ods.order_reviews,review_id,"Khử trùng trên cặp (review_id, order_id): giữ bản có review_answer_timestamp mới nhất, dòng còn lại ghi etl_log.rejected_rows"
+nguồn → ods,oltp.order_reviews,order_id,ods.order_reviews,order_id,Giữ nguyên giá trị
+nguồn → ods,oltp.order_reviews,review_score,ods.order_reviews,review_score,Giữ nguyên giá trị
+nguồn → ods,oltp.order_reviews,review_comment_title,ods.order_reviews,review_comment_title,Giữ nguyên giá trị
+nguồn → ods,oltp.order_reviews,review_comment_message,ods.order_reviews,review_comment_message,Giữ nguyên giá trị
+nguồn → ods,oltp.order_reviews,review_creation_date,ods.order_reviews,review_creation_date,Giữ nguyên giá trị
+nguồn → ods,oltp.order_reviews,review_answer_timestamp,ods.order_reviews,review_answer_timestamp,Giữ nguyên giá trị
+nguồn → ods,oltp.orders,order_id,ods.orders,order_id,Giữ nguyên giá trị
+nguồn → ods,oltp.orders,customer_id,ods.orders,customer_id,Giữ nguyên giá trị
+nguồn → ods,oltp.orders,order_status,ods.orders,order_status,lower(trim())
+nguồn → ods,oltp.orders,order_purchase_timestamp,ods.orders,order_purchase_timestamp,Giữ nguyên giá trị
+nguồn → ods,oltp.orders,order_approved_at,ods.orders,order_approved_at,Giữ nguyên giá trị
+nguồn → ods,oltp.orders,order_delivered_carrier_date,ods.orders,order_delivered_carrier_date,Giữ nguyên giá trị
+nguồn → ods,oltp.orders,order_delivered_customer_date,ods.orders,order_delivered_customer_date,Giữ nguyên giá trị
+nguồn → ods,oltp.orders,order_estimated_delivery_date,ods.orders,order_estimated_delivery_date,Giữ nguyên giá trị
+nguồn → ods,oltp.orders,các cột mốc thời gian + order_status,ods.orders,dq_flags,"Mảng cờ lỗi: approved_before_purchase, carrier_before_purchase, carrier_before_approved, delivered_before_carrier, delivered_before_purchase, estimated_before_purchase, delivered_without_date, delivered_without_carrier_date, delivered_without_approval, delivery_date_but_not_delivered"
+nguồn → ods,oltp.orders,dq_flags,ods.orders,dq_flag_count,cardinality(dq_flags)
+nguồn → ods,oltp.products,product_id,ods.products,product_id,Giữ nguyên giá trị
+nguồn → ods,oltp.products,product_category_name,ods.products,product_category_name,trim; rỗng/NULL → 'unknown'
+nguồn → ods,oltp.products,product_name_lenght,ods.products,name_length,Đổi tên cột (sửa chính tả *_lenght → *_length)
+nguồn → ods,oltp.products,product_description_lenght,ods.products,description_length,Đổi tên cột (sửa chính tả *_lenght → *_length)
+nguồn → ods,oltp.products,product_photos_qty,ods.products,photos_qty,Đổi tên cột (bỏ tiền tố product_)
+nguồn → ods,oltp.products,product_weight_g,ods.products,weight_g,Đổi tên cột (bỏ tiền tố product_)
+nguồn → ods,oltp.products,product_length_cm,ods.products,length_cm,Đổi tên cột (bỏ tiền tố product_)
+nguồn → ods,oltp.products,product_height_cm,ods.products,height_cm,Đổi tên cột (bỏ tiền tố product_)
+nguồn → ods,oltp.products,product_width_cm,ods.products,width_cm,Đổi tên cột (bỏ tiền tố product_)
+nguồn → ods,oltp.products,"product_weight_g, product_length_cm, product_height_cm, product_width_cm",ods.products,dq_missing_dimensions,true nếu thiếu (NULL) bất kỳ số đo nào hoặc cân nặng = 0; giữ nguyên giá trị gốc
+nguồn → ods,oltp.sellers,seller_id,ods.sellers,seller_id,Giữ nguyên giá trị
+nguồn → ods,oltp.sellers,seller_zip_code_prefix,ods.sellers,zip_code_prefix,"Chuẩn hoá char(5): bỏ ký tự không phải số, lpad(…,5,'0')"
+nguồn → ods,oltp.sellers,seller_city,ods.sellers,city,lower(unaccent(trim())); rỗng → NULL
+nguồn → ods,oltp.sellers,seller_state,ods.sellers,state_code,"upper(trim()), 2 ký tự"
+nguồn → ods,oltp.geolocation,geolocation_zip_code_prefix,ods.geolocation_zip,zip_code_prefix,Chuẩn hoá char(5) rồi GROUP BY zip
+nguồn → ods,oltp.geolocation,geolocation_lat,ods.geolocation_zip,latitude,Median (percentile_cont 0.5) sau khi lọc bbox Brazil lat −33.75…5.27
+nguồn → ods,oltp.geolocation,geolocation_lng,ods.geolocation_zip,longitude,Median (percentile_cont 0.5) sau khi lọc bbox Brazil lng −73.99…−34.79
+nguồn → ods,oltp.geolocation,geolocation_city,ods.geolocation_zip,city,lower(unaccent(trim())) rồi lấy mode theo zip
+nguồn → ods,oltp.geolocation,geolocation_state,ods.geolocation_zip,state_code,upper(trim()) rồi lấy mode theo zip
+nguồn → ods,oltp.geolocation,(số dòng),ods.geolocation_zip,n_points,count(*) điểm hợp lệ của zip
+nguồn → ods,oltp.geolocation,(mọi cột),etl_log.rejected_rows,record,Điểm ngoài bbox Brazil bị loại khỏi phép gom và ghi etl_log.rejected_rows
+nguồn → ods,oltp.customers,customer_id,ods.customer_map,customer_id,Giữ nguyên; bảng ánh xạ customer_id → customer_unique_id
+nguồn → ods,oltp.customers,customer_unique_id,ods.customer_map,customer_unique_id,Giữ nguyên; bảng ánh xạ customer_id → customer_unique_id
