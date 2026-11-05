@@ -78,3 +78,45 @@ nguồn → ods,oltp.geolocation,(số dòng),ods.geolocation_zip,n_points,count
 nguồn → ods,oltp.geolocation,(mọi cột),etl_log.rejected_rows,record,Điểm ngoài bbox Brazil bị loại khỏi phép gom và ghi etl_log.rejected_rows
 nguồn → ods,oltp.customers,customer_id,ods.customer_map,customer_id,Giữ nguyên; bảng ánh xạ customer_id → customer_unique_id
 nguồn → ods,oltp.customers,customer_unique_id,ods.customer_map,customer_unique_id,Giữ nguyên; bảng ánh xạ customer_id → customer_unique_id
+ods → dw,(lịch),full_date,dw.dim_date,date_key,Số yyyymmdd; -1 = Unknown
+ods → dw,(lịch),-,dw.dim_date,full_date,Mỗi ngày 2016-01-01 … 2019-12-31
+ods → dw,(lịch),full_date,dw.dim_date,day_of_week,isoweekday: 1 = Thứ Hai
+ods → dw,(lịch),full_date,dw.dim_date,week_of_year,Tuần ISO
+ods → dw,(lịch),full_date,dw.dim_date,year_month / year_quarter,'YYYY-MM' / 'YYYY-Qn'
+ods → dw,(lịch),full_date,dw.dim_date,is_weekend,"Thứ Bảy, Chủ Nhật"
+ods → dw,(package holidays),holidays.Brazil,dw.dim_date,is_holiday_br / holiday_name,Ngày lễ quốc gia Brazil
+ods → dw,(lịch),full_date,dw.dim_date,is_black_friday,Thứ Sáu sau thứ Năm thứ 4 của tháng 11
+ods → dw,-,-,dw.dim_geography,geography_key,Khoá thay thế tự sinh (identity); dòng Unknown có key -1
+ods → dw,ods.geolocation_zip ∪ ods.customers ∪ ods.sellers,zip_code_prefix,dw.dim_geography,zip_code_prefix,"Hợp nhất mọi zip (khoá tự nhiên, UNIQUE)"
+ods → dw,ods.geolocation_zip (ưu tiên) hoặc ods.customers/sellers,"city, state_code",dw.dim_geography,city / state_code,Lấy từ geolocation_zip; zip chỉ có ở customers/sellers thì lấy mode
+ods → dw,ods.ref_state_region,"state_name, region",dw.dim_geography,state_name / region,Tra theo state_code; không có → 'Unknown'
+ods → dw,ods.geolocation_zip,"latitude, longitude",dw.dim_geography,latitude / longitude,Giữ median; NULL nếu zip không có toạ độ
+ods → dw,-,-,dw.dim_geography,country,Hằng 'Brazil'
+ods → dw,-,-,dw.dim_customer,customer_key,Khoá thay thế tự sinh (identity); dòng Unknown có key -1 (mỗi phiên bản một key)
+ods → dw,ods.customers,customer_unique_id,dw.dim_customer,customer_unique_id,Khoá tự nhiên của khách thật
+ods → dw,ods.customers,"zip_code_prefix, city, state_code",dw.dim_customer,zip_code_prefix / city / state_code,Thuộc tính của phiên bản (từ đơn mở phiên bản)
+ods → dw,dw.dim_geography,geography_key,dw.dim_customer,geography_key,Tra theo zip; không có → -1
+ods → dw,ods.orders + ods.customers,"order_purchase_timestamp, zip",dw.dim_customer,effective_from / effective_to / is_current / version_no,SCD2: mỗi lần zip đổi so với đơn trước mở phiên bản mới (effective_from = ngày mua; phiên bản đầu 1900-01-01; hiện hành 9999-12-31)
+ods → dw,-,-,dw.dim_seller,seller_key,Khoá thay thế tự sinh (identity); dòng Unknown có key -1
+ods → dw,ods.sellers ∪ ods.closed_deals,seller_id,dw.dim_seller,seller_id,Khoá tự nhiên; seller chỉ có trong CRM vẫn có dòng
+ods → dw,ods.sellers,"zip_code_prefix, city, state_code",dw.dim_seller,zip_code_prefix / city / state_code,NULL / 'unknown' nếu seller chỉ có trong CRM
+ods → dw,dw.dim_geography,geography_key,dw.dim_seller,geography_key,Tra theo zip; không có → -1
+ods → dw,ods.closed_deals,mql_id,dw.dim_seller,is_from_funnel / mql_id,true nếu seller có trong closed_deals
+ods → dw,ods.mql,origin,dw.dim_seller,acquisition_origin,origin của MQL; 'not_from_funnel' nếu không từ funnel
+ods → dw,ods.ref_lead_origin_group,channel_group,dw.dim_seller,acquisition_channel,Nhóm kênh; 'Not from funnel' nếu không từ funnel
+ods → dw,ods.closed_deals,"business_segment, lead_type, business_type",dw.dim_seller,business_segment / lead_type / business_type,Giữ nguyên
+ods → dw,ods.closed_deals,won_date,dw.dim_seller,won_date,cast date
+ods → dw,dw.fact_order_item,purchase_date_key,dw.dim_seller,first_sale_date,Ngày mua đầu tiên (cập nhật ở P4)
+ods → dw,-,-,dw.dim_product,product_key,Khoá thay thế tự sinh (identity); dòng Unknown có key -1
+ods → dw,ods.products,product_id,dw.dim_product,product_id,Khoá tự nhiên
+ods → dw,ods.products,product_category_name,dw.dim_product,category_name_pt,Giữ nguyên ('unknown' nếu rỗng)
+ods → dw,ods.category_translation / ods.ref_category_translation_extra,product_category_name_english,dw.dim_product,category_name_en,"Bản dịch gốc, thiếu thì lấy seed bổ sung"
+ods → dw,ods.ref_category_group,category_group,dw.dim_product,category_group,Tra theo category_name_pt; không có → 'Unknown'
+ods → dw,ods.products,cùng tên,dw.dim_product,weight_g / length_cm / height_cm / width_cm / photos_qty / name_length / description_length,Giữ nguyên
+ods → dw,ods.products,"length_cm, height_cm, width_cm",dw.dim_product,volume_cm3,dài × cao × rộng; NULL nếu thiếu
+ods → dw,ods.products,weight_g,dw.dim_product,size_class,S < 500 g; M < 2 kg; L < 10 kg; XL ≥ 10 kg; Unknown nếu thiếu hoặc 0
+ods → dw,ods.ref_order_status,cùng tên,dw.dim_order_status,order_status / status_group / is_final,Giữ nguyên từ seed order_status.csv
+ods → dw,ods.ref_payment_type,cùng tên,dw.dim_payment_type,payment_type / payment_group / display_name,Giữ nguyên từ seed payment_type.csv
+ods → dw,ods.ref_lead_origin_group,cùng tên,dw.dim_lead_origin,origin / channel_group,"Giữ nguyên từ seed; 'unknown' là nhóm kênh Unknown riêng, không gộp với 'other'"
+ods → dw,ods.closed_deals,cùng tên,dw.dim_lead_profile,business_segment … average_stock (7 cột),Junk dimension: mỗi tổ hợp khác nhau của 7 thuộc tính một dòng; dòng -1 cho MQL chưa chốt
+ods → dw,ods.closed_deals,sdr_id → 'SDR'; sr_id → 'SR',dw.dim_sales_rep,rep_id / rep_role,"Tách hai vai trò thành các dòng (rep_id, rep_role)"
