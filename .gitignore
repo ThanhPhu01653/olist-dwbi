@@ -1,0 +1,12 @@
+# Raw Kaggle data (not committed)
+data/raw/
+# Secrets
+.env
+# Python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+# OS / editor
+.DS_Store
+Thumbs.db
