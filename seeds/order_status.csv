@@ -1,0 +1,9 @@
+order_status,status_group,is_final
+delivered,Completed,true
+shipped,In progress,false
+invoiced,In progress,false
+processing,In progress,false
+approved,In progress,false
+created,In progress,false
+canceled,Failed,true
+unavailable,Failed,true

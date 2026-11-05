@@ -10,14 +10,22 @@
 | --- | --- | --- |
 | 05/11 | Ghép thêm bộ Olist Marketing Funnel | Thêm schema `crm`, `fact_lead_funnel`, `fact_seller_monthly`, mart `mart_acquisition` |
 | 05/11 | Dùng **PostgreSQL** cho toàn bộ hệ thống, không dùng SQL Server/SSAS | OLAP theo mô hình **ROLAP**: thao tác OLAP minh hoạ bằng SQL (ROLLUP, CUBE, GROUPING SETS) trên star schema và bằng Power BI; báo cáo giải thích lý do chọn ROLAP thay vì MOLAP |
-| 05/11 | Không dùng Docker; chỉ KT1 viết code (cùng Claude Code); KT2, KT3 làm thiết kế và Power BI | PostgreSQL cài trực tiếp; dữ liệu cho Power BI đi qua CSV xuất từ `scripts/export_powerbi.py` |
+| 05/11 | Không dùng Docker; chỉ KT1 viết và chạy code (cùng Claude Code); cả nhóm cùng làm dashboard Power BI, báo cáo và slide | PostgreSQL cài trực tiếp; dữ liệu cho Power BI đi qua CSV xuất từ `scripts/export_powerbi.py` |
 | 05/11 | Không cài PostGIS | Khoảng cách seller → khách tính bằng hàm haversine SQL thuần; dim_geography không có cột geometry |
 | 05/11 | Zip: bản CSV hiện tại đã giữ số 0 đầu → `oltp` lưu zip kiểu `text`; ODS vẫn chuẩn hoá về `char(5)` (`lpad`) để phòng thủ | Lỗi "mất số 0 đầu" ở §2.3 không xảy ra với bản CSV này (số liệu kiểm chứng ghi ở §2.3) |
 | 05/11 | `oltp.customers` chỉ nạp khách có đơn trong khoảng thời gian nạp (`customer_id` sinh theo từng đơn, hệ thống OLTP thật cũng vậy) | `simulate_increment` phải chèn customer cùng với đơn mới (§12) |
 | 05/11 | Chấp nhận chỉ 3 deal có `won_date` ≤ 2017-12-31 sau nạp ban đầu; dashboard dựng trên trạng thái cuối sau khi chạy hết các đợt incremental | Funnel "lấp đầy dần" qua các đợt incremental là điểm để trình bày |
 | 05/11 | `oltp.order_reviews` dùng khoá chính ghép (`review_id`, `order_id`) | `review_id` lặp giữa các đơn nên không làm PK riêng được |
-| 05/11 | Máy KT1 dùng **PostgreSQL 18.6**, giữ nguyên, không cài lại bản 16 | Tài liệu ghi "PostgreSQL 18 (16+ đều chạy được)"; code không dùng tính năng riêng của một bản; đã chạy thật P0 trên 18.6 |
-| 12/11 | *(chờ review)* SCD2 hay SCD1 cho dim_customer; fact_seller_monthly dày đặc hay thưa; bảng nhóm ngành hàng; mốc tách dữ liệu 2017-12-31 | |
+| 05/11 | Máy của KT1 dùng **PostgreSQL 18.6**, giữ nguyên, không cài lại bản 16 | Tài liệu ghi "PostgreSQL 18 (16+ đều chạy được)"; code không dùng tính năng riêng của một bản; đã chạy thật P0 trên 18.6 |
+| 05/11 | **Chốt 05/11 (KT1); nhóm có thể đổi ở buổi 12/11:** `dim_customer` dùng **SCD2** | Chỉ 250 / 96.096 khách đổi zip (0,26%) nên SCD2 thêm 256 dòng (+0,27%); là ví dụ SCD thật để trình bày (EDA câu a) |
+| 05/11 | **Chốt 05/11 (KT1); nhóm có thể đổi ở buổi 12/11:** D6 gồm **2 trang**: (1) funnel theo kênh, (2) seller từ funnel có cảnh báo cỡ mẫu. 462 deal "chốt nhưng chưa bán" vẫn có dòng trong `dim_seller` (địa chỉ Unknown, `is_from_funnel = true`) và được hiển thị như một kết quả, không phải lỗi | Chỉ 380 / 842 deal (45,1%) có đơn, GMV 4,99% GMV sàn (EDA câu b) |
+| 05/11 | **Chốt 05/11 (KT1); nhóm có thể đổi ở buổi 12/11:** `fact_seller_monthly` lưu **dày đặc** đến tháng cuối có đơn; dashboard lọc 2017-01 → 2018-08 | 36.583 dòng dày đặc so với 16.441 dòng thưa; đo được seller ngừng bán (EDA câu c) |
+| 05/11 | **Chốt 05/11 (KT1); nhóm có thể đổi ở buổi 12/11:** nhóm ngành hàng dùng `docs/category_group_draft.csv` với 2 chỗ sửa: tách `pet_shop` thành nhóm **Pet**; đổi tên "Auto & Tools" thành **"Auto, Tools & Construction"** → 13 nhóm kể cả Unknown | Bản chốt nằm ở `seeds/category_group.csv` (EDA câu d) |
+| 05/11 | **Chốt 05/11 (KT1); nhóm có thể đổi ở buổi 12/11:** zip của customers/sellers thiếu trong geolocation → vẫn tạo dòng `dim_geography` từ city/state, `latitude`/`longitude` = NULL | 157 zip khách + 7 zip seller; 0,28% số đơn (EDA câu e) |
+| 05/11 | **Chốt 05/11 (KT1); nhóm có thể đổi ở buổi 12/11:** giữ mốc nạp ban đầu **2017-12-31** | 45.430 đơn, 2.002 MQL, 3 deal; còn 8 đợt incremental hằng tháng đến 2018-08 (EDA câu f) |
+| 05/11 | Điều chỉnh đặc tả: `fact_order_fulfillment` thêm `promised_days` (= ngày dự kiến − ngày mua); thêm KPI "ngày hứa giao TB so với ngày giao thực tế" | Ngày dự kiến quá rộng rãi (91,9% đơn giao sớm hơn dự kiến, trung vị sớm 12 ngày) nên cần so sánh số ngày hứa với số ngày thực tế (dùng cho D3) |
+| 05/11 | Điều chỉnh đặc tả: `dim_lead_origin` tách `unknown` thành nhóm kênh riêng **Unknown** (không gộp với `other`) | `origin = unknown` có tỷ lệ chốt cao nhất (16,7%), gộp với `other` (2,7%) sẽ che mất sự khác biệt |
+| 12/11 | *(buổi họp nhóm)* xem lại các dòng "Chốt 05/11" ở trên; mọi thay đổi sau đó phải cập nhật file này trước rồi mới sửa code | |
 
 ---
 
@@ -127,7 +135,7 @@ etl_log: job_run, rejected_rows, watermark  (giám sát → dashboard D7)
 Python 3.11 (pandas, SQLAlchemy, psycopg2); SQL stored procedure (PL/pgSQL); Git/GitHub; Power BI Desktop/Service.
 
 **Cầu nối sang Power BI:** chỉ KT1 chạy database, nên `dw`, `mart_*` và `etl_log` được xuất ra CSV (`exports/powerbi/`)
-sau mỗi lần chạy pipeline; KT2, KT3 dựng Power BI ở chế độ Import từ các file này. Publish to web cũng cần chế độ Import.
+sau mỗi lần chạy pipeline; cả nhóm dựng Power BI ở chế độ Import từ các file này. Publish to web cũng cần chế độ Import.
 
 ---
 
@@ -249,7 +257,7 @@ Grain: 1 sản phẩm. 32.951 dòng.
 | photos_qty, name_length, description_length | |
 
 Phân cấp: Sản phẩm → Danh mục → Nhóm ngành hàng.
-Nhóm ngành hàng gợi ý: Home & Furniture; Health & Beauty; Electronics & Computers; Fashion & Accessories; Sports & Leisure; Toys & Baby; Books, Media & Music; Food & Drinks; Auto & Tools; Office & Stationery; Gifts & Others; Unknown.
+Nhóm ngành hàng (13 nhóm, chốt 05/11, nguồn `seeds/category_group.csv`): Home & Furniture; Health & Beauty; Electronics & Computers; Fashion & Accessories; Sports & Leisure; Toys & Baby; Books, Media & Music; Food & Drinks; Auto, Tools & Construction; Office & Stationery; Gifts & Others; Pet; Unknown.
 
 ### 6.6 `dw.dim_order_status`
 8 trạng thái + Unknown.
@@ -274,7 +282,8 @@ Grain: 1 giá trị `origin` của MQL.
 | paid_search, display, other_publicities | Paid |
 | social | Social |
 | email | Email |
-| other, unknown | Other / Unknown |
+| other | Other |
+| unknown | Unknown |
 
 ### 6.9 `dw.dim_lead_profile` (junk dimension)
 Grain: 1 tổ hợp khác nhau của các thuộc tính deal: business_segment, lead_type, lead_behaviour_profile, business_type, has_company, has_gtin, average_stock. NULL → `'unknown'`. Dòng `-1` cho MQL chưa chốt.
@@ -317,6 +326,7 @@ cột `etl_batch_id`; khoảng thời gian tính ra âm (do lỗi nguồn) → N
 | transit_days | delivered − carrier (ngày) |
 | lead_days | delivered − purchase (ngày) |
 | delay_days | delivered::date − estimated::date (âm = sớm) |
+| promised_days | estimated::date − purchase::date (ngày; số ngày Olist hứa giao) |
 | is_delivered, is_late, is_canceled | 0/1 (int để cộng được) |
 | item_count, seller_count | |
 | order_value, freight_total | Σ từ order items |
@@ -389,6 +399,7 @@ Lưu ý giai đoạn dữ liệu: đơn 2016 rất thưa và 09–10/2018 gần 
 | Cancel rate | Đơn status_group = Failed ÷ tổng đơn |
 | On-time rate | Đơn giao có delay_days ≤ 0 ÷ đơn đã giao |
 | Avg lead time / từng chặng | AVG lead_days, approval_hours, handling_days, transit_days |
+| Ngày hứa giao TB so với ngày giao thực tế | AVG promised_days và AVG lead_days trên đơn đã giao; chênh lệch = AVG(promised_days − lead_days) (dương = giao sớm hơn hứa); dùng cho D3 |
 | Avg review, % negative | AVG review_score; Σ is_negative ÷ số review |
 | Repeat customer rate | Khách có ≥ 2 đơn ÷ tổng khách (theo customer_unique_id) |
 | MQL → Won conversion | Σ is_won ÷ số MQL |
@@ -397,17 +408,17 @@ Lưu ý giai đoạn dữ liệu: đơn 2016 rất thưa và 09–10/2018 gần 
 
 ## 10. Dashboard (7)
 
-| # | Dashboard | Loại | Nguồn chính | Phụ trách |
-| --- | --- | --- | --- | --- |
-| D1 | Executive Overview | Theo thời gian | mart_sales, fact_order_fulfillment | KT3 |
-| D2 | Sales & Product | Theo thời gian, OLAP | fact_order_item | KT3 |
-| D3 | Order Fulfillment | Vận hành | fact_order_fulfillment | KT2 |
-| D4 | Geography & Freight | OLAP | fact_order_item, dim_geography | KT3 |
-| D5 | Customer Experience | Thống kê | fact_review, fact_payment, mart_cx | KT2 |
-| D6 | Seller Acquisition & Performance | Vận hành | fact_lead_funnel, fact_seller_monthly | KT3 |
-| D7 | Data Quality & ETL Monitor | Vận hành hệ thống | etl_log | KT2 |
+| # | Dashboard | Loại | Nguồn chính |
+| --- | --- | --- | --- |
+| D1 | Executive Overview | Theo thời gian | mart_sales, fact_order_fulfillment |
+| D2 | Sales & Product | Theo thời gian, OLAP | fact_order_item |
+| D3 | Order Fulfillment | Vận hành | fact_order_fulfillment |
+| D4 | Geography & Freight | OLAP | fact_order_item, dim_geography |
+| D5 | Customer Experience | Thống kê | fact_review, fact_payment, mart_cx |
+| D6 | Seller Acquisition & Performance | Vận hành | fact_lead_funnel, fact_seller_monthly |
+| D7 | Data Quality & ETL Monitor | Vận hành hệ thống | etl_log |
 
-KT3 dựng semantic model chung trong một file .pbix; KT2 làm D3, D5, D7 trên cùng file đó. KT1 không dựng dashboard, chỉ cung cấp dữ liệu, `powerbi/measures.md` và `powerbi/model.md`.
+Cả nhóm dựng một semantic model chung trong một file .pbix và chia nhau các dashboard (phân công làm sau). KT1 không dựng dashboard, chỉ cung cấp dữ liệu, `powerbi/measures.md` và `powerbi/model.md`.
 
 ## 11. Giám sát ETL (`etl_log`)
 

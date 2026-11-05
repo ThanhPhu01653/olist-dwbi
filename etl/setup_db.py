@@ -15,7 +15,8 @@ from sqlalchemy.exc import OperationalError
 from . import config
 from .db import get_engine
 
-SQL_FOLDERS = ["00_init", "10_source"]
+SOURCE_FOLDERS = ["00_init", "10_source"]                      # every database
+WAREHOUSE_FOLDERS = SOURCE_FOLDERS + ["20_staging", "30_ods", "40_dw"]  # main warehouse database only
 OPTIONAL_MARK = "-- setup: optional"
 
 
@@ -64,9 +65,11 @@ def create_database_if_missing(name: str) -> None:
     engine.dispose()
 
 
-def run_sql_files(database: str) -> None:
+def run_sql_files(database: str, folders: list[str]) -> None:
     engine = get_engine(database)
-    for folder in SQL_FOLDERS:
+    for folder in folders:
+        if not (config.SQL_DIR / folder).exists():
+            continue
         for path in sorted((config.SQL_DIR / folder).glob("*.sql")):
             sql = path.read_text(encoding="utf-8")
             optional = OPTIONAL_MARK in sql
@@ -99,7 +102,7 @@ def main() -> None:
         return
     for name in args.database or [config.DB_NAME, config.DB_NAME_FULL]:
         create_database_if_missing(name)
-        run_sql_files(name)
+        run_sql_files(name, WAREHOUSE_FOLDERS if name == config.DB_NAME else SOURCE_FOLDERS)
     print("Setup done.")
 
 
