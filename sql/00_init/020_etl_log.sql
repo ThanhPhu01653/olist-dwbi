@@ -87,7 +87,8 @@ SELECT j.batch_id,
        round(coalesce(sum(extract(epoch FROM j.finished_at - j.started_at)) FILTER (WHERE j.layer = 'staging'), 0)::numeric, 1) AS staging_sec,
        round(coalesce(sum(extract(epoch FROM j.finished_at - j.started_at)) FILTER (WHERE j.layer = 'ods'), 0)::numeric, 1) AS ods_sec,
        round(coalesce(sum(extract(epoch FROM j.finished_at - j.started_at)) FILTER (WHERE j.layer = 'dw'), 0)::numeric, 1) AS dw_sec,
-       round(coalesce(sum(extract(epoch FROM j.finished_at - j.started_at)) FILTER (WHERE j.layer = 'test'), 0)::numeric, 1) AS test_sec
+       round(coalesce(sum(extract(epoch FROM j.finished_at - j.started_at)) FILTER (WHERE j.layer = 'test'), 0)::numeric, 1) AS test_sec,
+       round(coalesce(sum(extract(epoch FROM j.finished_at - j.started_at)) FILTER (WHERE j.layer = 'mart'), 0)::numeric, 1) AS mart_sec
 FROM etl_log.job_run j
 GROUP BY j.batch_id;
 

@@ -1,4 +1,4 @@
-# Thống kê dữ liệu (sinh tự động 2026-11-05 19:28)
+# Thống kê dữ liệu (sinh tự động 2026-11-05 19:50)
 
 ## File CSV nguồn
 
@@ -36,7 +36,7 @@
 | crm.closed_deals | 842 | 14 | 400.0 KB |
 | **Tổng (11 bảng)** | **1,559,764** | **71** | |
 
-- Dung lượng cả database: **842.88 MB**
+- Dung lượng cả database: **862.14 MB**
 - Số dòng trong etl_log.rejected_rows: **630**
 
 ### Database `olist_full`
@@ -82,10 +82,10 @@
 | dw | fact_payment | 103,886 |
 | dw | fact_review | 99,224 |
 | dw | fact_seller_monthly | 36,583 |
-| etl_log | batch_metrics | 14 |
-| etl_log | dq_check | 2,751 |
-| etl_log | fact_load_issue | 33 |
-| etl_log | job_run | 1,525 |
+| etl_log | batch_metrics | 16 |
+| etl_log | dq_check | 3,142 |
+| etl_log | fact_load_issue | 35 |
+| etl_log | job_run | 1,621 |
 | etl_log | rejected_rows | 630 |
 | etl_log | watermark | 4 |
 | ods | category_translation | 71 |

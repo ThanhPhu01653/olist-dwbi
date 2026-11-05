@@ -1,6 +1,6 @@
 # Dữ liệu xuất cho Power BI – cách lấy
 
-Bộ CSV đủ dữ liệu (đến 11/2018) nặng khoảng **69 MB** (> 50 MB) nên **không đưa lên GitHub** (`exports/powerbi/*.csv` nằm trong `.gitignore`).
+Bộ CSV đủ dữ liệu (đến 11/2018) nặng khoảng **79 MB** (> 50 MB) nên **không đưa lên GitHub** (`exports/powerbi/*.csv` nằm trong `.gitignore`).
 Cả thư mục `exports/powerbi/` được chia sẻ qua Google Drive:
 
 **Link Google Drive:** _(KT1 dán link vào đây sau khi tải thư mục lên)_
@@ -11,3 +11,24 @@ Cách dùng:
 3. Mỗi lần KT1 chạy lại pipeline và tải lại thư mục, **tên file không đổi** nên chỉ cần bấm **Refresh** trong Power BI, không phải dựng lại mô hình.
 
 Người chạy pipeline (KT1): `python scripts/export_powerbi.py` (hoặc `python -m etl.run_pipeline --mode incremental`, bước cuối tự xuất) ghi lại toàn bộ `exports/powerbi/`.
+
+## File mới ở P6 (cần tải bổ sung lên Drive)
+Bản xuất P6 gồm **35 file CSV**. 22 file cũ (10 `dim_*`, 6 `fact_*`, `job_run` và 5 file giám sát ETL của P5) **giữ nguyên tên và cột** (nội dung được ghi đè bằng lần xuất mới, kết quả giống P5 vì dữ liệu không đổi). **13 file mới** là các view data mart, tổng 9.7 MB:
+
+| File mới | Số dòng | Dung lượng |
+| --- | ---: | ---: |
+| v_sales_daily.csv | 614 | 0.05 MB |
+| v_sales_category_month.csv | 1,282 | 0.10 MB |
+| v_sales_state_month.csv | 558 | 0.04 MB |
+| v_category_pareto.csv | 74 | 0.01 MB |
+| v_fulfillment_state_month.csv | 565 | 0.04 MB |
+| v_status_funnel.csv | 125 | 0.01 MB |
+| v_review_vs_delay.csv | 105 | 0.01 MB |
+| v_payment_mix_month.csv | 90 | 0.01 MB |
+| v_customer_rfm.csv | 94,983 | 8.91 MB |
+| v_customer_cohort.csv | 220 | 0.01 MB |
+| v_funnel_by_origin_month.csv | 113 | 0.01 MB |
+| v_seller_scorecard.csv | 3,095 | 0.56 MB |
+| v_seller_by_channel.csv | 7 | 0.00 MB |
+
+Chỉ cần tải 13 file này lên cùng thư mục `powerbi` trên Drive (hoặc tải lại cả thư mục). Cách nạp chúng vào Power BI: `powerbi/model.md`, mục 3 và Phụ lục.
