@@ -100,3 +100,4 @@ figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 - `python -m etl.simulate_increment --until 2018-01-31` – chèn thêm dữ liệu mới vào nguồn
 - `python scripts/export_powerbi.py` – xuất CSV cho Power BI vào `exports/powerbi/`
 - `python scripts/report_stats.py` – sinh `handoff/stats.md` (số dòng mọi bảng, số bản ghi từng dim)
+- `python scripts/eda/run_all.py` – chạy toàn bộ EDA (P1) trên `olist_full`: sinh `handoff/{profiling,data-quality,distributions,correlations,funnel,design-questions,excel-toolpak-guide}.md`, `figures/3-3-1_*.png`, `exports/eda_sample.xlsx`
