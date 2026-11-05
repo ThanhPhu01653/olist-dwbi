@@ -9,7 +9,6 @@ from __future__ import annotations
 import argparse
 import sys
 
-from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
 from . import config
@@ -26,17 +25,22 @@ def run_tests(engine: Engine, batch_id: int, only: str | None = None) -> tuple[i
         if only and only not in path.stem:
             continue
         sql = path.read_text(encoding="utf-8")
-        with engine.begin() as conn:
-            rows = conn.exec_driver_sql(sql).fetchall()
+        raw = engine.raw_connection()      # plain psycopg2: '%' and ':' in test SQL are safe
+        try:
+            cur = raw.cursor()
+            cur.execute(sql)
+            rows = cur.fetchall()
             for check, target, expected, actual, ok in rows:
-                conn.execute(text(
-                    "INSERT INTO etl_log.dq_check (batch_id, check_name, target_table, expected, actual, passed) "
-                    "VALUES (:b, :c, :t, :e, :a, :p)"), {"b": batch_id, "c": check, "t": target, "e": expected, "a": actual, "p": bool(ok)})
+                cur.execute("INSERT INTO etl_log.dq_check (batch_id, check_name, target_table, expected, actual, passed) "
+                            "VALUES (%s, %s, %s, %s, %s, %s)", (batch_id, check, target, expected, actual, bool(ok)))
                 if ok:
                     passed += 1
                 else:
                     failed += 1
                     fails.append({"file": path.name, "check": check, "table": target, "expected": expected, "actual": actual})
+            raw.commit()
+        finally:
+            raw.close()
     return passed, failed, fails
 
 

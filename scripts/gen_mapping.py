@@ -68,6 +68,51 @@ TABLE_RULES = {
 DW_ROWS: list[tuple[str, str, str, str, str]] = []   # (dw table, dw column, source table, source column, transformation)
 
 
+def _dim(table: str, rows: list[tuple[str, str, str, str]]) -> None:
+    DW_ROWS.extend((table, c, st, sc, rule) for c, st, sc, rule in rows)
+
+
+KEY = "Khoá thay thế tự sinh (identity); dòng Unknown có key -1"
+_dim("dim_date", [("date_key", "(lịch)", "full_date", "Số yyyymmdd; -1 = Unknown"), ("full_date", "(lịch)", "-", "Mỗi ngày 2016-01-01 … 2019-12-31"),
+    ("day_of_week", "(lịch)", "full_date", "isoweekday: 1 = Thứ Hai"), ("week_of_year", "(lịch)", "full_date", "Tuần ISO"),
+    ("year_month / year_quarter", "(lịch)", "full_date", "'YYYY-MM' / 'YYYY-Qn'"), ("is_weekend", "(lịch)", "full_date", "Thứ Bảy, Chủ Nhật"),
+    ("is_holiday_br / holiday_name", "(package holidays)", "holidays.Brazil", "Ngày lễ quốc gia Brazil"),
+    ("is_black_friday", "(lịch)", "full_date", "Thứ Sáu sau thứ Năm thứ 4 của tháng 11")])
+_dim("dim_geography", [("geography_key", "-", "-", KEY),
+    ("zip_code_prefix", "ods.geolocation_zip ∪ ods.customers ∪ ods.sellers", "zip_code_prefix", "Hợp nhất mọi zip (khoá tự nhiên, UNIQUE)"),
+    ("city / state_code", "ods.geolocation_zip (ưu tiên) hoặc ods.customers/sellers", "city, state_code", "Lấy từ geolocation_zip; zip chỉ có ở customers/sellers thì lấy mode"),
+    ("state_name / region", "ods.ref_state_region", "state_name, region", "Tra theo state_code; không có → 'Unknown'"),
+    ("latitude / longitude", "ods.geolocation_zip", "latitude, longitude", "Giữ median; NULL nếu zip không có toạ độ"),
+    ("country", "-", "-", "Hằng 'Brazil'")])
+_dim("dim_customer", [("customer_key", "-", "-", KEY + " (mỗi phiên bản một key)"),
+    ("customer_unique_id", "ods.customers", "customer_unique_id", "Khoá tự nhiên của khách thật"),
+    ("zip_code_prefix / city / state_code", "ods.customers", "zip_code_prefix, city, state_code", "Thuộc tính của phiên bản (từ đơn mở phiên bản)"),
+    ("geography_key", "dw.dim_geography", "geography_key", "Tra theo zip; không có → -1"),
+    ("effective_from / effective_to / is_current / version_no", "ods.orders + ods.customers", "order_purchase_timestamp, zip",
+     "SCD2: mỗi lần zip đổi so với đơn trước mở phiên bản mới (effective_from = ngày mua; phiên bản đầu 1900-01-01; hiện hành 9999-12-31)")])
+_dim("dim_seller", [("seller_key", "-", "-", KEY), ("seller_id", "ods.sellers ∪ ods.closed_deals", "seller_id", "Khoá tự nhiên; seller chỉ có trong CRM vẫn có dòng"),
+    ("zip_code_prefix / city / state_code", "ods.sellers", "zip_code_prefix, city, state_code", "NULL / 'unknown' nếu seller chỉ có trong CRM"),
+    ("geography_key", "dw.dim_geography", "geography_key", "Tra theo zip; không có → -1"),
+    ("is_from_funnel / mql_id", "ods.closed_deals", "mql_id", "true nếu seller có trong closed_deals"),
+    ("acquisition_origin", "ods.mql", "origin", "origin của MQL; 'not_from_funnel' nếu không từ funnel"),
+    ("acquisition_channel", "ods.ref_lead_origin_group", "channel_group", "Nhóm kênh; 'Not from funnel' nếu không từ funnel"),
+    ("business_segment / lead_type / business_type", "ods.closed_deals", "business_segment, lead_type, business_type", "Giữ nguyên"),
+    ("won_date", "ods.closed_deals", "won_date", "cast date"), ("first_sale_date", "dw.fact_order_item", "purchase_date_key", "Ngày mua đầu tiên (cập nhật ở P4)")])
+_dim("dim_product", [("product_key", "-", "-", KEY), ("product_id", "ods.products", "product_id", "Khoá tự nhiên"),
+    ("category_name_pt", "ods.products", "product_category_name", "Giữ nguyên ('unknown' nếu rỗng)"),
+    ("category_name_en", "ods.category_translation / ods.ref_category_translation_extra", "product_category_name_english", "Bản dịch gốc, thiếu thì lấy seed bổ sung"),
+    ("category_group", "ods.ref_category_group", "category_group", "Tra theo category_name_pt; không có → 'Unknown'"),
+    ("weight_g / length_cm / height_cm / width_cm / photos_qty / name_length / description_length", "ods.products", "cùng tên", "Giữ nguyên"),
+    ("volume_cm3", "ods.products", "length_cm, height_cm, width_cm", "dài × cao × rộng; NULL nếu thiếu"),
+    ("size_class", "ods.products", "weight_g", "S < 500 g; M < 2 kg; L < 10 kg; XL ≥ 10 kg; Unknown nếu thiếu hoặc 0")])
+_dim("dim_order_status", [("order_status / status_group / is_final", "ods.ref_order_status", "cùng tên", "Giữ nguyên từ seed order_status.csv")])
+_dim("dim_payment_type", [("payment_type / payment_group / display_name", "ods.ref_payment_type", "cùng tên", "Giữ nguyên từ seed payment_type.csv")])
+_dim("dim_lead_origin", [("origin / channel_group", "ods.ref_lead_origin_group", "cùng tên", "Giữ nguyên từ seed; 'unknown' là nhóm kênh Unknown riêng, không gộp với 'other'")])
+_dim("dim_lead_profile", [("business_segment … average_stock (7 cột)", "ods.closed_deals", "cùng tên",
+                           "Junk dimension: mỗi tổ hợp khác nhau của 7 thuộc tính một dòng; dòng -1 cho MQL chưa chốt")])
+_dim("dim_sales_rep", [("rep_id / rep_role", "ods.closed_deals", "sdr_id → 'SDR'; sr_id → 'SR'", "Tách hai vai trò thành các dòng (rep_id, rep_role)")])
+
+
 def build() -> list[dict]:
     eng = get_engine(config.DB_NAME)
     rows: list[dict] = []

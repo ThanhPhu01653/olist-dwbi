@@ -13,6 +13,7 @@ import time
 from . import config
 from .db import get_engine
 from .extract import extract
+from .load_dw import load_dimensions
 from .load_seeds import load_seeds
 from .log import new_batch_id
 from .procs import call_procedures
@@ -32,7 +33,6 @@ ODS_PROCS = [
     ("ods.load_mql", "ods.mql"),
     ("ods.load_closed_deals", "ods.closed_deals"),
 ]
-DIM_PROCS: list[tuple[str, str]] = []   # filled in P3 (see etl/load_dw.py)
 
 
 def run_pipeline(mode: str, database: str, only_tests: str | None = None) -> dict:
@@ -59,10 +59,8 @@ def run_pipeline(mode: str, database: str, only_tests: str | None = None) -> dic
     res = call_procedures(engine, batch, "ods", ODS_PROCS)
     done({"inserted": sum(r["inserted"] for r in res), "rejected": sum(r["rejected"] for r in res)})
 
-    if DIM_PROCS:
-        from .load_dw import load_dimensions
-        done = stage("dim")
-        done(load_dimensions(engine, batch, mode))
+    done = stage("dim")
+    done(load_dimensions(engine, batch, mode))
 
     done = stage("tests")
     passed, failed, fails = run_tests(engine, batch, only_tests)
