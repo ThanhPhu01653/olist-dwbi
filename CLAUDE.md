@@ -99,6 +99,9 @@ figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 - `python scripts/compare_databases.py --a olist_dw --b <db full>` – so sánh hai database kho (số dòng, tổng tiền, checksum)
 - `python scripts/run_olap_examples.py` – chạy 5 thao tác OLAP ở `sql/60_olap_examples/`, sinh `handoff/olap-examples.md`
 - `python scripts/gen_powerbi_docs.py` – cập nhật giá trị kỳ vọng trong `powerbi/measures.md` và phụ lục M trong `powerbi/model.md`
+- `python scripts/rebuild_all.py [--drop]` – dựng lại TOÀN BỘ bằng một lệnh (setup → nạp nguồn → pipeline full → 11 đợt tăng dần → test → xuất CSV), ghi `handoff/rebuild-report.md`
+- `python scripts/benchmark.py` – benchmark gọn (oltp vs dw, index FK, view vs materialized view) → `handoff/benchmark.md`, `figures/3-5-1_benchmark.png`
+- `python scripts/geo_analysis.py` – khoảng cách seller → khách vs freight / lead time → `handoff/geo-distance.md`, `figures/3-5-2_*.png`
 - `python -m etl.test_orphan_retry` – kịch bản thử lại dòng mồ côi (chạy trong transaction rồi rollback)
 - `python scripts/export_powerbi.py` – xuất CSV cho Power BI vào `exports/powerbi/`
 - `python scripts/report_stats.py` – sinh `handoff/stats.md` (số dòng mọi bảng, từng dim và từng fact)

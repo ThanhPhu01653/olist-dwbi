@@ -1,4 +1,4 @@
-# Thống kê dữ liệu (sinh tự động 2026-11-05 19:50)
+# Thống kê dữ liệu (sinh tự động 2026-11-05 20:33)
 
 ## File CSV nguồn
 
@@ -36,8 +36,8 @@
 | crm.closed_deals | 842 | 14 | 400.0 KB |
 | **Tổng (11 bảng)** | **1,559,764** | **71** | |
 
-- Dung lượng cả database: **862.14 MB**
-- Số dòng trong etl_log.rejected_rows: **630**
+- Dung lượng cả database: **861.60 MB**
+- Số dòng trong etl_log.rejected_rows: **42**
 
 ### Database `olist_full`
 
@@ -56,7 +56,7 @@
 | crm.closed_deals | 842 | 14 | 504.0 KB |
 | **Tổng (11 bảng)** | **1,559,764** | **71** | |
 
-- Dung lượng cả database: **261.67 MB**
+- Dung lượng cả database: **261.77 MB**
 - Số dòng trong etl_log.rejected_rows: **0**
 
 
@@ -82,11 +82,11 @@
 | dw | fact_payment | 103,886 |
 | dw | fact_review | 99,224 |
 | dw | fact_seller_monthly | 36,583 |
-| etl_log | batch_metrics | 16 |
-| etl_log | dq_check | 3,142 |
-| etl_log | fact_load_issue | 35 |
-| etl_log | job_run | 1,621 |
-| etl_log | rejected_rows | 630 |
+| etl_log | batch_metrics | 13 |
+| etl_log | dq_check | 1,755 |
+| etl_log | fact_load_issue | 20 |
+| etl_log | job_run | 712 |
+| etl_log | rejected_rows | 42 |
 | etl_log | watermark | 4 |
 | ods | category_translation | 71 |
 | ods | closed_deals | 842 |
@@ -234,8 +234,8 @@ Phân cấp / số phần tử: Phân khúc (34) → Tổ hợp hồ sơ (502)
 | 1 | computers | offline | unknown | reseller | unknown | unknown | unknown |
 | 2 | health_beauty | online_small | unknown | manufacturer | unknown | unknown | unknown |
 | 3 | food_supplement | industry | unknown | manufacturer | unknown | unknown | unknown |
-| 4 | fashion_accessories | online_medium | unknown | reseller | unknown | unknown | unknown |
-| 5 | computers | online_big | unknown | reseller | unknown | unknown | unknown |
+| 4 | home_office_furniture | industry | unknown | reseller | unknown | unknown | unknown |
+| 5 | construction_tools_hou | online_medium | unknown | reseller | unknown | unknown | unknown |
 
 ### dw.dim_sales_rep – 55 dòng (gồm dòng Unknown key −1)
 
@@ -243,11 +243,11 @@ Phân cấp / số phần tử: Vai trò (2) → Nhân viên-vai trò (54)
 
 | sales_rep_key | rep_id | rep_role |
 | --- | --- | --- |
-| 1 | c638112b43f1d1b86dcabb | SR |
-| 2 | 060c0a26f19f4d66b42e0d | SR |
-| 3 | 495d4e95a8cf8bbf8b432b | SR |
-| 4 | 56bf83c4bb35763a51c2ba | SDR |
-| 5 | 9ae085775a198122c5586f | SDR |
+| 1 | 56bf83c4bb35763a51c2ba | SDR |
+| 2 | 9ae085775a198122c5586f | SDR |
+| 3 | c638112b43f1d1b86dcabb | SR |
+| 4 | 060c0a26f19f4d66b42e0d | SR |
+| 5 | 495d4e95a8cf8bbf8b432b | SR |
 
 ## Các fact: grain, số dòng, measure, tổng
 
@@ -328,7 +328,7 @@ Phân cấp / số phần tử: Vai trò (2) → Nhân viên-vai trò (54)
 | mql_id | landing_page_id | first_contact_date_key | won_date_key | first_sale_date_key | lead_origin_key | lead_profile_key | seller_key | sdr_key | sr_key | is_won | has_first_sale | days_to_close | days_won_to_first_sale | declared_product_catalog_size | declared_monthly_revenue | seller_gmv_first_90d |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 0002ac0d783338cfeab0b2 | b76ef37428e6799c421989 | 20171114 | -1 | -1 | 10 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |
-| 000dd3543ac84d906eae52 | b48ec5f3b04e9068441002 | 20180405 | 20180424 | -1 | 1 | 607 | 15943 | 24 | 87 | 1 | 0 | 19.0 | NULL | NULL | 0.0 | NULL |
+| 000dd3543ac84d906eae52 | b48ec5f3b04e9068441002 | 20180405 | 20180424 | -1 | 1 | 607 | 15943 | 29 | 89 | 1 | 0 | 19.0 | NULL | NULL | 0.0 | NULL |
 | 001d3439223b7bb23ed89b | 35c9b150ab36fe584c1f24 | 20180414 | -1 | -1 | 4 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |
 | 00275937100699204a3d5a | a7982125ff7aa3b2054c6e | 20180111 | -1 | -1 | 1 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |
 | 003d859bbd84a526b9e063 | 22c29808c4f815213303f8 | 20180402 | -1 | -1 | 2 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |

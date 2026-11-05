@@ -51,6 +51,8 @@ TABLES: list[tuple[str, str, tuple[str, ...]]] = [
     ("mart_sales.v_sales_daily", "Mart: GMV, đơn, AOV theo ngày (chỉ đơn không Failed)", ()),
     ("mart_sales.v_sales_category_month", "Mart: GMV theo tháng x nhóm ngành x danh mục", ()),
     ("mart_sales.v_sales_state_month", "Mart: GMV, freight ratio theo tháng x bang của khách", ()),
+    ("mart_sales.v_geo_state", "Mart địa lý: dữ liệu bản đồ theo bang (toạ độ tâm, khách, GMV, lead time, trễ)", ()),
+    ("mart_sales.v_geo_zip", "Mart địa lý: dữ liệu bản đồ theo zip có toạ độ (đơn, GMV, seller)", ()),
     ("mart_sales.v_category_pareto", "Mart: Pareto 80/20 GMV theo danh mục (hạng A/B/C)", ()),
     ("mart_fulfillment.v_fulfillment_state_month", "Mart: tỷ lệ đúng hạn / hủy, thời gian từng chặng theo tháng x bang", ()),
     ("mart_fulfillment.v_status_funnel", "Mart: số đơn đi qua từng chặng theo tháng (dạng dài)", ()),
