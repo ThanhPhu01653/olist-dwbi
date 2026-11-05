@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+\centering\small
+\caption{Các bảng fact: loại, grain và số dòng}
+\label{tab:facts}
+\begin{tabular}{lllr}
+\toprule
+\textbf{Fact} & \textbf{Loại} & \textbf{Grain} & \textbf{Số dòng} \\
+\midrule
+fact\_order\_item & Transaction & 1 dòng hàng của 1 đơn & 112.650 \\
+fact\_order\_fulfillment & Accumulating snapshot & 1 đơn (5 mốc thời gian) & 99.441 \\
+fact\_payment & Transaction & 1 lần thanh toán & 103.886 \\
+fact\_review & Transaction & 1 review của 1 đơn & 99.224 \\
+fact\_lead\_funnel & Accumulating snapshot & 1 MQL & 8.000 \\
+fact\_seller\_monthly & Periodic snapshot (dày đặc) & 1 seller × 1 tháng & 36.583 \\
+\bottomrule
+\end{tabular}
+\end{table}

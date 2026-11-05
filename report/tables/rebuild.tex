@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\centering\small
+\caption{Dựng lại toàn bộ dự án từ đầu bằng một lệnh (kiểm chứng tái lập)}
+\label{tab:rebuild}
+\begin{tabular}{p{6cm}rp{6cm}}
+\toprule
+\textbf{Bước} & \textbf{Giây} & \textbf{Kết quả} \\
+\midrule
+drop olist\_dw + olist\_full & 0.4 & dropped \\
+setup\_db (schemas, DDL, procedures, views) & 1.8 & Setup done. \\
+load\_source --initial (olist\_dw, to 2017-12-31) & 15.3 & Rejected rows logged in etl\_log.rejected\_rows: 0 (batch 1) \\
+load\_source --full (olist\_full) & 24.0 & Rejected rows logged in etl\_log.rejected\_rows: 0 (batch 1) \\
+run\_pipeline --mode full (initial state) & 57.0 & pipeline full trên dữ liệu đến 2017-12-31: 55.9s \\
+replay\_increments (11 x simulate + incremental) & 276.7 & 11 đợt hằng tháng (01/2018 → 11/2018); sau đợt cuối: 8.000 MQL, 842 deal, 380 seller có đơ \\
+run\_pipeline --mode incremental (tests + export\_powerbi) & 29.5 & tests: 130/130 đạt, 0 lỗi; đối chiếu EDA 5/5 khớp \\
+\bottomrule
+\end{tabular}
+\end{table}

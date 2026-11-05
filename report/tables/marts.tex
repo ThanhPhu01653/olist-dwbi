@@ -1,0 +1,30 @@
+{\small\begin{longtable}{llllp{6.3cm}}
+\caption{Các data mart: view, loại, số dòng và mô tả}\label{tab:marts}\\
+\toprule
+\textbf{Mart} & \textbf{View} & \textbf{Loại} & \textbf{Dòng} & \textbf{Mô tả} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Mart} & \textbf{View} & \textbf{Loại} & \textbf{Dòng} & \textbf{Mô tả} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+mart\_acquisition & v\_funnel\_by\_origin\_month & view & 113 & Funnel theo tháng liên hệ đầu x origin: MQL, đã chốt, đã có đơn, tỷ lệ, số ngày TB, GMV 90 ngày đầu \\
+mart\_acquisition & v\_seller\_by\_channel & materialized & 7 & Theo kênh thu hút seller: số seller, số seller có đơn, GMV, GMV / seller, trễ, review; cờ mẫu nhỏ (< 30 seller có đơn) \\
+mart\_acquisition & v\_seller\_scorecard & materialized & 3.095 & 1 dòng / seller có đơn: GMV, đơn, trễ, hủy, review, hạng và tỷ trọng luỹ kế (Pareto), cờ mẫu nhỏ (< 10 đơn) \\
+mart\_cx & v\_customer\_cohort & materialized & 220 & Cohort theo tháng mua đầu tiên: số khách còn mua lại sau 0,1,2... tháng và tỷ lệ quay lại \\
+mart\_cx & v\_customer\_rfm & materialized & 94.983 & 1 dòng / khách thật (customer\_unique\_id): recency, frequency, monetary, điểm R-F-M 1-5 và phân khúc; đơn không thuộc nhóm Failed \\
+mart\_cx & v\_payment\_mix\_month & view & 90 & Cơ cấu thanh toán theo tháng mua x hình thức: số lần, giá trị, trả góp TB, tỷ trọng giá trị \\
+mart\_cx & v\_review\_vs\_delay & view & 105 & Điểm review và \% tiêu cực theo nhóm trễ giao (giao sớm ... trễ trên 7 ngày) x tháng mua; chỉ đơn đã giao \\
+mart\_fulfillment & v\_fulfillment\_order & view & 99.441 & 1 dòng / đơn: mốc ngày, thời gian từng chặng, số ngày hứa và trễ, nhóm trễ (delay\_bucket), bang và vùng của khách \\
+mart\_fulfillment & v\_fulfillment\_state\_month & view & 565 & Theo tháng mua x bang: số đơn, tỷ lệ đúng hạn / hủy, thời gian trung bình từng chặng (chỉ đơn đã giao) \\
+mart\_fulfillment & v\_shipping\_distance & view & 112.650 & Khoảng cách seller -> khách (km, haversine) cho từng dòng hàng, nhóm 0-100 / 100-500 / 500-1000 / trên 1000 km; distance\_km NULL nếu thiếu toạ độ (has\_distance = false) \\
+mart\_fulfillment & v\_status\_funnel & view & 125 & Số đơn đi qua từng chặng (đặt, duyệt, bàn giao, giao, hủy) theo tháng mua, dạng dài \\
+mart\_sales & v\_category\_pareto & view & 74 & Pareto 80/20 của GMV theo danh mục: xếp hạng, tỷ trọng, tỷ trọng luỹ kế, hạng A/B/C \\
+mart\_sales & v\_geo\_state & view & 27 & Dữ liệu bản đồ theo bang: toạ độ tâm (trung bình các zip có toạ độ), số khách, đơn, GMV, freight ratio, số seller, lead time, tỷ lệ trễ \\
+mart\_sales & v\_geo\_zip & view & 14.889 & Dữ liệu bản đồ theo zip có toạ độ và có khách hoặc seller: toạ độ, thành phố, số đơn và GMV phía khách, số seller \\
+mart\_sales & v\_sales\_category\_month & view & 1.282 & GMV, đơn, dòng hàng theo tháng x nhóm ngành hàng x danh mục (số đơn không cộng được giữa các danh mục) \\
+mart\_sales & v\_sales\_daily & view & 614 & GMV, số đơn, số dòng hàng, phí vận chuyển, AOV theo ngày mua (chỉ đơn không thuộc nhóm Failed) \\
+mart\_sales & v\_sales\_state\_month & view & 558 & GMV, đơn, phí vận chuyển, tỷ lệ freight/price theo tháng x bang của khách \\
+\end{longtable}}

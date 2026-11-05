@@ -1,0 +1,14 @@
+\subsection{Đối soát trước và sau ETL, nạp tăng dần}
+Mẫu dữ liệu trước và sau làm sạch được đối chiếu ở các hình dưới đây (nguồn: handoff/before-after-samples.md).
+\hinh{3-4-3_before_after_orders.png}{Trước và sau ETL: bảng đơn hàng}{fig:ba-orders}{0.95}
+\hinh{3-4-3_before_after_products.png}{Trước và sau ETL: bảng sản phẩm}{fig:ba-products}{0.95}
+\hinh{3-4-3_before_after_sellers.png}{Trước và sau ETL: bảng seller}{fig:ba-sellers}{0.95}
+\hinh{3-4-3_before_after_geolocation.png}{Trước và sau ETL: bảng toạ độ địa lý}{fig:ba-geo}{0.95}
+\hinh{3-4-3_before_after_mql.png}{Trước và sau ETL: bảng MQL}{fig:ba-mql}{0.95}
+\hinh{3-4-3_before_after_closed_deals.png}{Trước và sau ETL: bảng deal đã chốt}{fig:ba-deals}{0.95}
+\paragraph{Nạp tăng dần.}
+Vì bộ dữ liệu Olist là ảnh chụp tĩnh, nhóm mô phỏng việc cập nhật theo tháng. Hệ thống nguồn ban đầu chứa mọi bản ghi đến 31/12/2017 (45.430 đơn); sau đó một chương trình mô phỏng đổ thêm từng tháng vào hệ thống bán hàng và CRM, và kho dữ liệu được nạp tăng dần sau mỗi đợt. Ở mỗi đợt, bước extract chỉ lấy những dòng chưa có ở staging (đơn hàng theo mốc thời gian, các bảng còn lại theo khoá), tầng ODS làm sạch và thử lại các dòng từng bị loại vì thiếu bản ghi cha, chiều khách hàng đóng phiên bản cũ và mở phiên bản mới khi khách đổi mã bưu chính, bảng fact giao dịch thêm dòng, fact snapshot tích luỹ được cập nhật theo mã đơn, còn các snapshot nhỏ được tính lại. Toàn bộ nguồn được đưa vào kho sau 11 đợt hằng tháng (286.144 bản ghi mới), mỗi đợt mất khoảng 17–23 giây gồm cả kiểm thử. Kết quả cuối cùng khớp hoàn toàn với một lần nạp đầy đủ: cả 16 bảng chiều và fact có cùng số dòng, cùng tổng tiền và cùng giá trị kiểm tra nội dung. Mỗi lần chạy đều được ghi vào nhật ký \code{etl\_\allowbreak{}log} (thời gian, số dòng đọc/chèn/cập nhật/loại), làm nguồn cho dashboard giám sát; nhờ đó có thể thấy funnel marketing "lấp đầy" dần: số seller từ funnel có đơn tăng từ 0 lên 380 qua các đợt.
+
+\input{tables/increments}
+\paragraph{Thử lại dòng mồ côi.} Dòng con bị loại vì chưa có dòng cha (ví dụ deal đến trước MQL) được thử lại ở các đợt sau và biến mất khỏi danh sách loại khi đã nạp. \textbf{Lưu ý trung thực}: cơ chế này mới được chứng minh bằng kịch bản kiểm thử; trong 11 đợt thật không có dòng mồ côi nào xảy ra vì nguồn luôn nạp dòng cha trước.
+\todo{Thêm sơ đồ data pipeline hoặc ETL jobs (có logo công nghệ); ví dụ trước/sau cho thêm bảng nếu giảng viên yêu cầu; kết quả so sánh incremental với full: 16/16 bảng khớp (handoff/2026-11-05-P5.md).}

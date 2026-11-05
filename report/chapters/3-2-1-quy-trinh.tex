@@ -1,0 +1,18 @@
+\subsection{Quy trình nghiệp vụ}
+Chu trình xử lý đơn hàng gồm các bước: khách đặt hàng và thanh toán, sàn duyệt thanh toán, người bán chuẩn bị và bàn giao cho đơn vị vận chuyển, vận chuyển giao hàng, khách nhận hàng và đánh giá; đơn có thể bị hủy hoặc không khả dụng. Mỗi mốc là một cột thời gian trong dữ liệu nguồn (Hình \ref{fig:bpmn-don}); các ô vàng đánh dấu nơi \textbf{kho dữ liệu thu thập} để phân tích.
+\hinh{3-2-1_bpmn_don_hang.png}{Quy trình xử lý đơn hàng và các điểm thu thập dữ liệu của kho (bản nháp)}{fig:bpmn-don}{1.0}
+Quy trình thu hút người bán đi từ khách tiềm năng (MQL) để lại thông tin trên trang đích, đội sales (SDR, SR) tư vấn và chốt thương vụ, người bán ký hợp đồng và nhận đơn đầu tiên (Hình \ref{fig:bpmn-seller}). Trong dữ liệu: 8.000 MQL, 842 thương vụ được chốt (10,5\%), trong đó 380 seller có đơn (45,1\% số đã chốt).
+\hinh{3-2-2_bpmn_thu_hut_seller.png}{Quy trình thu hút người bán và các điểm thu thập dữ liệu của kho (bản nháp)}{fig:bpmn-seller}{1.0}
+Các hoạt động của doanh nghiệp được tổ chức thành cây nghiệp vụ ở Hình \ref{fig:cay-nghiep-vu}.
+\hinh{3-2-5_cay_nghiep_vu.png}{Cây nghiệp vụ của Olist (bản nháp)}{fig:cay-nghiep-vu}{0.8}
+\todo{Nhóm đọc, sửa cho đúng cách hiểu nghiệp vụ và vẽ lại BPMN bằng draw.io (đúng ký hiệu BPMN), giữ nguyên các điểm thu thập dữ liệu. Nguồn nháp: huong-dan/05-nghiep-vu-nhap.md.}
+
+\begin{table}[htbp]\centering\small\caption{Các mốc của quy trình đơn hàng và nơi kho lưu}\label{tab:moc-don}
+\begin{tabular}{p{3.2cm}p{4.6cm}p{3.4cm}p{3.6cm}}\toprule
+\textbf{Bước} & \textbf{Cột nguồn} & \textbf{Nơi kho lưu} & \textbf{Phân tích được}\\\midrule
+Đặt hàng, thanh toán & \code{order\_purchase\_timestamp}, \code{payment\_type} & \code{purchase\_ts}, \code{fact\_payment} & số đơn, cơ cấu thanh toán\\
+Duyệt & \code{order\_approved\_at} & \code{approval\_hours} & tốc độ duyệt\\
+Bàn giao vận chuyển & \code{order\_delivered\_carrier\_date} & \code{handling\_days} & seller xử lý nhanh hay chậm\\
+Giao khách & \code{order\_delivered\_customer\_date} & \code{transit\_days}, \code{lead\_days}, \code{delay\_days} & vận chuyển, đúng hạn\\
+Đánh giá & \code{review\_score} & \code{fact\_review} & điểm trung bình, ảnh hưởng của trễ\\\bottomrule
+\end{tabular}\end{table}

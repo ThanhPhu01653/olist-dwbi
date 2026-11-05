@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\centering\small
+\caption{Số bảng và số dòng của từng lớp trong kho dữ liệu (trạng thái cuối)}
+\label{tab:layers}
+\begin{tabular}{llrr}
+\toprule
+\textbf{Lớp} & \textbf{Schema} & \textbf{Số bảng} & \textbf{Số dòng} \\
+\midrule
+Nguồn bán hàng & oltp & 9 & 1.550.922 \\
+Nguồn marketing & crm & 2 & 8.842 \\
+Staging & staging & 11 & 1.559.764 \\
+ODS & ods & 18 & 678.183 \\
+Kho (dimension + fact) & dw & 16 & 614.223 \\
+Giám sát ETL & etl\_log & 6 & 2.701 \\
+Data mart (view và materialized view) & mart\_* & 17 view & -- \\
+\bottomrule
+\end{tabular}
+\end{table}

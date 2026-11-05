@@ -1,0 +1,25 @@
+\begin{table}[htbp]
+\centering\small
+\caption{Lỗi dữ liệu nguồn được phát hiện khi làm sạch và cách xử lý (số dòng ở trạng thái cuối)}
+\label{tab:dq-errors}
+\begin{tabular}{p{6.2cm}rp{5.5cm}}
+\toprule
+\textbf{Lỗi} & \textbf{Số dòng} & \textbf{Xử lý} \\
+\midrule
+Bàn giao vận chuyển trước khi duyệt thanh toán & 1.359 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Bàn giao vận chuyển trước ngày mua & 166 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Giao khách trước khi bàn giao vận chuyển & 23 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Đơn đã giao nhưng không có ngày duyệt & 14 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Trạng thái delivered nhưng không có ngày giao & 8 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Có ngày giao nhưng trạng thái chưa là delivered & 6 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Đã giao nhưng không có ngày bàn giao & 2 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Giá trị thanh toán = 0 & 9 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+Hình thức thanh toán not\_defined & 3 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+Số kỳ trả góp = 0 (đặt thành 1) & 2 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+Doanh thu tháng khai báo = 0 & 797 & Gắn cờ, giữ nguyên giá trị \\
+Chốt deal trước ngày liên hệ đầu & 1 & Gắn cờ, giữ nguyên giá trị \\
+coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.rejected\_rows \\
+\bottomrule
+\end{tabular}
+\\[2pt]{\footnotesize Cờ chất lượng gắn trên đơn, thanh toán và deal; mỗi dòng có thể có nhiều cờ.}
+\end{table}

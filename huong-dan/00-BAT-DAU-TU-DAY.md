@@ -57,6 +57,14 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | [`05-nghiep-vu-nhap.md`](05-nghiep-vu-nhap.md) | **bản nháp** BPMN, Business Model Canvas, cây nghiệp vụ / yêu cầu / phân tích |
 | [`dashboards/D1.md` … `D7.md`](dashboards/) | hướng dẫn dựng từng dashboard: mục tiêu, bố cục lưới, slicer, DAX, số kỳ vọng, insight, checklist giảng viên |
 
+## 3b. Báo cáo LaTeX và kịch bản slide
+| File | Nội dung |
+| --- | --- |
+| [`../report/README.md`](../report/README.md) | **Khung báo cáo LaTeX** (XeLaTeX, 87 trang khung, đã biên dịch được): mỗi mục một file trong `report/chapters/`, việc còn lại đánh dấu `	odo{}` (khung cam); cách lên Overleaf và cách nhiều người gửi file `.tex` cho một người ghép lại |
+| [`../slides/slide-script.md`](../slides/slide-script.md) | **Kịch bản 114 slide** chia 7 phần (tiêu đề là câu kết luận có số, hình, ghi chú người nói; dùng được cho PowerPoint và Beamer) + 10 câu vấn đáp dễ gặp kèm slide dự phòng |
+
+Người viết báo cáo: sau bước 1–4 ở lộ trình B, mở `report/README.md` và nhận mục của mình. Người làm slide: dùng `slides/slide-script.md` làm dàn bài, lấy hình trong `figures/`.
+
 ## 4. Sơ đồ draw.io (mở và chỉnh)
 Ba file trong [`docs/diagrams/`](../docs/diagrams/): `kien-truc-cac-lop.drawio`, `data-model-theo-mart.drawio` (fact màu cam, dimension màu xanh, khung = data mart), `pipeline-etl.drawio`. Bố cục cố ý đơn giản để nhóm chỉnh.
 - **Mở**: vào <https://app.diagrams.net> → *File → Open from → Device* → chọn file `.drawio` (hoặc cài app draw.io Desktop, hoặc extension "Draw.io Integration" trong VS Code rồi bấm đúp file).
@@ -79,6 +87,8 @@ Ba file trong [`docs/diagrams/`](../docs/diagrams/): `kien-truc-cac-lop.drawio`,
 | `python scripts/render_mermaid.py` | hình `figures/3-2-*.png` từ các khối Mermaid trong `05-nghiep-vu-nhap.md` (qua dịch vụ mermaid.ink) |
 | `python scripts/gen_bmc.py` | `figures/3-2-3_business_model_canvas.png` |
 | `python scripts/gen_drawio.py` | ba file `docs/diagrams/*.drawio` |
+| `python scripts/export_latex.py` | bảng số liệu và đoạn SQL/DAX của báo cáo LaTeX (`report/tables/`, `report/code/`) |
+| `python scripts/make_overleaf_zip.py` | `report_overleaf.zip` để tải lên Overleaf (không commit) |
 
 ## 7. Trạng thái soạn tài liệu
 Đã xong: 00, 01, 02, 03, 04, 05, `dashboards/D1–D7`, ba sơ đồ draw.io, hình `3-2-*`, liên kết trong `README.md` và `handoff/00-TONG-QUAN.md`. Chưa làm: kiểm tra tài liệu bằng cách dựng thật trên Power BI Desktop (chưa ai chạy), nên các bước ở `powerbi/model.md` và bố cục ở `dashboards/*.md` có thể cần chỉnh nhỏ khi dựng lần đầu.

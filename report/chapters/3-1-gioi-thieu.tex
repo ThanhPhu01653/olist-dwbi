@@ -1,0 +1,17 @@
+Olist là doanh nghiệp kết nối người bán nhỏ với các sàn thương mại điện tử lớn ở Brazil. Bài tập lớn xây dựng kho dữ liệu cho chủ đề \textbf{quản lý đơn hàng} (Order Management) trên bộ dữ liệu công khai Brazilian E-Commerce \cite{olist_ecommerce}, tích hợp thêm bộ Marketing Funnel \cite{olist_marketing} để phân tích cả quá trình thu hút người bán. Hai bộ dữ liệu được nối qua mã người bán (\code{seller\_id}), nên kho trả lời được câu hỏi xuyên quy trình: \emph{người bán đến từ kênh marketing nào thì bán được nhiều và giao đúng hạn hơn}.
+
+\todo{Viết 2--3 câu về mục tiêu và phạm vi bài toán theo cách của nhóm; thêm 1 đoạn giới thiệu Olist từ nguồn công khai (trích dẫn nguồn đã đọc).}
+
+\paragraph{Các nhóm câu hỏi phân tích chính.}
+\begin{itemize}
+  \item \textbf{Bán hàng}: doanh thu (GMV), số đơn, giá trị đơn trung bình theo thời gian, danh mục, vùng; tăng trưởng và quy luật 80/20.
+  \item \textbf{Xử lý đơn}: mỗi chặng (duyệt, bàn giao vận chuyển, giao) mất bao lâu, tỷ lệ giao trễ và hủy, vùng nào chậm.
+  \item \textbf{Thanh toán}: cơ cấu hình thức thanh toán, số kỳ trả góp.
+  \item \textbf{Trải nghiệm khách}: giao trễ ảnh hưởng điểm đánh giá thế nào, khách có quay lại không.
+  \item \textbf{Người bán}: seller nào doanh thu cao nhưng hay trễ.
+  \item \textbf{Thu hút người bán}: tỷ lệ chuyển đổi từ khách tiềm năng (MQL) sang seller theo kênh, thời gian chốt deal, thời gian đến đơn đầu tiên.
+\end{itemize}
+
+\paragraph{Mô hình kinh doanh (bản nháp).} Hình \ref{fig:bmc} tóm tắt mô hình kinh doanh của Olist theo 9 ô của Business Model Canvas, suy luận từ dữ liệu và mô tả công khai.
+\hinh{3-2-3_business_model_canvas.png}{Business Model Canvas của Olist (bản nháp)}{fig:bmc}{0.98}
+\todo{Nhóm kiểm tra và sửa Business Model Canvas, đặc biệt ô \emph{dòng doanh thu} và \emph{đối tác chính}: chỉ có suy luận, cần dẫn chứng từ nguồn công khai về Olist (dữ liệu chỉ có giá hàng và phí vận chuyển, không có doanh thu của Olist). Vẽ lại bằng draw.io nếu muốn.}

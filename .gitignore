@@ -17,3 +17,19 @@ docs/*.xlsx
 
 # Power BI CSV export is > 50 MB: shared through Google Drive (see exports/README.md); the README inside exports/powerbi/ stays in git
 exports/powerbi/*.csv
+
+# LaTeX build files and the Overleaf upload package (not committed)
+report_overleaf.zip
+report/*.aux
+report/*.log
+report/*.toc
+report/*.lof
+report/*.lot
+report/*.bbl
+report/*.blg
+report/*.xdv
+report/*.fls
+report/*.fdb_latexmk
+report/*.out
+report/*.pdf
+report/build.log

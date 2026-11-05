@@ -1,0 +1,19 @@
+\section*{SQL tiêu biểu}
+Các đoạn mã dưới đây được cắt từ thư mục \code{sql/} của dự án (sinh bằng scripts/export\_latex.py).
+
+\subsection*{ODS: nạp deal đã chốt và thử lại dòng mồ côi}
+\lstinputlisting[language=SQLvi]{code/ods_take_orphans.sql}
+\lstinputlisting[language=SQLvi]{code/ods_load_closed_deals.sql}
+
+\subsection*{SCD loại 2: dim\_customer}
+\lstinputlisting[language=SQLvi]{code/scd2_dim_customer.sql}
+
+\subsection*{Accumulating snapshot: fact\_order\_fulfillment (rút gọn)}
+\lstinputlisting[language=SQLvi]{code/fact_order_fulfillment.sql}
+
+\subsection*{OLAP: roll-up và pivot}
+\lstinputlisting[language=SQLvi]{code/olap_rollup.sql}
+\lstinputlisting[language=SQLvi]{code/olap_pivot.sql}
+
+\subsection*{Địa lý: hàm haversine}
+\lstinputlisting[language=SQLvi]{code/haversine.sql}
