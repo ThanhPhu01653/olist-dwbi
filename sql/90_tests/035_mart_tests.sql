@@ -38,3 +38,9 @@ UNION ALL SELECT 'v_seller_scorecard: one row per seller with sales; sum(gmv) = 
 UNION ALL SELECT 'v_seller_by_channel: sum(sellers) = dim_seller rows (without Unknown); sum(gmv) = scorecard', 'mart_acquisition.v_seller_by_channel',
        (SELECT count(*) FROM dw.dim_seller WHERE seller_key <> -1) || ' / ' || (SELECT sum(gmv) FROM mart_acquisition.v_seller_scorecard), sum(sellers) || ' / ' || sum(gmv),
        sum(sellers) = (SELECT count(*) FROM dw.dim_seller WHERE seller_key <> -1) AND sum(gmv) = (SELECT sum(gmv) FROM mart_acquisition.v_seller_scorecard) FROM mart_acquisition.v_seller_by_channel
+UNION ALL SELECT 'v_shipping_distance: one row per order item; rows with and without distance add up', 'mart_fulfillment.v_shipping_distance', (SELECT count(*) FROM dw.fact_order_item)::text,
+       count(*)::text, count(*) = (SELECT count(*) FROM dw.fact_order_item) AND count(*) FILTER (WHERE has_distance) + count(*) FILTER (WHERE NOT has_distance) = count(*)
+       AND count(*) FILTER (WHERE has_distance AND distance_km < 0) = 0 FROM mart_fulfillment.v_shipping_distance
+UNION ALL SELECT 'v_geo_state: one row per Brazilian state (27)', 'mart_sales.v_geo_state', '27', count(*)::text, count(*) = 27 FROM mart_sales.v_geo_state
+UNION ALL SELECT 'haversine_km: Sao Paulo -> Rio de Janeiro is about 358 km (355-365)', 'dw.haversine_km', '355-365', round(dw.haversine_km(-23.55, -46.63, -22.90, -43.17)::numeric, 1)::text,
+       dw.haversine_km(-23.55, -46.63, -22.90, -43.17) BETWEEN 355 AND 365

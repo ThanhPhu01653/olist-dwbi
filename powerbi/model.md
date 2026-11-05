@@ -38,7 +38,7 @@ Giải thích: `Encoding = 65001` là UTF-8; `"en-US"` để dấu thập phân 
 | --- | --- | --- |
 | Chiều (10) | `dim_date`, `dim_geography`, `dim_customer`, `dim_seller`, `dim_product`, `dim_order_status`, `dim_payment_type`, `dim_lead_origin`, `dim_lead_profile`, `dim_sales_rep` | mọi dashboard |
 | Fact (6) | `fact_order_item`, `fact_order_fulfillment`, `fact_payment`, `fact_review`, `fact_lead_funnel`, `fact_seller_monthly` | mọi dashboard |
-| Mart (13, *bảng rời, không tạo quan hệ*) | `v_sales_daily`, `v_sales_category_month`, `v_sales_state_month`, `v_category_pareto`, `v_fulfillment_state_month`, `v_status_funnel`, `v_review_vs_delay`, `v_payment_mix_month`, `v_customer_rfm`, `v_customer_cohort`, `v_funnel_by_origin_month`, `v_seller_scorecard`, `v_seller_by_channel` | các visual đặc biệt (Pareto, cohort, RFM, funnel, scorecard) – mục 8 |
+| Mart (15, *bảng rời, không tạo quan hệ*) | `v_sales_daily`, `v_sales_category_month`, `v_sales_state_month`, `v_category_pareto`, `v_fulfillment_state_month`, `v_status_funnel`, `v_review_vs_delay`, `v_payment_mix_month`, `v_customer_rfm`, `v_customer_cohort`, `v_funnel_by_origin_month`, `v_seller_scorecard`, `v_seller_by_channel`, `v_geo_state`, `v_geo_zip` | các visual đặc biệt (Pareto, cohort, RFM, funnel, scorecard, bản đồ) – mục 8 |
 | Giám sát ETL (6, *bảng rời*) | `job_run`, `v_run_summary`, `v_dq_summary`, `v_rejected_summary`, `batch_metrics`, `fact_load_issue` | chỉ D7 |
 
 ### 3.2 Cách nạp một bảng
@@ -203,7 +203,7 @@ Cỡ trang 16:9; mỗi trang có tiêu đề, dòng chú thích nguồn ("Nguồ
 ### D4 – Geography & Freight
 | Thành phần | Gợi ý |
 | --- | --- |
-| Bản đồ bong bóng | vị trí = `dim_geography[latitude]`/`[longitude]`, kích thước **GMV**, màu **Freight ratio** (zip chưa có toạ độ sẽ không hiện) |
+| Bản đồ bong bóng | vị trí = `dim_geography[latitude]`/`[longitude]` (hoặc bảng rời `v_geo_state` theo bang, `v_geo_zip` theo zip: đã có sẵn toạ độ, số đơn, GMV), kích thước **GMV**, màu **Freight ratio** (zip chưa có toạ độ sẽ không hiện) |
 | Ma trận | phân cấp **Geography**, giá trị **GMV**, **Freight**, **Freight ratio**, **Avg lead days** |
 | Cột | **Freight ratio** theo `state_code` (màu theo **Color Freight ratio**) |
 | So sánh vai trò | **GMV** (địa lý khách) cạnh **GMV by seller state** (địa lý seller) theo `region` |
@@ -626,6 +626,33 @@ let
         {"year_month", type text}, {"year", Int64.Type}, {"quarter", Int64.Type}, {"in_window", type logical},
         {"region", type text}, {"state_code", type text}, {"state_name", type text}, {"orders", Int64.Type},
         {"items", Int64.Type}, {"gmv", type number}, {"freight", type number}, {"freight_ratio", type number}
+    })
+in
+    Source
+```
+
+**v_geo_state** – Mart địa lý: dữ liệu bản đồ theo bang (toạ độ tâm, khách, GMV, lead time, trễ)
+
+```m
+let
+    Source = fnCsv("v_geo_state.csv", {
+        {"state_code", type text}, {"state_name", type text}, {"region", type text}, {"latitude", type number},
+        {"longitude", type number}, {"zips_with_coordinates", Int64.Type}, {"customers", Int64.Type},
+        {"orders", Int64.Type}, {"gmv", type number}, {"freight_ratio", type number}, {"sellers", Int64.Type},
+        {"avg_lead_days", type number}, {"late_rate_pct", type number}
+    })
+in
+    Source
+```
+
+**v_geo_zip** – Mart địa lý: dữ liệu bản đồ theo zip có toạ độ (đơn, GMV, seller)
+
+```m
+let
+    Source = fnCsv("v_geo_zip.csv", {
+        {"zip_code_prefix", type text}, {"city", type text}, {"state_code", type text}, {"region", type text},
+        {"latitude", type number}, {"longitude", type number}, {"customer_orders", Int64.Type},
+        {"customer_gmv", type number}, {"sellers", Int64.Type}
     })
 in
     Source

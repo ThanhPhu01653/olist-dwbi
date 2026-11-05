@@ -16,7 +16,7 @@ from . import config
 from .db import get_engine
 
 SOURCE_FOLDERS = ["00_init", "10_source"]                      # every database
-WAREHOUSE_FOLDERS = SOURCE_FOLDERS + ["20_staging", "30_ods", "40_dw", "50_mart"]  # main warehouse database only
+WAREHOUSE_FOLDERS = SOURCE_FOLDERS + ["20_staging", "30_ods", "40_dw", "50_mart", "70_geo"]  # main warehouse database only
 OPTIONAL_MARK = "-- setup: optional"
 
 

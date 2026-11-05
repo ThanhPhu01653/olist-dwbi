@@ -32,3 +32,13 @@ Bản xuất P6 gồm **35 file CSV**. 22 file cũ (10 `dim_*`, 6 `fact_*`, `job
 | v_seller_by_channel.csv | 7 | 0.00 MB |
 
 Chỉ cần tải 13 file này lên cùng thư mục `powerbi` trên Drive (hoặc tải lại cả thư mục). Cách nạp chúng vào Power BI: `powerbi/model.md`, mục 3 và Phụ lục.
+
+## File mới ở P7 (cần tải bổ sung lên Drive)
+Bản xuất hiện có **37 file CSV**. Ngoài 35 file ở P6 (tên và cột không đổi), có **2 file mới** cho bản đồ của dashboard D4:
+
+| File mới | Số dòng | Dung lượng |
+| --- | ---: | ---: |
+| v_geo_state.csv | 27 | 0.00 MB |
+| v_geo_zip.csv | 14,889 | 1.11 MB |
+
+Cả thư mục `powerbi` (37 file) tải lại một lần là đủ. Cách nạp: `powerbi/model.md`, mục 3 (hàm `fnCsv`); bảng rời, đặt `latitude`/`longitude` ở Data category.

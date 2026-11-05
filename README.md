@@ -2,7 +2,8 @@
 
 Bài tập lớn môn Kho dữ liệu & Kinh doanh thông minh (HUST). Xây kho dữ liệu chủ đề **Order Management** trên bộ
 Olist Brazilian E-Commerce, tích hợp bộ Olist Marketing Funnel (nối qua `seller_id`).
-Đặc tả schema: [docs/DW_DESIGN.md](docs/DW_DESIGN.md). Quy ước làm việc: [CLAUDE.md](CLAUDE.md).
+**Cả nhóm bắt đầu từ [handoff/00-TONG-QUAN.md](handoff/00-TONG-QUAN.md)** (tổng quan, số liệu, phát hiện, việc cần làm; không cần biết lập trình).
+Đặc tả schema: [docs/DW_DESIGN.md](docs/DW_DESIGN.md). Quy ước làm việc: [CLAUDE.md](CLAUDE.md). Hướng dẫn dựng Power BI: [powerbi/model.md](powerbi/model.md).
 
 Dự án **không dùng Docker**: PostgreSQL được cài trực tiếp trên máy.
 
@@ -49,19 +50,43 @@ pip install -r requirements.txt
 
 ## 4. Chạy
 
+### 4.1 Cả dự án bằng một lệnh (khoảng 7 phút)
+```powershell
+python scripts/rebuild_all.py --drop      # xoá và dựng lại từ đầu: setup -> nạp nguồn -> pipeline full -> 11 đợt tăng dần -> test -> xuất CSV
+python scripts/rebuild_all.py             # như trên nhưng giữ database cũ (mọi bước chạy lại được)
+```
+Kết quả (thời gian từng bước, số test, so sánh với trạng thái trước) ghi ở `handoff/rebuild-report.md`. Cuối cùng `olist_dw` ở **trạng thái đủ dữ liệu** (99.441 đơn, GMV 13,49 triệu BRL) và `exports/powerbi/` có 37 file CSV cho Power BI.
+
+### 4.2 Từng bước
 ```powershell
 python -m etl.setup_db --check                    # kiểm tra kết nối và extension unaccent
-python -m etl.setup_db                            # tạo olist_dw + olist_full, chạy sql/00_init và sql/10_source
+python -m etl.setup_db                            # tạo olist_dw + olist_full, chạy toàn bộ DDL, procedure, view (sql/00_init ... 70_geo)
 python -m etl.load_source --initial               # nạp nguồn đến 2017-12-31 vào olist_dw
 python -m etl.load_source --full --database olist_full   # nạp toàn bộ vào olist_full (dùng cho EDA)
-python scripts/report_stats.py                    # sinh handoff/stats.md (số dòng, số cột, dung lượng)
-python scripts/eda/run_all.py                     # khám phá dữ liệu (EDA) trên olist_full: handoff/*.md, figures/3-3-1_*.png, exports/eda_sample.xlsx
+python -m etl.run_pipeline --mode full --no-export       # staging -> ODS -> dim -> fact -> mart -> test (trạng thái ban đầu)
+python scripts/replay_increments.py               # 11 đợt hằng tháng: simulate_increment + run_pipeline --mode incremental
+python -m etl.run_pipeline --mode incremental     # chạy lại một đợt: 0 dòng mới; test + xuất CSV Power BI
+python -m etl.run_tests                           # chỉ chạy kiểm thử (sql/90_tests), ghi etl_log.dq_check
 ```
-Tất cả lệnh chạy lại được nhiều lần: `setup_db` dùng `IF NOT EXISTS`, `load_source` xoá rồi nạp lại 11 bảng nguồn
-(chạy lại `--initial` sẽ đưa nguồn về trạng thái ban đầu).
-Dòng vi phạm khoá chính / khoá ngoại / NOT NULL không được nạp mà ghi vào `etl_log.rejected_rows`.
+Các báo cáo và bản xuất phụ: `python scripts/report_stats.py` (handoff/stats.md), `python scripts/eda/run_all.py` (EDA trên olist_full),
+`python scripts/run_olap_examples.py` (handoff/olap-examples.md), `python scripts/benchmark.py` (hiệu năng), `python scripts/geo_analysis.py` (khoảng cách địa lý),
+`python scripts/gen_powerbi_docs.py` (giá trị kỳ vọng trong powerbi/measures.md), `python scripts/export_powerbi.py` (CSV cho Power BI).
+Tất cả chạy lại được nhiều lần (`IF NOT EXISTS`, `CREATE OR REPLACE`, upsert). `load_source --initial` đưa nguồn về trạng thái ban đầu.
+Dòng bị loại luôn được ghi vào `etl_log.rejected_rows` kèm lý do; không có dòng nào bị bỏ âm thầm.
 
-Các lệnh `etl.run_pipeline` và `etl.simulate_increment` trong CLAUDE.md sẽ có ở các phase sau.
+### 4.3 Cấu trúc thư mục
+```
+handoff/        bàn giao cho cả nhóm: 00-TONG-QUAN.md (đọc trước), một file cho mỗi phase P0-P7, các bảng số liệu sinh tự động
+docs/           DW_DESIGN.md (đặc tả + nhật ký quyết định), sơ đồ Mermaid (*.mmd), mapping nguồn -> đích
+figures/        hình cho báo cáo (png)
+powerbi/        model.md (dựng Power BI từng bước), measures.md (DAX + giá trị kỳ vọng), theme.json
+exports/        powerbi/ = CSV cho Power BI (không commit nếu > 50 MB, xem exports/README.md), eda_sample.xlsx
+sql/            00_init, 10_source, 20_staging, 30_ods, 40_dw, 50_mart, 60_olap_examples, 70_geo, 90_tests
+etl/            setup_db, load_source, simulate_increment, extract, run_pipeline, run_tests, load_dw, procs, log ...
+scripts/        rebuild_all, replay_increments, export_powerbi, report_stats, benchmark, geo_analysis, eda/ ...
+seeds/          bảng tham chiếu (bang -> vùng, nhóm ngành hàng, nhóm kênh...)
+data/raw/       CSV Kaggle (không commit)
+```
 
 ## 5. Xử lý sự cố
 
@@ -70,3 +95,5 @@ Các lệnh `etl.run_pipeline` và `etl.simulate_increment` trong CLAUDE.md sẽ
 | `Cannot connect to PostgreSQL ...` | Dịch vụ chưa chạy hoặc sai `DB_PORT`/`DB_PASSWORD` trong `.env` |
 | `Missing ... CSV files` | Kiểm tra đã giải nén đúng vào `data/raw/ecommerce` và `data/raw/marketing` |
 | `This role cannot create databases` | Dùng user `postgres` (siêu quản trị) trong `.env` |
+| `rebuild_all.py --drop` báo không xoá được database | Đóng pgAdmin / DBeaver / Power BI đang kết nối, rồi chạy lại |
+| Pipeline dừng với `PIPELINE FAILED` | Xem `etl_log.job_run` (cột `status`, `message`); sửa nguyên nhân rồi chạy lại cùng lệnh |
