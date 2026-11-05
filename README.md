@@ -55,6 +55,7 @@ python -m etl.setup_db                            # tạo olist_dw + olist_full,
 python -m etl.load_source --initial               # nạp nguồn đến 2017-12-31 vào olist_dw
 python -m etl.load_source --full --database olist_full   # nạp toàn bộ vào olist_full (dùng cho EDA)
 python scripts/report_stats.py                    # sinh handoff/stats.md (số dòng, số cột, dung lượng)
+python scripts/eda/run_all.py                     # khám phá dữ liệu (EDA) trên olist_full: handoff/*.md, figures/3-3-1_*.png, exports/eda_sample.xlsx
 ```
 Tất cả lệnh chạy lại được nhiều lần: `setup_db` dùng `IF NOT EXISTS`, `load_source` xoá rồi nạp lại 11 bảng nguồn
 (chạy lại `--initial` sẽ đưa nguồn về trạng thái ban đầu).
