@@ -236,6 +236,7 @@ def run_load(mode: str, database: str) -> None:
     try:
         with raw.cursor() as cur:
             cur.execute(f"TRUNCATE {', '.join(TABLE_NAMES)} RESTART IDENTITY CASCADE")
+            cur.execute("DELETE FROM etl_log.watermark WHERE source_table = 'source.simulated_until'")   # simulate_increment restarts from the cutoff
             for spec in SPECS:
                 res = load_table(cur, engine, batch_id, spec, ctx)
                 results.append(res)

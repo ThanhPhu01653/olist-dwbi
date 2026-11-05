@@ -74,7 +74,7 @@ def _dim(table: str, rows: list[tuple[str, str, str, str]]) -> None:
 
 
 KEY = "Khoá thay thế tự sinh (identity); dòng Unknown có key -1"
-_dim("dim_date", [("date_key", "(lịch)", "full_date", "Số yyyymmdd; -1 = Unknown"), ("full_date", "(lịch)", "-", "Mỗi ngày 2016-01-01 … 2019-12-31"),
+_dim("dim_date", [("date_key", "(lịch)", "full_date", "Số yyyymmdd; -1 = Unknown"), ("full_date", "(lịch)", "-", "Mỗi ngày 2016-01-01 … 2020-12-31"),
     ("day_of_week", "(lịch)", "full_date", "isoweekday: 1 = Thứ Hai"), ("week_of_year", "(lịch)", "full_date", "Tuần ISO"),
     ("year_month / year_quarter", "(lịch)", "full_date", "'YYYY-MM' / 'YYYY-Qn'"), ("is_weekend", "(lịch)", "full_date", "Thứ Bảy, Chủ Nhật"),
     ("is_holiday_br / holiday_name", "(package holidays)", "holidays.Brazil", "Ngày lễ quốc gia Brazil"),
@@ -114,7 +114,7 @@ _dim("dim_lead_profile", [("business_segment … average_stock (7 cột)", "ods.
 _dim("dim_sales_rep", [("rep_id / rep_role", "ods.closed_deals", "sdr_id → 'SDR'; sr_id → 'SR'", "Tách hai vai trò thành các dòng (rep_id, rep_role)")])
 
 # ods -> dw facts
-DK = "Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2019 → -1"
+DK = "Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2020 → -1"
 CUST = "ods.orders.customer_id → ods.customers.customer_unique_id → dw.dim_customer: phiên bản SCD2 có hiệu lực tại ngày mua; không có → -1"
 _dim("fact_order_item", [
     ("order_id / order_item_id", "ods.order_items", "order_id, order_item_id", "Giữ nguyên (degenerate dimension, khoá chính)"),

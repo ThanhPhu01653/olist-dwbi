@@ -136,9 +136,10 @@ def fact_section(conn) -> str:
         v = conn.execute(text(sql)).scalar_one()
         shown = f"{v:,.2f}" if hasattr(v, "quantize") else f"{v:,}" if isinstance(v, int) else str(v)
         lines.append(f"| {label} | {shown} |")
-    issues = conn.execute(text("SELECT fact_table, issue_type, detail, sum(row_count) FROM etl_log.fact_load_issue "
-                               "WHERE batch_id = (SELECT max(batch_id) FROM etl_log.fact_load_issue) GROUP BY 1, 2, 3 ORDER BY 1, 2, 3")).fetchall()
-    lines += ["", "### Vấn đề ghi nhận khi nạp fact (lô gần nhất, `etl_log.fact_load_issue`)", ""]
+    issues = conn.execute(text("SELECT fact_table, issue_type, detail, CASE WHEN fact_table = 'fact_lead_funnel' THEN max(row_count) ELSE sum(row_count) END "
+                               "FROM etl_log.fact_load_issue "
+                               "WHERE batch_id >= (SELECT coalesce(max(batch_id), 0) FROM etl_log.v_run_summary WHERE mode = 'full') GROUP BY 1, 2, 3 ORDER BY 1, 2, 3")).fetchall()
+    lines += ["", "### Vấn đề ghi nhận khi nạp fact (từ lần nạp full gần nhất đến nay, cộng dồn các đợt, riêng fact_lead_funnel được tính lại mỗi đợt nên lấy giá trị lớn nhất; `etl_log.fact_load_issue`)", ""]
     if issues:
         lines += ["| Fact | Loại | Chi tiết | Số dòng |", "| --- | --- | --- | ---: |"] + [f"| {a} | {b} | {c} | {d:,} |" for a, b, c, d in issues]
     else:

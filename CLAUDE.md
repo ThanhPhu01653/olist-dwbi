@@ -93,8 +93,11 @@ figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 ## Lệnh thường dùng (cập nhật khi thêm)
 - `python -m etl.setup_db` – tạo database, extension, schema, etl_log (chạy các file trong sql/00_init, sql/10_source)
 - `python -m etl.load_source --initial` – nạp nguồn ban đầu (đến 2017-12-31) vào oltp/crm
-- `python -m etl.run_pipeline` – chạy staging → ods → dw → mart → tests
-- `python -m etl.simulate_increment --until 2018-01-31` – chèn thêm dữ liệu mới vào nguồn
+- `python -m etl.run_pipeline [--mode full|incremental] [--no-export]` – chạy staging → ods → dim → fact → tests → snapshot → export Power BI
+- `python -m etl.simulate_increment [--until 2018-01-31]` – chèn thêm dữ liệu mới vào nguồn (mặc định +1 tháng)
+- `python scripts/replay_increments.py` – lặp simulate + `run_pipeline --mode incremental` tới hết dữ liệu nguồn (in bảng các đợt)
+- `python scripts/compare_databases.py --a olist_dw --b <db full>` – so sánh hai database kho (số dòng, tổng tiền, checksum)
+- `python -m etl.test_orphan_retry` – kịch bản thử lại dòng mồ côi (chạy trong transaction rồi rollback)
 - `python scripts/export_powerbi.py` – xuất CSV cho Power BI vào `exports/powerbi/`
 - `python scripts/report_stats.py` – sinh `handoff/stats.md` (số dòng mọi bảng, từng dim và từng fact)
 - `python -m etl.run_tests [--only ods|dim|fact]` – chạy kiểm thử `sql/90_tests/*.sql`, ghi `etl_log.dq_check`

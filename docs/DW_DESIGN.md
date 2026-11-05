@@ -27,6 +27,8 @@
 | 05/11 | Điều chỉnh đặc tả: `dim_lead_origin` tách `unknown` thành nhóm kênh riêng **Unknown** (không gộp với `other`) | `origin = unknown` có tỷ lệ chốt cao nhất (16,7%), gộp với `other` (2,7%) sẽ che mất sự khác biệt |
 | 05/11 | Làm rõ `dim_geography` (P4): zip chỉ có toạ độ ngoài bbox vẫn có dòng (lat/lng NULL, city/state theo mode của các điểm đó). Trước đó 4 zip như vậy bị bỏ sót (dim 19.174 thay vì 19.178 dòng khi nạp đủ dữ liệu) | ODS giữ zip với `n_points = 0`; thêm test đối soát số zip dim = số zip trong staging ∪ customers ∪ sellers |
 | 05/11 | Làm rõ cách tính fact (P4): `is_delivered` = status `delivered` và có ngày giao; `is_canceled` = status `canceled`; `dq_flag_count` = cờ ODS + số khoảng thời gian bị đặt NULL; `fact_seller_monthly.gmv/freight` chỉ tính đơn không thuộc nhóm Failed (khớp KPI GMV), `orders/items` tính mọi đơn; `seller_gmv_first_90d` = GMV (không Failed) trong 90 ngày kể từ ngày đơn đầu; thêm bảng `etl_log.fact_load_issue` | Chỉ làm rõ định nghĩa, không đổi tên bảng/cột của đặc tả |
+| 05/11 | Mở rộng `dim_date` đến **2020-12-31** (1.827 ngày + Unknown) | 4 dòng hàng (3 đơn) có `shipping_limit_date` năm 2020 không còn nhận khoá −1 |
+| 05/11 | Làm rõ nạp tăng dần (P5): (1) `simulate_increment` nạp mọi bản ghi nguồn có mốc thời gian ≤ ngày `--until` mà nguồn chưa có (nạp cả MQL cha của deal nếu `first_contact_date` muộn hơn `won_date`); cần **11 đợt hằng tháng (01/2018 → 11/2018)** để hết dữ liệu nguồn vì deal kéo dài tới 11/2018 (8 đợt đầu mới tới 08/2018); (2) `mql` và `closed_deals` được extract theo "chưa có trong staging" thay vì watermark ngày (tránh bỏ sót MQL khi deal đăng ký trước ngày liên hệ); watermark chỉ còn dùng cho `orders`; (3) dòng bị loại vì mồ côi (`orphan:`) được **thử lại** ở các đợt sau khi cha đã tới, và biến mất khỏi `etl_log.rejected_rows` khi đã nạp; (4) thêm `etl_log.batch_metrics`, `v_run_summary`, `v_dq_summary`, `v_rejected_summary` cho D7 | Kết quả incremental phải bằng full (so sánh số dòng, tổng tiền và checksum nội dung trên khoá tự nhiên) |
 | 12/11 | *(buổi họp nhóm)* xem lại các dòng "Chốt 05/11" ở trên; mọi thay đổi sau đó phải cập nhật file này trước rồi mới sửa code | |
 
 ---
@@ -166,7 +168,7 @@ sau mỗi lần chạy pipeline; cả nhóm dựng Power BI ở chế độ Impo
 ## 6. Dimension
 
 ### 6.1 `dw.dim_date` (role-playing)
-Phạm vi 2016-01-01 → 2019-12-31 (~1.461 dòng) + dòng `-1`.
+Phạm vi 2016-01-01 → 2020-12-31 (1.827 dòng) + dòng `-1`.
 
 | Cột | Kiểu | Ghi chú |
 | --- | --- | --- |

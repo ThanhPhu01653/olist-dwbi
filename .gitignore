@@ -14,3 +14,6 @@ Thumbs.db
 # Course documents (instructor material / personal data) - local only
 docs/*.pdf
 docs/*.xlsx
+
+# Power BI CSV export is > 50 MB: shared through Google Drive (see exports/README.md); the README inside exports/powerbi/ stays in git
+exports/powerbi/*.csv

@@ -1,0 +1,30 @@
+%% Pipeline of the warehouse: python -m etl.run_pipeline --mode full|incremental  (one batch_id per run, every job logs to etl_log.job_run)
+%% Render: paste into https://mermaid.live  (or: mmdc -i docs/pipeline.mmd -o figures/3-4-1_pipeline.png -s 2)
+flowchart LR
+    csv[("CSV Kaggle<br/>data/raw")]
+    subgraph SRC["Hệ thống nguồn (mô phỏng)"]
+        oltp[("oltp<br/>bán hàng")]
+        crm[("crm<br/>marketing")]
+    end
+    sim["simulate_increment<br/>+1 tháng mỗi lần"]
+    subgraph ETL["run_pipeline (Python điều phối, SQL procedure biến đổi)"]
+        ext["1. extract<br/>full: sao chép hết<br/>incremental: chỉ dòng chưa có<br/>(watermark đơn hàng)"]
+        ods["2. ODS<br/>làm sạch, dq_flags<br/>dòng lỗi -> rejected_rows<br/>thử lại dòng mồ côi"]
+        dim["3. dim<br/>SCD1 / SCD2<br/>dòng Unknown -1"]
+        fact["4. fact<br/>transaction: insert<br/>accumulating: upsert<br/>periodic: tính lại"]
+        tst["5. tests<br/>kiểm thử + đối chiếu EDA"]
+        snap["6. snapshot<br/>etl_log.batch_metrics"]
+        exp["7. export_powerbi<br/>CSV"]
+    end
+    stg[("staging<br/>stg_*")]
+    odsdb[("ods")]
+    dw[("dw<br/>10 dim + 6 fact")]
+    log[("etl_log<br/>job_run, rejected_rows,<br/>dq_check, fact_load_issue,<br/>batch_metrics, v_run_summary")]
+    pbi["Power BI<br/>(Import CSV)"]
+
+    csv -- "load_source --initial" --> oltp & crm
+    csv --> sim --> oltp & crm
+    oltp & crm --> ext --> stg --> ods --> odsdb --> dim --> dw
+    odsdb --> fact --> dw
+    dw --> tst --> snap --> exp --> pbi
+    ext & ods & dim & fact & tst -.-> log

@@ -58,3 +58,12 @@ SELECT 'seeds loaded (6 ref tables not empty)', 'ods.ref_*', '6', (
   ((SELECT (count(*) > 0)::int FROM ods.ref_state_region) + (SELECT (count(*) > 0)::int FROM ods.ref_category_group)
   + (SELECT (count(*) > 0)::int FROM ods.ref_lead_origin_group) + (SELECT (count(*) > 0)::int FROM ods.ref_payment_type)
   + (SELECT (count(*) > 0)::int FROM ods.ref_order_status) + (SELECT (count(*) > 0)::int FROM ods.ref_category_translation_extra)) = 6
+UNION ALL
+SELECT 'no orphan rejection whose parent is already in ODS (late parents are retried)', 'etl_log.rejected_rows', '0', count(*)::text, count(*) = 0
+FROM etl_log.rejected_rows r
+WHERE r.reason LIKE 'orphan:%'
+  AND ((r.job_name = 'ods.load_closed_deals' AND EXISTS (SELECT 1 FROM ods.mql m WHERE m.mql_id = r.record ->> 'mql_id'))
+    OR (r.job_name = 'ods.load_orders' AND EXISTS (SELECT 1 FROM ods.customers c WHERE c.customer_id = r.record ->> 'customer_id'))
+    OR (r.job_name = 'ods.load_order_items' AND EXISTS (SELECT 1 FROM ods.orders o WHERE o.order_id = r.record ->> 'order_id')
+        AND EXISTS (SELECT 1 FROM ods.products p WHERE p.product_id = r.record ->> 'product_id') AND EXISTS (SELECT 1 FROM ods.sellers s WHERE s.seller_id = r.record ->> 'seller_id'))
+    OR (r.job_name IN ('ods.load_order_payments', 'ods.load_order_reviews') AND EXISTS (SELECT 1 FROM ods.orders o WHERE o.order_id = r.record ->> 'order_id')))

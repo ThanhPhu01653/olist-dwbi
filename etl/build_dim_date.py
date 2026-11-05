@@ -1,4 +1,4 @@
-"""Build dw.dim_date: every day 2016-01-01 .. 2019-12-31, Brazilian holidays (package 'holidays'), Black Friday.
+"""Build dw.dim_date: every day 2016-01-01 .. 2020-12-31, Brazilian holidays (package 'holidays'), Black Friday.
 Idempotent (upsert on date_key). The Unknown member (-1) is created by dw.insert_unknown_members().
 """
 from __future__ import annotations
@@ -13,7 +13,7 @@ from sqlalchemy.engine import Engine
 
 from .log import job_run
 
-START, END = date(2016, 1, 1), date(2019, 12, 31)
+START, END = date(2016, 1, 1), date(2020, 12, 31)
 
 
 def black_friday(year: int) -> date:

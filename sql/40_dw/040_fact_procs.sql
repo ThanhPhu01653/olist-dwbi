@@ -8,9 +8,9 @@
 -- No FK is ever NULL: a failed lookup becomes the Unknown member (-1) and is counted in etl_log.fact_load_issue;
 -- a negative time interval (source error) becomes NULL and is counted there too.
 
--- date -> yyyymmdd key, -1 when the value is NULL or outside the range of dim_date (2016-01-01 .. 2019-12-31)
+-- date -> yyyymmdd key, -1 when the value is NULL or outside the range of dim_date (2016-01-01 .. 2020-12-31)
 CREATE OR REPLACE FUNCTION dw.date_key(ts timestamp) RETURNS int LANGUAGE sql IMMUTABLE AS $$
-    SELECT CASE WHEN ts IS NULL OR ts::date NOT BETWEEN DATE '2016-01-01' AND DATE '2019-12-31' THEN -1
+    SELECT CASE WHEN ts IS NULL OR ts::date NOT BETWEEN DATE '2016-01-01' AND DATE '2020-12-31' THEN -1
                 ELSE to_char(ts, 'YYYYMMDD')::int END $$;
 
 CREATE OR REPLACE PROCEDURE dw.log_fact_issue(p_batch_id bigint, p_fact text, p_type text, p_detail text, p_rows bigint)
