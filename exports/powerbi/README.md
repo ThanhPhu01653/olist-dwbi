@@ -1,32 +1,37 @@
 # Dữ liệu xuất cho Power BI
 
-> Sinh tự động bằng `python scripts/export_powerbi.py` lúc 2026-11-05 18:57 từ database `olist_dw` (lô ETL mới nhất: 25; đơn mua muộn nhất trong dữ liệu: 2017-12-31). Đừng sửa tay.
+> Sinh tự động bằng `python scripts/export_powerbi.py` lúc 2026-11-05 19:28 từ database `olist_dw` (lô ETL mới nhất: 96; đơn mua muộn nhất trong dữ liệu: 2018-10-17). Đừng sửa tay.
 
 **Định dạng**: UTF-8 có BOM, phân cách `,`, số thập phân `.`, ngày `YYYY-MM-DD`, cột đúng/sai ghi `true`/`false`, ô trống = NULL, tên file = tên bảng. Trong Power BI chọn *Get data → Text/CSV*, đặt *File origin* = UTF-8, rồi **Transform Data** để đặt kiểu cột (xem hướng dẫn trong `handoff/`).
 
-**Dung lượng**: 34.3 MB tổng cộng. Dưới 50 MB nên các file được commit cùng repo.
+**Dung lượng**: 69.0 MB tổng cộng. **Trên 50 MB nên các file `*.csv` không được commit** (đã có trong `.gitignore`); cả thư mục được chia sẻ qua Google Drive, link ở `exports/README.md`. Tên file giữ nguyên giữa các lần xuất nên Power BI chỉ cần *Refresh*.
 
 ## Danh sách file
 
 | File | Mô tả | Số dòng | Dung lượng | Số cột |
 | --- | --- | ---: | ---: | ---: |
-| dim_date.csv | Chiều thời gian (1 dòng / ngày 2016–2019 + Unknown -1) | 1,462 | 0.12 MB | 16 |
-| dim_geography.csv | Chiều địa lý (1 dòng / zip) | 19,108 | 1.66 MB | 9 |
-| dim_customer.csv | Chiều khách hàng, SCD2 (1 dòng / phiên bản địa chỉ) | 44,118 | 3.93 MB | 10 |
-| dim_seller.csv | Chiều seller, dùng chung bán hàng và funnel | 3,098 | 0.33 MB | 15 |
+| dim_date.csv | Chiều thời gian (1 dòng / ngày 2016–2020 + Unknown -1) | 1,828 | 0.15 MB | 16 |
+| dim_geography.csv | Chiều địa lý (1 dòng / zip) | 19,178 | 1.66 MB | 9 |
+| dim_customer.csv | Chiều khách hàng, SCD2 (1 dòng / phiên bản địa chỉ) | 96,339 | 8.59 MB | 10 |
+| dim_seller.csv | Chiều seller, dùng chung bán hàng và funnel | 3,558 | 0.44 MB | 15 |
 | dim_product.csv | Chiều sản phẩm | 32,952 | 3.66 MB | 14 |
 | dim_order_status.csv | Chiều trạng thái đơn | 9 | 0.00 MB | 4 |
 | dim_payment_type.csv | Chiều hình thức thanh toán | 6 | 0.00 MB | 4 |
 | dim_lead_origin.csv | Chiều kênh thu hút MQL | 11 | 0.00 MB | 3 |
-| dim_lead_profile.csv | Chiều hồ sơ deal (junk dimension) | 4 | 0.00 MB | 8 |
-| dim_sales_rep.csv | Chiều nhân viên sales (SDR / SR) | 7 | 0.00 MB | 3 |
-| fact_order_item.csv | Fact giao dịch: 1 dòng hàng của 1 đơn | 51,234 | 5.04 MB | 14 |
-| fact_order_fulfillment.csv | Fact accumulating snapshot: 1 đơn | 45,430 | 10.85 MB | 30 |
-| fact_payment.csv | Fact giao dịch: 1 lần thanh toán | 47,871 | 2.89 MB | 8 |
-| fact_review.csv | Fact giao dịch: 1 review | 45,370 | 4.82 MB | 13 |
-| fact_lead_funnel.csv | Fact accumulating snapshot: 1 MQL | 2,002 | 0.20 MB | 18 |
-| fact_seller_monthly.csv | Fact periodic snapshot: 1 seller × 1 tháng | 13,548 | 0.65 MB | 14 |
-| job_run.csv | Nhật ký chạy ETL (cho dashboard D7) | 779 | 0.11 MB | 13 |
+| dim_lead_profile.csv | Chiều hồ sơ deal (junk dimension) | 503 | 0.03 MB | 8 |
+| dim_sales_rep.csv | Chiều nhân viên sales (SDR / SR) | 55 | 0.00 MB | 3 |
+| fact_order_item.csv | Fact giao dịch: 1 dòng hàng của 1 đơn | 112,650 | 11.09 MB | 14 |
+| fact_order_fulfillment.csv | Fact accumulating snapshot: 1 đơn | 99,441 | 23.80 MB | 30 |
+| fact_payment.csv | Fact giao dịch: 1 lần thanh toán | 103,886 | 6.29 MB | 8 |
+| fact_review.csv | Fact giao dịch: 1 review | 99,224 | 10.55 MB | 13 |
+| fact_lead_funnel.csv | Fact accumulating snapshot: 1 MQL | 8,000 | 0.84 MB | 18 |
+| fact_seller_monthly.csv | Fact periodic snapshot: 1 seller × 1 tháng | 36,583 | 1.71 MB | 14 |
+| job_run.csv | Nhật ký chạy ETL từng job (cho dashboard D7) | 1,525 | 0.20 MB | 13 |
+| v_run_summary.csv | Tóm tắt mỗi lô ETL: chế độ, thời gian, số dòng từng tầng (D7) | 51 | 0.01 MB | 16 |
+| v_dq_summary.csv | Kết quả kiểm thử chất lượng theo lô (D7) | 34 | 0.00 MB | 8 |
+| v_rejected_summary.csv | Số dòng bị loại theo lô, job, lý do (D7) | 15 | 0.00 MB | 6 |
+| batch_metrics.csv | Chỉ số chính của kho sau mỗi lô: đơn, GMV, MQL, deal… (D7, minh hoạ funnel lấp đầy dần) | 14 | 0.00 MB | 12 |
+| fact_load_issue.csv | Khoá rơi về Unknown và khoảng thời gian âm khi nạp fact (D7) | 33 | 0.00 MB | 6 |
 
 ## Khoá nối (fact → dimension)
 
@@ -78,3 +83,13 @@ Mọi khoá `*_key` là số nguyên; `-1` là dòng Unknown của chiều (ví 
 **fact_seller_monthly** – `month_date_key`, `seller_key`, `orders`, `items`, `gmv`, `freight`, `delivered_orders`, `late_orders`, `late_rate`, `canceled_orders`, `avg_review_score`, `is_active`, `months_since_first_sale`, `etl_batch_id`
 
 **job_run** – `run_id`, `batch_id`, `job_name`, `layer`, `target_table`, `started_at`, `finished_at`, `status`, `rows_read`, `rows_inserted`, `rows_updated`, `rows_rejected`, `message`
+
+**v_run_summary** – `batch_id`, `mode`, `started_at`, `finished_at`, `duration_sec`, `status`, `source_rows`, `staging_rows`, `ods_inserted`, `ods_rejected`, `dw_inserted`, `dw_updated`, `staging_sec`, `ods_sec`, `dw_sec`, `test_sec`
+
+**v_dq_summary** – `batch_id`, `checks`, `passed`, `failed`, `pass_pct`, `eda_checks`, `eda_match`, `checked_at`
+
+**v_rejected_summary** – `batch_id`, `job_name`, `source_table`, `reason`, `row_count`, `last_logged_at`
+
+**batch_metrics** – `batch_id`, `taken_at`, `mode`, `orders`, `order_items`, `gmv`, `mql`, `deals_won`, `sellers_with_sale`, `customers`, `customer_versions`, `sellers`
+
+**fact_load_issue** – `batch_id`, `fact_table`, `issue_type`, `detail`, `row_count`, `logged_at`

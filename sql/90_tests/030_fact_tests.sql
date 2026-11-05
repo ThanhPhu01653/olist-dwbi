@@ -133,8 +133,12 @@ SELECT 'milestone date key is -1 exactly when the timestamp is missing', 'dw.fac
 FROM dw.fact_order_fulfillment WHERE (approved_ts IS NULL) <> (approved_date_key = -1) OR (carrier_ts IS NULL) <> (carrier_date_key = -1)
    OR (delivered_ts IS NULL) <> (delivered_date_key = -1) OR (estimated_ts IS NULL) <> (estimated_date_key = -1)
 UNION ALL
-SELECT 'seller_count <= item_count and every order has items or is flagged (orders without items)', 'dw.fact_order_fulfillment', '0',
-       count(*) FILTER (WHERE seller_count > item_count)::text, count(*) FILTER (WHERE seller_count > item_count) = 0 FROM dw.fact_order_fulfillment
+SELECT 'seller_count <= item_count; orders with item_count = 0 are exactly the ods orders without item rows', 'dw.fact_order_fulfillment',
+       (SELECT count(*) FROM ods.orders o WHERE NOT EXISTS (SELECT 1 FROM ods.order_items i WHERE i.order_id = o.order_id))::text,
+       count(*) FILTER (WHERE item_count = 0)::text,
+       count(*) FILTER (WHERE seller_count > item_count) = 0
+       AND count(*) FILTER (WHERE item_count = 0) = (SELECT count(*) FROM ods.orders o WHERE NOT EXISTS (SELECT 1 FROM ods.order_items i WHERE i.order_id = o.order_id))
+FROM dw.fact_order_fulfillment
 UNION ALL
 -- ------------------------------------------------ review, seller, funnel, monthly snapshot
 SELECT 'fact_review.delivered_late = fact_order_fulfillment.is_late', 'dw.fact_review', '0', count(*)::text, count(*) = 0

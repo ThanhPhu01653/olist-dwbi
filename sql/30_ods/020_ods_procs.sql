@@ -138,18 +138,33 @@ BEGIN
     GROUP BY ods.clean_zip(s.geolocation_zip_code_prefix);
 END $$;
 
+-- ---------------------------------------------------------------- orphan retry
+-- A row rejected as 'orphan: <parent> not found' may only be early: its parent can arrive in a later batch.
+-- ods.take_orphans moves the orphan rejections of EARLIER batches of one job into the temp table tmp_orphans and removes them
+-- from etl_log.rejected_rows. The load procedure then treats the matching staging rows as candidates again, together with the rows
+-- of the current batch: rows whose parent is now there are loaded (and stay out of rejected_rows), rows still orphaned are
+-- rejected again under the current batch. So an orphan appears in rejected_rows exactly once and disappears when it is resolved.
+CREATE OR REPLACE PROCEDURE ods.take_orphans(p_job text, p_batch_id bigint) LANGUAGE plpgsql AS $$
+BEGIN
+    CREATE TEMP TABLE IF NOT EXISTS tmp_orphans (job text, rec jsonb) ON COMMIT DROP;
+    DELETE FROM tmp_orphans WHERE job = p_job;
+    INSERT INTO tmp_orphans SELECT job_name, record FROM etl_log.rejected_rows WHERE job_name = p_job AND reason LIKE 'orphan:%' AND batch_id <> p_batch_id;
+    DELETE FROM etl_log.rejected_rows WHERE job_name = p_job AND reason LIKE 'orphan:%' AND batch_id <> p_batch_id;
+END $$;
+
 -- ---------------------------------------------------------------- orders
 CREATE OR REPLACE PROCEDURE ods.load_orders(p_batch_id bigint, INOUT p_read bigint DEFAULT 0,
                                             INOUT p_inserted bigint DEFAULT 0, INOUT p_rejected bigint DEFAULT 0)
 LANGUAGE plpgsql AS $$
 BEGIN
     DELETE FROM etl_log.rejected_rows WHERE batch_id = p_batch_id AND job_name = 'ods.load_orders';
+    CALL ods.take_orphans('ods.load_orders', p_batch_id);
     SELECT count(*) INTO p_read FROM staging.stg_orders WHERE load_batch_id = p_batch_id;
     INSERT INTO etl_log.rejected_rows (batch_id, job_name, source_table, reason, record)
     SELECT p_batch_id, 'ods.load_orders', 'staging.stg_orders', 'orphan: customer_id not in ods.customers',
            to_jsonb(s) - 'load_batch_id' - 'loaded_at'
     FROM staging.stg_orders s
-    WHERE load_batch_id = p_batch_id AND NOT EXISTS (SELECT 1 FROM ods.customers c WHERE c.customer_id = s.customer_id);
+    WHERE (s.load_batch_id = p_batch_id OR EXISTS (SELECT 1 FROM tmp_orphans t WHERE t.job = 'ods.load_orders' AND t.rec ->> 'order_id' = s.order_id::text)) AND NOT EXISTS (SELECT 1 FROM ods.customers c WHERE c.customer_id = s.customer_id);
     GET DIAGNOSTICS p_rejected = ROW_COUNT;
     INSERT INTO ods.orders
     SELECT f.order_id, f.customer_id, f.order_status, f.order_purchase_timestamp, f.order_approved_at, f.order_delivered_carrier_date,
@@ -169,7 +184,7 @@ BEGIN
                      CASE WHEN s.order_status <> 'delivered' AND s.order_delivered_customer_date IS NOT NULL THEN 'delivery_date_but_not_delivered' END
                  ], NULL) AS flags
           FROM staging.stg_orders s
-          WHERE s.load_batch_id = p_batch_id AND EXISTS (SELECT 1 FROM ods.customers c WHERE c.customer_id = s.customer_id)) f
+          WHERE (s.load_batch_id = p_batch_id OR EXISTS (SELECT 1 FROM tmp_orphans t WHERE t.job = 'ods.load_orders' AND t.rec ->> 'order_id' = s.order_id::text)) AND EXISTS (SELECT 1 FROM ods.customers c WHERE c.customer_id = s.customer_id)) f
     ON CONFLICT (order_id) DO NOTHING;
     GET DIAGNOSTICS p_inserted = ROW_COUNT;
 END $$;
@@ -180,6 +195,7 @@ CREATE OR REPLACE PROCEDURE ods.load_order_items(p_batch_id bigint, INOUT p_read
 LANGUAGE plpgsql AS $$
 BEGIN
     DELETE FROM etl_log.rejected_rows WHERE batch_id = p_batch_id AND job_name = 'ods.load_order_items';
+    CALL ods.take_orphans('ods.load_order_items', p_batch_id);
     SELECT count(*) INTO p_read FROM staging.stg_order_items WHERE load_batch_id = p_batch_id;
     INSERT INTO etl_log.rejected_rows (batch_id, job_name, source_table, reason, record)
     SELECT p_batch_id, 'ods.load_order_items', 'staging.stg_order_items',
@@ -191,7 +207,7 @@ BEGIN
     LEFT JOIN ods.orders o ON o.order_id = s.order_id
     LEFT JOIN ods.products p ON p.product_id = s.product_id
     LEFT JOIN ods.sellers l ON l.seller_id = s.seller_id
-    WHERE s.load_batch_id = p_batch_id AND (o.order_id IS NULL OR p.product_id IS NULL OR l.seller_id IS NULL);
+    WHERE (s.load_batch_id = p_batch_id OR EXISTS (SELECT 1 FROM tmp_orphans t WHERE t.job = 'ods.load_order_items' AND t.rec ->> 'order_id' = s.order_id::text AND t.rec ->> 'order_item_id' = s.order_item_id::text)) AND (o.order_id IS NULL OR p.product_id IS NULL OR l.seller_id IS NULL);
     GET DIAGNOSTICS p_rejected = ROW_COUNT;
     INSERT INTO ods.order_items
     SELECT s.order_id, s.order_item_id, s.product_id, s.seller_id, s.shipping_limit_date, s.price, s.freight_value, p_batch_id
@@ -199,7 +215,7 @@ BEGIN
     JOIN ods.orders o ON o.order_id = s.order_id
     JOIN ods.products p ON p.product_id = s.product_id
     JOIN ods.sellers l ON l.seller_id = s.seller_id
-    WHERE s.load_batch_id = p_batch_id
+    WHERE (s.load_batch_id = p_batch_id OR EXISTS (SELECT 1 FROM tmp_orphans t WHERE t.job = 'ods.load_order_items' AND t.rec ->> 'order_id' = s.order_id::text AND t.rec ->> 'order_item_id' = s.order_item_id::text))
     ON CONFLICT (order_id, order_item_id) DO NOTHING;
     GET DIAGNOSTICS p_inserted = ROW_COUNT;
 END $$;
@@ -210,12 +226,13 @@ CREATE OR REPLACE PROCEDURE ods.load_order_payments(p_batch_id bigint, INOUT p_r
 LANGUAGE plpgsql AS $$
 BEGIN
     DELETE FROM etl_log.rejected_rows WHERE batch_id = p_batch_id AND job_name = 'ods.load_order_payments';
+    CALL ods.take_orphans('ods.load_order_payments', p_batch_id);
     SELECT count(*) INTO p_read FROM staging.stg_order_payments WHERE load_batch_id = p_batch_id;
     INSERT INTO etl_log.rejected_rows (batch_id, job_name, source_table, reason, record)
     SELECT p_batch_id, 'ods.load_order_payments', 'staging.stg_order_payments', 'orphan: order_id not in ods.orders',
            to_jsonb(s) - 'load_batch_id' - 'loaded_at'
     FROM staging.stg_order_payments s
-    WHERE load_batch_id = p_batch_id AND NOT EXISTS (SELECT 1 FROM ods.orders o WHERE o.order_id = s.order_id);
+    WHERE (s.load_batch_id = p_batch_id OR EXISTS (SELECT 1 FROM tmp_orphans t WHERE t.job = 'ods.load_order_payments' AND t.rec ->> 'order_id' = s.order_id::text AND t.rec ->> 'payment_sequential' = s.payment_sequential::text)) AND NOT EXISTS (SELECT 1 FROM ods.orders o WHERE o.order_id = s.order_id);
     GET DIAGNOSTICS p_rejected = ROW_COUNT;
     INSERT INTO ods.order_payments
     SELECT s.order_id, s.payment_sequential, lower(trim(s.payment_type)), greatest(coalesce(s.payment_installments, 1), 1), s.payment_value,
@@ -225,7 +242,7 @@ BEGIN
                CASE WHEN s.payment_value = 0 THEN 'payment_value_zero' END], NULL),
            p_batch_id
     FROM staging.stg_order_payments s
-    WHERE s.load_batch_id = p_batch_id AND EXISTS (SELECT 1 FROM ods.orders o WHERE o.order_id = s.order_id)
+    WHERE (s.load_batch_id = p_batch_id OR EXISTS (SELECT 1 FROM tmp_orphans t WHERE t.job = 'ods.load_order_payments' AND t.rec ->> 'order_id' = s.order_id::text AND t.rec ->> 'payment_sequential' = s.payment_sequential::text)) AND EXISTS (SELECT 1 FROM ods.orders o WHERE o.order_id = s.order_id)
     ON CONFLICT (order_id, payment_sequential) DO NOTHING;
     GET DIAGNOSTICS p_inserted = ROW_COUNT;
 END $$;
@@ -238,12 +255,13 @@ DECLARE
     v_dup bigint;
 BEGIN
     DELETE FROM etl_log.rejected_rows WHERE batch_id = p_batch_id AND job_name = 'ods.load_order_reviews';
+    CALL ods.take_orphans('ods.load_order_reviews', p_batch_id);
     SELECT count(*) INTO p_read FROM staging.stg_order_reviews WHERE load_batch_id = p_batch_id;
     INSERT INTO etl_log.rejected_rows (batch_id, job_name, source_table, reason, record)
     SELECT p_batch_id, 'ods.load_order_reviews', 'staging.stg_order_reviews', 'orphan: order_id not in ods.orders',
            to_jsonb(s) - 'load_batch_id' - 'loaded_at'
     FROM staging.stg_order_reviews s
-    WHERE load_batch_id = p_batch_id AND NOT EXISTS (SELECT 1 FROM ods.orders o WHERE o.order_id = s.order_id);
+    WHERE (s.load_batch_id = p_batch_id OR EXISTS (SELECT 1 FROM tmp_orphans t WHERE t.job = 'ods.load_order_reviews' AND t.rec ->> 'review_id' = s.review_id::text AND t.rec ->> 'order_id' = s.order_id::text)) AND NOT EXISTS (SELECT 1 FROM ods.orders o WHERE o.order_id = s.order_id);
     GET DIAGNOSTICS p_rejected = ROW_COUNT;
     -- keep the row with the latest answer timestamp for each (review_id, order_id); log the others
     CREATE TEMP TABLE IF NOT EXISTS tmp_rev ON COMMIT DROP AS SELECT * FROM staging.stg_order_reviews WHERE false;
@@ -253,7 +271,7 @@ BEGIN
     SELECT s.*, row_number() OVER (PARTITION BY s.review_id, s.order_id
                                    ORDER BY s.review_answer_timestamp DESC NULLS LAST, s.review_creation_date DESC NULLS LAST)
     FROM staging.stg_order_reviews s
-    WHERE s.load_batch_id = p_batch_id AND EXISTS (SELECT 1 FROM ods.orders o WHERE o.order_id = s.order_id);
+    WHERE (s.load_batch_id = p_batch_id OR EXISTS (SELECT 1 FROM tmp_orphans t WHERE t.job = 'ods.load_order_reviews' AND t.rec ->> 'review_id' = s.review_id::text AND t.rec ->> 'order_id' = s.order_id::text)) AND EXISTS (SELECT 1 FROM ods.orders o WHERE o.order_id = s.order_id);
     INSERT INTO etl_log.rejected_rows (batch_id, job_name, source_table, reason, record)
     SELECT p_batch_id, 'ods.load_order_reviews', 'staging.stg_order_reviews', 'duplicate (review_id, order_id)',
            to_jsonb(t) - 'load_batch_id' - 'loaded_at' - 'rn'
@@ -289,12 +307,13 @@ CREATE OR REPLACE PROCEDURE ods.load_closed_deals(p_batch_id bigint, INOUT p_rea
 LANGUAGE plpgsql AS $$
 BEGIN
     DELETE FROM etl_log.rejected_rows WHERE batch_id = p_batch_id AND job_name = 'ods.load_closed_deals';
+    CALL ods.take_orphans('ods.load_closed_deals', p_batch_id);
     SELECT count(*) INTO p_read FROM staging.stg_closed_deals WHERE load_batch_id = p_batch_id;
     INSERT INTO etl_log.rejected_rows (batch_id, job_name, source_table, reason, record)
     SELECT p_batch_id, 'ods.load_closed_deals', 'staging.stg_closed_deals', 'orphan: mql_id not in ods.mql',
            to_jsonb(s) - 'load_batch_id' - 'loaded_at'
     FROM staging.stg_closed_deals s
-    WHERE load_batch_id = p_batch_id AND NOT EXISTS (SELECT 1 FROM ods.mql m WHERE m.mql_id = s.mql_id);
+    WHERE (s.load_batch_id = p_batch_id OR EXISTS (SELECT 1 FROM tmp_orphans t WHERE t.job = 'ods.load_closed_deals' AND t.rec ->> 'mql_id' = s.mql_id::text)) AND NOT EXISTS (SELECT 1 FROM ods.mql m WHERE m.mql_id = s.mql_id);
     GET DIAGNOSTICS p_rejected = ROW_COUNT;
     INSERT INTO ods.closed_deals
     SELECT s.mql_id, s.seller_id, s.sdr_id, s.sr_id, s.won_date,
@@ -308,7 +327,7 @@ BEGIN
                CASE WHEN s.won_date::date < m.first_contact_date THEN 'won_before_first_contact' END], NULL),
            p_batch_id
     FROM staging.stg_closed_deals s JOIN ods.mql m ON m.mql_id = s.mql_id
-    WHERE s.load_batch_id = p_batch_id
+    WHERE (s.load_batch_id = p_batch_id OR EXISTS (SELECT 1 FROM tmp_orphans t WHERE t.job = 'ods.load_closed_deals' AND t.rec ->> 'mql_id' = s.mql_id::text))
     ON CONFLICT (mql_id) DO NOTHING;
     GET DIAGNOSTICS p_inserted = ROW_COUNT;
 END $$;

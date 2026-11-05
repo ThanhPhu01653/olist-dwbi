@@ -2,9 +2,11 @@
 
 full:        TRUNCATE staging, copy every source row.
 incremental: only rows that are not in staging yet. orders by order_purchase_timestamp (>= watermark),
-             child tables by the order_id of the orders staged in this batch, mql by first_contact_date,
-             closed_deals by won_date; customers of the new orders; sellers/products/geolocation/translation: rows not yet staged.
-Every table writes an etl_log.job_run row; the watermarks of orders / mql / closed_deals are stored in etl_log.watermark.
+             child tables by the order_id of the orders staged in this batch; customers of the new orders;
+             mql / closed_deals / sellers / products / geolocation / translation: every source row not yet staged (small tables).
+             mql and closed_deals deliberately do NOT use a date watermark: the CRM can register a deal before the first contact
+             date of its lead (won_date < first_contact_date), and a date filter would then skip the lead for ever.
+Every table writes an etl_log.job_run row; the watermarks of orders / mql / closed_deals (max date staged) are kept in etl_log.watermark.
 """
 from __future__ import annotations
 
@@ -27,8 +29,8 @@ TABLES = [
     ("products", "oltp.products", ["product_id"], "all"),
     ("geolocation", "oltp.geolocation", ["id"], "all"),
     ("product_category_name_translation", "oltp.product_category_name_translation", ["product_category_name"], "all"),
-    ("mql", "crm.mql", ["mql_id"], "wm_ts:first_contact_date"),
-    ("closed_deals", "crm.closed_deals", ["mql_id"], "wm_ts:won_date"),
+    ("mql", "crm.mql", ["mql_id"], "all"),
+    ("closed_deals", "crm.closed_deals", ["mql_id"], "all"),
 ]
 WATERMARKS = {"orders": "order_purchase_timestamp", "mql": "first_contact_date", "closed_deals": "won_date"}
 

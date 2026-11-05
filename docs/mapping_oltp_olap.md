@@ -9,7 +9,7 @@ Cách đọc: *Bảng nguồn* là bảng ODS (đã làm sạch từ `oltp`/`crm
 | Cột đích | Bảng nguồn | Cột nguồn | Phép biến đổi |
 | --- | --- | --- | --- |
 | date_key | (lịch) | full_date | Số yyyymmdd; -1 = Unknown |
-| full_date | (lịch) | - | Mỗi ngày 2016-01-01 … 2019-12-31 |
+| full_date | (lịch) | - | Mỗi ngày 2016-01-01 … 2020-12-31 |
 | day_of_week | (lịch) | full_date | isoweekday: 1 = Thứ Hai |
 | week_of_year | (lịch) | full_date | Tuần ISO |
 | year_month / year_quarter | (lịch) | full_date | 'YYYY-MM' / 'YYYY-Qn' |
@@ -101,8 +101,8 @@ Cách đọc: *Bảng nguồn* là bảng ODS (đã làm sạch từ `oltp`/`crm
 | Cột đích | Bảng nguồn | Cột nguồn | Phép biến đổi |
 | --- | --- | --- | --- |
 | order_id / order_item_id | ods.order_items | order_id, order_item_id | Giữ nguyên (degenerate dimension, khoá chính) |
-| purchase_date_key | ods.orders | order_purchase_timestamp | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2019 → -1 |
-| shipping_limit_date_key | ods.order_items | shipping_limit_date | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2019 → -1 |
+| purchase_date_key | ods.orders | order_purchase_timestamp | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2020 → -1 |
+| shipping_limit_date_key | ods.order_items | shipping_limit_date | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2020 → -1 |
 | customer_key | ods.orders, ods.customers, dw.dim_customer | customer_id | ods.orders.customer_id → ods.customers.customer_unique_id → dw.dim_customer: phiên bản SCD2 có hiệu lực tại ngày mua; không có → -1 |
 | customer_geography_key | dw.dim_customer | geography_key | geography_key của phiên bản khách tìm được ở trên |
 | seller_geography_key | dw.dim_seller | geography_key | Tra theo seller_id |
@@ -119,7 +119,7 @@ Cách đọc: *Bảng nguồn* là bảng ODS (đã làm sạch từ `oltp`/`crm
 | order_id | ods.orders | order_id | Giữ nguyên (khoá chính; UPSERT theo order_id) |
 | customer_key / customer_geography_key | ods.orders, ods.customers, dw.dim_customer | customer_id | ods.orders.customer_id → ods.customers.customer_unique_id → dw.dim_customer: phiên bản SCD2 có hiệu lực tại ngày mua; không có → -1; geography_key lấy từ phiên bản đó |
 | order_status_key | ods.orders, dw.dim_order_status | order_status | Tra theo trạng thái đơn; không có → -1 |
-| purchase_date_key / approved_date_key / carrier_date_key / delivered_date_key / estimated_date_key | ods.orders | order_purchase_timestamp, order_approved_at, order_delivered_carrier_date, order_delivered_customer_date, order_estimated_delivery_date | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2019 → -1 (mốc chưa xảy ra = NULL → -1) |
+| purchase_date_key / approved_date_key / carrier_date_key / delivered_date_key / estimated_date_key | ods.orders | order_purchase_timestamp, order_approved_at, order_delivered_carrier_date, order_delivered_customer_date, order_estimated_delivery_date | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2020 → -1 (mốc chưa xảy ra = NULL → -1) |
 | purchase_ts … estimated_ts (5 cột) | ods.orders | 5 cột mốc thời gian | Giữ nguyên timestamp gốc |
 | approval_hours | ods.orders | order_approved_at − order_purchase_timestamp | Số giờ; NULL nếu thiếu mốc hoặc âm (lỗi nguồn, ghi etl_log.fact_load_issue) |
 | handling_days | ods.orders | order_delivered_carrier_date − order_approved_at | Số ngày (2 chữ số thập phân); NULL nếu thiếu mốc hoặc âm |
@@ -141,7 +141,7 @@ Cách đọc: *Bảng nguồn* là bảng ODS (đã làm sạch từ `oltp`/`crm
 | Cột đích | Bảng nguồn | Cột nguồn | Phép biến đổi |
 | --- | --- | --- | --- |
 | order_id / payment_sequential | ods.order_payments | order_id, payment_sequential | Giữ nguyên (khoá chính) |
-| purchase_date_key | ods.orders | order_purchase_timestamp | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2019 → -1 |
+| purchase_date_key | ods.orders | order_purchase_timestamp | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2020 → -1 |
 | customer_key | ods.orders, ods.customers, dw.dim_customer | customer_id | ods.orders.customer_id → ods.customers.customer_unique_id → dw.dim_customer: phiên bản SCD2 có hiệu lực tại ngày mua; không có → -1 |
 | payment_type_key | ods.order_payments, dw.dim_payment_type | payment_type | Tra theo loại thanh toán; không có → -1 |
 | payment_installments / payment_value | ods.order_payments | payment_installments, payment_value | Giữ nguyên (installments đã chuẩn hoá ≥ 1 ở ODS) |
@@ -151,7 +151,7 @@ Cách đọc: *Bảng nguồn* là bảng ODS (đã làm sạch từ `oltp`/`crm
 | Cột đích | Bảng nguồn | Cột nguồn | Phép biến đổi |
 | --- | --- | --- | --- |
 | review_id / order_id | ods.order_reviews | review_id, order_id | Giữ nguyên (khoá chính; đã khử trùng ở ODS) |
-| review_creation_date_key / review_answer_date_key | ods.order_reviews | review_creation_date, review_answer_timestamp | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2019 → -1 |
+| review_creation_date_key / review_answer_date_key | ods.order_reviews | review_creation_date, review_answer_timestamp | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2020 → -1 |
 | customer_key | ods.orders, ods.customers, dw.dim_customer | customer_id | ods.orders.customer_id → ods.customers.customer_unique_id → dw.dim_customer: phiên bản SCD2 có hiệu lực tại ngày mua; không có → -1 |
 | review_score | ods.order_reviews | review_score | Giữ nguyên (CHECK 1–5) |
 | is_negative | ods.order_reviews | review_score | 1 nếu điểm ≤ 2 |
@@ -165,9 +165,9 @@ Cách đọc: *Bảng nguồn* là bảng ODS (đã làm sạch từ `oltp`/`crm
 | Cột đích | Bảng nguồn | Cột nguồn | Phép biến đổi |
 | --- | --- | --- | --- |
 | mql_id / landing_page_id | ods.mql | mql_id, landing_page_id | Giữ nguyên (mỗi MQL một dòng) |
-| first_contact_date_key | ods.mql | first_contact_date | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2019 → -1 |
-| won_date_key | ods.closed_deals | won_date | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2019 → -1; MQL chưa chốt → -1 |
-| first_sale_date_key | dw.dim_seller | first_sale_date | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2019 → -1; seller chưa có đơn → -1 |
+| first_contact_date_key | ods.mql | first_contact_date | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2020 → -1 |
+| won_date_key | ods.closed_deals | won_date | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2020 → -1; MQL chưa chốt → -1 |
+| first_sale_date_key | dw.dim_seller | first_sale_date | Ngày → yyyymmdd (dim_date); NULL hoặc ngoài 2016–2020 → -1; seller chưa có đơn → -1 |
 | lead_origin_key | ods.mql, dw.dim_lead_origin | origin | Tra theo origin; không có → -1 |
 | lead_profile_key | ods.closed_deals, dw.dim_lead_profile | 7 thuộc tính của deal | Tra theo tổ hợp 7 thuộc tính; MQL chưa chốt → -1 |
 | seller_key | ods.closed_deals, dw.dim_seller | seller_id | Tra theo seller_id; MQL chưa chốt → -1 |

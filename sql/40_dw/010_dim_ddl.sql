@@ -130,7 +130,7 @@ DECLARE
     r record;
 BEGIN
     FOR r IN SELECT * FROM (VALUES
-        ('dim_date', NULL, 'Chiều thời gian: 1 dòng / ngày từ 2016-01-01 đến 2019-12-31 (+ dòng Unknown key -1). Dùng chung cho nhiều vai trò (ngày mua, duyệt, giao...)'),
+        ('dim_date', NULL, 'Chiều thời gian: 1 dòng / ngày từ 2016-01-01 đến 2020-12-31 (+ dòng Unknown key -1). Dùng chung cho nhiều vai trò (ngày mua, duyệt, giao...)'),
         ('dim_date', 'date_key', 'Khoá ngày dạng số yyyymmdd (vd 20171124); -1 = Unknown'),
         ('dim_date', 'full_date', 'Ngày dạng date'), ('dim_date', 'day_of_month', 'Ngày trong tháng (1-31)'),
         ('dim_date', 'day_of_week', 'Thứ trong tuần, 1 = Thứ Hai ... 7 = Chủ Nhật'), ('dim_date', 'day_name', 'Tên thứ (tiếng Anh)'),

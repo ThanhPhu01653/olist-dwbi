@@ -26,7 +26,7 @@ SIZE_LIMIT_MB = 50
 
 # table -> (description, columns to leave out)
 TABLES: list[tuple[str, str, tuple[str, ...]]] = [
-    ("dw.dim_date", "Chiều thời gian (1 dòng / ngày 2016–2019 + Unknown -1)", ()),
+    ("dw.dim_date", "Chiều thời gian (1 dòng / ngày 2016–2020 + Unknown -1)", ()),
     ("dw.dim_geography", "Chiều địa lý (1 dòng / zip)", ()),
     ("dw.dim_customer", "Chiều khách hàng, SCD2 (1 dòng / phiên bản địa chỉ)", ()),
     ("dw.dim_seller", "Chiều seller, dùng chung bán hàng và funnel", ()),
@@ -42,7 +42,12 @@ TABLES: list[tuple[str, str, tuple[str, ...]]] = [
     ("dw.fact_review", "Fact giao dịch: 1 review", ()),
     ("dw.fact_lead_funnel", "Fact accumulating snapshot: 1 MQL", ()),
     ("dw.fact_seller_monthly", "Fact periodic snapshot: 1 seller × 1 tháng", ()),
-    ("etl_log.job_run", "Nhật ký chạy ETL (cho dashboard D7)", ()),
+    ("etl_log.job_run", "Nhật ký chạy ETL từng job (cho dashboard D7)", ()),
+    ("etl_log.v_run_summary", "Tóm tắt mỗi lô ETL: chế độ, thời gian, số dòng từng tầng (D7)", ()),
+    ("etl_log.v_dq_summary", "Kết quả kiểm thử chất lượng theo lô (D7)", ()),
+    ("etl_log.v_rejected_summary", "Số dòng bị loại theo lô, job, lý do (D7)", ()),
+    ("etl_log.batch_metrics", "Chỉ số chính của kho sau mỗi lô: đơn, GMV, MQL, deal… (D7, minh hoạ funnel lấp đầy dần)", ()),
+    ("etl_log.fact_load_issue", "Khoá rơi về Unknown và khoảng thời gian âm khi nạp fact (D7)", ()),
 ]
 
 # join keys shown in the README: fact column -> dimension (role)
@@ -70,7 +75,7 @@ def export_table(conn, table: str, drop: tuple[str, ...]) -> tuple[int, list[str
     # booleans as true/false (COPY would write t/f), char(n) without trailing blanks
     select_list = ", ".join(f"{c}::text AS {c}" if u == "bool" else f"rtrim({c}) AS {c}" if u == "bpchar" else c for c, u in info)
     order = {"fact_order_item": "order_id, order_item_id", "fact_payment": "order_id, payment_sequential", "fact_review": "review_id, order_id",
-             "fact_seller_monthly": "month_date_key, seller_key", "job_run": "run_id"}.get(name, cols[0])
+             "fact_seller_monthly": "month_date_key, seller_key", "job_run": "run_id", "v_run_summary": "batch_id", "batch_metrics": "batch_id"}.get(name, cols[0])
     # session settings give ISO dates and '.' decimals regardless of the server defaults
     conn.exec_driver_sql("SET datestyle = 'ISO, YMD'")
     raw = conn.connection.dbapi_connection if hasattr(conn.connection, "dbapi_connection") else conn.connection.connection
@@ -106,7 +111,7 @@ def main() -> None:
         "Trong Power BI chọn *Get data → Text/CSV*, đặt *File origin* = UTF-8, rồi **Transform Data** để đặt kiểu cột (xem hướng dẫn trong `handoff/`).", "",
         f"**Dung lượng**: {total_mb:.1f} MB tổng cộng. " + (
             f"Dưới {SIZE_LIMIT_MB} MB nên các file được commit cùng repo." if total_mb < SIZE_LIMIT_MB else
-            f"**Trên {SIZE_LIMIT_MB} MB: không commit; KT1 tải lên Google Drive và ghi link vào đây.**"), "",
+            f"**Trên {SIZE_LIMIT_MB} MB nên các file `*.csv` không được commit** (đã có trong `.gitignore`); cả thư mục được chia sẻ qua Google Drive, link ở `exports/README.md`. Tên file giữ nguyên giữa các lần xuất nên Power BI chỉ cần *Refresh*."), "",
         "## Danh sách file", "", "| File | Mô tả | Số dòng | Dung lượng | Số cột |", "| --- | --- | ---: | ---: | ---: |"]
     for table, desc, rows, cols, size in results:
         lines.append(f"| {table.split('.')[1]}.csv | {desc} | {rows:,} | {size / 1024 / 1024:.2f} MB | {len(cols)} |")

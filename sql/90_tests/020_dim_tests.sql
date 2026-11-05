@@ -16,7 +16,7 @@ cust AS (   -- SCD2 helper
     FROM dw.dim_customer WHERE customer_key <> -1)
 SELECT 'exactly one Unknown row (key -1)' AS check_name, 'dw.' || t AS target_table, '1' AS expected, n::text AS actual, n = 1 AS passed FROM unknown_rows
 UNION ALL
-SELECT 'dim_date covers 2016-01-01..2019-12-31 (1461 days + Unknown)', 'dw.dim_date', '1462', count(*)::text, count(*) = 1462 FROM dw.dim_date
+SELECT 'dim_date covers 2016-01-01..2020-12-31 (1827 days + Unknown)', 'dw.dim_date', '1828', count(*)::text, count(*) = 1828 FROM dw.dim_date
 UNION ALL
 SELECT 'dim_date: 3 Black Fridays in 2016-2018', 'dw.dim_date', '3', count(*)::text, count(*) = 3 FROM dw.dim_date WHERE is_black_friday AND year BETWEEN 2016 AND 2018
 UNION ALL
