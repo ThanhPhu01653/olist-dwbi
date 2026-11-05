@@ -1,4 +1,4 @@
-"""Load the warehouse dimensions (full reset or incremental upsert). Facts are added in P4."""
+"""Load the warehouse dimensions (full reset or incremental upsert) and the facts."""
 from __future__ import annotations
 
 from sqlalchemy.engine import Engine
@@ -17,6 +17,22 @@ DIM_PROCS = [
     ("dw.load_dim_lead_profile", "dw.dim_lead_profile"),
     ("dw.load_dim_sales_rep", "dw.dim_sales_rep"),
 ]
+
+# order matters: order_item -> payment -> fulfillment -> review (needs fulfillment.is_late) -> seller.first_sale_date -> funnel -> seller monthly
+FACT_PROCS = [
+    ("dw.load_fact_order_item", "dw.fact_order_item"),
+    ("dw.load_fact_payment", "dw.fact_payment"),
+    ("dw.load_fact_order_fulfillment", "dw.fact_order_fulfillment"),
+    ("dw.load_fact_review", "dw.fact_review"),
+    ("dw.load_dim_seller_first_sale", "dw.dim_seller"),
+    ("dw.load_fact_lead_funnel", "dw.fact_lead_funnel"),
+    ("dw.load_fact_seller_monthly", "dw.fact_seller_monthly"),
+]
+
+
+def load_facts(engine: Engine, batch_id: int) -> dict:
+    res = call_procedures(engine, batch_id, "dw", FACT_PROCS, counters=4)
+    return {"inserted": sum(r["inserted"] for r in res), "updated": sum(r["updated"] for r in res)}
 
 
 def load_dimensions(engine: Engine, batch_id: int, mode: str) -> dict:

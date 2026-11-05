@@ -25,6 +25,8 @@
 | 05/11 | **Chốt 05/11 (KT1); nhóm có thể đổi ở buổi 12/11:** giữ mốc nạp ban đầu **2017-12-31** | 45.430 đơn, 2.002 MQL, 3 deal; còn 8 đợt incremental hằng tháng đến 2018-08 (EDA câu f) |
 | 05/11 | Điều chỉnh đặc tả: `fact_order_fulfillment` thêm `promised_days` (= ngày dự kiến − ngày mua); thêm KPI "ngày hứa giao TB so với ngày giao thực tế" | Ngày dự kiến quá rộng rãi (91,9% đơn giao sớm hơn dự kiến, trung vị sớm 12 ngày) nên cần so sánh số ngày hứa với số ngày thực tế (dùng cho D3) |
 | 05/11 | Điều chỉnh đặc tả: `dim_lead_origin` tách `unknown` thành nhóm kênh riêng **Unknown** (không gộp với `other`) | `origin = unknown` có tỷ lệ chốt cao nhất (16,7%), gộp với `other` (2,7%) sẽ che mất sự khác biệt |
+| 05/11 | Làm rõ `dim_geography` (P4): zip chỉ có toạ độ ngoài bbox vẫn có dòng (lat/lng NULL, city/state theo mode của các điểm đó). Trước đó 4 zip như vậy bị bỏ sót (dim 19.174 thay vì 19.178 dòng khi nạp đủ dữ liệu) | ODS giữ zip với `n_points = 0`; thêm test đối soát số zip dim = số zip trong staging ∪ customers ∪ sellers |
+| 05/11 | Làm rõ cách tính fact (P4): `is_delivered` = status `delivered` và có ngày giao; `is_canceled` = status `canceled`; `dq_flag_count` = cờ ODS + số khoảng thời gian bị đặt NULL; `fact_seller_monthly.gmv/freight` chỉ tính đơn không thuộc nhóm Failed (khớp KPI GMV), `orders/items` tính mọi đơn; `seller_gmv_first_90d` = GMV (không Failed) trong 90 ngày kể từ ngày đơn đầu; thêm bảng `etl_log.fact_load_issue` | Chỉ làm rõ định nghĩa, không đổi tên bảng/cột của đặc tả |
 | 12/11 | *(buổi họp nhóm)* xem lại các dòng "Chốt 05/11" ở trên; mọi thay đổi sau đó phải cập nhật file này trước rồi mới sửa code | |
 
 ---
@@ -193,7 +195,7 @@ Grain: 1 zip code prefix. ~19.000 dòng.
 | state_name | từ seed |
 | region | Norte / Nordeste / Centro-Oeste / Sudeste / Sul |
 | country | 'Brazil' |
-| latitude, longitude | median sau khi lọc bbox; NULL nếu zip không có trong geolocation |
+| latitude, longitude | median sau khi lọc bbox; NULL nếu zip không có trong geolocation hoặc mọi điểm của zip nằm ngoài bbox |
 | *(không có cột geom – không dùng PostGIS; khoảng cách tính bằng haversine trên latitude/longitude)* | |
 
 Phân cấp: Zip → Thành phố → Bang → Vùng → Quốc gia.
@@ -327,11 +329,11 @@ cột `etl_batch_id`; khoảng thời gian tính ra âm (do lỗi nguồn) → N
 | lead_days | delivered − purchase (ngày) |
 | delay_days | delivered::date − estimated::date (âm = sớm) |
 | promised_days | estimated::date − purchase::date (ngày; số ngày Olist hứa giao) |
-| is_delivered, is_late, is_canceled | 0/1 (int để cộng được) |
+| is_delivered, is_late, is_canceled | 0/1 (int để cộng được). `is_delivered` = status `delivered` và có ngày giao; `is_late` = đã giao và `delay_days > 0`; `is_canceled` = status `canceled` |
 | item_count, seller_count | |
 | order_value, freight_total | Σ từ order items |
 | payment_total | Σ từ payments |
-| dq_flag_count | số cờ lỗi của đơn |
+| dq_flag_count | số cờ lỗi của đơn ở ODS + số khoảng thời gian bị đặt NULL vì âm |
 
 ### 7.3 `dw.fact_payment` – Transaction
 **Grain:** 1 lần thanh toán (`order_id`, `payment_sequential`). ~103.886 dòng.
@@ -358,7 +360,7 @@ is_negative (score ≤ 2), has_comment_title, has_comment_message, comment_lengt
 | days_to_close | won_date − first_contact_date |
 | days_won_to_first_sale | first_sale_date − won_date |
 | declared_product_catalog_size, declared_monthly_revenue | non-additive, dùng AVG/median |
-| seller_gmv_first_90d | GMV của seller trong 90 ngày từ đơn đầu (nối với fact_order_item) |
+| seller_gmv_first_90d | GMV (đơn không thuộc nhóm Failed) của seller trong 90 ngày kể từ ngày của đơn đầu (ngày 0…89), nối với fact_order_item; NULL nếu seller chưa có đơn |
 
 ### 7.6 `dw.fact_seller_monthly` – Periodic snapshot
 **Grain:** 1 seller × 1 tháng, **dày đặc** từ tháng có đơn đầu tiên của seller đến tháng cuối cùng có đơn hàng trong dữ liệu (để tổng GMV khớp fact_order_item; dashboard tự lọc giai đoạn hiển thị).
@@ -368,7 +370,7 @@ is_negative (score ≤ 2), has_comment_title, has_comment_message, comment_lengt
 | --- | --- |
 | month_date_key, seller_key | PK |
 | orders, items | 0 nếu tháng không có đơn |
-| gmv, freight | |
+| gmv, freight | chỉ tính đơn không thuộc nhóm Failed (khớp KPI GMV); `orders`, `items`, `canceled_orders` tính mọi đơn |
 | delivered_orders, late_orders, late_rate | |
 | canceled_orders | |
 | avg_review_score | NULL nếu không có review |
@@ -426,6 +428,7 @@ Cả nhóm dựng một semantic model chung trong một file .pbix và chia nha
 - `etl_log.rejected_rows(id, batch_id, job_name, source_table, reason, record jsonb, logged_at)`
 - `etl_log.watermark(source_table, last_value timestamptz, updated_at)` – cho incremental load
 - `etl_log.dq_check(batch_id, check_name, target_table, expected, actual, passed, checked_at)` – kết quả kiểm thử sau mỗi lần chạy
+- `etl_log.fact_load_issue(batch_id, fact_table, issue_type, detail, row_count, logged_at)` – khoá rơi về Unknown (`unknown_member`) và khoảng thời gian âm bị đặt NULL (`negative_interval`) khi nạp fact
 
 ## 12. Mô phỏng cập nhật (incremental)
 

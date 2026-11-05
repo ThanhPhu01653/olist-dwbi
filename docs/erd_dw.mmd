@@ -1,0 +1,178 @@
+%% ERD of the warehouse schema dw (DW_DESIGN sections 6-7). Only keys and the main measures are listed; full column lists: handoff/stats.md.
+%% Fact loaded as: TRANSACTION (insert), ACCUMULATING SNAPSHOT (upsert by id), PERIODIC SNAPSHOT (one row per seller and month).
+%% Role-playing: dim_date (many dates per fact) and dim_geography (customer / seller) are drawn once per fact with the role in the label.
+%% Render: paste into https://mermaid.live  (or: mmdc -i docs/erd_dw.mmd -o figures/3-3-4_erd_dw.png -s 2)
+erDiagram
+    dim_date ||--o{ fact_order_item : "purchase, shipping_limit (role-playing)"
+    dim_customer ||--o{ fact_order_item : "version in force on purchase date (SCD2)"
+    dim_geography ||--o{ fact_order_item : "customer / seller geography (role-playing)"
+    dim_seller ||--o{ fact_order_item : ""
+    dim_product ||--o{ fact_order_item : ""
+    dim_order_status ||--o{ fact_order_item : ""
+
+    dim_date ||--o{ fact_order_fulfillment : "purchase, approved, carrier, delivered, estimated (5 roles)"
+    dim_customer ||--o{ fact_order_fulfillment : ""
+    dim_geography ||--o{ fact_order_fulfillment : "customer geography"
+    dim_order_status ||--o{ fact_order_fulfillment : ""
+
+    dim_date ||--o{ fact_payment : "purchase"
+    dim_customer ||--o{ fact_payment : ""
+    dim_payment_type ||--o{ fact_payment : ""
+
+    dim_date ||--o{ fact_review : "creation, answer (role-playing)"
+    dim_customer ||--o{ fact_review : ""
+
+    dim_date ||--o{ fact_lead_funnel : "first contact, won, first sale (role-playing)"
+    dim_seller ||--o{ fact_lead_funnel : "-1 until the deal is won"
+    dim_lead_origin ||--o{ fact_lead_funnel : ""
+    dim_lead_profile ||--o{ fact_lead_funnel : "junk dimension, -1 until won"
+    dim_sales_rep ||--o{ fact_lead_funnel : "SDR and SR (role-playing)"
+
+    dim_date ||--o{ fact_seller_monthly : "first day of the month"
+    dim_seller ||--o{ fact_seller_monthly : ""
+
+    dim_geography ||--o{ dim_customer : "zip"
+    dim_geography ||--o{ dim_seller : "zip"
+
+    dim_date {
+        int date_key PK "yyyymmdd, -1 Unknown"
+        date full_date
+        char7 year_month
+        bool is_holiday_br
+        bool is_black_friday
+    }
+    dim_geography {
+        int geography_key PK
+        char5 zip_code_prefix UK
+        text city
+        char2 state_code
+        text region
+        float latitude "NULL if no in-bbox point"
+        float longitude
+    }
+    dim_customer {
+        int customer_key PK "one per address version"
+        char32 customer_unique_id
+        date effective_from
+        date effective_to
+        bool is_current
+        int geography_key FK
+    }
+    dim_seller {
+        int seller_key PK
+        char32 seller_id UK
+        bool is_from_funnel
+        text acquisition_channel
+        date won_date
+        date first_sale_date "set after fact_order_item"
+        int geography_key FK
+    }
+    dim_product {
+        int product_key PK
+        char32 product_id UK
+        text category_name_en
+        text category_group
+        text size_class
+    }
+    dim_order_status {
+        int order_status_key PK
+        text order_status UK
+        text status_group
+    }
+    dim_payment_type {
+        int payment_type_key PK
+        text payment_type UK
+        text payment_group
+    }
+    dim_lead_origin {
+        int lead_origin_key PK
+        text origin UK
+        text channel_group
+    }
+    dim_lead_profile {
+        int lead_profile_key PK "junk dimension"
+        text business_segment
+        text lead_type
+        text business_type
+    }
+    dim_sales_rep {
+        int sales_rep_key PK
+        char32 rep_id
+        text rep_role "SDR or SR"
+    }
+
+    fact_order_item {
+        char32 order_id PK "degenerate"
+        int order_item_id PK
+        int purchase_date_key FK
+        int shipping_limit_date_key FK
+        int customer_key FK
+        int customer_geography_key FK
+        int seller_geography_key FK
+        int seller_key FK
+        int product_key FK
+        int order_status_key FK
+        numeric price "additive"
+        numeric freight_value "additive"
+        numeric item_total
+    }
+    fact_order_fulfillment {
+        char32 order_id PK "accumulating snapshot"
+        int customer_key FK
+        int customer_geography_key FK
+        int order_status_key FK
+        int purchase_date_key FK
+        int approved_date_key FK
+        int carrier_date_key FK
+        int delivered_date_key FK
+        int estimated_date_key FK
+        numeric approval_hours
+        numeric handling_days
+        numeric transit_days
+        numeric lead_days
+        int delay_days
+        int promised_days
+        int is_late
+        numeric order_value
+    }
+    fact_payment {
+        char32 order_id PK
+        int payment_sequential PK
+        int purchase_date_key FK
+        int customer_key FK
+        int payment_type_key FK
+        int payment_installments
+        numeric payment_value
+    }
+    fact_review {
+        char32 review_id PK
+        char32 order_id PK
+        int review_creation_date_key FK
+        int review_answer_date_key FK
+        int customer_key FK
+        int review_score
+        int is_negative
+        int delivered_late
+    }
+    fact_lead_funnel {
+        char32 mql_id PK "accumulating snapshot"
+        int first_contact_date_key FK
+        int won_date_key FK
+        int first_sale_date_key FK
+        int lead_origin_key FK
+        int lead_profile_key FK
+        int seller_key FK
+        int sdr_key FK
+        int sr_key FK
+        int is_won
+        int days_to_close
+        numeric seller_gmv_first_90d
+    }
+    fact_seller_monthly {
+        int month_date_key PK "periodic snapshot, dense"
+        int seller_key PK
+        int orders
+        numeric gmv
+        numeric late_rate
+        numeric avg_review_score
+    }

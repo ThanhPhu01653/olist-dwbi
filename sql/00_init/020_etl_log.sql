@@ -49,3 +49,14 @@ CREATE TABLE IF NOT EXISTS etl_log.dq_check (
     checked_at    timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS ix_dq_check_batch ON etl_log.dq_check (batch_id);
+
+-- Lookups that fell back to the Unknown member (-1) and time intervals set to NULL while loading facts (never silent).
+CREATE TABLE IF NOT EXISTS etl_log.fact_load_issue (
+    batch_id      bigint      NOT NULL,
+    fact_table    text        NOT NULL,
+    issue_type    text        NOT NULL,         -- unknown_member | negative_interval
+    detail        text        NOT NULL,         -- column / interval concerned
+    row_count     bigint      NOT NULL,
+    logged_at     timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS ix_fact_load_issue_batch ON etl_log.fact_load_issue (batch_id);

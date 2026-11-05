@@ -1,0 +1,41 @@
+%% Constellation (fact constellation) of the warehouse, grouped by data mart. Orange = fact, blue = dimension.
+%% dim_date, dim_customer, dim_seller, dim_geography are conformed dimensions shared by several facts / marts.
+%% Render: paste into https://mermaid.live  (or: mmdc -i docs/erd_dw_marts.mmd -o figures/3-3-4_constellation.png -s 2)
+flowchart LR
+    subgraph SALES["mart_sales"]
+        foi["fact_order_item<br/>(transaction)"]
+    end
+    subgraph FULF["mart_fulfillment"]
+        fof["fact_order_fulfillment<br/>(accumulating snapshot)"]
+    end
+    subgraph CX["mart_cx"]
+        fpay["fact_payment<br/>(transaction)"]
+        frev["fact_review<br/>(transaction)"]
+    end
+    subgraph ACQ["mart_acquisition"]
+        flf["fact_lead_funnel<br/>(accumulating snapshot)"]
+        fsm["fact_seller_monthly<br/>(periodic snapshot)"]
+    end
+
+    d_date(["dim_date<br/>(role-playing)"])
+    d_cust(["dim_customer<br/>SCD2"])
+    d_geo(["dim_geography<br/>(customer / seller)"])
+    d_sell(["dim_seller<br/>conformed, SCD1"])
+    d_prod(["dim_product"])
+    d_stat(["dim_order_status"])
+    d_pay(["dim_payment_type"])
+    d_orig(["dim_lead_origin"])
+    d_prof(["dim_lead_profile<br/>junk"])
+    d_rep(["dim_sales_rep<br/>(SDR / SR)"])
+
+    foi --- d_date & d_cust & d_geo & d_sell & d_prod & d_stat
+    fof --- d_date & d_cust & d_geo & d_stat
+    fpay --- d_date & d_cust & d_pay
+    frev --- d_date & d_cust
+    flf --- d_date & d_sell & d_orig & d_prof & d_rep
+    fsm --- d_date & d_sell
+
+    classDef fact fill:#f4a261,stroke:#c26a1a,color:#000
+    classDef dim fill:#8ecae6,stroke:#2a7fa8,color:#000
+    class foi,fof,fpay,frev,flf,fsm fact
+    class d_date,d_cust,d_geo,d_sell,d_prod,d_stat,d_pay,d_orig,d_prof,d_rep dim

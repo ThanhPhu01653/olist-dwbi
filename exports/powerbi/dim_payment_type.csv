@@ -1,0 +1,7 @@
+﻿payment_type_key,payment_type,payment_group,display_name
+-1,unknown,Unknown,Unknown
+1,credit_card,Card,Credit card
+2,debit_card,Card,Debit card
+3,boleto,Bank slip,Boleto
+4,voucher,Voucher,Voucher
+5,not_defined,Unknown,Not defined

@@ -129,6 +129,13 @@ BEGIN
     FROM pts p JOIN tmp_geo_zips t ON t.z = p.z
     GROUP BY p.z;
     GET DIAGNOSTICS p_inserted = ROW_COUNT;      -- number of zip rows written
+    -- zips touched by this batch whose points are ALL outside the bbox: keep the zip (city/state by mode), coordinates NULL, n_points 0
+    INSERT INTO ods.geolocation_zip
+    SELECT ods.clean_zip(s.geolocation_zip_code_prefix), NULL, NULL, mode() WITHIN GROUP (ORDER BY ods.clean_city(s.geolocation_city)),
+           mode() WITHIN GROUP (ORDER BY ods.clean_state(s.geolocation_state)), 0, p_batch_id
+    FROM staging.stg_geolocation s JOIN tmp_geo_zips t ON t.z = ods.clean_zip(s.geolocation_zip_code_prefix)
+    WHERE NOT EXISTS (SELECT 1 FROM ods.geolocation_zip g WHERE g.zip_code_prefix = t.z)
+    GROUP BY ods.clean_zip(s.geolocation_zip_code_prefix);
 END $$;
 
 -- ---------------------------------------------------------------- orders
