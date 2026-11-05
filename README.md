@@ -2,6 +2,8 @@
 
 Bài tập lớn môn Kho dữ liệu & Kinh doanh thông minh (HUST). Xây kho dữ liệu chủ đề **Order Management** trên bộ
 Olist Brazilian E-Commerce, tích hợp bộ Olist Marketing Funnel (nối qua `seller_id`).
+📘 **Hướng dẫn cho cả nhóm (lộ trình theo việc, thuật ngữ, từ điển dữ liệu, hỏi đáp, dashboard): [huong-dan/00-BAT-DAU-TU-DAY.md](huong-dan/00-BAT-DAU-TU-DAY.md)**
+
 **Cả nhóm bắt đầu từ [handoff/00-TONG-QUAN.md](handoff/00-TONG-QUAN.md)** (tổng quan, số liệu, phát hiện, việc cần làm; không cần biết lập trình).
 Đặc tả schema: [docs/DW_DESIGN.md](docs/DW_DESIGN.md). Quy ước làm việc: [CLAUDE.md](CLAUDE.md). Hướng dẫn dựng Power BI: [powerbi/model.md](powerbi/model.md).
 
@@ -76,8 +78,9 @@ Dòng bị loại luôn được ghi vào `etl_log.rejected_rows` kèm lý do; k
 
 ### 4.3 Cấu trúc thư mục
 ```
+huong-dan/      hướng dẫn cho cả nhóm: lộ trình đọc, pipeline bằng lời, thuật ngữ, từ điển dữ liệu, 40 câu hỏi đáp, nghiệp vụ (nháp), D1-D7
 handoff/        bàn giao cho cả nhóm: 00-TONG-QUAN.md (đọc trước), một file cho mỗi phase P0-P7, các bảng số liệu sinh tự động
-docs/           DW_DESIGN.md (đặc tả + nhật ký quyết định), sơ đồ Mermaid (*.mmd), mapping nguồn -> đích
+docs/           DW_DESIGN.md (đặc tả + nhật ký quyết định), sơ đồ Mermaid (*.mmd), diagrams/*.drawio (mở bằng draw.io), mapping nguồn -> đích
 figures/        hình cho báo cáo (png)
 powerbi/        model.md (dựng Power BI từng bước), measures.md (DAX + giá trị kỳ vọng), theme.json
 exports/        powerbi/ = CSV cho Power BI (không commit nếu > 50 MB, xem exports/README.md), eda_sample.xlsx

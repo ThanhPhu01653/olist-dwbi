@@ -1,5 +1,7 @@
 # Tổng quan dự án Olist – Kho dữ liệu & BI (cập nhật 05/11/2026, sau P7)
 
+> 📘 **Bộ hướng dẫn cho cả nhóm: [`huong-dan/00-BAT-DAU-TU-DAY.md`](../huong-dan/00-BAT-DAU-TU-DAY.md)** – lộ trình đọc theo việc (dựng dashboard / viết báo cáo / làm slide), pipeline bằng lời, thuật ngữ, từ điển dữ liệu, 40 câu hỏi đáp, nghiệp vụ (nháp) và hướng dẫn từng dashboard D1–D7.
+
 *Dành cho cả nhóm, **không cần biết lập trình**. Mọi số liệu lấy từ truy vấn thật trên trạng thái cuối của kho; chi tiết và cách truy ngược nằm ở các file `handoff/2026-11-05-P0.md` … `P7-*.md`. Hình hiển thị ngay trong trang này khi mở trên GitHub.*
 
 ## 1. Dự án làm gì
@@ -127,6 +129,7 @@ Ngoài ra: dữ liệu đơn dùng được là **01/2017–08/2018** (99,6% s�
 | Hình | Nội dung | Mục |
 | --- | --- | --- |
 | `3-2-4_erd_oltp.png` | ERD hai hệ thống nguồn (bản nháp tự động) | 3.2.4 |
+| `3-2-1_bpmn_don_hang.png`, `3-2-2_bpmn_thu_hut_seller.png`, `3-2-3_business_model_canvas.png`, `3-2-5_cay_nghiep_vu.png`, `3-2-6_cay_yeu_cau_phan_tich.png`, `3-2-7_cay_phan_tich_D1…D7.png` | nghiệp vụ (BẢN NHÁP): BPMN, canvas, các cây | 3.1, 3.2.1–3.2.2, 3.3.5 |
 | `3-3-1_*.png` (17 hình) | EDA: lỗi dữ liệu, tỷ lệ rỗng, phân bố, Pareto, đơn theo tháng, review, tương quan, trễ vs review, freight vs cân nặng, lead time theo vùng, trễ theo bang, funnel (5 hình) | 3.3.1 |
 | `3-3-4_erd_dw.png`, `3-3-4_constellation.png` | ERD kho; constellation theo data mart (bản nháp tự động) | 3.3.4 |
 | `3-4-1_pipeline.png` | pipeline / các lớp (bản nháp tự động) | 3.4 |
@@ -147,17 +150,22 @@ Ngoài ra: dữ liệu đơn dùng được là **01/2017–08/2018** (99,6% s�
 - Nhóm chưa xem lại các quyết định "chốt 05/11" ở buổi họp 12/11; nếu đổi (ví dụ SCD2 → SCD1) phải sửa `DW_DESIGN.md` rồi chạy lại `rebuild_all.py`.
 
 ## 10. Mục báo cáo → file handoff nguồn → hình dùng
-Đề cương theo các mục đã dùng trong các file phase; các mục chưa có file nguồn (mở đầu, cơ sở lý thuyết chung, kết luận, và các mục 3.2.1–3.2.2, 3.3.2, 3.4.1 nếu có trong đề cương của lớp) do nhóm tự viết, có thể lấy ý từ `docs/DW_DESIGN.md` mục 1, 4, 9, 10.
+Các mục dưới đây theo đề cương báo cáo đã dùng trong các file phase. Mục không có file nguồn tự động (mở đầu chung, cơ sở lý thuyết, kết luận) do nhóm tự viết, có thể lấy ý từ `docs/DW_DESIGN.md` mục 1, 4, 9, 10 và `huong-dan/02-thuat-ngu.md`.
 
 | Mục báo cáo | File handoff nguồn (đoạn nháp + số liệu) | Hình / file dùng |
 | --- | --- | --- |
+| 3.1 Giới thiệu doanh nghiệp, bài toán và mô hình kinh doanh | `huong-dan/05-nghiep-vu-nhap.md` (mục 3 Business Model Canvas, mục 4 cây nghiệp vụ; **bản nháp cần sửa**), `docs/DW_DESIGN.md` mục 1 | `3-2-3_business_model_canvas.png`, `3-2-5_cay_nghiep_vu.png` |
+| 3.2.1–3.2.2 Quy trình nghiệp vụ (đơn hàng, thu hút seller) và yêu cầu phân tích | `huong-dan/05-nghiep-vu-nhap.md` (mục 1–2 BPMN, mục 5 cây yêu cầu phân tích; **bản nháp cần sửa**) | `3-2-1_bpmn_don_hang.png`, `3-2-2_bpmn_thu_hut_seller.png`, `3-2-6_cay_yeu_cau_phan_tich.png` |
 | 3.2.3 Hệ thống nguồn và dữ liệu | `2026-11-05-P0.md`, `stats.md` | – |
 | 3.2.4 ERD nguồn, mapping OLTP → OLAP | `2026-11-05-P0.md`, `P4.md`; `docs/mapping_oltp_olap.md`, `docs/mapping.csv` | `3-2-4_erd_oltp.png` |
 | 3.3.1 Khám phá dữ liệu (EDA) | `2026-11-05-P1.md`, `profiling.md`, `data-quality.md`, `distributions.md`, `correlations.md`, `funnel.md`, `design-questions.md` | 17 hình `3-3-1_*.png`, `exports/eda_sample.xlsx`, `excel-toolpak-guide.md` |
+| 3.3.2 Kiến trúc hệ thống (các lớp, pipeline) | `huong-dan/01-pipeline-bang-loi.md`, `docs/DW_DESIGN.md` mục 3 | `docs/diagrams/kien-truc-cac-lop.drawio`, `docs/diagrams/pipeline-etl.drawio` (mở bằng draw.io, xuất PNG); nháp: `3-4-1_pipeline.png` |
 | 3.3.3 Staging và ODS (thiết kế, quy tắc làm sạch) | `2026-11-05-P2.md` | sơ đồ luồng (vẽ lại từ `3-4-1_pipeline.png`) |
 | 3.3.4 Mô hình chiều: dimension | `2026-11-05-P3.md`, `stats.md` | `3-3-4_erd_dw.png`; sơ đồ phân cấp (vẽ) |
 | 3.3.4 Mô hình chiều: fact và mô hình vật lý | `2026-11-05-P4.md`, `docs/DW_DESIGN.md` mục 4, 7 | `3-3-4_erd_dw.png`, `3-3-4_constellation.png` |
+| 3.3.5 KPI và cây phân tích | `powerbi/measures.md` (thư viện KPI + giá trị kỳ vọng), `huong-dan/dashboards/D1.md … D7.md`, `huong-dan/05-nghiep-vu-nhap.md` mục 6 (cây phân tích từng dashboard) | `3-2-7_cay_phan_tich_D1.png … D7.png` |
 | 3.4 Tần suất cập nhật, nạp tăng dần, giám sát ETL | `2026-11-05-P5.md`, `rebuild-report.md` | `3-4-1_pipeline.png` (vẽ lại), bảng các đợt |
+| 3.4.1 Môi trường và mã nguồn | `README.md` (cài đặt, chạy một lệnh, cấu trúc thư mục), `CLAUDE.md` (quy ước), `docs/DW_DESIGN.md` mục 3 | `docs/diagrams/` (kiến trúc), sơ đồ cấu trúc thư mục (vẽ) |
 | 3.4.2–3.4.3 Làm sạch và đối soát dữ liệu | `2026-11-05-P2.md`, `before-after-samples.md` | `3-4-3_before_after_*.png` (6 hình) |
 | 3.4.4 Data mart, OLAP (ROLAP), Power BI | `2026-11-05-P6.md`, `olap-examples.md`; `powerbi/model.md`, `powerbi/measures.md` | `3-3-4_constellation.png`; ảnh dashboard D1–D7 (khi dựng xong) |
 | 3.5.1 Hiệu năng truy vấn | `2026-11-05-P7-perf.md`, `benchmark.md` | `3-5-1_benchmark.png` |
@@ -176,7 +184,7 @@ Slide: mỗi file phase có mục "Gợi ý slide (2–4 slide)"; ghép theo th�
 ## 12. Danh mục file
 | File | Nội dung |
 | --- | --- |
-| `00-TONG-QUAN.md` | trang này |
+| `00-TONG-QUAN.md` | trang này (hướng dẫn chi tiết cho từng việc: `huong-dan/`) |
 | `2026-11-05-P0.md` … `P6.md` | từng phase: đã làm, số liệu, việc cho nhóm, đoạn nháp, gợi ý slide |
 | `2026-11-05-P7-perf.md`, `P7-geo.md` | hiệu năng; cơ sở dữ liệu địa lý |
 | `stats.md` | số dòng mọi bảng, các chiều (phân cấp, dòng mẫu), các fact |
