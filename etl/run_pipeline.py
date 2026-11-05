@@ -1,8 +1,8 @@
 """Orchestrate the warehouse pipeline:  python -m etl.run_pipeline --mode full|incremental
 
 Stages run in order, one batch_id per run, every job writes etl_log.job_run; any error stops the run (status 'failed').
-    extract (oltp/crm -> staging) -> seeds -> ods -> [dim] -> tests
-Later phases add fact / mart / export stages to STAGES.
+    extract (oltp/crm -> staging) -> seeds -> ods -> dim -> fact -> tests
+Later phases add mart / export stages.
 """
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ import time
 from . import config
 from .db import get_engine
 from .extract import extract
-from .load_dw import load_dimensions
+from .load_dw import load_dimensions, load_facts
 from .load_seeds import load_seeds
 from .log import new_batch_id
 from .procs import call_procedures
@@ -61,6 +61,9 @@ def run_pipeline(mode: str, database: str, only_tests: str | None = None) -> dic
 
     done = stage("dim")
     done(load_dimensions(engine, batch, mode))
+
+    done = stage("fact")
+    done(load_facts(engine, batch))
 
     done = stage("tests")
     passed, failed, fails = run_tests(engine, batch, only_tests)

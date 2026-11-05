@@ -3,7 +3,8 @@
     python scripts/report_stats.py                      # olist_dw and olist_full
     python scripts/report_stats.py --database olist_dw
 
-Later phases extend this script with ODS / DW tables. All numbers come from the files and the databases.
+The warehouse part lists every table, the dimensions (hierarchies, samples) and the facts (grain, measures, totals).
+All numbers come from the files and the databases.
 """
 from __future__ import annotations
 
@@ -96,7 +97,59 @@ def warehouse_section(database: str) -> str:
             lines += [f"### dw.{dim} – {n:,} dòng (gồm dòng Unknown key −1)", "", f"Phân cấp / số phần tử: {chain}", "",
                       "| " + " | ".join(sample.columns) + " |", "| " + " | ".join("---" for _ in sample.columns) + " |",
                       *["| " + " | ".join(r) + " |" for r in sample.itertuples(index=False)], ""]
+        lines.append(fact_section(conn))
     return "\n".join(lines)
+
+
+FACTS = [
+    ("fact_order_item", "Transaction", "1 dòng sản phẩm trong 1 đơn", "price, freight_value, item_total"),
+    ("fact_order_fulfillment", "Accumulating snapshot", "1 đơn hàng", "approval_hours, handling_days, transit_days, lead_days, delay_days, promised_days, is_late, order_value"),
+    ("fact_payment", "Transaction", "1 lần thanh toán", "payment_value, payment_installments"),
+    ("fact_review", "Transaction", "1 review của 1 đơn", "review_score, is_negative, response_hours"),
+    ("fact_lead_funnel", "Accumulating snapshot", "1 MQL", "is_won, has_first_sale, days_to_close, days_won_to_first_sale, seller_gmv_first_90d"),
+    ("fact_seller_monthly", "Periodic snapshot", "1 seller × 1 tháng (dày đặc)", "orders, items, gmv, freight, late_rate, avg_review_score"),
+]
+FACT_TOTALS = [
+    ("Số đơn (fact_order_fulfillment)", "SELECT count(*) FROM dw.fact_order_fulfillment"),
+    ("Số dòng hàng (fact_order_item)", "SELECT count(*) FROM dw.fact_order_item"),
+    ("Tổng price, mọi đơn (BRL)", "SELECT sum(price) FROM dw.fact_order_item"),
+    ("GMV = Σ price của đơn không thuộc nhóm Failed (BRL)",
+     "SELECT sum(f.price) FROM dw.fact_order_item f JOIN dw.dim_order_status s USING (order_status_key) WHERE s.status_group <> 'Failed'"),
+    ("Tổng freight_value (BRL)", "SELECT sum(freight_value) FROM dw.fact_order_item"),
+    ("Tổng payment_value (BRL)", "SELECT sum(payment_value) FROM dw.fact_payment"),
+    ("Số đơn đã giao / giao trễ", "SELECT sum(is_delivered) || ' / ' || sum(is_late) FROM dw.fact_order_fulfillment"),
+    ("Số đơn bị hủy", "SELECT sum(is_canceled) FROM dw.fact_order_fulfillment"),
+    ("Điểm review trung bình / % review tiêu cực", "SELECT round(avg(review_score), 2) || ' / ' || round(100.0 * avg(is_negative), 1) || '%' FROM dw.fact_review"),
+    ("MQL / đã chốt (won) / seller đã có đơn", "SELECT count(*) || ' / ' || sum(is_won) || ' / ' || sum(has_first_sale) FROM dw.fact_lead_funnel"),
+    ("Số seller trong fact_seller_monthly / số tháng", "SELECT count(DISTINCT seller_key) || ' / ' || count(DISTINCT month_date_key) FROM dw.fact_seller_monthly"),
+    ("Σ gmv của fact_seller_monthly (phải bằng GMV ở trên, giai đoạn có đơn)", "SELECT sum(gmv) FROM dw.fact_seller_monthly"),
+]
+
+
+def fact_section(conn) -> str:
+    lines = ["## Các fact: grain, số dòng, measure, tổng", "", "| Fact | Loại | Grain | Số dòng | Measure chính |", "| --- | --- | --- | ---: | --- |"]
+    for name, kind, grain, measures in FACTS:
+        n = conn.execute(text(f"SELECT count(*) FROM dw.{name}")).scalar_one()
+        lines.append(f"| dw.{name} | {kind} | {grain} | {n:,} | {measures} |")
+    lines += ["", "| Chỉ số | Giá trị |", "| --- | ---: |"]
+    for label, sql in FACT_TOTALS:
+        v = conn.execute(text(sql)).scalar_one()
+        shown = f"{v:,.2f}" if hasattr(v, "quantize") else f"{v:,}" if isinstance(v, int) else str(v)
+        lines.append(f"| {label} | {shown} |")
+    issues = conn.execute(text("SELECT fact_table, issue_type, detail, sum(row_count) FROM etl_log.fact_load_issue "
+                               "WHERE batch_id = (SELECT max(batch_id) FROM etl_log.fact_load_issue) GROUP BY 1, 2, 3 ORDER BY 1, 2, 3")).fetchall()
+    lines += ["", "### Vấn đề ghi nhận khi nạp fact (lô gần nhất, `etl_log.fact_load_issue`)", ""]
+    if issues:
+        lines += ["| Fact | Loại | Chi tiết | Số dòng |", "| --- | --- | --- | ---: |"] + [f"| {a} | {b} | {c} | {d:,} |" for a, b, c, d in issues]
+    else:
+        lines.append("Không có.")
+    # 5 sample rows per fact
+    for name, *_ in FACTS:
+        sample = pd.read_sql_query(text(f"SELECT * FROM dw.{name} ORDER BY 1, 2 LIMIT 5"), conn)
+        sample = sample.drop(columns=[c for c in ("etl_batch_id",) if c in sample.columns]).astype(str).fillna("NULL").apply(lambda col: col.str.slice(0, 22))
+        lines += ["", f"### dw.{name} – 5 dòng mẫu", "", "| " + " | ".join(sample.columns) + " |", "| " + " | ".join("---" for _ in sample.columns) + " |",
+                  *["| " + " | ".join(r) + " |" for r in sample.itertuples(index=False)]]
+    return "\n".join(lines) + "\n"
 
 
 DIM_ORDER_KEY = {"dim_date": "date_key", "dim_geography": "geography_key", "dim_customer": "customer_key", "dim_seller": "seller_key",

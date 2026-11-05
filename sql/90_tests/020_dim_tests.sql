@@ -111,3 +111,26 @@ WHERE NOT EXISTS (SELECT 1 FROM dw.dim_sales_rep d WHERE d.rep_id = s.id AND d.r
 UNION ALL
 SELECT 'role-playing date views exist (11)', 'dw.v_dim_*_date', '11', count(*)::text, count(*) = 11
 FROM information_schema.views WHERE table_schema = 'dw' AND table_name LIKE 'v_dim\_%\_date'
+UNION ALL
+SELECT 'dim_geography: rows = distinct zips of STAGING geolocation (all points, even outside bbox) + customers + sellers (+ Unknown)', 'dw.dim_geography',
+       (SELECT count(*) + 1 FROM (SELECT ods.clean_zip(geolocation_zip_code_prefix) AS z FROM staging.stg_geolocation
+                                  UNION SELECT zip_code_prefix FROM ods.customers UNION SELECT zip_code_prefix FROM ods.sellers) u WHERE z IS NOT NULL)::text,
+       (SELECT count(*) FROM dw.dim_geography)::text,
+       (SELECT count(*) + 1 FROM (SELECT ods.clean_zip(geolocation_zip_code_prefix) AS z FROM staging.stg_geolocation
+                                  UNION SELECT zip_code_prefix FROM ods.customers UNION SELECT zip_code_prefix FROM ods.sellers) u WHERE z IS NOT NULL)
+       = (SELECT count(*) FROM dw.dim_geography)
+UNION ALL
+SELECT 'dim_geography: latitude/longitude are NULL exactly for zips without any in-bbox coordinate (decision e)', 'dw.dim_geography',
+       (SELECT count(*) FROM (SELECT zip_code_prefix FROM ods.customers UNION SELECT zip_code_prefix FROM ods.sellers
+                              UNION SELECT ods.clean_zip(geolocation_zip_code_prefix) FROM staging.stg_geolocation) u
+        WHERE zip_code_prefix IS NOT NULL AND NOT EXISTS (SELECT 1 FROM staging.stg_geolocation s WHERE ods.clean_zip(s.geolocation_zip_code_prefix) = u.zip_code_prefix
+                       AND s.geolocation_lat BETWEEN -33.75 AND 5.27 AND s.geolocation_lng BETWEEN -73.99 AND -34.79))::text,
+       (SELECT count(*) FROM dw.dim_geography WHERE geography_key <> -1 AND latitude IS NULL)::text,
+       (SELECT count(*) FROM (SELECT zip_code_prefix FROM ods.customers UNION SELECT zip_code_prefix FROM ods.sellers
+                              UNION SELECT ods.clean_zip(geolocation_zip_code_prefix) FROM staging.stg_geolocation) u
+        WHERE zip_code_prefix IS NOT NULL AND NOT EXISTS (SELECT 1 FROM staging.stg_geolocation s WHERE ods.clean_zip(s.geolocation_zip_code_prefix) = u.zip_code_prefix
+                       AND s.geolocation_lat BETWEEN -33.75 AND 5.27 AND s.geolocation_lng BETWEEN -73.99 AND -34.79))
+       = (SELECT count(*) FROM dw.dim_geography WHERE geography_key <> -1 AND latitude IS NULL)
+UNION ALL
+SELECT 'dim_geography: latitude and longitude are NULL together', 'dw.dim_geography', '0', count(*)::text, count(*) = 0
+FROM dw.dim_geography WHERE (latitude IS NULL) <> (longitude IS NULL)

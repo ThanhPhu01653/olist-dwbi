@@ -1,0 +1,5 @@
+﻿lead_profile_key,business_segment,lead_type,lead_behaviour_profile,business_type,has_company,has_gtin,average_stock
+-1,n/a,n/a,n/a,n/a,n/a,n/a,n/a
+1,computers,offline,unknown,reseller,unknown,unknown,unknown
+2,health_beauty,online_small,unknown,manufacturer,unknown,unknown,unknown
+3,food_supplement,industry,unknown,manufacturer,unknown,unknown,unknown

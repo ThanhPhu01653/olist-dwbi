@@ -38,9 +38,10 @@ CREATE INDEX IF NOT EXISTS ix_ods_customers_unique ON ods.customers (customer_un
 CREATE TABLE IF NOT EXISTS ods.customer_map (
     customer_id char(32) PRIMARY KEY, customer_unique_id char(32) NOT NULL, etl_batch_id bigint);
 
--- one row per zip: median coordinates, mode city/state (after bounding-box filter)
+-- one row per zip: median coordinates, mode city/state (after bounding-box filter).
+-- A zip whose points all lie outside the bbox is kept with NULL coordinates and n_points = 0 (decision "e": never lose a zip).
 CREATE TABLE IF NOT EXISTS ods.geolocation_zip (
-    zip_code_prefix char(5) PRIMARY KEY, latitude double precision NOT NULL, longitude double precision NOT NULL,
+    zip_code_prefix char(5) PRIMARY KEY, latitude double precision, longitude double precision,
     city text, state_code char(2), n_points integer NOT NULL, etl_batch_id bigint);
 
 CREATE TABLE IF NOT EXISTS ods.orders (
@@ -84,3 +85,7 @@ COMMENT ON SCHEMA ods IS 'Operational Data Store: dữ liệu nguồn đã làm 
 COMMENT ON TABLE ods.geolocation_zip IS '1 dòng / zip: toạ độ median sau khi lọc bbox Brazil, city/state theo mode';
 COMMENT ON TABLE ods.customer_map IS 'Ánh xạ customer_id (sinh theo từng đơn) -> customer_unique_id (khách thật)';
 COMMENT ON COLUMN ods.orders.dq_flags IS 'Danh sách lỗi dữ liệu phát hiện trên đơn (mốc thời gian sai thứ tự, thiếu ngày...)';
+
+-- upgrade for databases created before this rule (idempotent)
+ALTER TABLE ods.geolocation_zip ALTER COLUMN latitude DROP NOT NULL;
+ALTER TABLE ods.geolocation_zip ALTER COLUMN longitude DROP NOT NULL;
