@@ -48,6 +48,19 @@ TABLES: list[tuple[str, str, tuple[str, ...]]] = [
     ("etl_log.v_rejected_summary", "Số dòng bị loại theo lô, job, lý do (D7)", ()),
     ("etl_log.batch_metrics", "Chỉ số chính của kho sau mỗi lô: đơn, GMV, MQL, deal… (D7, minh hoạ funnel lấp đầy dần)", ()),
     ("etl_log.fact_load_issue", "Khoá rơi về Unknown và khoảng thời gian âm khi nạp fact (D7)", ()),
+    ("mart_sales.v_sales_daily", "Mart: GMV, đơn, AOV theo ngày (chỉ đơn không Failed)", ()),
+    ("mart_sales.v_sales_category_month", "Mart: GMV theo tháng x nhóm ngành x danh mục", ()),
+    ("mart_sales.v_sales_state_month", "Mart: GMV, freight ratio theo tháng x bang của khách", ()),
+    ("mart_sales.v_category_pareto", "Mart: Pareto 80/20 GMV theo danh mục (hạng A/B/C)", ()),
+    ("mart_fulfillment.v_fulfillment_state_month", "Mart: tỷ lệ đúng hạn / hủy, thời gian từng chặng theo tháng x bang", ()),
+    ("mart_fulfillment.v_status_funnel", "Mart: số đơn đi qua từng chặng theo tháng (dạng dài)", ()),
+    ("mart_cx.v_review_vs_delay", "Mart: điểm review theo nhóm trễ giao x tháng", ()),
+    ("mart_cx.v_payment_mix_month", "Mart: cơ cấu thanh toán theo tháng x hình thức", ()),
+    ("mart_cx.v_customer_rfm", "Mart: RFM từng khách thật và phân khúc", ()),
+    ("mart_cx.v_customer_cohort", "Mart: cohort khách quay lại theo tháng mua đầu", ()),
+    ("mart_acquisition.v_funnel_by_origin_month", "Mart: funnel MQL -> won -> có đơn theo tháng liên hệ x origin", ()),
+    ("mart_acquisition.v_seller_scorecard", "Mart: scorecard từng seller có đơn (Pareto, cờ mẫu nhỏ)", ()),
+    ("mart_acquisition.v_seller_by_channel", "Mart: seller và GMV theo kênh thu hút", ()),
 ]
 
 # join keys shown in the README: fact column -> dimension (role)
@@ -63,12 +76,17 @@ JOINS = [
 ]
 
 
+def columns_of(conn, table: str) -> list[tuple[str, str]]:
+    """[(column, udt_name)] in table order; works for tables, views and materialized views (information_schema does not list the latter)."""
+    return [tuple(r) for r in conn.execute(text(
+        "SELECT a.attname, t.typname FROM pg_attribute a JOIN pg_type t ON t.oid = a.atttypid WHERE a.attrelid = CAST(:r AS regclass) "
+        "AND a.attnum > 0 AND NOT a.attisdropped ORDER BY a.attnum"), {"r": table})]
+
+
 def export_table(conn, table: str, drop: tuple[str, ...]) -> tuple[int, list[str], int]:
     """Write exports/powerbi/<table>.csv; return (rows, columns, bytes)."""
     schema, name = table.split(".")
-    info = conn.execute(
-        text("SELECT column_name, udt_name FROM information_schema.columns WHERE table_schema = :s AND table_name = :t ORDER BY ordinal_position"),
-        {"s": schema, "t": name}).fetchall()
+    info = columns_of(conn, table)
     technical = ("dw_created_at", "dw_updated_at")      # warehouse bookkeeping, useless in reports
     info = [(c, u) for c, u in info if c not in drop and c not in technical]
     cols = [c for c, _ in info]

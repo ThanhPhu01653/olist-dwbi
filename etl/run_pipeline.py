@@ -2,8 +2,8 @@
 
 One batch_id per run; every stage writes etl_log.job_run and the whole run is one 'pipeline.<mode>' row. The first error stops the
 run: the failing job and the pipeline row get status 'failed' with the message, the exit code is 1.
-    extract (oltp/crm -> staging) -> seeds -> ods -> dim -> fact -> tests -> snapshot (etl_log.batch_metrics) -> export_powerbi
-Data marts (P6) will be added between fact and tests. --no-export skips the CSV export (used while replaying many batches).
+    extract (oltp/crm -> staging) -> seeds -> ods -> dim -> fact -> mart (refresh materialized views) -> tests -> snapshot (etl_log.batch_metrics) -> export_powerbi
+--no-export skips the CSV export (used while replaying many batches).
 """
 from __future__ import annotations
 
@@ -83,6 +83,10 @@ def run_pipeline(mode: str, database: str, only_tests: str | None = None, export
 
         done = stage("fact")
         done(load_facts(engine, batch))
+
+        done = stage("mart")
+        res = call_procedures(engine, batch, "mart", [("dw.refresh_marts", "mart_*.v_* (materialized)")], counters=4)
+        done({"mview_rows": res[0]["read"]})
 
         done = stage("tests")
         with job_run(engine, batch, "tests.run", "test") as tr:

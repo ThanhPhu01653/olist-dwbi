@@ -5,9 +5,9 @@
 ## 1. Dự án đang làm gì
 Xây **kho dữ liệu** cho chủ đề **Quản lý đơn hàng** của Olist (sàn kết nối người bán nhỏ với các sàn TMĐT lớn ở Brazil), cộng thêm quy trình **thu hút người bán (seller)** từ bộ dữ liệu Marketing Funnel. Kho dữ liệu giúp trả lời: doanh thu bao nhiêu, đơn đi mất bao lâu ở từng chặng, giao trễ ảnh hưởng đánh giá ra sao, seller đến từ kênh marketing nào thì bán tốt.
 
-Hiện tại hai hệ thống nguồn, các tầng staging, làm sạch (ODS), kho dữ liệu (10 chiều + 6 bảng fact), nạp tăng dần và giám sát ETL đã xây xong; kho đang ở trạng thái đủ dữ liệu và có bộ CSV đầy đủ cho Power BI (xem mục *Tiến độ* ngay bên dưới). Còn lại: data mart/OLAP (P6), mở rộng (P7).
+Hiện tại hai hệ thống nguồn, các tầng staging, làm sạch (ODS), kho dữ liệu (10 chiều + 6 bảng fact), nạp tăng dần và giám sát ETL đã xây xong; kho đang ở trạng thái đủ dữ liệu và có bộ CSV đầy đủ cho Power BI (xem mục *Tiến độ* ngay bên dưới). Data mart, thao tác OLAP và đặc tả Power BI đã có (P6). Còn lại: mở rộng hiệu năng + địa lý (P7), rồi cả nhóm dựng dashboard, viết báo cáo và slide.
 
-## Tiến độ (cập nhật sau P5)
+## Tiến độ (cập nhật sau P6)
 | Phase | Nội dung | Trạng thái |
 | --- | --- | --- |
 | P0 | Dựng 2 hệ thống nguồn (`oltp`, `crm`), nạp dữ liệu | Xong |
@@ -16,7 +16,7 @@ Hiện tại hai hệ thống nguồn, các tầng staging, làm sạch (ODS), k
 | P3 | 10 bảng chiều (dimension), SCD2 cho khách | Xong |
 | P4 | 6 bảng fact, kiểm thử, bản đầu dữ liệu cho Power BI | Xong |
 | P5 | Nạp tăng dần 11 đợt hằng tháng, điều phối `run_pipeline`, giám sát ETL; `olist_dw` ở **trạng thái cuối (đủ dữ liệu)**, khớp 100% với một lần nạp full | Xong |
-| P6 | Data mart, ví dụ OLAP, đặc tả Power BI, xuất bản cuối | Chưa làm |
+| P6 | 4 data mart (13 view), 5 thao tác OLAP (ROLAP), đặc tả Power BI (`powerbi/model.md`, `measures.md`, `theme.json`), 4 sơ đồ PNG nháp | Xong |
 | P7 | Mở rộng: hiệu năng + địa lý | Chưa làm |
 
 **Số dòng trong `olist_dw` ở trạng thái cuối** (gồm dòng Unknown −1 của các chiều): dim_date 1.828 · dim_geography 19.178 · dim_customer (SCD2) 96.339 · dim_seller 3.558 · dim_product 32.952 · dim_order_status 9 · dim_payment_type 6 · dim_lead_origin 11 · dim_lead_profile 503 · dim_sales_rep 55 · fact_order_item 112.650 · fact_order_fulfillment 99.441 · fact_payment 103.886 · fact_review 99.224 · fact_lead_funnel 8.000 · fact_seller_monthly 36.583.
@@ -35,7 +35,15 @@ Hiện tại hai hệ thống nguồn, các tầng staging, làm sạch (ODS), k
 
 Cách khớp: dữ liệu nạp ban đầu đến 31/12/2017 rồi **11 đợt hằng tháng (01/2018 → 11/2018)** cho tới hết dữ liệu nguồn (8 đợt đầu tới 08/2018; 3 đợt cuối mang nốt 20 đơn và 50 deal). So sánh với nạp full trên dữ liệu đầy đủ: số dòng, tổng tiền và checksum nội dung của cả 16 bảng dim/fact đều khớp. Chi tiết, bảng các đợt và funnel lấp đầy dần: `handoff/2026-11-05-P5.md`.
 
-**File CSV cho Power BI**: `exports/powerbi/` (22 file, 69 MB, UTF-8 có BOM) là bản **đủ dữ liệu**. Vì vượt 50 MB nên **không nằm trong git**; thư mục được chia sẻ qua Google Drive, link ở `exports/README.md`. Tên file giữ nguyên nên Power BI chỉ cần *Refresh*. `exports/powerbi/README.md` (có trong git) liệt kê từng file, cột và khoá nối.
+**4 data mart** (schema `mart_*`, làm mới tự động trong pipeline): `mart_sales` (GMV theo ngày / danh mục / bang, Pareto danh mục), `mart_fulfillment` (thời gian từng chặng, tỷ lệ trễ và hủy, phễu trạng thái), `mart_cx` (review theo mức trễ, cơ cấu thanh toán, RFM, cohort), `mart_acquisition` (funnel MQL → seller, scorecard seller, seller theo kênh). Danh sách view và số dòng: `handoff/2026-11-05-P6.md`; kết quả 5 thao tác OLAP: `handoff/olap-examples.md`.
+
+**File CSV cho Power BI**: `exports/powerbi/` gồm **35 file** (khoảng 79 MB, UTF-8 có BOM): 10 chiều, 6 fact, 13 view mart và 6 file giám sát ETL. Vì vượt 50 MB nên **không nằm trong git**; thư mục được chia sẻ qua Google Drive, link và danh sách 13 file mới ở `exports/README.md`. Tên file giữ nguyên nên Power BI chỉ cần *Refresh*. `exports/powerbi/README.md` (có trong git) liệt kê từng file, cột và khoá nối.
+
+### Bắt đầu dựng dashboard
+1. Đọc **`powerbi/model.md`** và làm từ mục 1 đến mục 7: cài Power BI Desktop → tải CSV từ Drive → tạo tham số `DataFolder` và hàm `fnCsv` → nạp bảng (đoạn lệnh có sẵn ở phụ lục) → tạo 32 quan hệ → thiết lập bảng ngày, phân cấp.
+2. Tạo measure bằng cách copy-paste từ **`powerbi/measures.md`**, rồi **đối chiếu với bảng giá trị kỳ vọng** ở cuối file đó (ví dụ GMV toàn bộ = 13.494.400,74). Số lệch thì báo KT1.
+3. Dựng D1–D7 theo bảng visual gợi ý ở mục 8 của `model.md` (cả nhóm chia nhau; phân công làm sau), dùng `powerbi/theme.json`, lọc thời gian 2017-01 → 2018-08 cho D1–D6; xem mục 9 để Publish to web.
+4. Sơ đồ nháp đã có trong `figures/` (`3-2-4_erd_oltp.png`, `3-3-4_erd_dw.png`, `3-3-4_constellation.png`, `3-4-1_pipeline.png`); cả nhóm vẽ lại bằng draw.io cho báo cáo.
 
 ## 2. Hai hệ thống nguồn và số liệu
 | Hệ thống | Nội dung | Số bảng | Số dòng | Giai đoạn |
@@ -115,7 +123,7 @@ Cả nhóm cùng làm dashboard Power BI, báo cáo và slide từ các file tro
 | Việc | Nguồn | Hạn gợi ý |
 | --- | --- | --- |
 | Dự họp chốt thiết kế ngày 12/11 với bảng câu hỏi ở mục 5 | `design-questions.md` | 12/11 |
-| Vẽ các sơ đồ (ERD nguồn, hệ thống chiều, data model logic/vật lý, constellation) bằng draw.io | `docs/*.mmd`, mục "Việc cho nhóm" trong từng file phase | trước 21/11 |
+| Vẽ lại các sơ đồ (ERD nguồn, hệ thống chiều, data model logic/vật lý, constellation, pipeline) bằng draw.io từ PNG nháp trong `figures/` | `docs/*.mmd`, mục "Việc cho nhóm" trong từng file phase | trước 21/11 |
 | Nạp CSV vào Power BI, tạo quan hệ và phân cấp | `exports/powerbi/README.md`, `2026-11-05-P4.md` | từ 18/11 |
 | Chạy Excel Data Analysis ToolPak, chụp ảnh kết quả | `excel-toolpak-guide.md`, `exports/eda_sample.xlsx` | trước 21/11 |
 | Viết các mục báo cáo 3.2.3, 3.2.4, 3.3.1, 3.3.3, 3.3.4, 3.4.2–3.4.3 từ các đoạn nháp | `2026-11-05-P0.md` … `P4.md` | trước báo cáo tuần 12 (30/11–6/12) |
@@ -132,10 +140,12 @@ Cả nhóm cùng làm dashboard Power BI, báo cáo và slide từ các file tro
 | `2026-11-05-P3.md` | 10 bảng chiều: grain, phân cấp, SCD |
 | `2026-11-05-P4.md` | 6 bảng fact, kiểm thử, hướng dẫn nạp CSV vào Power BI |
 | `2026-11-05-P5.md` | nạp tăng dần, điều phối, giám sát ETL, bảng các đợt, cơ chế thử lại dòng mồ côi |
+| `2026-11-05-P6.md` | data mart, KPI để đối chiếu, việc dựng Power BI, đoạn nháp 3.4.4 |
+| `olap-examples.md` | 17 truy vấn OLAP (roll-up, drill-down, slice, dice, pivot) với kết quả và giải thích ROLAP/MOLAP |
 | `before-after-samples.md` | mẫu dữ liệu trước/sau làm sạch |
 | `profiling.md`, `data-quality.md`, `distributions.md`, `correlations.md`, `funnel.md` | bảng số liệu chi tiết của EDA (sinh tự động) |
 | `design-questions.md` | câu hỏi thiết kế a–f kèm số liệu, phương án, khuyến nghị |
 | `excel-toolpak-guide.md` | hướng dẫn Excel ToolPak |
 | `stats.md` | số dòng mọi bảng, các chiều (phân cấp, dòng mẫu), các fact (measure, tổng) |
 
-Ngoài `handoff/`: `docs/mapping_oltp_olap.md` (ánh xạ cột nguồn → đích), `docs/erd_dw.mmd`, `docs/erd_dw_marts.mmd`, `docs/pipeline.mmd` (sơ đồ kho và pipeline, dán vào mermaid.live), `exports/powerbi/` (dữ liệu cho Power BI).
+Ngoài `handoff/`: `powerbi/` (model.md, measures.md, theme.json), `docs/mapping_oltp_olap.md` (ánh xạ cột nguồn → đích), `docs/erd_dw.mmd`, `docs/erd_dw_marts.mmd`, `docs/pipeline.mmd` (sơ đồ kho và pipeline, dán vào mermaid.live), `exports/powerbi/` (dữ liệu cho Power BI).
