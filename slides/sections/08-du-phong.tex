@@ -1,0 +1,130 @@
+\begin{frame}[noprogressbar,noframenumbering]{Vì sao fact\symbol{95}order\symbol{95}fulfillment là accumulating snapshot? (3)}
+\begin{itemize}
+  \item Đơn đi qua nhiều mốc; một dòng, cập nhật theo mốc; lead time tính sẵn (approval 10,3 giờ, handling 2,9 ngày, transit 9,3 ngày)
+  \item Slide chính liên quan: S63
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{ll}\toprule
+\textbf{Cột của fact\_order\_fulfillment (đơn 19c36691…)} & \textbf{Giá trị} \\\midrule
+approval\_hours & 36,61 \\
+handling\_days & 0,71 \\
+transit\_days & 12,84 \\
+lead\_days & 15,07 \\
+promised\_days & 21 \\
+delay\_days & -6 (giao sớm 6 ngày) \\
+order\_value & 43,00 \\
+freight\_total & 45,30 \\
+payment\_total & 88,30 \\
+\bottomrule\end{tabular}}\end{center}
+
+\note{[S63] B01 - dự phòng cho câu hỏi: Vì sao \texttt{fact\_\allowbreak{}order\_\allowbreak{}fulfillment} là accumulating snapshot? (3). Xem huong-dan/04-cau-hoi-van-dap.md.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Vì sao chọn ROLAP mà không MOLAP? (25)}
+\begin{itemize}
+  \item PostgreSQL không có khối đa chiều, dữ liệu nhỏ, kho luôn tươi, Power BI là lớp ngữ nghĩa
+  \item Slide chính liên quan: S11, S87
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{llll}\toprule
+\textbf{Tiêu chí} & \textbf{MOLAP} & \textbf{ROLAP} & \textbf{HOLAP} \\\midrule
+Lưu trữ & khối đa chiều riêng & bảng quan hệ (lược đồ sao) & kết hợp hai cách \\
+Tốc độ truy vấn & rất nhanh (tính sẵn) & phụ thuộc chỉ mục, materialized view & cân bằng \\
+Độ tươi dữ liệu & phải xử lý lại khối & luôn tươi sau mỗi lần nạp & tùy phần \\
+Công cụ & ví dụ SSAS & PostgreSQL + Power BI & -- \\
+Nhóm chọn & -- & \ding{51} ROLAP & -- \\
+\bottomrule\end{tabular}}\end{center}
+
+\note{[S11] B02 - dự phòng cho câu hỏi: Vì sao chọn ROLAP mà không MOLAP? (25). Xem huong-dan/04-cau-hoi-van-dap.md.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{SCD2 hoạt động thế nào? (6)}
+\begin{itemize}
+  \item Mỗi lần zip đổi mở phiên bản mới; 96.096 khách $\rightarrow$ 96.339 dòng; fact tra theo ngày mua
+  \item Slide chính liên quan: S59, S75
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{llllllll}\toprule
+\textbf{customer\_key} & \textbf{khách thật} & \textbf{zip} & \textbf{thành phố} & \textbf{effective\_from} & \textbf{effective\_to} & \textbf{is\_current} & \textbf{version} \\\midrule
+15081 & 570eb70f… & 31930 & belo horizonte & 1900-01-01 & 2017-11-08 & không & 1 \\
+15082 & 570eb70f… & 31130 & belo horizonte & 2017-11-09 & 9999-12-31 & có & 2 \\
+\bottomrule\end{tabular}}\end{center}
+
+\note{[S59] B03 - dự phòng cho câu hỏi: SCD2 hoạt động thế nào? (6). Xem huong-dan/04-cau-hoi-van-dap.md.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Xử lý 1 triệu dòng geolocation ra sao? (20)}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Lọc khung Brazil (loại 42), trung vị toạ độ, mode thành phố, 19.015 zip; zip chỉ có toạ độ ngoài khung vẫn có dòng
+  \item Slide chính liên quan: S40, S72
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-4-3_before_after_geolocation.png}\end{center}
+\end{column}\end{columns}
+
+\note{[B04] B04 - dự phòng cho câu hỏi: Xử lý 1 triệu dòng geolocation ra sao? (20). Xem huong-dan/04-cau-hoi-van-dap.md.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Vì sao đúng hạn 93,2\% mà review đơn trễ vẫn tệ? (33)}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Trễ chỉ 6,8\% đơn nhưng tạo 27,4\% review tiêu cực; điểm 4,29 $\rightarrow$ 1,70; ngày dự kiến quá rộng
+  \item Slide chính liên quan: S45, S98
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_delay_vs_review.png}\end{center}
+\end{column}\end{columns}
+
+\note{[B05] B05 - dự phòng cho câu hỏi: Vì sao đúng hạn 93,2\% mà review đơn trễ vẫn tệ? (33). Xem huong-dan/04-cau-hoi-van-dap.md.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Vì sao star schema chỉ nhanh hơn OLTP 1,0–1,6 lần mà vẫn đáng dùng? (30)}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Dữ liệu nhỏ; giá trị là truy vấn đơn giản, KPI nhất quán; tốc độ từ materialized view và index
+  \item Slide chính liên quan: S88
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-5-1_benchmark.png}\end{center}
+\end{column}\end{columns}
+
+\note{[B06] B06 - dự phòng cho câu hỏi: Vì sao star schema chỉ nhanh hơn OLTP 1,0–1,6 lần mà vẫn đáng dùng? (30). Xem huong-dan/04-cau-hoi-van-dap.md.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Làm sao biết nạp tăng dần đúng? (13)}
+\begin{itemize}
+  \item So với nạp full: 16/16 bảng khớp số dòng, tổng tiền, checksum; chạy lại một đợt cho 0 dòng mới
+  \item Slide chính liên quan: S80
+\end{itemize}
+
+
+\note{[B07] B07 - dự phòng cho câu hỏi: Làm sao biết nạp tăng dần đúng? (13). Xem huong-dan/04-cau-hoi-van-dap.md.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{GMV khác tổng giá hàng thế nào? (23)}
+\begin{itemize}
+  \item GMV loại đơn Failed: 13.494.400,74 so với 13.591.643,70
+  \item Slide chính liên quan: S26, S30
+\end{itemize}
+
+
+\note{[B08] B08 - dự phòng cho câu hỏi: GMV khác tổng giá hàng thế nào? (23). Xem huong-dan/04-cau-hoi-van-dap.md.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Dòng mồ côi được xử lý ra sao? (15)}
+\begin{itemize}
+  \item Loại kèm lý do, thử lại ở đợt sau; mới chứng minh bằng test
+  \item Slide chính liên quan: S81
+\end{itemize}
+
+
+\note{[B09] B09 - dự phòng cho câu hỏi: Dòng mồ côi được xử lý ra sao? (15). Xem huong-dan/04-cau-hoi-van-dap.md.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Ngày hứa giao so với thực tế cho thấy điều gì? (34)}
+\begin{itemize}
+  \item Hứa 24,4, thực tế 12,6: sớm 11,8 ngày; 91,9\% đơn giao sớm
+  \item Slide chính liên quan: S27, S98
+\end{itemize}
+
+
+\note{[B10] B10 - dự phòng cho câu hỏi: Ngày hứa giao so với thực tế cho thấy điều gì? (34). Xem huong-dan/04-cau-hoi-van-dap.md.}
+\end{frame}

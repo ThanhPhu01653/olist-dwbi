@@ -1,0 +1,64 @@
+% Bộ slide Beamer – Kho dữ liệu và Kinh doanh thông minh (MI4214). Biên dịch: LuaLaTeX (latexmk -lualatex main.tex).
+% Theme HUST: thư mục hust-theme/ (đường dẫn đặt trong .latexmkrc). Bản có ghi chú người nói: slides-notes.tex.
+\documentclass[aspectratio=169,10pt]{beamer}
+\usetheme[
+  color=blue, font=lato, titlefont=avantgarde, footerlogo=mark, bar=thin, titlepage=cover,
+  sectionpage=panel, numbering=fraction, progressbar=on, dateaddress=on, address={Hà Nội},
+  logolayout=2, logo2image=fami-shield.png, logo2vn={KHOA TOÁN - TIN}, logo2en={Faculty of Mathematics and Informatics},
+  logo2color=famiblue, logo2layout=1, headerlogo=fami-shield.png, framebg=on, footermeta=on
+]{HUST}
+\graphicspath{{hust-theme/assets/}{assets/}{figures/}}
+
+\setbeamerfont{frametitle}{size=\small}   % tiêu đề slide là câu kết luận dài (theme cắt tiêu đề ở một dòng)
+\usepackage{booktabs,tabularx,multirow,array,colortbl,graphicx,pifont,adjustbox}
+\usetikzlibrary{calc,positioning}
+\makeatletter
+\let\hustspeakernote\note          % theme đổi \note thành ghi chú chân trang; trả lại \note = ghi chú người nói của Beamer
+\let\note\beamer@orig@note
+\makeatother
+\ifdefined\HUSTNOTES\setbeameroption{show notes on second screen=right}\fi
+\setbeamertemplate{note page}[plain]
+
+% ---------- THÔNG TIN CẦN SỬA (xem slides/README.md) ----------
+\newcommand{\TenNhom}{[TÊN NHÓM]}
+\newcommand{\ThanhVienA}{[Họ tên 1 -- MSSV]}
+\newcommand{\ThanhVienB}{[Họ tên 2 -- MSSV]}
+\newcommand{\ThanhVienC}{[Họ tên 3 -- MSSV]}
+\newcommand{\ThanhVienD}{[Họ tên 4 -- MSSV]}
+\newcommand{\GiangVien}{[Họ tên giảng viên]}
+% --------------------------------------------------------------
+
+% khung ảnh chụp dashboard / hình cần chèn sau (chữ rõ ràng để không bị bỏ sót)
+\newcommand{\khungchen}[2][0.5\textheight]{\par\vspace{2pt}\centering\fcolorbox{red!70!black}{red!4}{\parbox[c][#1][c]{0.86\linewidth}{\centering\bfseries\large\color{red!70!black}#2}}\par}
+\newcommand{\anh}[2][0.56\textheight]{\includegraphics[width=\linewidth,height=#1,keepaspectratio]{#2}}
+\newcommand{\canxacnhan}{\hfill{\scriptsize\color{red!70!black}[nhóm xác nhận]}}
+
+\title[Olist DW \& BI]{{\normalsize KHO DỮ LIỆU VÀ KINH DOANH THÔNG MINH (MI4214)}\\[5pt]{\bfseries Xây dựng kho dữ liệu Quản lý đơn hàng -- Olist}}
+\subtitle{Báo cáo nhóm: từ hai bộ dữ liệu đến kho dữ liệu hình sao và bảy dashboard Power BI}
+\author[\TenNhom]{Nhóm \TenNhom\\ \ThanhVienA, \ThanhVienB,\\ \ThanhVienC, \ThanhVienD\\ GVHD: \GiangVien}
+\institute{Khoa Toán - Tin,\\Đại học Bách khoa Hà Nội}
+\date{\today}
+
+\begin{document}
+
+\hustsetup{slogantext={}}
+\begin{frame}[plain,noframenumbering]
+  \titlepage
+\end{frame}
+
+\begin{frame}[noprogressbar]{\husttoctitle}{\husttocsubtitle}
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\input{sections/01-ly-thuyet}
+\input{sections/02-bai-toan}
+\input{sections/03-du-lieu}
+\input{sections/04-kien-truc}
+\input{sections/05-etl-mart-olap}
+\input{sections/06-dashboard}
+\input{sections/07-ket-luan}
+
+\appendix
+\hustsection[panel=false]
+\input{sections/08-du-phong}
+\end{document}
