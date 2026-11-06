@@ -1,0 +1,206 @@
+\section[Dữ liệu và EDA]{Dữ liệu và khám phá dữ liệu}
+
+\begin{frame}{Hai hệ thống nguồn có 11 bảng, 121 MB và 1.559.764 dòng}
+\begin{itemize}
+  \item oltp 9 bảng 1.550.922 dòng; crm 2 bảng 8.842 dòng
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{llrrr}
+\toprule
+\textbf{Bảng nguồn} & \textbf{File CSV} & \textbf{Số dòng} & \textbf{Số cột} & \textbf{MB} \\
+\midrule
+oltp.product\_category\_name\_translation & product\_category\_name\_translation.csv & 71 & 2 & 0,00 \\
+oltp.products & olist\_products\_dataset.csv & 32.951 & 9 & 2,27 \\
+oltp.sellers & olist\_sellers\_dataset.csv & 3.095 & 4 & 0,17 \\
+oltp.geolocation & olist\_geolocation\_dataset.csv & 1.000.163 & 6 & 58,44 \\
+oltp.customers & olist\_customers\_dataset.csv & 99.441 & 5 & 8,62 \\
+oltp.orders & olist\_orders\_dataset.csv & 99.441 & 8 & 16,84 \\
+oltp.order\_items & olist\_order\_items\_dataset.csv & 112.650 & 7 & 14,72 \\
+oltp.order\_payments & olist\_order\_payments\_dataset.csv & 103.886 & 5 & 5,51 \\
+oltp.order\_reviews & olist\_order\_reviews\_dataset.csv & 99.224 & 7 & 13,78 \\
+crm.mql & olist\_marketing\_qualified\_leads\_dataset.csv & 8.000 & 4 & 0,67 \\
+crm.closed\_deals & olist\_closed\_deals\_dataset.csv & 842 & 14 & 0,16 \\
+Tổng (11 bảng) &  & 1.559.764 &  & 121,18 \\
+\bottomrule
+\end{tabular}}\end{center}
+
+\note{[S33] Vượt tiêu chí kích thước dữ liệu của môn (trên 100 MB).}
+\end{frame}
+
+\begin{frame}{Bảng toạ độ chiếm 64\% số dòng nhưng chỉ đại diện 19.015 mã bưu chính}
+\begin{itemize}
+  \item 1.000.163 dòng geolocation
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng nguồn (làm nổi dòng geolocation)}
+
+\note{[S34] Đây là bảng cần xử lý nhiều nhất ở ODS.}
+\end{frame}
+
+\begin{frame}{ERD hệ thống bán hàng: chín bảng nối quanh đơn hàng}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item orders $\rightarrow$ items, payments, reviews; customers, sellers, products
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-2-4_erd_oltp.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S35] \texttt{customer\_\allowbreak{}id} được sinh riêng cho từng đơn nên cần \texttt{customer\_\allowbreak{}unique\_\allowbreak{}id} để nhận ra khách thật.}
+\end{frame}
+
+\begin{frame}{Các cột được gạch chân trên ERD là cột đi sang kho, kèm ghi chú mapping}
+\begin{itemize}
+  \item Ví dụ: \texttt{order\_\allowbreak{}purchase\_\allowbreak{}timestamp} $\rightarrow$ \texttt{purchase\_\allowbreak{}date\_\allowbreak{}key}, \texttt{price} $\rightarrow$ \texttt{price}
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: ERD đã gạch chân (vẽ lại)}
+
+\note{[S36] Bảng mapping đầy đủ 108 dòng ODS $\rightarrow$ kho nằm ở phụ lục.}
+\end{frame}
+
+\begin{frame}{Luồng dữ liệu và tần suất cập nhật: nạp ban đầu 45.430 đơn rồi 11 đợt hằng tháng}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Tổng 286.144 bản ghi mới qua 11 đợt
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-4-1_pipeline.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S37] Dữ liệu Kaggle là ảnh tĩnh nên nhóm mô phỏng cập nhật.}
+\end{frame}
+
+\begin{frame}{Khám phá dữ liệu đo được 45 loại lỗi cần xử lý ở ODS}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Cột thiếu, mốc thời gian sai thứ tự, tên thành phố lệch dấu, trùng lặp
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_data_quality.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S38] Không loại lỗi nào bằng cách xóa dữ liệu.}
+\end{frame}
+
+\begin{frame}{Tỷ lệ ô rỗng cho thấy cột nào cần điền unknown}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Cột review và ngày giao có nhiều ô rỗng hợp lệ
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_null_heatmap.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S39] Ô rỗng của ngày giao đa phần là đơn chưa giao hoặc bị hủy.}
+\end{frame}
+
+\begin{frame}{Bảng toạ độ bẩn nhất: 93,5\% mã bưu chính có nhiều toạ độ, 26,2\% dòng trùng hoàn toàn}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item 7,3\% tên thành phố lệch dấu; 42 điểm ngoài lãnh thổ Brazil
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-4-3_before_after_geolocation.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S40] Giải pháp: lọc khung Brazil, lấy trung vị toạ độ và mode tên thành phố theo zip.}
+\end{frame}
+
+\begin{frame}{Phân bố giá, phí vận chuyển và lead time đều lệch phải}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Nhiều giá trị lớn bất thường ở phí vận chuyển
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_distributions_numeric.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S41] Vì vậy dùng trung vị và Spearman khi cần.}
+\end{frame}
+
+\begin{frame}{Dữ liệu đơn dùng được là 01/2017–08/2018, hai đầu rất thưa}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item 2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_orders_per_month.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S42] Quyết định lọc thời gian đưa vào Power BI.}
+\end{frame}
+
+\begin{frame}{18/74 danh mục (24,3\%) tạo 80\% GMV, dẫn đầu health\symbol{95}beauty 9,3\%}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Quy luật Pareto theo danh mục
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_pareto_category.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S43] Danh mục được gom thành 13 nhóm ngành hàng.}
+\end{frame}
+
+\begin{frame}{Seller thì phân tán hơn: 540 seller tạo 80\% GMV, 5 seller lớn nhất chỉ 7,7\%}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Doanh thu không phụ thuộc vài seller
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_pareto_seller.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S44] Khác với danh mục, rủi ro tập trung vào seller thấp.}
+\end{frame}
+
+\begin{frame}{Giao trễ làm điểm review rơi từ 4,29 xuống 1,70 và 79,2\% review tiêu cực}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Đơn trễ chiếm 6,5\% số review nhưng tạo 27,4\% review tiêu cực
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_delay_vs_review.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S45] Trung bình toàn sàn che mất nhóm nhỏ nhưng đau.}
+\end{frame}
+
+\begin{frame}{Trễ tập trung ở Bắc và Đông Bắc: Nordeste trễ 12,8\%, Norte lead time 22,6 ngày}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Sudeste chỉ 6,1\% trễ, lead time 10,7 ngày
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_late_rate_by_state.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S46] Địa lý quyết định trải nghiệm giao hàng.}
+\end{frame}
+
+\begin{frame}{Chỉ 380/842 deal (45,1\%) có đơn: funnel và bán hàng chỉ giao nhau một phần}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item 380 seller tạo 674.005 BRL, 4,99\% GMV
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_funnel_seller_overlap.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S47] Quyết định D6 hiển thị cả nhóm "chốt nhưng chưa bán".}
+\end{frame}
+
+\begin{frame}{Sáu quyết định thiết kế đến từ khám phá dữ liệu}
+\begin{itemize}
+  \item SCD2 khách (0,26\% đổi zip); D6 hai trang; snapshot seller dày đặc; 13 nhóm ngành; zip thiếu toạ độ vẫn có dòng; mốc nạp 2017-12-31
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
+\textbf{Quyết định} & \textbf{Nội dung} & \textbf{Số liệu đi kèm} \\\midrule
+Câu a & \texttt{dim\_customer} dùng SCD2 & chỉ 0,26\% khách đổi zip \\
+Câu b & D6 hai trang & 380/842 deal có đơn \\
+Câu c & snapshot seller dày đặc & 36.583 so với 16.441 dòng \\
+Câu d & 13 nhóm ngành hàng & 73 danh mục \\
+Câu e & zip thiếu toạ độ vẫn có dòng & 168 zip, không mất đơn \\
+Câu f & mốc nạp đầu 2017-12-31 & 45.430 đơn, 11 đợt sau \\
+\bottomrule\end{tabular}}\end{center}
+
+\note{[S48] Mỗi quyết định có số liệu trong \texttt{handoff/design-questions.md}.}
+\end{frame}

@@ -33,3 +33,21 @@ report/*.fdb_latexmk
 report/*.out
 report/*.pdf
 report/build.log
+
+# Beamer slides: build files, PDFs and the Overleaf package are not committed
+slides_overleaf.zip
+slides/*.pdf
+slides/*.aux
+slides/*.log
+slides/*.nav
+slides/*.snm
+slides/*.toc
+slides/*.out
+slides/*.vrb
+slides/*.xdv
+slides/*.fls
+slides/*.fdb_latexmk
+slides/build*.log
+slides/hust-theme/references/
+slides/hust-theme/*.pdf
+slides/hust-theme/*.pptx

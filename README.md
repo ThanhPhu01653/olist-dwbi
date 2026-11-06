@@ -4,7 +4,7 @@ Bài tập lớn môn Kho dữ liệu & Kinh doanh thông minh (HUST). Xây kho 
 Olist Brazilian E-Commerce, tích hợp bộ Olist Marketing Funnel (nối qua `seller_id`).
 📘 **Hướng dẫn cho cả nhóm (lộ trình theo việc, thuật ngữ, từ điển dữ liệu, hỏi đáp, dashboard): [huong-dan/00-BAT-DAU-TU-DAY.md](huong-dan/00-BAT-DAU-TU-DAY.md)**
 
-**Cả nhóm bắt đầu từ [handoff/00-TONG-QUAN.md](handoff/00-TONG-QUAN.md)** (tổng quan, số liệu, phát hiện, việc cần làm; không cần biết lập trình).
+**Cả nhóm bắt đầu từ [handoff/00-TONG-QUAN.md](handoff/00-TONG-QUAN.md)** (tổng quan, số liệu, phát hiện, việc cần làm).
 Đặc tả schema: [docs/DW_DESIGN.md](docs/DW_DESIGN.md). Quy ước làm việc: [CLAUDE.md](CLAUDE.md). Hướng dẫn dựng Power BI: [powerbi/model.md](powerbi/model.md).
 
 Dự án **không dùng Docker**: PostgreSQL được cài trực tiếp trên máy.

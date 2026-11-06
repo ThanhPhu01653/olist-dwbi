@@ -1,0 +1,242 @@
+\section[Kiến trúc và thiết kế]{Kiến trúc và thiết kế kho dữ liệu}
+
+\begin{frame}{Kiến trúc sáu lớp từ hai hệ thống nguồn đến bảy dashboard}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item oltp/crm $\rightarrow$ staging $\rightarrow$ ODS $\rightarrow$ kho $\rightarrow$ data mart $\rightarrow$ Power BI; etl\_log giám sát
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-4-1_pipeline.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S49] Mỗi lớp có một việc và một cách kiểm tra riêng.}
+\end{frame}
+
+\begin{frame}{Tách lớp giúp đối soát: staging = ODS + dòng bị loại cho mọi bảng}
+\begin{itemize}
+  \item Chỗ nào hỏng biết ngay lớp nào
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng đối soát (handoff P2)}
+
+\note{[S50] Không phải lấy lại dữ liệu từ nguồn khi ODS lỗi.}
+\end{frame}
+
+\begin{frame}{Công nghệ: PostgreSQL 18, Python 3.11, SQL procedure, Power BI, Git}
+\begin{itemize}
+  \item Không Docker, không PostGIS; điều phối bằng một lệnh
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: logo công nghệ (chèn)}
+
+\note{[S51] Chạy được trên laptop sinh viên 8 GB.}
+\end{frame}
+
+\begin{frame}{ODS là lớp làm sạch trung gian: 18 bảng, 678.183 dòng, mọi lỗi có cờ hoặc lý do}
+\begin{itemize}
+  \item Zip thành 5 chữ số, thành phố bỏ dấu, \texttt{NULL} thành \texttt{unknown}, khử trùng review
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{p{6.2cm}rp{5.5cm}}
+\toprule
+\textbf{Lỗi} & \textbf{Số dòng} & \textbf{Xử lý} \\
+\midrule
+Bàn giao vận chuyển trước khi duyệt thanh toán & 1.359 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Bàn giao vận chuyển trước ngày mua & 166 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Giao khách trước khi bàn giao vận chuyển & 23 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Đơn đã giao nhưng không có ngày duyệt & 14 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Trạng thái delivered nhưng không có ngày giao & 8 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Có ngày giao nhưng trạng thái chưa là delivered & 6 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Đã giao nhưng không có ngày bàn giao & 2 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Giá trị thanh toán = 0 & 9 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+Hình thức thanh toán not\_defined & 3 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+Số kỳ trả góp = 0 (đặt thành 1) & 2 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+Doanh thu tháng khai báo = 0 & 797 & Gắn cờ, giữ nguyên giá trị \\
+Chốt deal trước ngày liên hệ đầu & 1 & Gắn cờ, giữ nguyên giá trị \\
+coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.rejected\_rows \\
+\bottomrule
+\end{tabular}}\end{center}
+
+\note{[S52] 1.411 đơn (1,4\%) có ít nhất một cờ chất lượng.}
+\end{frame}
+
+\begin{frame}{Bus matrix: sáu fact dùng chung các chiều ngày, seller, khách, địa lý}
+\begin{itemize}
+  \item Seller là chiều dùng chung của hai quy trình
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{lcccccccccc}\toprule
+\textbf{Fact} & \textbf{Date} & \textbf{Customer} & \textbf{Seller} & \textbf{Product} & \textbf{Geo} & \textbf{Status} & \textbf{Payment} & \textbf{Origin} & \textbf{Profile} & \textbf{Rep} \\\midrule
+fact\_order\_item & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} &  &  &  &  \\
+fact\_order\_fulfillment & \ding{51} & \ding{51} &  &  & \ding{51} & \ding{51} &  &  &  &  \\
+fact\_payment & \ding{51} & \ding{51} &  &  &  &  & \ding{51} &  &  &  \\
+fact\_review & \ding{51} & \ding{51} &  &  &  &  &  &  &  &  \\
+fact\_lead\_funnel & \ding{51} &  & \ding{51} &  &  &  &  & \ding{51} & \ding{51} & \ding{51} \\
+fact\_seller\_monthly & \ding{51} &  & \ding{51} &  &  &  &  &  &  &  \\
+\bottomrule\end{tabular}}\end{center}
+
+\note{[S53] Bus matrix cho thấy chiều nào được dùng lại ở đâu.}
+\end{frame}
+
+\begin{frame}{Mô hình constellation: bốn mart, sáu fact (cam), mười chiều (xanh)}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Khung = data mart
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-4_constellation.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S54] Fact màu cam, chiều màu xanh đúng yêu cầu trình bày.}
+\end{frame}
+
+\begin{frame}{Data model logic: mỗi fact nối đúng các chiều theo bus matrix}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Ví dụ \texttt{fact\_\allowbreak{}order\_\allowbreak{}item} nối 6 chiều với 2 vai địa lý
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-4_erd_dw.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S55] Địa lý có hai vai: khách và seller.}
+\end{frame}
+
+\begin{frame}{Data model vật lý: khoá chính theo grain, khoá ngoại có index, 112.650 dòng hàng}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Mọi khoá ngoại NOT NULL, dòng Unknown -1
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-4_erd_dw.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S56] Tiền \texttt{numeric(12,2)}, khoá \texttt{<tên>\_\allowbreak{}key}, ngày \texttt{yyyymmdd}.}
+\end{frame}
+
+\begin{frame}{Mười bảng chiều với số dòng từ 6 đến 96.339}
+\begin{itemize}
+  \item dim\_date 1.828; geography 19.178; customer 96.339; seller 3.558; product 32.952; ...
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{llrc}
+\toprule
+\textbf{Chiều} & \textbf{Grain} & \textbf{Số dòng} & \textbf{SCD} \\
+\midrule
+dim\_date & 1 ngày (2016-01-01 → 2020-12-31) & 1.828 & -- \\
+dim\_geography & 1 mã bưu chính (zip) & 19.178 & 1 \\
+dim\_customer & 1 phiên bản địa chỉ của 1 khách thật & 96.339 & 2 \\
+dim\_seller & 1 seller (chiều dùng chung) & 3.558 & 1 \\
+dim\_product & 1 sản phẩm & 32.952 & 1 \\
+dim\_order\_status & 1 trạng thái đơn & 9 & 1 \\
+dim\_payment\_type & 1 hình thức thanh toán & 6 & 1 \\
+dim\_lead\_origin & 1 giá trị origin của MQL & 11 & 1 \\
+dim\_lead\_profile & 1 tổ hợp thuộc tính deal (junk dimension) & 503 & -- \\
+dim\_sales\_rep & 1 nhân viên và vai trò (SDR/SR) & 55 & -- \\
+\bottomrule
+\end{tabular}}\end{center}
+
+\note{[S57] Mỗi chiều có đúng một dòng Unknown, được kiểm thử.}
+\end{frame}
+
+\begin{frame}{Hệ thống chiều khái niệm: phân cấp ngày, địa lý, sản phẩm, seller, khách}
+\begin{itemize}
+  \item Ngày $\rightarrow$ tháng $\rightarrow$ quý $\rightarrow$ năm; zip $\rightarrow$ thành phố $\rightarrow$ bang $\rightarrow$ vùng
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: sơ đồ phân cấp (vẽ)}
+
+\note{[S58] Phân cấp là cơ sở của roll-up và drill-down.}
+\end{frame}
+
+\begin{frame}{SCD2 giữ lịch sử địa chỉ: 96.096 khách thành 96.339 dòng, 236 khách đổi zip}
+\begin{itemize}
+  \item Đơn cũ vẫn trỏ về địa chỉ lúc mua
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{llllllll}\toprule
+\textbf{customer\_key} & \textbf{khách thật} & \textbf{zip} & \textbf{thành phố} & \textbf{effective\_from} & \textbf{effective\_to} & \textbf{is\_current} & \textbf{version} \\\midrule
+15081 & 570eb70f… & 31930 & belo horizonte & 1900-01-01 & 2017-11-08 & không & 1 \\
+15082 & 570eb70f… & 31130 & belo horizonte & 2017-11-09 & 9999-12-31 & có & 2 \\
+\bottomrule\end{tabular}}\end{center}
+
+\note{[S59] Ví dụ khách \texttt{570eb70f…} đổi zip ngày 09/11/2017; đơn 24/10 thuộc phiên bản 1.}
+\end{frame}
+
+\begin{frame}{dim\symbol{95}seller là chiều dùng chung: nối bán hàng với funnel qua seller\symbol{95}id}
+\begin{itemize}
+  \item 462 seller chỉ có trong CRM vẫn có dòng, địa chỉ Unknown
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng ví dụ seller (\texttt{huong-dan/01-pipeline-bang-loi.md})}
+
+\note{[S60] \texttt{first\_\allowbreak{}sale\_\allowbreak{}date} được điền sau khi nạp fact.}
+\end{frame}
+
+\begin{frame}{Chiều rác và role-playing giúp fact gọn mà vẫn đủ thông tin}
+\begin{itemize}
+  \item \texttt{dim\_\allowbreak{}lead\_\allowbreak{}profile} gom 7 thuộc tính thành 503 tổ hợp; \texttt{dim\_\allowbreak{}date} đóng 5 vai ở fulfillment
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng ví dụ hai kỹ thuật}
+
+\note{[S61] Trong Power BI, vai trò ngày dùng quan hệ không hoạt động và \texttt{USERELATIONSHIP}.}
+\end{frame}
+
+\begin{frame}{Sáu fact thuộc đủ ba loại của Kimball}
+\begin{itemize}
+  \item Transaction $\times$3, accumulating $\times$2, periodic $\times$1
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{lllr}
+\toprule
+\textbf{Fact} & \textbf{Loại} & \textbf{Grain} & \textbf{Số dòng} \\
+\midrule
+fact\_order\_item & Transaction & 1 dòng hàng của 1 đơn & 112.650 \\
+fact\_order\_fulfillment & Accumulating snapshot & 1 đơn (5 mốc thời gian) & 99.441 \\
+fact\_payment & Transaction & 1 lần thanh toán & 103.886 \\
+fact\_review & Transaction & 1 review của 1 đơn & 99.224 \\
+fact\_lead\_funnel & Accumulating snapshot & 1 MQL & 8.000 \\
+fact\_seller\_monthly & Periodic snapshot (dày đặc) & 1 seller × 1 tháng & 36.583 \\
+\bottomrule
+\end{tabular}}\end{center}
+
+\note{[S62] Tổng 459.784 dòng fact (99.441 + 112.650 + 103.886 + 99.224 + 8.000 + 36.583).}
+\end{frame}
+
+\begin{frame}{fact\symbol{95}order\symbol{95}fulfillment là accumulating snapshot: một đơn một dòng, cập nhật theo mốc}
+\begin{itemize}
+  \item Mốc chưa xảy ra có khoá -1; thời gian từng chặng tính sẵn
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{ll}\toprule
+\textbf{Cột của fact\_order\_fulfillment (đơn 19c36691…)} & \textbf{Giá trị} \\\midrule
+approval\_hours & 36,61 \\
+handling\_days & 0,71 \\
+transit\_days & 12,84 \\
+lead\_days & 15,07 \\
+promised\_days & 21 \\
+delay\_days & -6 (giao sớm 6 ngày) \\
+order\_value & 43,00 \\
+freight\_total & 45,30 \\
+payment\_total & 88,30 \\
+\bottomrule\end{tabular}}\end{center}
+
+\note{[S63] Nếu dùng transaction fact phải ghép nhiều dòng mới tính được lead time.}
+\end{frame}
+
+\begin{frame}{fact\symbol{95}lead\symbol{95}funnel ghi lại hành trình MQL: ba mốc ngày và hai khoảng thời gian}
+\begin{itemize}
+  \item \texttt{days\_\allowbreak{}to\_\allowbreak{}close} TB 48,5; \texttt{days\_\allowbreak{}won\_\allowbreak{}to\_\allowbreak{}first\_\allowbreak{}sale} TB 51,8
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: dòng ví dụ MQL}
+
+\note{[S64] Cũng là accumulating snapshot, 8.000 dòng.}
+\end{frame}
+
+\begin{frame}{fact\symbol{95}seller\symbol{95}monthly lưu dày đặc 36.583 dòng để thấy seller ngừng bán}
+\begin{itemize}
+  \item Dày đặc so với thưa: 36.583 và 16.441 dòng
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng 4 tháng đầu của một seller}
+
+\note{[S65] Tháng không có đơn vẫn có dòng với \texttt{orders = 0}.}
+\end{frame}
+
+\begin{frame}{Dòng Unknown -1 và khoá thay thế bảo đảm fact không bao giờ có khoá rỗng}
+\begin{itemize}
+  \item Mọi lỗi tra khoá được ghi \texttt{fact\_\allowbreak{}load\_\allowbreak{}issue}
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng \texttt{dim\_\allowbreak{}seller} dòng -1}
+
+\note{[S66] Nhờ đó ETL không làm rơi dòng khi chiều thiếu.}
+\end{frame}

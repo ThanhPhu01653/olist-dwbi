@@ -1,0 +1,40 @@
+# LaTeX compilation auxiliary files
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex(busy)
+*.synctex.gz
+*.toc
+*.vrb
+texput.*
+
+# Minted temporary cache & files
+_minted/
+_minted*/
+*.minted
+*.data.minted
+*.config.minted
+*.highlight.minted
+*.style.minted
+
+# Temporary verification and check images
+*chk*.png
+*cite*.png
+*_check*.png
+*.tmp
+
+# Operating system and editor artifacts
+.DS_Store
+Thumbs.db
+*.bak
+*.swp
+*~
+

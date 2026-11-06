@@ -1,0 +1,211 @@
+\section[Dashboard và mở rộng]{Dashboard và mở rộng}
+
+\begin{frame}{Bảy dashboard chia thành bốn loại: thời gian, OLAP, vận hành, thống kê}
+\begin{itemize}
+  \item D1 Executive $\cdot$ D2 Sales $\cdot$ D3 Fulfillment $\cdot$ D4 Geography $\cdot$ D5 Customer $\cdot$ D6 Seller $\cdot$ D7 ETL monitor
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng 7 dashboard (\texttt{huong-dan/dashboards/})}
+
+\note{[S89] Mỗi dashboard dùng nhiều loại biểu đồ, slicer và định dạng có điều kiện.}
+\end{frame}
+
+\begin{frame}{Mô hình Power BI có 16 bảng và 32 quan hệ, mỗi fact một quan hệ ngày hoạt động}
+\begin{itemize}
+  \item Quan hệ còn lại không hoạt động
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: ảnh chụp Model view}
+
+\note{[S90] Tham số \texttt{DataFolder} giúp đổi máy chỉ cần sửa một giá trị.}
+\end{frame}
+
+\begin{frame}{Role-playing date và DAX tăng trưởng: GMV tháng 11/2017 tăng 52,1\% so với tháng 10}
+\begin{itemize}
+  \item \texttt{USERELATIONSHIP}, \texttt{DATEADD}, \texttt{SAMEPERIODLASTYEAR}
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: đoạn DAX (\texttt{powerbi/measures.md})}
+
+\note{[S91] Mọi measure đối chiếu với bảng giá trị kỳ vọng từ SQL.}
+\end{frame}
+
+\begin{frame}{Chủ đề màu thống nhất: xanh là tốt, vàng cần chú ý, đỏ là xấu}
+\begin{itemize}
+  \item \texttt{powerbi/theme.json}; ngưỡng cảnh báo on-time 90\%/95\%
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: ảnh chụp theme}
+
+\note{[S92] Cùng một quy ước màu trên mọi dashboard.}
+\end{frame}
+
+\begin{frame}{D1 Executive: GMV 13,49 triệu BRL, 98.199 đơn, đúng hạn 93,2\%, review 4,09}
+\begin{itemize}
+  \item Thẻ KPI, đường GMV theo tháng, cột MoM, thanh theo vùng, treemap ngành
+\end{itemize}
+\khungchen{CHÈN ẢNH CHỤP D1}
+
+\note{[S93] Trang tổng quan cho lãnh đạo.}
+\end{frame}
+
+\begin{frame}{D1 cho thấy tháng 11/2017 là đỉnh (1,0 triệu BRL) và Sudeste chiếm 65\% GMV}
+\begin{itemize}
+  \item Black Friday 152.654 BRL trong một ngày
+\end{itemize}
+\khungchen{CHÈN ẢNH CHỤP D1}
+
+\note{[S94] Từ 03/2018 GMV đi ngang nhưng cao hơn cùng kỳ (05/2018 +97\%).}
+\end{frame}
+
+\begin{frame}{D2 Sales và Product: 18 danh mục tạo 80\% GMV; Home \& Furniture dẫn đầu 22,8\%}
+\begin{itemize}
+  \item Treemap, ma trận drill, Pareto, scatter AOV – freight
+\end{itemize}
+\khungchen{CHÈN ẢNH CHỤP D2}
+
+\note{[S95] Drill từ nhóm ngành xuống danh mục.}
+\end{frame}
+
+\begin{frame}{D2 cho thấy phí vận chuyển nặng ở hàng giá thấp và ở vùng xa}
+\begin{itemize}
+  \item Freight ratio 16,6\% toàn sàn
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: ảnh chụp D2 (scatter)}
+
+\note{[S96] Danh mục nhẹ giá thấp bị phí vận chuyển ăn vào nhiều nhất.}
+\end{frame}
+
+\begin{frame}{D3 Order Fulfillment: lead time 12,6 ngày, phễu trạng thái và tỷ lệ trễ theo bang}
+\begin{itemize}
+  \item Funnel, cột chồng từng chặng, bản đồ trễ
+\end{itemize}
+\khungchen{CHÈN ẢNH CHỤP D3}
+
+\note{[S97] KPI "hứa so với thực tế" nằm trên đầu trang.}
+\end{frame}
+
+\begin{frame}{D3 cho thấy Olist hứa 24,4 ngày nhưng giao 12,6 ngày: sớm hơn lời hứa 11,8 ngày}
+\begin{itemize}
+  \item Đúng hạn tụt 87,6\% ở Black Friday 11/2017 và 81,0\% ở 03/2018
+\end{itemize}
+\khungchen{CHÈN ẢNH CHỤP D3}
+
+\note{[S98] Tải cao làm giao chậm dù trung bình vẫn "đúng hạn".}
+\end{frame}
+
+\begin{frame}{D4 Geography và Freight: Sudeste 65,4\% GMV, Norte và Nordeste chịu phí vận chuyển 22\%}
+\begin{itemize}
+  \item Bản đồ bong bóng, ma trận phân cấp, GMV khách và seller
+\end{itemize}
+\khungchen{CHÈN ẢNH CHỤP D4}
+
+\note{[S99] Dùng \texttt{v\_\allowbreak{}geo\_\allowbreak{}state} và \texttt{v\_\allowbreak{}geo\_\allowbreak{}zip} cho bản đồ.}
+\end{frame}
+
+\begin{frame}{D4 cho thấy 36\% dòng hàng có seller và khách cùng bang}
+\begin{itemize}
+  \item Khoảng cách TB 598 km
+\end{itemize}
+\khungchen{CHÈN ẢNH CHỤP D4}
+
+\note{[S100] Mô hình vai trò địa lý seller cho phép so sánh hai phía.}
+\end{frame}
+
+\begin{frame}{D5 Customer Experience: điểm review 4,09; 14,7\% review tiêu cực; chỉ 3,1\% khách quay lại}
+\begin{itemize}
+  \item Cột điểm theo nhóm trễ, donut thanh toán, RFM, cohort
+\end{itemize}
+\khungchen{CHÈN ẢNH CHỤP D5}
+
+\note{[S101] Có sáu phân khúc RFM trên 94.983 khách.}
+\end{frame}
+
+\begin{frame}{D5: thẻ tín dụng chiếm 78,3\% giá trị thanh toán và trả góp trung bình 3,5 kỳ}
+\begin{itemize}
+  \item 66,9\% giao dịch thẻ trả góp nhiều kỳ
+\end{itemize}
+\khungchen{CHÈN ẢNH CHỤP D5}
+
+\note{[S102] Boleto chiếm 17,9\%.}
+\end{frame}
+
+\begin{frame}{D6 trang 1: tỷ lệ chốt theo kênh từ 2,7\% (other) đến 16,7\% (unknown)}
+\begin{itemize}
+  \item Phễu MQL $\rightarrow$ deal $\rightarrow$ seller có đơn; thời gian chốt
+\end{itemize}
+\khungchen{CHÈN ẢNH CHỤP D6 TRANG 1}
+
+\note{[S103] Luôn kèm cỡ mẫu: email chỉ 493 MQL.}
+\end{frame}
+
+\begin{frame}{D6 trang 2: seller từ funnel chỉ tạo 4,99\% GMV; kênh nhỏ được cảnh báo mẫu nhỏ}
+\begin{itemize}
+  \item Scorecard seller, GMV/seller theo kênh
+\end{itemize}
+\khungchen{CHÈN ẢNH CHỤP D6 TRANG 2}
+
+\note{[S104] Email chỉ có 6 seller có đơn nên đánh dấu mẫu nhỏ.}
+\end{frame}
+
+\begin{frame}{D7 giám sát ETL: 11 đợt chạy 20–26 giây, 133 test đạt 100\%}
+\begin{itemize}
+  \item Thời gian theo lô, funnel lấp đầy dần, dòng bị loại theo lý do
+\end{itemize}
+\khungchen{CHÈN ẢNH CHỤP D7}
+
+\note{[S105] Dòng bị loại duy nhất là 42 điểm toạ độ.}
+\end{frame}
+
+\begin{frame}{Publish to web chia sẻ cả bảy dashboard bằng một liên kết công khai}
+\begin{itemize}
+  \item Dữ liệu Olist công khai nên chấp nhận được
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: ảnh màn hình Publish to web}
+
+\note{[S106] Nếu tài khoản bị chặn thì dùng PDF xuất từ Power BI.}
+\end{frame}
+
+\begin{frame}{Mở rộng địa lý: hàm haversine SQL thuần tính khoảng cách seller $\rightarrow$ khách cho 112.650 dòng hàng}
+\begin{itemize}
+  \item 555 dòng (0,49\%) thiếu toạ độ vẫn được giữ lại với giá trị trống
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: đoạn SQL \texttt{dw.haversine\_\allowbreak{}km} (Phụ lục B)}
+
+\note{[S107] São Paulo – Rio tính ra 360,9 km, gần với thực tế.}
+\end{frame}
+
+\begin{frame}{Khoảng cách tăng từ dưới 100 km lên trên 1.000 km làm phí vận chuyển gấp 2,7 lần và lead time gấp 2,9 lần}
+\begin{itemize}
+  \item Phí 11,75 $\rightarrow$ 31,65 BRL; lead time 6,5 $\rightarrow$ 19,0 ngày; trễ 4,5\% $\rightarrow$ 10,3\%
+\end{itemize}
+\begin{columns}[c]\begin{column}{0.48\textwidth}\anh[0.46\textheight]{3-5-2_distance_vs_freight.png}\end{column}\begin{column}{0.48\textwidth}\anh[0.46\textheight]{3-5-2_distance_vs_leadtime.png}\end{column}\end{columns}
+
+\note{[S108] Tương quan Spearman 0,63 với phí và 0,54 với lead time; đó là tương quan, không phải nhân quả.}
+\end{frame}
+
+\begin{frame}{Haversine thuần đủ cho khoảng cách điểm–điểm; PostGIS cần khi truy vấn bán kính hoặc đa giác}
+\begin{itemize}
+  \item GiST chỉ mục không gian; haversine sai số tối đa 0,5\%
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng so sánh (\texttt{report/chapters/3-5-2-dia-ly.tex})}
+
+\note{[S109] Nhóm không cài PostGIS nên chọn giải pháp thuần SQL.}
+\end{frame}
+
+\begin{frame}{Dựng lại toàn bộ dự án từ đầu mất 413 giây và cho kết quả giống hệt}
+\begin{itemize}
+  \item Xóa hai database, chạy một lệnh, 16/16 bảng khớp
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{p{6cm}rp{6cm}}
+\toprule
+\textbf{Bước} & \textbf{Giây} & \textbf{Kết quả} \\
+\midrule
+drop olist\_dw + olist\_full & 0.4 & dropped \\
+setup\_db (schemas, DDL, procedures, views) & 1.8 & Setup done. \\
+load\_source --initial (olist\_dw, to 2017-12-31) & 15.3 & Rejected rows logged in etl\_log.rejected\_rows: 0 (batch 1) \\
+load\_source --full (olist\_full) & 24.0 & Rejected rows logged in etl\_log.rejected\_rows: 0 (batch 1) \\
+run\_pipeline --mode full (initial state) & 57.0 & pipeline full trên dữ liệu đến 2017-12-31: 55.9s \\
+replay\_increments (11 x simulate + incremental) & 276.7 & 11 đợt hằng tháng (01/2018 → 11/2018); sau đợt cuối: 8.000 MQL, 842 deal, 380 seller có đơ \\
+run\_pipeline --mode incremental (tests + export\_powerbi) & 29.5 & tests: 130/130 đạt, 0 lỗi; đối chiếu EDA 5/5 khớp \\
+\bottomrule
+\end{tabular}}\end{center}
+
+\note{[S110] Khả năng tái lập là bằng chứng độ tin cậy của pipeline.}
+\end{frame}

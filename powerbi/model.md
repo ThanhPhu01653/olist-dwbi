@@ -1,6 +1,6 @@
 # Dựng mô hình và dashboard Power BI – hướng dẫn từng bước
 
-Viết cho người **chưa dùng Power BI nhiều** và không cần biết SQL. Làm tuần tự từ mục 1. Cả nhóm dùng **một file `.pbix` chung** (dựng xong gửi nhau qua Drive); các dashboard chia nhau làm (phân công làm sau).
+Hướng dẫn từng bước dựng mô hình và dashboard; làm tuần tự từ mục 1 (không cần truy cập database). Cả nhóm dùng **một file `.pbix` chung** (dựng xong gửi nhau qua Drive); các dashboard chia nhau làm (phân công làm sau).
 Tài liệu đi kèm: `powerbi/measures.md` (code DAX và giá trị kỳ vọng để đối chiếu), `powerbi/theme.json` (màu và font), `exports/powerbi/README.md` (danh sách file CSV và cột).
 
 ## 1. Chuẩn bị

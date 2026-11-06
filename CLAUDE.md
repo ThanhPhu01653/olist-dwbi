@@ -9,12 +9,12 @@ dữ liệu xuất cho Power BI phải có bản đầu tiên trước **18/11**
 **Đặc tả schema đầy đủ nằm ở `docs/DW_DESIGN.md` – đọc file đó trước khi viết bất kỳ DDL/ETL nào.**
 Không tự ý đổi tên bảng/cột so với đặc tả. Nếu thấy đặc tả sai hoặc thiếu, dừng lại, nêu rõ vấn đề và đề xuất sửa `docs/DW_DESIGN.md` trước.
 
-## Ai làm gì (để hiểu ai đọc output)
-- **KT1 (Phú) là người duy nhất viết và chạy code**, làm việc cùng Claude Code. Mọi code trong repo do KT1 + Claude Code viết.
+## Phân công và nơi chạy code
+- Database và code chạy trên máy của KT1 (Phú), làm việc cùng Claude Code. Mọi code trong repo do KT1 + Claude Code viết.
 - Cả nhóm cùng làm dashboard Power BI, báo cáo LaTeX và slide **từ các file trong `handoff/`**; phân công cụ thể sẽ làm sau.
 
-Hệ quả: những người còn lại **không thể tự chạy truy vấn**. Mọi thứ họ cần (số liệu, bảng mẫu, hình, dữ liệu cho Power BI)
-phải được xuất sẵn ra file trong repo hoặc thư mục chia sẻ. Handoff phải tự giải thích được, không giả định người đọc biết SQL.
+Hệ quả: database nằm trên một máy. Mọi thứ dashboard, báo cáo và slide cần (số liệu, bảng mẫu, hình, dữ liệu cho Power BI)
+phải được xuất sẵn ra file trong repo hoặc thư mục chia sẻ. Handoff tự giải thích được: nêu thuật ngữ khi dùng lần đầu, không đòi hỏi truy cập database.
 
 ## Môi trường (không dùng Docker)
 - PostgreSQL 18 (16+ đều chạy được) **cài trực tiếp** trên máy của KT1 (installer EnterpriseDB). Extension bắt buộc: `unaccent` (có sẵn).
@@ -51,6 +51,9 @@ scripts/                        # report_stats.py, export_samples.py, export_pow
 powerbi/                        # measures.md (DAX), model.md (quan hệ, phân cấp), theme.json – nhóm dùng để dựng trong Power BI
 exports/powerbi/                # CSV xuất từ dw/mart/etl_log cho Power BI
 handoff/                        # bàn giao cho cả nhóm (markdown)
+huong-dan/                      # hướng dẫn dùng chung: lộ trình đọc, pipeline bằng lời, thuật ngữ, từ điển dữ liệu, hỏi đáp, D1-D7
+report/                         # báo cáo LaTeX (XeLaTeX): chapters/ viết tay, tables/ sinh từ database (scripts/export_latex.py)
+slides/                         # slide Beamer theme HUST (LuaLaTeX): sections/ sinh từ slide-script.md (scripts/gen_beamer.py), hust-theme/
 figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 ```
 
@@ -61,6 +64,7 @@ figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 - File SQL đánh số thứ tự chạy (`010_...sql`), idempotent (`CREATE ... IF NOT EXISTS`, `CREATE OR REPLACE`), chạy lại không lỗi
 - Mỗi job ETL ghi `etl_log.job_run`; dòng bị loại ghi `etl_log.rejected_rows` kèm lý do — **không bao giờ âm thầm bỏ dữ liệu**
 - Comment SQL/Python bằng tiếng Anh ngắn gọn; `handoff/`, `README.md`, `powerbi/*.md` viết bằng **tiếng Việt**
+- Tài liệu viết giọng trung lập cho mọi người đọc; không phân loại người đọc theo trình độ hay vai trò.
 - CSV xuất cho Power BI: UTF-8 có BOM, dấu phân cách `,`, số thập phân dấu `.`, ngày dạng `YYYY-MM-DD`, tên file = tên bảng
 
 ## Cách làm việc
@@ -69,10 +73,10 @@ figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 - Sau mỗi phase viết `handoff/<yyyy-mm-dd>-<phase>.md` theo mẫu dưới đây và commit
 - Ưu tiên đơn giản, chạy được trên laptop sinh viên (8 GB RAM); bảng lớn nhất là geolocation ~1 triệu dòng
 
-## Mẫu handoff (người không biết code đọc để viết báo cáo, vẽ sơ đồ, dựng dashboard)
+## Mẫu handoff (dùng để viết báo cáo, vẽ sơ đồ, dựng dashboard)
 ```markdown
 # <Phase> – <ngày>
-## Đã làm (giải thích bằng lời, không giả định người đọc biết SQL)
+## Đã làm (giải thích bằng lời; nêu thuật ngữ khi dùng lần đầu)
 - ...
 ## Số liệu (lấy từ truy vấn thật)
 | Bảng | Số dòng | Ghi chú |
@@ -102,6 +106,8 @@ figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 - `python scripts/rebuild_all.py [--drop]` – dựng lại TOÀN BỘ bằng một lệnh (setup → nạp nguồn → pipeline full → 11 đợt tăng dần → test → xuất CSV), ghi `handoff/rebuild-report.md`
 - `python scripts/benchmark.py` – benchmark gọn (oltp vs dw, index FK, view vs materialized view) → `handoff/benchmark.md`, `figures/3-5-1_benchmark.png`
 - `python scripts/geo_analysis.py` – khoảng cách seller → khách vs freight / lead time → `handoff/geo-distance.md`, `figures/3-5-2_*.png`
+- `python scripts/export_latex.py` – sinh `report/tables/*.tex`, `report/code/*.sql` từ database; báo cáo: `cd report && latexmk -xelatex main.tex`; zip Overleaf: `python scripts/make_overleaf_zip.py`
+- `python scripts/gen_beamer.py` – sinh `slides/sections/*.tex` từ `slides/slide-script.md`; slide: `cd slides && latexmk -lualatex main.tex` (bản có ghi chú: `slides-notes.tex`); zip: `python scripts/make_slides_zip.py`
 - `python -m etl.test_orphan_retry` – kịch bản thử lại dòng mồ côi (chạy trong transaction rồi rollback)
 - `python scripts/export_powerbi.py` – xuất CSV cho Power BI vào `exports/powerbi/`
 - `python scripts/report_stats.py` – sinh `handoff/stats.md` (số dòng mọi bảng, từng dim và từng fact)

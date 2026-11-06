@@ -10,7 +10,7 @@ Cách dùng:
 2. Trong Power BI Desktop chọn nguồn là thư mục đó (hoặc từng file CSV, *File origin* = UTF-8). Danh sách file, cột, khoá nối: `exports/powerbi/README.md` (file này có trong git).
 3. Mỗi lần KT1 chạy lại pipeline và tải lại thư mục, **tên file không đổi** nên chỉ cần bấm **Refresh** trong Power BI, không phải dựng lại mô hình.
 
-Người chạy pipeline (KT1): `python scripts/export_powerbi.py` (hoặc `python -m etl.run_pipeline --mode incremental`, bước cuối tự xuất) ghi lại toàn bộ `exports/powerbi/`.
+Khi chạy lại pipeline (máy có database): `python scripts/export_powerbi.py` (hoặc `python -m etl.run_pipeline --mode incremental`, bước cuối tự xuất) ghi lại toàn bộ `exports/powerbi/`.
 
 ## File mới ở P6 (cần tải bổ sung lên Drive)
 Bản xuất P6 gồm **35 file CSV**. 22 file cũ (10 `dim_*`, 6 `fact_*`, `job_run` và 5 file giám sát ETL của P5) **giữ nguyên tên và cột** (nội dung được ghi đè bằng lần xuất mới, kết quả giống P5 vì dữ liệu không đổi). **13 file mới** là các view data mart, tổng 9.7 MB:

@@ -1,6 +1,6 @@
 # 01 – Pipeline bằng lời: dữ liệu đi qua từng lớp như thế nào
 
-*Dành cho người không biết code. Đọc khoảng 25 phút. Mọi giá trị trong các bảng ví dụ ở dưới lấy từ truy vấn thật trên `olist_dw` (sinh tự động bằng `python scripts/gen_trace_examples.py`, có thể chạy lại).*
+*Tài liệu này giải thích từng lớp của pipeline bằng ví dụ thật. Đọc khoảng 25 phút; thuật ngữ ở `02-thuat-ngu.md`. Mọi giá trị trong các bảng ví dụ ở dưới lấy từ truy vấn thật trên `olist_dw` (sinh tự động bằng `python scripts/gen_trace_examples.py`, có thể chạy lại).*
 
 ## 1. Bức tranh chung
 ![Pipeline và các lớp](../figures/3-4-1_pipeline.png)
@@ -13,7 +13,7 @@ Dữ liệu đi một chiều qua 6 lớp. Mỗi lớp có **một việc** và 
 | **Staging** `staging` (`stg_*`) | Sao chép nguyên văn dữ liệu mới của nguồn, thêm `load_batch_id` (lô nào nạp) và `loaded_at`. | Tách việc "lấy dữ liệu" khỏi việc "biến đổi": nạp tăng dần chỉ lấy dòng chưa có; có bằng chứng dòng nào đến từ lô nào. |
 | **ODS** `ods` | Làm sạch và chuẩn hoá: zip thành `char(5)`, tên thành phố bỏ dấu + chữ thường, `NULL` thành `unknown`, khử trùng review, gắn cờ lỗi `dq_flags`. Dòng không dùng được ghi vào `etl_log.rejected_rows` kèm lý do. | Một nơi duy nhất để làm sạch; không xoá âm thầm. Staging = ODS + dòng bị loại (đối soát được). |
 | **Kho** `dw` | 10 bảng chiều + 6 bảng fact theo lược đồ hình sao: khoá thay thế số nguyên, SCD2 cho khách, các khoảng thời gian đã tính sẵn. | Dạng dễ phân tích nhất: truy vấn ngắn, nhất quán, một định nghĩa cho mỗi KPI. |
-| **Data mart** `mart_sales`, `mart_fulfillment`, `mart_cx`, `mart_acquisition` | View (4 cái là materialized view) tổng hợp sẵn cho từng chủ đề dashboard. | Nhanh (dưới 1 ms thay vì 150–750 ms) và gọn cho người dựng dashboard. |
+| **Data mart** `mart_sales`, `mart_fulfillment`, `mart_cx`, `mart_acquisition` | View (4 cái là materialized view) tổng hợp sẵn cho từng chủ đề dashboard. | Nhanh (dưới 1 ms thay vì 150–750 ms) và gọn khi dựng dashboard. |
 | **Power BI** | 37 file CSV xuất từ kho → mô hình quan hệ + measure DAX → 7 dashboard. | Lớp ngữ nghĩa và tương tác kéo thả cho người dùng cuối. |
 
 Song song có **`etl_log`**: ghi mỗi lần chạy (thời gian, số dòng đọc/chèn/cập nhật/loại), dòng bị loại, kết quả kiểm thử (133 phép), khoá rơi về Unknown. Đây là nguồn của dashboard D7.

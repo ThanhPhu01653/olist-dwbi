@@ -32,7 +32,7 @@ Các file trong `chapters/`:
 - Font: nếu máy có *Times New Roman* thì dùng, nếu không (Overleaf) tự chuyển sang *TeX Gyre Termes* (tương đương). Đổi trong `preamble.tex`.
 
 ## 3. Overleaf: tạo project và làm việc nhóm
-1. Người giữ project (ví dụ trưởng nhóm) chạy `python scripts/make_overleaf_zip.py` ở gốc repo → ra `report_overleaf.zip` (không commit, đã có trong `.gitignore`).
+1. Thành viên giữ project Overleaf (ví dụ trưởng nhóm) chạy `python scripts/make_overleaf_zip.py` ở gốc repo → ra `report_overleaf.zip` (không commit, đã có trong `.gitignore`).
 2. Trên Overleaf: **New Project → Upload Project** → chọn `report_overleaf.zip`.
 3. **Menu → Compiler = XeLaTeX**, *Main document* = `main.tex`. Biên dịch.
 4. Mời thành viên (nút *Share*) nếu dùng tài khoản có cho phép cộng tác; hoặc làm theo cách 5.

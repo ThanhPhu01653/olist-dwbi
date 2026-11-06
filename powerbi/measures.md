@@ -1,6 +1,6 @@
 # Thư viện measure DAX
 
-Dành cho người **chưa quen DAX**: mỗi measure có code để copy – dán, một dòng giải thích và định dạng hiển thị. Tên bảng và cột trong code là tên trong mô hình Power BI dựng theo `powerbi/model.md` (bảng = tên file CSV, ví dụ `fact_order_item`, `dim_date`). Các KPI bám theo `docs/DW_DESIGN.md` mục 9.
+Mỗi measure có code để copy – dán, một dòng giải thích và định dạng hiển thị. Tên bảng và cột trong code là tên trong mô hình Power BI dựng theo `powerbi/model.md` (bảng = tên file CSV, ví dụ `fact_order_item`, `dim_date`). Các KPI bám theo `docs/DW_DESIGN.md` mục 9.
 
 ## Cách dùng
 1. Mở **Model view** hoặc **Report view** → **Enter data** → tạo một bảng rỗng tên `_Measures` (chỉ để chứa measure cho gọn) → *Load*.
