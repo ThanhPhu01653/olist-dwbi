@@ -3,7 +3,7 @@
 > 📘 **Bộ hướng dẫn cho cả nhóm: [`huong-dan/00-BAT-DAU-TU-DAY.md`](../huong-dan/00-BAT-DAU-TU-DAY.md)** – lộ trình đọc theo việc (dựng dashboard / viết báo cáo / làm slide), pipeline bằng lời, thuật ngữ, từ điển dữ liệu, 40 câu hỏi đáp, nghiệp vụ (nháp) và hướng dẫn từng dashboard D1–D7.
 > 📝 **Báo cáo LaTeX (khung, đã biên dịch được): [`report/README.md`](../report/README.md)** · **Kịch bản 114 slide: [`slides/slide-script.md`](../slides/slide-script.md)**.
 
-*Dành cho cả nhóm, **không cần biết lập trình**. Mọi số liệu lấy từ truy vấn thật trên trạng thái cuối của kho; chi tiết và cách truy ngược nằm ở các file `handoff/2026-11-05-P0.md` … `P7-*.md`. Hình hiển thị ngay trong trang này khi mở trên GitHub.*
+*Trang này là điểm vào của toàn bộ tài liệu; lộ trình đọc theo công việc ở `huong-dan/00-BAT-DAU-TU-DAY.md`. Mọi số liệu lấy từ truy vấn thật trên trạng thái cuối của kho; chi tiết và cách truy ngược nằm ở các file `handoff/2026-11-05-P0.md` … `P7-*.md`. Hình hiển thị ngay trong trang này khi mở trên GitHub.*
 
 ## 1. Dự án làm gì
 Xây **kho dữ liệu** cho chủ đề **Quản lý đơn hàng** của Olist (sàn kết nối người bán nhỏ với các sàn TMĐT lớn ở Brazil), cộng quy trình **thu hút người bán (seller)** từ bộ Marketing Funnel. Kho trả lời: doanh thu bao nhiêu, đơn đi mất bao lâu ở từng chặng, giao trễ ảnh hưởng đánh giá ra sao, seller đến từ kênh marketing nào thì bán tốt.
@@ -143,7 +143,7 @@ Ngoài ra: dữ liệu đơn dùng được là **01/2017–08/2018** (99,6% s�
 - **Cơ chế thử lại dòng mồ côi** (dòng con đến trước dòng cha thì được nạp ở đợt sau) **mới chỉ được chứng minh bằng kịch bản test** (`python -m etl.test_orphan_retry`, chạy trong mỗi lần pipeline); trong 11 đợt thật không có dòng mồ côi nào xảy ra vì nguồn luôn nạp cha trước.
 - Mô phỏng cập nhật chỉ **thêm** bản ghi mới với trạng thái cuối; không mô phỏng được đơn đổi trạng thái giữa chừng hay sửa/xoá bản ghi nguồn.
 - Sơ đồ PNG trong `figures/` (ERD, constellation, pipeline) là **bản nháp tự động**, bố cục dây nối còn rối; cần vẽ lại bằng draw.io để đưa vào báo cáo.
-- CSV cho Power BI **79,5 MB** (> 50 MB) nên không nằm trong git; **link Google Drive chưa có** (người phụ trách dữ liệu tải lên rồi dán vào `exports/README.md`).
+- CSV cho Power BI **79,5 MB** (> 50 MB) nên không nằm trong git; **link Google Drive chưa có** (KT1 tải thư mục lên rồi dán link vào `exports/README.md`).
 - Dữ liệu: 2016 và 09–10/2018 rất thưa; chỉ 45,1% deal chốt có đơn nên so sánh theo kênh có cỡ mẫu nhỏ (luôn ghi cỡ mẫu); toạ độ là trung vị theo zip (không phải địa chỉ thật) và khoảng cách haversine là đường chim bay.
 - Hiệu năng: benchmark gọn (4 truy vấn, một laptop, một người dùng); không đo phân vùng bảng, cấu hình PostgreSQL, nhiều người dùng đồng thời.
 - Kho điều phối bằng lệnh Python (không có lịch tự chạy hay Airflow); chưa có phân quyền theo người dùng ngoài mật khẩu trong `.env`.
@@ -175,12 +175,12 @@ Các mục dưới đây theo đề cương báo cáo đã dùng trong các file
 Slide: mỗi file phase có mục "Gợi ý slide (2–4 slide)"; ghép theo thứ tự bảng trên.
 
 ## 11. Việc cho nhóm (chưa gán người)
-1. **Một người dựng D1 (Executive Overview) trước**, làm theo `powerbi/model.md` từ mục 1: cài Power BI Desktop → tải CSV từ Drive → tạo tham số `DataFolder` và hàm `fnCsv` → nạp bảng → tạo quan hệ → tạo measure từ `powerbi/measures.md` → **đối chiếu với bảng "giá trị kỳ vọng" ở cuối `measures.md`** (ví dụ GMV toàn bộ phải ra 13.494.400,74). Ghi lại mọi chỗ tài liệu hướng dẫn chưa đúng hoặc khó hiểu và báo người phụ trách dữ liệu để sửa.
+1. **Một người dựng D1 (Executive Overview) trước**, làm theo `powerbi/model.md` từ mục 1: cài Power BI Desktop → tải CSV từ Drive → tạo tham số `DataFolder` và hàm `fnCsv` → nạp bảng → tạo quan hệ → tạo measure từ `powerbi/measures.md` → **đối chiếu với bảng "giá trị kỳ vọng" ở cuối `measures.md`** (ví dụ GMV toàn bộ phải ra 13.494.400,74). Ghi lại mọi chỗ tài liệu hướng dẫn chưa đúng hoặc khó hiểu và báo KT1 để sửa.
 2. **Sau khi D1 khớp số**, cả nhóm chia nhau dựng **D2–D7** trên cùng file `.pbix` (bảng visual gợi ý ở mục 8 của `model.md`; lọc 2017-01 → 2018-08 cho D1–D6; D7 dùng dữ liệu giám sát ETL). Xong thì **Publish to web** (mục 9 của `model.md`).
 3. **Vẽ lại sơ đồ bằng draw.io** từ bản nháp: ERD nguồn (gạch chân cột dùng sang OLAP), hệ thống chiều và phân cấp, data model logic / vật lý (fact màu cam, chiều màu xanh, nhóm theo mart), pipeline có logo công nghệ (PostgreSQL, Python, Power BI, GitHub); xuất PNG 200 dpi vào `figures/`.
 4. **Viết báo cáo và slide** theo bảng ở mục 10 (đoạn nháp tiếng Việt có sẵn ở mỗi file phase); kiểm tra ngẫu nhiên số liệu trong handoff (so với `stats.md` hoặc truy vấn lại).
 5. **Họp 12/11**: xem lại các quyết định đã chốt (mục 7) và `design-questions.md`.
-6. Người phụ trách dữ liệu: tải thư mục `exports/powerbi/` lên Google Drive và dán link vào `exports/README.md`; khi cần chạy lại toàn bộ: `python scripts/rebuild_all.py --drop`.
+6. Tải thư mục `exports/powerbi/` lên Google Drive và dán link vào `exports/README.md`; khi cần chạy lại toàn bộ: `python scripts/rebuild_all.py --drop`.
 
 ## 12. Danh mục file
 | File | Nội dung |

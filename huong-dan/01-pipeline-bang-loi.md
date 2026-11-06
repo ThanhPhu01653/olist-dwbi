@@ -1,6 +1,6 @@
 # 01 – Pipeline bằng lời: dữ liệu đi qua từng lớp như thế nào
 
-*Dành cho người không biết code. Đọc khoảng 25 phút. Mọi giá trị trong các bảng ví dụ ở dưới lấy từ truy vấn thật trên `olist_dw` (sinh tự động bằng `python scripts/gen_trace_examples.py`, có thể chạy lại).*
+*Tài liệu này giải thích từng lớp của pipeline bằng ví dụ thật. Đọc khoảng 25 phút; thuật ngữ ở `02-thuat-ngu.md`. Mọi giá trị trong các bảng ví dụ ở dưới lấy từ truy vấn thật trên `olist_dw` (sinh tự động bằng `python scripts/gen_trace_examples.py`, có thể chạy lại).*
 
 ## 1. Bức tranh chung
 ![Pipeline và các lớp](../figures/3-4-1_pipeline.png)

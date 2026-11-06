@@ -424,7 +424,7 @@ Lưu ý giai đoạn dữ liệu: đơn 2016 rất thưa và 09–10/2018 gần 
 | D6 | Seller Acquisition & Performance | Vận hành | fact_lead_funnel, fact_seller_monthly |
 | D7 | Data Quality & ETL Monitor | Vận hành hệ thống | etl_log |
 
-Cả nhóm dựng một semantic model chung trong một file .pbix và chia nhau các dashboard (phân công làm sau). KT1 không dựng dashboard, chỉ cung cấp dữ liệu, `powerbi/measures.md` và `powerbi/model.md`.
+Cả nhóm dựng một semantic model chung trong một file .pbix và chia nhau các dashboard (phân công làm sau). KT1 cung cấp dữ liệu, `powerbi/measures.md` và `powerbi/model.md`.
 
 ## 11. Giám sát ETL (`etl_log`)
 
