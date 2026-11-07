@@ -19,10 +19,10 @@ Một đơn đi qua nhiều mốc (mua → duyệt → bàn giao → giao, kèm 
 Cùng một bảng chiều được cả hai quy trình dùng: `fact_order_item` (bán hàng) và `fact_lead_funnel`/`fact_seller_monthly` (thu hút seller). Nhờ đó nối được "kênh thu hút → GMV": kênh Paid có 204 seller, 103 seller có đơn, GMV 153.720 BRL. Seller chỉ có trong CRM (462 deal chưa bán) vẫn có dòng với địa chỉ Unknown.
 
 **6. SCD2 hoạt động thế nào trên dữ liệu này?**
-Mỗi `customer_id` trong nguồn sinh ra cho từng đơn, nên khách thật (`customer_unique_id`) có thể đổi mã bưu chính qua các đơn. Kho sắp đơn theo thời gian; mỗi lần zip đổi thì mở **phiên bản mới** (`effective_from` = ngày mua, bản cũ `effective_to` = ngày trước). Kết quả: 96.096 khách → 96.339 dòng; 236 khách có ≥ 2 phiên bản (nhiều nhất 4). Fact tra `customer_key` theo phiên bản có hiệu lực **tại ngày mua** nên báo cáo địa lý theo lịch sử vẫn đúng. *Xem thêm: `01-pipeline-bang-loi.md` mục 2.*
+Mỗi `customer_id` trong nguồn sinh ra cho từng đơn, nên khách thật (`customer_unique_id`) có thể đổi mã bưu chính qua các đơn. Kho sắp đơn theo thời gian; mỗi lần zip đổi thì mở **phiên bản mới** (`effective_from` = ngày mua, bản cũ `effective_to` = ngày trước). Kết quả: 96.096 khách → 96.338 phiên bản (96.339 dòng kể cả dòng Unknown `-1`); 236 khách có ≥ 2 phiên bản (nhiều nhất 4). Fact tra `customer_key` theo phiên bản có hiệu lực **tại ngày mua** nên báo cáo địa lý theo lịch sử vẫn đúng. *Xem thêm: `01-pipeline-bang-loi.md` mục 2.*
 
 **7. Vì sao chọn SCD2 cho khách khi chỉ 0,26% khách đổi zip?**
-Vì chi phí thấp (thêm 243 dòng, +0,25%) mà có ví dụ SCD2 thật trên dữ liệu thật để minh hoạ cho báo cáo; nhóm có thể hạ xuống SCD1 ở buổi họp 12/11 (ghi trong `DW_DESIGN.md`).
+Vì chi phí thấp (thêm 242 dòng so với 96.096 khách, +0,25%) mà có ví dụ SCD2 thật trên dữ liệu thật để minh hoạ cho báo cáo. Quyết định ghi trong nhật ký của `DW_DESIGN.md`.
 
 **8. Role-playing dimension là gì, dự án dùng ở đâu?**
 Một bảng chiều đóng nhiều vai. `dim_date` có 5 vai trong `fact_order_fulfillment` (mua, duyệt, bàn giao, giao, dự kiến) và 3 vai trong `fact_lead_funnel`; `dim_geography` có vai khách và vai seller; `dim_sales_rep` có vai SDR/SR. Trong SQL: join nhiều lần; trong Power BI: một quan hệ Active + các quan hệ Inactive gọi bằng `USERELATIONSHIP`.
@@ -50,32 +50,32 @@ Là mốc "đã nạp đến đâu" (`etl_log.watermark`). Đơn hàng dùng m�
 Dòng con thiếu dòng cha bị loại kèm lý do `orphan:…` ở `rejected_rows`, nhưng **được thử lại** ở các đợt sau khi cha đã tới và biến mất khỏi danh sách loại. Thành thật: cơ chế này **mới được chứng minh bằng kịch bản test** (`etl.test_orphan_retry`, 3/3 đạt); trong 11 đợt thật không có dòng mồ côi nào vì nguồn luôn nạp cha trước.
 
 **16. Pipeline xử lý lỗi và ghi nhận thế nào?**
-Mỗi job ghi `etl_log.job_run` (thời gian, đọc/chèn/cập nhật/loại, trạng thái); lỗi thì dừng, job và cả lần chạy ghi `failed` kèm thông báo, thoát mã 1. Các thủ tục nạp chạy trong một transaction cho mỗi lớp nên lỗi giữa chừng không để dữ liệu nửa vời.
+Mỗi job ghi `etl_log.job_run` (thời gian, đọc/chèn/cập nhật/loại, trạng thái) bằng một kết nối riêng tự commit, nên dòng `failed` vẫn còn sau khi dữ liệu bị rollback. Lỗi đầu tiên dừng cả lần chạy: job lỗi và dòng `pipeline.<mode>` ghi `failed` kèm thông báo, tiến trình thoát mã 1. Về transaction, theo code (`etl/procs.py`, `etl/load_dw.py`, `etl/extract.py`, `etl/run_pipeline.py`): **transaction bao theo từng lớp, không bao cả lần chạy**. Bước extract (mọi bảng staging) là một transaction; mỗi lớp ODS (11 thủ tục), nhóm dimension (9 thủ tục) và nhóm fact (7 thủ tục) được gọi qua `call_procedures` trên một kết nối và chỉ `commit` sau thủ tục cuối, nên một thủ tục lỗi thì cả lớp đó rollback; bước làm mới materialized view là một transaction riêng. Các bước phụ (nạp seed, dựng `dim_date`, `ods.truncate_data()` và `dw.reset_dims()` ở chế độ full) tự commit riêng. Hệ quả: lỗi ở lớp fact không làm mất ODS và dimension đã commit, nhưng lớp fact không bị nạp nửa chừng; chạy lại pipeline sẽ nạp lại từ đầu lớp đó. Lưu ý khi đọc `job_run` sau một lần lỗi: các dòng `success` của thủ tục chạy trước thủ tục lỗi trong cùng lớp vẫn còn (vì ghi bằng kết nối riêng) dù dữ liệu của chúng đã bị rollback; dòng `failed` cho biết lớp nào hỏng.
 
 **17. Vì sao biến đổi bằng SQL procedure thay vì pandas?**
 Dữ liệu nằm sẵn trong PostgreSQL, xử lý theo tập hợp (window function, upsert) nhanh và ngắn hơn; Python chỉ điều phối và COPY. Nạp full toàn bộ 1,56 triệu dòng nguồn vào kho mất khoảng 1,5 phút.
 
 **18. Dựng lại toàn bộ dự án mất bao lâu và có tái lập không?**
-Một lệnh `python scripts/rebuild_all.py --drop` xoá hai database và dựng lại từ CSV: **413 giây (6,9 phút)**; kết quả giống hệt trước khi xoá (16/16 bảng khớp checksum), 130/130 test đạt khi dựng (133 sau khi thêm test địa lý).
+Một lệnh `python scripts/rebuild_all.py --drop` xoá hai database và dựng lại từ CSV: **407 giây (6,8 phút)**; kết quả giống hệt trước khi xoá (16/16 bảng khớp checksum), 130/130 test đạt khi dựng (133 sau khi thêm test địa lý).
 
 ## C. Chất lượng dữ liệu (6 câu)
 **19. Dữ liệu nguồn có những lỗi gì và xử lý ra sao?**
 EDA đo được 45 loại lỗi. Ví dụ: 1.411 đơn (1,4%) có ít nhất một cờ lỗi (1.359 đơn bàn giao trước khi duyệt, 166 bàn giao trước ngày mua, 23 giao trước bàn giao); các khoảng thời gian âm được đặt trống và đếm lại, **không xoá đơn**. Cột phân loại trống thành `unknown`. Toàn bộ nằm ở `etl_log` (`rejected_rows`, `fact_load_issue`).
 
 **20. Xử lý bảng geolocation 1 triệu dòng như thế nào?**
-1.000.163 dòng nhưng chỉ 19.015 mã bưu chính (93,5% zip có nhiều toạ độ khác nhau, 26,2% dòng trùng hoàn toàn, tên thành phố lệch dấu). ODS lọc điểm trong khung Brazil (loại 42 điểm ngoài khung, ghi `rejected_rows`), gom theo zip lấy **trung vị** vĩ/kinh độ và **mode** thành phố/bang đã chuẩn hoá (`lower(unaccent(trim()))`). Zip chỉ có toạ độ ngoài khung vẫn có dòng trong `dim_geography` với toạ độ trống (168 zip).
+1.000.163 dòng nhưng chỉ 19.015 mã bưu chính (93,5% zip có nhiều toạ độ khác nhau, 26,2% dòng trùng hoàn toàn, tên thành phố lệch dấu). ODS lọc điểm trong khung Brazil (loại 42 điểm ngoài khung, ghi `rejected_rows`), gom theo zip lấy **trung vị** vĩ/kinh độ và **mode** thành phố/bang đã chuẩn hoá (`lower(unaccent(trim()))`). Mọi zip vẫn có dòng trong `dim_geography`, kể cả zip không có toạ độ (vĩ/kinh độ để trống). Có hai con số cần phân biệt: **5 zip** có trong geolocation nhưng mọi điểm đều nằm ngoài khung Brazil, và **167 zip** không có toạ độ nói chung, gồm 5 zip trên cộng 162 zip có ở customers/sellers nhưng không có trong geolocation (157 zip khách + 7 zip seller, 2 zip trùng). Tính cả dòng Unknown `-1` thì có 168 dòng `dim_geography` với toạ độ trống.
 
 **21. Review bị lặp `review_id` xử lý thế nào?**
 Có 789 `review_id` xuất hiện ở nhiều đơn nên không dùng làm khoá chính; khoá là cặp (`review_id`, `order_id`) (99.224 dòng), và ODS khử trùng giữ bản có `review_answer_timestamp` mới nhất nếu có trùng cặp.
 
 **22. Bạn kiểm tra chất lượng kho bằng cách nào?**
-133 phép kiểm thử chạy sau mỗi lần pipeline và lưu ở `etl_log.dq_check`: đối soát số dòng nguồn → ODS → kho (chênh = dòng bị loại), tổng tiền (Σ price kho = 13.591.643,70 = file CSV), khoá ngoại hợp lệ, grain không trùng, SCD2 không chồng thời gian, mart khớp fact. Thêm 5 phép đối chiếu với EDA (chỉ báo cáo) như 380 seller có đơn và GMV 13,49 triệu.
+136 phép kiểm thử chạy sau mỗi lần pipeline và lưu ở `etl_log.dq_check`: đối soát số dòng nguồn → ODS → kho (chênh = dòng bị loại), tổng tiền (Σ price kho = 13.591.643,70 = file CSV), khoá ngoại hợp lệ, grain không trùng, SCD2 không chồng thời gian, mart khớp fact. Thêm 6 phép đối chiếu với EDA (chỉ báo cáo) như 380 seller có đơn và GMV 13,49 triệu.
 
 **23. GMV khác tổng giá hàng thế nào?**
 GMV = Σ `price` của đơn **không** thuộc nhóm Failed (canceled, unavailable) = 13.494.400,74; tổng giá hàng mọi đơn = 13.591.643,70; chênh 97.242,96 là hàng của 1.234 đơn Failed. Dùng GMV làm KPI vì đơn hủy không tạo doanh thu.
 
 **24. Vì sao 462 deal đã chốt lại không có đơn?**
-Trong 842 deal, chỉ 380 seller (45,1%) có đơn trong hệ thống bán hàng. Đây là một **kết quả phân tích**, không phải lỗi: các seller này vẫn có dòng trong `dim_seller` (địa chỉ Unknown, `is_from_funnel = true`) và dashboard D6 hiển thị như một kết quả.
+Trong 842 deal, chỉ 380 seller (45,1%) có đơn trong hệ thống bán hàng (mọi trạng thái đơn); nếu chỉ tính đơn không thuộc nhóm Failed (huỷ / không có sẵn) thì còn 379 seller (45,0%) có đơn bán được, là số `Sellers with first sale` trên dashboard. Đây là một **kết quả phân tích**, không phải lỗi: các seller này vẫn có dòng trong `dim_seller` (địa chỉ Unknown, `is_from_funnel = true`) và dashboard D6 hiển thị như một kết quả.
 
 ## D. OLAP và mô hình phân tích (5 câu)
 **25. Vì sao chọn ROLAP mà không dùng MOLAP?**
@@ -91,7 +91,7 @@ Slice cố định **một** chiều: năm 2017 → vùng Sudeste chiếm 64,3% 
 Dùng tổng có điều kiện `sum(price) FILTER (WHERE d.year = 2017)` để mỗi năm thành một cột (GMV vùng × năm); có thể dùng `crosstab()` của extension `tablefunc` nhưng dự án không cài.
 
 **29. Pareto 80/20 cho kết quả gì?**
-18/74 danh mục (24,3%) tạo 80% GMV, đứng đầu `health_beauty` 9,31%. Với seller, 540/3.095 seller (17,4%) tạo 80% GMV nhưng 5 seller lớn nhất chỉ chiếm 7,7%: doanh thu **phân tán**, không phụ thuộc vài seller.
+18/74 danh mục (24,3%) tạo 80% GMV, đứng đầu `health_beauty` 9,31%. Với seller, 540/3.053 seller có đơn bán được (17,7%) tạo 80% GMV nhưng 5 seller lớn nhất chỉ chiếm 7,7%: doanh thu **phân tán**, không phụ thuộc vài seller.
 
 ## E. Hiệu năng (3 câu)
 **30. Vì sao star schema chỉ nhanh hơn OLTP 1,0–1,6 lần mà vẫn đáng dùng?**
@@ -105,7 +105,7 @@ Cả hai đều phải đếm distinct đơn và join review ở mức dòng hà
 
 ## F. Dashboard và Power BI (5 câu)
 **33. Vì sao tỷ lệ đúng hạn cao (93,2%) mà review vẫn tệ ở đơn trễ?**
-Trễ chỉ chiếm 6,8% đơn nhưng tác động rất mạnh: điểm review 4,29 (giao sớm) → 3,29 (trễ 1–3 ngày) → 2,10 (4–7 ngày) → 1,70 (trên 7 ngày); 79,2% review tiêu cực ở nhóm trễ trên 7 ngày. Các đơn trễ chiếm 6,5% số review nhưng tạo ra 27,4% số review tiêu cực (4.000/14.575). Trung bình toàn sàn che mất nhóm nhỏ nhưng "đau".
+Trễ chỉ chiếm 6,8% đơn nhưng tác động rất mạnh: điểm review 4,29 (giao sớm) → 3,29 (trễ 1–3 ngày) → 2,10 (4–7 ngày) → 1,70 (trên 7 ngày) (số ở kho tính trên từng review: 1.756 review ở nhóm 4–7 ngày; bản EDA `handoff/correlations.md` tính mỗi đơn một lần, 1.748 đơn, nên ra 2,11; nhóm giao sớm 4,29 và nhóm trễ trên 7 ngày 1,70 giống nhau ở cả hai cách tính); 79,2% review tiêu cực ở nhóm trễ trên 7 ngày. Các đơn trễ chiếm 6,5% số review nhưng tạo ra 27,4% số review tiêu cực (4.000/14.575). Trung bình toàn sàn che mất nhóm nhỏ nhưng "đau".
 
 **34. Ngày hứa giao so với thực tế cho thấy điều gì?**
 Olist hứa trung bình 24,4 ngày nhưng giao thực tế 12,6 ngày: giao sớm hơn lời hứa 11,8 ngày; 91,9% đơn giao sớm hơn dự kiến. Ngày dự kiến quá rộng nên "đúng hạn" dễ đạt; vì vậy dashboard D3 thêm KPI so sánh số ngày hứa với số ngày thực tế.
@@ -124,7 +124,7 @@ Mọi measure có **giá trị kỳ vọng tính bằng SQL** trong `powerbi/mea
 (1) Nạp tăng dần chỉ mô phỏng bản ghi mới với trạng thái cuối, không có đơn đổi trạng thái giữa chừng; (2) cơ chế thử lại mồ côi mới chứng minh bằng test; (3) toạ độ theo mã bưu chính (không phải địa chỉ), haversine là đường chim bay (sai số ≤ 0,5%); (4) dữ liệu 2016 và cuối 2018 thưa; (5) chỉ 45,1% deal có đơn nên so sánh theo kênh nhỏ (kênh Email chỉ 6 seller có đơn, đánh dấu mẫu nhỏ); (6) benchmark gọn trên một laptop.
 
 **39. Vì sao không dùng PostGIS và khoảng cách địa lý tính thế nào?**
-Máy KT1 không cài PostGIS nên nhóm viết hàm `dw.haversine_km` bằng SQL thuần; bài toán chỉ cần khoảng cách điểm–điểm cho 112 nghìn cặp seller–khách. Kết quả: khoảng cách TB 598 km, khoảng cách tăng từ < 100 km lên > 1.000 km thì phí vận chuyển 11,75 → 31,65 BRL và lead time 6,5 → 19,0 ngày (Spearman 0,63 và 0,54). PostGIS sẽ cần khi muốn truy vấn bán kính hoặc vùng đa giác (chỉ mục GiST).
+Quyết định thiết kế ngày 05/11 (ghi trong nhật ký của `DW_DESIGN.md`): không dùng PostGIS, khoảng cách seller → khách tính bằng công thức haversine viết thành hàm SQL thuần `dw.haversine_km` trên cột `latitude`/`longitude`, và `dim_geography` không có cột `geometry`. Lý do: bài toán chỉ cần khoảng cách điểm–điểm cho 112 nghìn cặp seller–khách, hàm SQL thuần đủ và không thêm extension nào phải cài. Kết quả: khoảng cách TB 598 km, khoảng cách tăng từ < 100 km lên > 1.000 km thì phí vận chuyển 11,75 → 31,65 BRL và lead time 6,5 → 19,0 ngày (Spearman 0,63 và 0,54). PostGIS sẽ cần khi muốn truy vấn bán kính hoặc vùng đa giác (chỉ mục GiST).
 
 **40. Nếu mở rộng, bạn sẽ làm gì tiếp?**
 Thêm trạng thái trung gian của đơn (CDC thật) và lịch chạy tự động; chuyển toạ độ sang PostGIS khi cần truy vấn không gian; phân vùng `fact_order_item` theo năm khi dữ liệu lớn; thêm chiều khuyến mãi/sản phẩm theo thời gian (SCD cho giá); và đo hiệu năng nhiều người dùng đồng thời.
