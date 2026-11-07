@@ -1,14 +1,14 @@
 # Tổng quan dự án Olist – Kho dữ liệu & BI (cập nhật 05/11/2026, sau P7)
 
 > 📘 **Bộ hướng dẫn cho cả nhóm: [`huong-dan/00-BAT-DAU-TU-DAY.md`](../huong-dan/00-BAT-DAU-TU-DAY.md)** – lộ trình đọc theo việc (dựng dashboard / viết báo cáo / làm slide), pipeline bằng lời, thuật ngữ, từ điển dữ liệu, 40 câu hỏi đáp, nghiệp vụ (nháp) và hướng dẫn từng dashboard D1–D7.
-> 📝 **Báo cáo LaTeX (khung, đã biên dịch được): [`report/README.md`](../report/README.md)** · **Slide Beamer (theme HUST, 114 slide + 10 dự phòng): [`slides/README.md`](../slides/README.md)** · dàn bài: [`slides/slide-script.md`](../slides/slide-script.md).
+> 📝 **Báo cáo LaTeX (khung 88 trang PDF, đã biên dịch được): [`report/README.md`](../report/README.md)** · **Slide Beamer (theme HUST, 114 slide nội dung + 10 slide dự phòng, 133 trang PDF): [`slides/README.md`](../slides/README.md)** · dàn bài: [`slides/slide-script.md`](../slides/slide-script.md).
 
-*Trang này là điểm vào của toàn bộ tài liệu; lộ trình đọc theo công việc ở `huong-dan/00-BAT-DAU-TU-DAY.md`. Mọi số liệu lấy từ truy vấn thật trên trạng thái cuối của kho; chi tiết và cách truy ngược nằm ở các file `handoff/2026-11-05-P0.md` … `P7-*.md`. Hình hiển thị ngay trong trang này khi mở trên GitHub.*
+*Đây là trang tổng quan số liệu và phát hiện. Điểm vào của tài liệu là [`huong-dan/00-BAT-DAU-TU-DAY.md`](../huong-dan/00-BAT-DAU-TU-DAY.md) (bản đồ tài liệu và lộ trình đọc theo công việc). Mọi số liệu lấy từ truy vấn thật trên trạng thái cuối của kho; chi tiết và cách truy ngược nằm ở các file `handoff/2026-11-05-P0.md` … `P7-*.md`. Hình hiển thị ngay trong trang này khi mở trên GitHub.*
 
 ## 1. Dự án làm gì
 Xây **kho dữ liệu** cho chủ đề **Quản lý đơn hàng** của Olist (sàn kết nối người bán nhỏ với các sàn TMĐT lớn ở Brazil), cộng quy trình **thu hút người bán (seller)** từ bộ Marketing Funnel. Kho trả lời: doanh thu bao nhiêu, đơn đi mất bao lâu ở từng chặng, giao trễ ảnh hưởng đánh giá ra sao, seller đến từ kênh marketing nào thì bán tốt.
 
-**Trạng thái**: phần dữ liệu đã xong và chạy được từ đầu đến cuối bằng **một lệnh** (`python scripts/rebuild_all.py --drop`, khoảng 7 phút; lần dựng lại từ đầu cho kết quả giống hệt lần trước: 16/16 bảng dim/fact khớp số dòng, tổng tiền và checksum nội dung; 133/133 kiểm thử đạt (130 lúc dựng lại; thêm 3 test địa lý sau đó)). **Còn lại cho cả nhóm: dựng 7 dashboard Power BI, vẽ lại sơ đồ, viết báo cáo (> 100 trang) và slide (> 100 trang)**; báo cáo trước lớp tuần 12 (30/11–6/12/2026).
+**Trạng thái**: phần dữ liệu đã xong và chạy được từ đầu đến cuối bằng **một lệnh** (`python scripts/rebuild_all.py --drop`, khoảng 7 phút; lần dựng lại từ đầu cho kết quả giống hệt lần trước: 16/16 bảng dim/fact khớp số dòng, tổng tiền và checksum nội dung; 136/136 kiểm thử đạt, thêm 6/6 đối chiếu EDA). **Còn lại cho cả nhóm: dựng 7 dashboard Power BI, vẽ lại sơ đồ, viết báo cáo (> 100 trang) và slide (> 100 trang)**; báo cáo trước lớp tuần 12 (30/11–6/12/2026).
 
 ## 2. Các lớp của hệ thống
 ![Pipeline và các lớp](../figures/3-4-1_pipeline.png)
@@ -73,7 +73,7 @@ Nạp dữ liệu: ban đầu đến 31/12/2017 (45.430 đơn), sau đó **11 đ
 | Điểm review TB / % tiêu cực | 4,09 / 14,7% | 99.224 review |
 | Khách quay lại mua (≥ 2 đơn) | 3,12% | 2.997 / 96.096 khách |
 | MQL → seller (chốt deal) | 10,5% (842 / 8.000) | thời gian chốt TB 48,5 ngày |
-| Seller chốt deal đã có đơn | 45,1% (380 / 842) | tức 4,75% số MQL trở thành seller có đơn; TB 51,8 ngày từ chốt đến đơn đầu |
+| Seller chốt deal đã có đơn | 45,0% (379 / 842) | tức 4,74% số MQL trở thành seller có đơn bán được; TB 51,9 ngày từ chốt đến đơn đầu |
 
 ## 6. Bảy phát hiện chính
 ### 1) Giao trễ làm điểm đánh giá sụp
@@ -85,7 +85,7 @@ Toàn quốc chỉ 6,8% đơn trễ và 91,9% đơn giao sớm hơn dự kiến,
 ![Tỷ lệ giao trễ theo bang](../figures/3-3-1_late_rate_by_state.png)
 
 ### 3) Funnel marketing chỉ nối được với một phần bán hàng
-Trong 842 thương vụ đã chốt chỉ **380 seller (45,1%)** có đơn; 462 seller (54,9%) chưa bán gì. 380 seller này tạo 674.005 BRL = **4,99%** GMV toàn sàn. Tỷ lệ chốt chung 10,5% (cao nhất `paid_search` 12,3%, thấp nhất `email` 3,0%).
+Trong 842 thương vụ đã chốt chỉ **380 seller (45,1%)** có đơn ở mọi trạng thái (trong kho, `first_sale_date` chỉ tính đơn không thuộc nhóm Failed nên có **379 seller, 45,0%** có đơn bán được; số này dùng ở dashboard D6); 462 seller (54,9%) chưa bán gì. 380 seller này tạo 674.005 BRL = **4,99%** GMV toàn sàn. Tỷ lệ chốt chung 10,5% (cao nhất `paid_search` 12,3%, thấp nhất `email` 3,0%).
 ![Seller của funnel có đơn hàng](../figures/3-3-1_funnel_seller_overlap.png)
 
 ### 4) Quy luật 80/20 rõ ở danh mục, seller thì phân tán
@@ -107,18 +107,18 @@ Từ dưới 100 km lên trên 1.000 km: phí vận chuyển TB tăng **11,75 �
 Ngoài ra: dữ liệu đơn dùng được là **01/2017–08/2018** (99,6% số đơn; 2016 chỉ 329 đơn, 09–10/2018 chỉ 20 đơn) nên dashboard xu hướng lọc 2017-01 → 2018-08; vùng Sudeste chiếm 64,3% GMV năm 2017; mã bưu chính trong bản dữ liệu này không bị mất số 0 đầu như dự đoán ban đầu.
 
 ## 7. Quyết định thiết kế đã chốt
-Đầy đủ (và nhật ký có ngày): `docs/DW_DESIGN.md`. Các dòng "chốt 05/11" có thể được nhóm xem lại ở buổi họp 12/11; mọi thay đổi phải sửa `DW_DESIGN.md` trước.
+Đầy đủ (và nhật ký có ngày): `docs/DW_DESIGN.md`. Các dòng "chốt 05/11" có thể được nhóm xem lại trước mốc chốt thiết kế 12/11; mọi thay đổi phải sửa `DW_DESIGN.md` trước.
 
 | Chủ đề | Quyết định | Lý do / hệ quả |
 | --- | --- | --- |
 | Phạm vi | Chủ đề Order Management + tích hợp Marketing Funnel (nối qua `seller_id`) | thêm nguồn thứ hai, quy trình thu hút seller, 6 fact thuộc cả 3 loại |
 | Công nghệ | PostgreSQL 18 cài trực tiếp, không Docker, không SQL Server/SSAS | OLAP theo mô hình **ROLAP** (SQL + Power BI); khác MOLAP ở `olap-examples.md` |
 | Địa lý | Không dùng PostGIS; khoảng cách bằng haversine SQL thuần | đủ cho bài toán; so sánh với PostGIS ở `P7-geo.md` |
-| Khách | `dim_customer` dùng **SCD2** | chỉ 0,26% khách đổi zip, thêm 243 dòng; ví dụ SCD thật |
+| Khách | `dim_customer` dùng **SCD2** | chỉ 0,26% khách đổi zip, thêm 242 dòng; ví dụ SCD thật |
 | Seller | `dim_seller` SCD1, chiều dùng chung; 462 deal chưa bán vẫn có dòng (địa chỉ Unknown) | hiển thị như một kết quả, không phải lỗi |
 | Snapshot seller-tháng | **dày đặc** đến tháng cuối có đơn (36.583 dòng) | đo được seller ngừng bán |
 | Ngành hàng | 13 nhóm (tách Pet; "Auto, Tools & Construction") | `seeds/category_group.csv` |
-| Zip thiếu toạ độ | vẫn tạo dòng địa lý, lat/lng trống (168 zip khi đủ dữ liệu) | không mất đơn nào |
+| Zip thiếu toạ độ | vẫn tạo dòng địa lý, lat/lng trống (167 zip khi đủ dữ liệu) | không mất đơn nào |
 | Mốc nạp đầu | 2017-12-31, rồi 11 đợt hằng tháng | funnel "lấp đầy dần" để trình bày |
 | Dòng lỗi | không xoá, không bỏ âm thầm: ghi `rejected_rows`, cờ `dq_flags`, khoảng thời gian âm → NULL + đếm | kiểm toán được |
 | KPI | GMV không tính đơn Failed; `Orders` = đơn có doanh thu; thêm "ngày hứa giao" (`promised_days`) | AOV nhất quán; ngày dự kiến quá rộng nên cần so với thực tế |
@@ -143,12 +143,12 @@ Ngoài ra: dữ liệu đơn dùng được là **01/2017–08/2018** (99,6% s�
 - **Cơ chế thử lại dòng mồ côi** (dòng con đến trước dòng cha thì được nạp ở đợt sau) **mới chỉ được chứng minh bằng kịch bản test** (`python -m etl.test_orphan_retry`, chạy trong mỗi lần pipeline); trong 11 đợt thật không có dòng mồ côi nào xảy ra vì nguồn luôn nạp cha trước.
 - Mô phỏng cập nhật chỉ **thêm** bản ghi mới với trạng thái cuối; không mô phỏng được đơn đổi trạng thái giữa chừng hay sửa/xoá bản ghi nguồn.
 - Sơ đồ PNG trong `figures/` (ERD, constellation, pipeline) là **bản nháp tự động**, bố cục dây nối còn rối; cần vẽ lại bằng draw.io để đưa vào báo cáo.
-- CSV cho Power BI **79,5 MB** (> 50 MB) nên không nằm trong git; **link Google Drive chưa có** (KT1 tải thư mục lên rồi dán link vào `exports/README.md`).
-- Dữ liệu: 2016 và 09–10/2018 rất thưa; chỉ 45,1% deal chốt có đơn nên so sánh theo kênh có cỡ mẫu nhỏ (luôn ghi cỡ mẫu); toạ độ là trung vị theo zip (không phải địa chỉ thật) và khoảng cách haversine là đường chim bay.
+- CSV cho Power BI **79,5 MB** (> 50 MB) nên không nằm trong git; **link Google Drive chưa có** (Phú tải thư mục lên rồi dán link vào `exports/README.md`).
+- Dữ liệu: 2016 và 09–10/2018 rất thưa; chỉ 45,0% deal chốt có đơn bán được nên so sánh theo kênh có cỡ mẫu nhỏ (luôn ghi cỡ mẫu); toạ độ là trung vị theo zip (không phải địa chỉ thật) và khoảng cách haversine là đường chim bay.
 - Hiệu năng: benchmark gọn (4 truy vấn, một laptop, một người dùng); không đo phân vùng bảng, cấu hình PostgreSQL, nhiều người dùng đồng thời.
 - Kho điều phối bằng lệnh Python (không có lịch tự chạy hay Airflow); chưa có phân quyền theo người dùng ngoài mật khẩu trong `.env`.
 - Các số liệu và hình EDA (mục 3.3.1) tính từ lần chạy EDA trước; sau lần dựng lại từ đầu chưa chạy lại `scripts/eda/run_all.py` (dữ liệu nguồn không đổi nên kết quả giống nhau).
-- Nhóm chưa xem lại các quyết định "chốt 05/11" ở buổi họp 12/11; nếu đổi (ví dụ SCD2 → SCD1) phải sửa `DW_DESIGN.md` rồi chạy lại `rebuild_all.py`.
+- Nhóm chưa xem lại các quyết định "chốt 05/11" trước mốc chốt thiết kế 12/11; nếu đổi (ví dụ SCD2 → SCD1) phải sửa `DW_DESIGN.md` rồi chạy lại `rebuild_all.py`.
 
 ## 10. Mục báo cáo → file handoff nguồn → hình dùng
 Các mục dưới đây theo đề cương báo cáo đã dùng trong các file phase. Mục không có file nguồn tự động (mở đầu chung, cơ sở lý thuyết, kết luận) do nhóm tự viết, có thể lấy ý từ `docs/DW_DESIGN.md` mục 1, 4, 9, 10 và `huong-dan/02-thuat-ngu.md`.
@@ -175,7 +175,7 @@ Các mục dưới đây theo đề cương báo cáo đã dùng trong các file
 Slide: mỗi file phase có mục "Gợi ý slide (2–4 slide)"; ghép theo thứ tự bảng trên.
 
 ## 11. Việc cho nhóm (chưa gán người)
-1. **Một người dựng D1 (Executive Overview) trước**, làm theo `powerbi/model.md` từ mục 1: cài Power BI Desktop → tải CSV từ Drive → tạo tham số `DataFolder` và hàm `fnCsv` → nạp bảng → tạo quan hệ → tạo measure từ `powerbi/measures.md` → **đối chiếu với bảng "giá trị kỳ vọng" ở cuối `measures.md`** (ví dụ GMV toàn bộ phải ra 13.494.400,74). Ghi lại mọi chỗ tài liệu hướng dẫn chưa đúng hoặc khó hiểu và báo KT1 để sửa.
+1. **Một người dựng D1 (Executive Overview) trước**, làm theo `powerbi/model.md` từ mục 1: cài Power BI Desktop → tải CSV từ Drive → tạo tham số `DataFolder` và hàm `fnCsv` → nạp bảng → tạo quan hệ → tạo measure từ `powerbi/measures.md` → **đối chiếu với bảng "giá trị kỳ vọng" ở cuối `measures.md`** (ví dụ GMV toàn bộ phải ra 13.494.400,74). Ghi lại mọi chỗ tài liệu hướng dẫn chưa đúng hoặc khó hiểu và báo Phú để sửa.
 2. **Sau khi D1 khớp số**, cả nhóm chia nhau dựng **D2–D7** trên cùng file `.pbix` (bảng visual gợi ý ở mục 8 của `model.md`; lọc 2017-01 → 2018-08 cho D1–D6; D7 dùng dữ liệu giám sát ETL). Xong thì **Publish to web** (mục 9 của `model.md`).
 3. **Vẽ lại sơ đồ bằng draw.io** từ bản nháp: ERD nguồn (gạch chân cột dùng sang OLAP), hệ thống chiều và phân cấp, data model logic / vật lý (fact màu cam, chiều màu xanh, nhóm theo mart), pipeline có logo công nghệ (PostgreSQL, Python, Power BI, GitHub); xuất PNG 200 dpi vào `figures/`.
 4. **Viết báo cáo và slide** theo bảng ở mục 10 (đoạn nháp tiếng Việt có sẵn ở mỗi file phase); kiểm tra ngẫu nhiên số liệu trong handoff (so với `stats.md` hoặc truy vấn lại).

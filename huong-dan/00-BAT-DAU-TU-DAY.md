@@ -4,10 +4,31 @@
 
 ## 1. Dự án trong 5 dòng
 1. Dữ liệu: 2 bộ Kaggle của Olist (bán hàng 99.441 đơn + marketing 8.000 MQL) → 11 file CSV.
-2. Chúng ta đã xây **kho dữ liệu** PostgreSQL (nguồn → staging → ODS → kho hình sao → data mart), nạp tăng dần 11 đợt, 133 phép kiểm thử đạt.
+2. Chúng ta đã xây **kho dữ liệu** PostgreSQL (nguồn → staging → ODS → kho hình sao → data mart), nạp tăng dần 11 đợt, 136 phép kiểm thử đạt.
 3. Kho xuất ra **37 file CSV** (`exports/powerbi/`, chia sẻ qua Google Drive) để dựng **7 dashboard Power BI**.
 4. Việc còn lại của cả nhóm: **dựng dashboard, vẽ lại sơ đồ, viết báo cáo (> 100 trang), làm slide (> 100 trang)**; báo cáo trước lớp tuần 12 (30/11–6/12/2026).
 5. Trang tổng quan đầy đủ: [`handoff/00-TONG-QUAN.md`](../handoff/00-TONG-QUAN.md).
+
+## 1b. Bản đồ tài liệu
+Mọi thư mục và nhóm file của repo, theo thứ tự nên mở. Cột cuối: **Đọc kỹ** = nên đọc hết; **Tra cứu** = mở khi cần một số liệu, một cột hay một bước cụ thể; **Không cần đọc** = file dành cho máy hoặc cho Claude Code.
+
+| Ở đâu | Là gì | Dùng khi nào | Cách đọc |
+| --- | --- | --- | --- |
+| [`huong-dan/`](.) | Bộ hướng dẫn chung: lộ trình (file này), pipeline bằng ví dụ thật, thuật ngữ, từ điển dữ liệu, 40 câu hỏi đáp, nghiệp vụ (nháp), hướng dẫn D1–D7 | Bắt đầu mọi việc; dựng dashboard, viết báo cáo, làm slide | Đọc kỹ `01`, `02`; tra cứu `03`, `04`, `dashboards/` |
+| [`handoff/00-TONG-QUAN.md`](../handoff/00-TONG-QUAN.md) | Trang tổng quan số liệu và phát hiện: các bảng, KPI, 7 phát hiện, bảng "mục báo cáo → file nguồn → hình" | Cần toàn cảnh hoặc tìm file nguồn cho một mục báo cáo | Đọc kỹ |
+| [`handoff/2026-11-05-P*.md`](../handoff/README.md) | Nhật ký kỹ thuật từng phase P0–P7: đã làm gì, số liệu, đoạn nháp báo cáo, gợi ý slide, SQL tiêu biểu | Viết một mục báo cáo hoặc làm slide của phase tương ứng | Tra cứu (đọc kỹ file của phase mình viết) |
+| Bảng số liệu sinh tự động trong `handoff/`: [`profiling`](../handoff/profiling.md), [`data-quality`](../handoff/data-quality.md), [`distributions`](../handoff/distributions.md), [`correlations`](../handoff/correlations.md), [`funnel`](../handoff/funnel.md), [`design-questions`](../handoff/design-questions.md), [`stats`](../handoff/stats.md), [`benchmark`](../handoff/benchmark.md), [`olap-examples`](../handoff/olap-examples.md), [`geo-distance`](../handoff/geo-distance.md), [`before-after-samples`](../handoff/before-after-samples.md), [`rebuild-report`](../handoff/rebuild-report.md), [`excel-toolpak-guide`](../handoff/excel-toolpak-guide.md) | Bảng và số liệu thô do script sinh từ database | Lấy con số, bảng cho báo cáo hoặc slide; đối chiếu số | Tra cứu |
+| [`docs/DW_DESIGN.md`](../docs/DW_DESIGN.md) | Đặc tả schema đầy đủ, nhật ký quyết định thiết kế, định nghĩa KPI | Cần định nghĩa chính xác của một bảng, cột, KPI hoặc lý do một quyết định | Tra cứu (mục 6, 7, 9 và nhật ký quyết định nên đọc một lần) |
+| [`docs/mapping.csv`](../docs/mapping.csv), [`docs/mapping_oltp_olap.md`](../docs/mapping_oltp_olap.md) | Bảng ánh xạ nguồn → đích → phép biến đổi cho dim và fact | Viết phụ lục mapping, kiểm tra một cột đến từ đâu | Tra cứu |
+| [`docs/*.mmd`](../docs/) | Sơ đồ Mermaid: ERD nguồn, ERD kho, constellation theo mart, pipeline | Render lại hình bằng mermaid.live hoặc sửa sơ đồ | Tra cứu |
+| [`docs/diagrams/`](../docs/diagrams/) | Ba sơ đồ draw.io (kiến trúc, data model theo mart, pipeline) | Vẽ lại sơ đồ cho báo cáo và slide | Tra cứu (mở bằng draw.io) |
+| [`powerbi/`](../powerbi/) | `model.md` (dựng mô hình từng bước), `measures.md` (DAX và giá trị kỳ vọng), `theme.json` | Dựng và kiểm tra dashboard Power BI | Đọc kỹ `model.md` mục 1–7; tra cứu `measures.md` |
+| [`report/`](../report/README.md) | Báo cáo LaTeX (XeLaTeX): `chapters/` viết tay, `tables/` và `code/` sinh từ database | Viết báo cáo, biên dịch, đưa lên Overleaf | Đọc kỹ `report/README.md`; sửa các file trong `chapters/` |
+| [`slides/`](../slides/README.md) | Slide Beamer theme HUST (LuaLaTeX): `slide-script.md` là dàn bài, `sections/` là mã slide | Làm slide, biên dịch, đưa lên Overleaf | Đọc kỹ `slides/README.md`; sửa `slide-script.md` |
+| [`figures/`](../figures/) | Hình PNG 200 dpi cho báo cáo, đặt tên theo mục báo cáo | Chèn hình vào báo cáo và slide | Tra cứu |
+| [`exports/`](../exports/README.md) | `powerbi/` là CSV cho Power BI (chia sẻ qua Google Drive), `eda_sample.xlsx` là mẫu cho Excel | Nạp dữ liệu vào Power BI; chạy Excel ToolPak | Tra cứu (đọc `exports/README.md` một lần) |
+| [`CLAUDE.md`](../CLAUDE.md), [`PROMPTS.md`](../PROMPTS.md) | File hướng dẫn cho Claude Code | Không dùng khi đọc hay viết tài liệu | Không cần đọc |
+| [`sql/`](../sql/), [`etl/`](../etl/), [`scripts/`](../scripts/), [`seeds/`](../seeds/) | Mã nguồn: DDL và procedure, pipeline Python, script sinh tài liệu và số liệu, bảng tham chiếu | Chỉ khi cần xem chính xác một phép biến đổi hoặc trích đoạn code cho báo cáo | Không cần đọc (tra cứu khi cần trích code) |
 
 ## 2. Chọn lộ trình theo công việc
 Thời gian là thời gian **đọc** (chưa tính thời gian làm).
@@ -69,8 +90,8 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 ## 3b. Báo cáo LaTeX và kịch bản slide
 | File | Nội dung |
 | --- | --- |
-| [`../report/README.md`](../report/README.md) | **Khung báo cáo LaTeX** (XeLaTeX, 87 trang khung, đã biên dịch được): mỗi mục một file trong `report/chapters/`, việc còn lại đánh dấu `	odo{}` (khung cam); cách lên Overleaf và cách nhiều người gửi file `.tex` cho một người ghép lại |
-| [`../slides/README.md`](../slides/README.md) | **Bộ slide Beamer (theme HUST, 133 trang)**: cách biên dịch bằng LuaLaTeX, sửa tên nhóm và thành viên, thay ảnh dashboard, đưa lên Overleaf; có bản kèm ghi chú người nói |
+| [`../report/README.md`](../report/README.md) | **Khung báo cáo LaTeX** (XeLaTeX, 88 trang PDF, đã biên dịch được): mỗi mục một file trong `report/chapters/`, việc còn lại đánh dấu `\todo{}` (khung cam); cách lên Overleaf và cách nhiều người gửi file `.tex` cho một người ghép lại |
+| [`../slides/README.md`](../slides/README.md) | **Bộ slide Beamer (theme HUST, 114 slide nội dung + 10 slide dự phòng, 133 trang PDF)**: cách biên dịch bằng LuaLaTeX, sửa tên nhóm và thành viên, thay ảnh dashboard, đưa lên Overleaf; có bản kèm ghi chú người nói |
 | [`../slides/slide-script.md`](../slides/slide-script.md) | **Kịch bản 114 slide** chia 7 phần (tiêu đề là câu kết luận có số, hình, ghi chú người nói; dùng được cho PowerPoint và Beamer) + 10 câu vấn đáp dễ gặp kèm slide dự phòng |
 
 Viết báo cáo: sau bước 1–4 ở lộ trình B, mở `report/README.md` và chọn mục cần viết. Làm slide: dùng `slides/slide-script.md` làm dàn bài và `slides/README.md` để biên dịch và chỉnh bộ Beamer; hình lấy trong `figures/`.
@@ -85,7 +106,7 @@ Ba file trong [`docs/diagrams/`](../docs/diagrams/): `kien-truc-cac-lop.drawio`,
 ## 5. Quy ước và mẹo
 - **GMV = 13,49 triệu BRL** (không tính đơn hủy); tổng giá hàng mọi đơn là 13,59 triệu. Luôn nói rõ đang dùng số nào.
 - Số liệu và hình trong hướng dẫn được **sinh từ database** bằng script (xem mục 6) nên đúng với dữ liệu hiện tại; đừng tự gõ lại số, hãy copy từ file.
-- Gặp số lệch hoặc chỗ khó hiểu: ghi lại (file, mục, hiện tượng) và báo KT1 để sửa tài liệu hoặc kiểm tra lại dữ liệu.
+- Gặp số lệch hoặc chỗ khó hiểu: ghi lại (file, mục, hiện tượng) và báo Phú để sửa tài liệu hoặc kiểm tra lại dữ liệu.
 - Các file đánh dấu **BẢN NHÁP** (`05-nghiep-vu-nhap.md`, các hình `3-2-*`) cần nhóm đọc, sửa và vẽ lại; không đưa nguyên vào báo cáo.
 
 ## 6. Sinh lại tài liệu (cần truy cập database)
