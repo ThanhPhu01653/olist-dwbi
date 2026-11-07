@@ -55,7 +55,7 @@ Cho lãnh đạo thấy sức khoẻ toàn doanh nghiệp trong một trang: doa
   \item Home \& Furniture dẫn đầu với 3,07 triệu BRL (22,8\% GMV trong cửa sổ).
   \item AOV toàn sàn 137,42 BRL; phí vận chuyển chiếm 16,6\% giá hàng, nhưng \textbf{nặng hơn ở hàng giá thấp} (xem scatter AOV – Freight ratio).
   \item Doanh số theo quý tăng rõ: quý 4/2017 là 2,41 triệu BRL so với 0,73 triệu ở quý 1/2017.
-  \item Quy luật 80/20 ở seller yếu hơn: 540/3.095 seller (17,4\%) tạo 80\% GMV nhưng 5 seller lớn nhất chỉ chiếm 7,7\%.
+  \item Quy luật 80/20 ở seller yếu hơn: 540/3.053 seller (17,7\%) tạo 80\% GMV nhưng 5 seller lớn nhất chỉ chiếm 7,7\%.
 \end{itemize}
 \todo{Nhóm kiểm tra các nhận xét của D2 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
 
@@ -161,9 +161,9 @@ Hiểu trải nghiệm khách hàng: điểm đánh giá, ảnh hưởng của g
 \paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
 
 \begin{itemize}
-  \item \textbf{8.000 MQL $\rightarrow$ 842 deal (10,5\%) $\rightarrow$ 380 seller có đơn (45,1\% số đã chốt, tức 4,75\% MQL)}; 462 deal chốt nhưng chưa bán.
+  \item \textbf{8.000 MQL $\rightarrow$ 842 deal (10,5\%) $\rightarrow$ 379 seller có đơn bán được (45,0\% số đã chốt, tức 4,74\% MQL)}; 462 deal chốt nhưng chưa bán.
   \item Tỷ lệ chốt theo origin: \code{unknown} 16,7\%, \code{paid\_\allowbreak{}search} 12,3\%, \code{organic\_\allowbreak{}search} 11,8\%… thấp nhất \code{email} 3,0\% (493 MQL) và \code{other} 2,7\% (150 MQL).
-  \item Thời gian chốt TB 48,5 ngày (Social 61,0; Paid 55,0; Organic 45,9; Unknown 41,9); từ chốt đến đơn đầu TB 51,8 ngày.
+  \item Thời gian chốt TB 48,5 ngày (Social 61,0; Paid 55,0; Organic 45,9; Unknown 41,9); từ chốt đến đơn đầu TB 51,9 ngày.
   \item Seller từ funnel chỉ tạo \textasciitilde{}5\% GMV: kênh Organic 153 seller có đơn (GMV 246.767), Unknown 85 (214.726), Paid 103 (153.720), Social 31, Email 6 (\textbf{mẫu nhỏ}), Other 2 (\textbf{mẫu nhỏ}).
   \item Seller Unknown có \textbf{GMV/seller cao nhất (2.526 BRL)} trong các nhóm funnel nhưng mẫu 85 seller; Organic chỉ 1.613 BRL/seller – cần nói rõ cỡ mẫu khi so sánh.
 \end{itemize}
@@ -189,9 +189,9 @@ Giám sát pipeline: mỗi lô chạy bao lâu, nạp bao nhiêu dòng, bao nhi�
 \paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
 
 \begin{itemize}
-  \item 11 đợt tăng dần, mỗi đợt \textbf{\textasciitilde{}20–26 giây} (gồm kiểm thử \textasciitilde{}12 giây).
-  \item \textbf{Funnel lấp đầy dần}: MQL 2.002 $\rightarrow$ 8.000 (đủ từ đợt 5), deal chốt 3 $\rightarrow$ 842, seller của funnel có đơn 0 $\rightarrow$ 380 (đủ từ đợt 8).
+  \item 11 đợt tăng dần, mỗi đợt \textbf{\textasciitilde{}20–26 giây} (gồm kiểm thử \textasciitilde{}11–15 giây).
+  \item \textbf{Funnel lấp đầy dần}: MQL 2.002 $\rightarrow$ 8.000 (đủ từ đợt 5), deal chốt 3 $\rightarrow$ 842, seller của funnel có đơn 0 $\rightarrow$ 379 (đủ từ đợt 8).
   \item Dòng bị loại: chỉ \textbf{42 điểm toạ độ ngoài Brazil}; không có dòng mồ côi; các khoảng thời gian âm được đặt trống và đếm ở \code{fact\_\allowbreak{}load\_\allowbreak{}issue} (1.359 \code{handling\_\allowbreak{}days}, 23 \code{transit\_\allowbreak{}days}, 1 \code{days\_\allowbreak{}to\_\allowbreak{}close}).
-  \item 133 phép kiểm thử đạt 100\% và 5/5 đối chiếu EDA khớp ở lô cuối.
+  \item 136 phép kiểm thử đạt 100\% và 6/6 đối chiếu EDA khớp ở lô cuối.
 \end{itemize}
 \todo{Nhóm kiểm tra các nhận xét của D7 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}

@@ -49,8 +49,8 @@ def kpis(conn, a, b) -> dict:
     cust, rep = one(f"WITH c AS (SELECT dc.customer_unique_id, count(*) AS n FROM dw.fact_order_fulfillment o JOIN dw.dim_customer dc ON dc.customer_key = o.customer_key {j} {w} "
                     "GROUP BY 1) SELECT count(*), count(*) FILTER (WHERE n >= 2) FROM c")
     j, w = scope("f.review_creation_date_key", a, b)
-    revs, avg_rev, neg, rev_late, rev_ok = one("SELECT count(*), avg(f.review_score), sum(f.is_negative), avg(f.review_score) FILTER (WHERE f.delivered_late = 1), "
-                                               f"avg(f.review_score) FILTER (WHERE f.delivered_late = 0) FROM dw.fact_review f {j} {w}")
+    revs, avg_rev, neg, rev_late, rev_ok = one("SELECT count(*), avg(f.review_score), sum(f.is_negative), avg(f.review_score) FILTER (WHERE f.is_delivered = 1 AND f.delivered_late = 1), "
+                                               f"avg(f.review_score) FILTER (WHERE f.is_delivered = 1 AND f.delivered_late = 0) FROM dw.fact_review f {j} {w}")
     j, w = scope("f.purchase_date_key", a, b)
     pay, npay, inst = one(f"SELECT sum(f.payment_value), count(*), avg(f.payment_installments) FROM dw.fact_payment f {j} {w}")
     j, w = scope("f.first_contact_date_key", a, b)

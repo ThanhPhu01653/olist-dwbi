@@ -1,23 +1,25 @@
 # CLAUDE.md – Olist DW & BI (bài tập lớn môn Kho dữ liệu & Kinh doanh thông minh, HUST)
 
+File hướng dẫn cho Claude Code; thành viên nhóm không cần đọc.
+
 ## Dự án là gì
 Xây kho dữ liệu chủ đề **Order Management** trên bộ Olist Brazilian E-Commerce, tích hợp thêm bộ **Olist Marketing Funnel**
 (nối qua `seller_id`). Sản phẩm cuối: PostgreSQL DW chạy được end-to-end, 7 dashboard Power BI, báo cáo LaTeX > 100 trang
-và slide > 100 trang. Báo cáo trước lớp vào **tuần 12 (30/11–6/12/2026)**; phần code phải xong trước **21/11**,
-dữ liệu xuất cho Power BI phải có bản đầu tiên trước **18/11**.
+và slide > 100 trang. Bản nháp đủ (báo cáo, slide, dashboard) trước **29/11**; báo cáo trước lớp vào **tuần 12 (30/11–6/12/2026)**;
+phần code phải xong trước **21/11**, dữ liệu xuất cho Power BI phải có bản đầu tiên trước **18/11**.
 
 **Đặc tả schema đầy đủ nằm ở `docs/DW_DESIGN.md` – đọc file đó trước khi viết bất kỳ DDL/ETL nào.**
 Không tự ý đổi tên bảng/cột so với đặc tả. Nếu thấy đặc tả sai hoặc thiếu, dừng lại, nêu rõ vấn đề và đề xuất sửa `docs/DW_DESIGN.md` trước.
 
-## Phân công và nơi chạy code
-- Database và code chạy trên máy của KT1 (Phú), làm việc cùng Claude Code. Mọi code trong repo do KT1 + Claude Code viết.
-- Cả nhóm cùng làm dashboard Power BI, báo cáo LaTeX và slide **từ các file trong `handoff/`**; phân công cụ thể sẽ làm sau.
+## Ai làm gì và nơi chạy code
+- Phú là người duy nhất viết và chạy code cùng Claude Code; database và code nằm trên máy của Phú.
+- Cả nhóm cùng dựng dashboard Power BI, viết báo cáo LaTeX và làm slide **từ các file trong `handoff/`**; không chia vai theo người.
 
 Hệ quả: database nằm trên một máy. Mọi thứ dashboard, báo cáo và slide cần (số liệu, bảng mẫu, hình, dữ liệu cho Power BI)
 phải được xuất sẵn ra file trong repo hoặc thư mục chia sẻ. Handoff tự giải thích được: nêu thuật ngữ khi dùng lần đầu, không đòi hỏi truy cập database.
 
 ## Môi trường (không dùng Docker)
-- PostgreSQL 18 (16+ đều chạy được) **cài trực tiếp** trên máy của KT1 (installer EnterpriseDB). Extension bắt buộc: `unaccent` (có sẵn).
+- PostgreSQL 18 (16+ đều chạy được) **cài trực tiếp** trên máy của Phú (installer EnterpriseDB). Extension bắt buộc: `unaccent` (có sẵn).
 - **PostGIS không cài** (quyết định 05/11). Mọi tính toán địa lý (khoảng cách seller → khách) dùng công thức haversine bằng SQL thuần trên cột latitude/longitude; không tạo cột `geometry`. Nếu sau này cài PostGIS thì mới thêm.
 - Python 3.11 trong virtualenv (`.venv`): pandas, SQLAlchemy 2, psycopg2-binary, python-dotenv, holidays, matplotlib, seaborn, openpyxl
 - Biến đổi chính viết bằng **SQL (PL/pgSQL procedure)**; Python dùng để tạo database, nạp nguồn, extract, điều phối, sinh thống kê, xuất file

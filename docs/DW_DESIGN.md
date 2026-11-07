@@ -2,7 +2,7 @@
 
 > Tài liệu đặc tả cho nhóm và cho Claude Code. Đây là nguồn sự thật duy nhất (single source of truth) về schema.
 > Mọi thay đổi sau mốc chốt thiết kế (12/11) phải cập nhật file này trước rồi mới sửa code.
-> Phiên bản: v1.0 – 05/11/2026.
+> Phiên bản: v1.1 – 07/11/2026 (v1.0 ngày 05/11/2026; thay đổi sau đó nằm trong nhật ký quyết định).
 
 **Nhật ký quyết định**
 
@@ -10,19 +10,19 @@
 | --- | --- | --- |
 | 05/11 | Ghép thêm bộ Olist Marketing Funnel | Thêm schema `crm`, `fact_lead_funnel`, `fact_seller_monthly`, mart `mart_acquisition` |
 | 05/11 | Dùng **PostgreSQL** cho toàn bộ hệ thống, không dùng SQL Server/SSAS | OLAP theo mô hình **ROLAP**: thao tác OLAP minh hoạ bằng SQL (ROLLUP, CUBE, GROUPING SETS) trên star schema và bằng Power BI; báo cáo giải thích lý do chọn ROLAP thay vì MOLAP |
-| 05/11 | Không dùng Docker; chỉ KT1 viết và chạy code (cùng Claude Code); cả nhóm cùng làm dashboard Power BI, báo cáo và slide | PostgreSQL cài trực tiếp; dữ liệu cho Power BI đi qua CSV xuất từ `scripts/export_powerbi.py` |
+| 05/11 | Không dùng Docker; chỉ Phú viết và chạy code (cùng Claude Code); cả nhóm cùng làm dashboard Power BI, báo cáo và slide | PostgreSQL cài trực tiếp; dữ liệu cho Power BI đi qua CSV xuất từ `scripts/export_powerbi.py` |
 | 05/11 | Không cài PostGIS | Khoảng cách seller → khách tính bằng hàm haversine SQL thuần; dim_geography không có cột geometry |
 | 05/11 | Zip: bản CSV hiện tại đã giữ số 0 đầu → `oltp` lưu zip kiểu `text`; ODS vẫn chuẩn hoá về `char(5)` (`lpad`) để phòng thủ | Lỗi "mất số 0 đầu" ở §2.3 không xảy ra với bản CSV này (số liệu kiểm chứng ghi ở §2.3) |
 | 05/11 | `oltp.customers` chỉ nạp khách có đơn trong khoảng thời gian nạp (`customer_id` sinh theo từng đơn, hệ thống OLTP thật cũng vậy) | `simulate_increment` phải chèn customer cùng với đơn mới (§12) |
 | 05/11 | Chấp nhận chỉ 3 deal có `won_date` ≤ 2017-12-31 sau nạp ban đầu; dashboard dựng trên trạng thái cuối sau khi chạy hết các đợt incremental | Funnel "lấp đầy dần" qua các đợt incremental là điểm để trình bày |
 | 05/11 | `oltp.order_reviews` dùng khoá chính ghép (`review_id`, `order_id`) | `review_id` lặp giữa các đơn nên không làm PK riêng được |
-| 05/11 | Máy của KT1 dùng **PostgreSQL 18.6**, giữ nguyên, không cài lại bản 16 | Tài liệu ghi "PostgreSQL 18 (16+ đều chạy được)"; code không dùng tính năng riêng của một bản; đã chạy thật P0 trên 18.6 |
-| 05/11 | **Chốt 05/11 (KT1); nhóm có thể đổi ở buổi 12/11:** `dim_customer` dùng **SCD2** | Chỉ 250 / 96.096 khách đổi zip (0,26%) nên SCD2 thêm 256 dòng (+0,27%); là ví dụ SCD thật để trình bày (EDA câu a) |
-| 05/11 | **Chốt 05/11 (KT1); nhóm có thể đổi ở buổi 12/11:** D6 gồm **2 trang**: (1) funnel theo kênh, (2) seller từ funnel có cảnh báo cỡ mẫu. 462 deal "chốt nhưng chưa bán" vẫn có dòng trong `dim_seller` (địa chỉ Unknown, `is_from_funnel = true`) và được hiển thị như một kết quả, không phải lỗi | Chỉ 380 / 842 deal (45,1%) có đơn, GMV 4,99% GMV sàn (EDA câu b) |
-| 05/11 | **Chốt 05/11 (KT1); nhóm có thể đổi ở buổi 12/11:** `fact_seller_monthly` lưu **dày đặc** đến tháng cuối có đơn; dashboard lọc 2017-01 → 2018-08 | 36.583 dòng dày đặc so với 16.441 dòng thưa; đo được seller ngừng bán (EDA câu c) |
-| 05/11 | **Chốt 05/11 (KT1); nhóm có thể đổi ở buổi 12/11:** nhóm ngành hàng dùng `docs/category_group_draft.csv` với 2 chỗ sửa: tách `pet_shop` thành nhóm **Pet**; đổi tên "Auto & Tools" thành **"Auto, Tools & Construction"** → 13 nhóm kể cả Unknown | Bản chốt nằm ở `seeds/category_group.csv` (EDA câu d) |
-| 05/11 | **Chốt 05/11 (KT1); nhóm có thể đổi ở buổi 12/11:** zip của customers/sellers thiếu trong geolocation → vẫn tạo dòng `dim_geography` từ city/state, `latitude`/`longitude` = NULL | 157 zip khách + 7 zip seller; 0,28% số đơn (EDA câu e) |
-| 05/11 | **Chốt 05/11 (KT1); nhóm có thể đổi ở buổi 12/11:** giữ mốc nạp ban đầu **2017-12-31** | 45.430 đơn, 2.002 MQL, 3 deal; còn 8 đợt incremental hằng tháng đến 2018-08 (EDA câu f) |
+| 05/11 | Máy của Phú dùng **PostgreSQL 18.6**, giữ nguyên, không cài lại bản 16 | Tài liệu ghi "PostgreSQL 18 (16+ đều chạy được)"; code không dùng tính năng riêng của một bản; đã chạy thật P0 trên 18.6 |
+| 05/11 | **Chốt 05/11 (Phú); nhóm có thể xem lại trước mốc chốt thiết kế 12/11:** `dim_customer` dùng **SCD2** | Chỉ 250 / 96.096 khách đổi zip (0,26%) nên SCD2 thêm 256 dòng (+0,27%); là ví dụ SCD thật để trình bày (EDA câu a) |
+| 05/11 | **Chốt 05/11 (Phú); nhóm có thể xem lại trước mốc chốt thiết kế 12/11:** D6 gồm **2 trang**: (1) funnel theo kênh, (2) seller từ funnel có cảnh báo cỡ mẫu. 462 deal "chốt nhưng chưa bán" vẫn có dòng trong `dim_seller` (địa chỉ Unknown, `is_from_funnel = true`) và được hiển thị như một kết quả, không phải lỗi | Chỉ 380 / 842 deal (45,1%) có đơn, GMV 4,99% GMV sàn (EDA câu b) |
+| 05/11 | **Chốt 05/11 (Phú); nhóm có thể xem lại trước mốc chốt thiết kế 12/11:** `fact_seller_monthly` lưu **dày đặc** đến tháng cuối có đơn; dashboard lọc 2017-01 → 2018-08 | 36.583 dòng dày đặc so với 16.441 dòng thưa; đo được seller ngừng bán (EDA câu c) |
+| 05/11 | **Chốt 05/11 (Phú); nhóm có thể xem lại trước mốc chốt thiết kế 12/11:** nhóm ngành hàng dùng `docs/category_group_draft.csv` với 2 chỗ sửa: tách `pet_shop` thành nhóm **Pet**; đổi tên "Auto & Tools" thành **"Auto, Tools & Construction"** → 13 nhóm kể cả Unknown | Bản chốt nằm ở `seeds/category_group.csv` (EDA câu d) |
+| 05/11 | **Chốt 05/11 (Phú); nhóm có thể xem lại trước mốc chốt thiết kế 12/11:** zip của customers/sellers thiếu trong geolocation → vẫn tạo dòng `dim_geography` từ city/state, `latitude`/`longitude` = NULL | 157 zip khách + 7 zip seller; 0,28% số đơn (EDA câu e) |
+| 05/11 | **Chốt 05/11 (Phú); nhóm có thể xem lại trước mốc chốt thiết kế 12/11:** giữ mốc nạp ban đầu **2017-12-31** | 45.430 đơn, 2.002 MQL, 3 deal; còn 8 đợt incremental hằng tháng đến 2018-08 (EDA câu f) |
 | 05/11 | Điều chỉnh đặc tả: `fact_order_fulfillment` thêm `promised_days` (= ngày dự kiến − ngày mua); thêm KPI "ngày hứa giao TB so với ngày giao thực tế" | Ngày dự kiến quá rộng rãi (91,9% đơn giao sớm hơn dự kiến, trung vị sớm 12 ngày) nên cần so sánh số ngày hứa với số ngày thực tế (dùng cho D3) |
 | 05/11 | Điều chỉnh đặc tả: `dim_lead_origin` tách `unknown` thành nhóm kênh riêng **Unknown** (không gộp với `other`) | `origin = unknown` có tỷ lệ chốt cao nhất (16,7%), gộp với `other` (2,7%) sẽ che mất sự khác biệt |
 | 05/11 | Làm rõ `dim_geography` (P4): zip chỉ có toạ độ ngoài bbox vẫn có dòng (lat/lng NULL, city/state theo mode của các điểm đó). Trước đó 4 zip như vậy bị bỏ sót (dim 19.174 thay vì 19.178 dòng khi nạp đủ dữ liệu) | ODS giữ zip với `n_points = 0`; thêm test đối soát số zip dim = số zip trong staging ∪ customers ∪ sellers |
@@ -31,7 +31,10 @@
 | 05/11 | Làm rõ nạp tăng dần (P5): (1) `simulate_increment` nạp mọi bản ghi nguồn có mốc thời gian ≤ ngày `--until` mà nguồn chưa có (nạp cả MQL cha của deal nếu `first_contact_date` muộn hơn `won_date`); cần **11 đợt hằng tháng (01/2018 → 11/2018)** để hết dữ liệu nguồn vì deal kéo dài tới 11/2018 (8 đợt đầu mới tới 08/2018); (2) `mql` và `closed_deals` được extract theo "chưa có trong staging" thay vì watermark ngày (tránh bỏ sót MQL khi deal đăng ký trước ngày liên hệ); watermark chỉ còn dùng cho `orders`; (3) dòng bị loại vì mồ côi (`orphan:`) được **thử lại** ở các đợt sau khi cha đã tới, và biến mất khỏi `etl_log.rejected_rows` khi đã nạp; (4) thêm `etl_log.batch_metrics`, `v_run_summary`, `v_dq_summary`, `v_rejected_summary` cho D7 | Kết quả incremental phải bằng full (so sánh số dòng, tổng tiền và checksum nội dung trên khoá tự nhiên) |
 | 05/11 | Làm rõ KPI và data mart (P6): `Orders` = số đơn **có doanh thu** (distinct `order_id` của các đơn không thuộc nhóm Failed, cùng phạm vi với GMV) để `AOV = GMV ÷ Orders` nhất quán; `Orders placed` = mọi đơn đã đặt (`fact_order_fulfillment`); mart đặt tên `v_*`, các view nặng (RFM, cohort, scorecard seller, seller theo kênh) là MATERIALIZED VIEW làm mới bằng `dw.refresh_marts` giữa bước fact và test; trong Power BI bỏ dòng `date_key = -1` của `dim_date` và thêm cột `InWindow` (2017-01 → 2018-08) làm bộ lọc trang | Không đổi schema `dw`; thêm 13 file CSV mart vào `exports/powerbi/` |
 | 05/11 | P7: hàm `dw.haversine_km` và `mart_fulfillment.v_shipping_distance` (khoảng cách seller → khách cho từng dòng hàng; dòng thiếu toạ độ giữ `distance_km` NULL); thêm `mart_sales.v_geo_state`, `v_geo_zip` cho bản đồ; `scripts/rebuild_all.py` dựng lại toàn bộ bằng một lệnh | Không đổi schema `dw`; `sql/70_geo` chạy trong `setup_db`; xuất thêm 2 file CSV (37 file) |
-| 12/11 | *(buổi họp nhóm)* xem lại các dòng "Chốt 05/11" ở trên; mọi thay đổi sau đó phải cập nhật file này trước rồi mới sửa code | |
+| 07/11 | Thêm cột `is_delivered smallint` vào `dw.fact_review` (lấy từ `fact_order_fulfillment.is_delivered`; không có fulfillment → 0) | Measure `Avg review - on time` và `Avg review - late delivery` chỉ tính đơn đã giao; trước đó đơn chưa giao (2.871 review) bị tính vào nhóm "đúng hạn" nên điểm là 4,21 thay vì 4,29. Thêm test đối soát `is_delivered` với `fact_order_fulfillment` và test EDA điểm đúng hạn 4,29 |
+| 07/11 | Làm rõ §9: tách `Orders` (đơn có doanh thu, không Failed) và `Orders placed` (mọi đơn); `Late rate` = đơn giao trễ ÷ đơn đã giao, viết `DIVIDE([Late orders], [Delivered orders])` thay cho `1 - [On-time rate]` | Giá trị không đổi, định nghĩa không còn phụ thuộc measure khác |
+| 07/11 | `dim_seller.first_sale_date` chỉ lấy đơn **không thuộc nhóm Failed** (join `dim_order_status`); lý do: đơn bị huỷ / không có sẵn không phải là bán được hàng, khớp định nghĩa GMV. Sửa theo: `fact_lead_funnel.first_sale_date_key`, `has_first_sale`, `days_won_to_first_sale`, `seller_gmv_first_90d` (cửa sổ 90 ngày bắt đầu từ ngày đơn đầu không Failed); `fact_seller_monthly.months_since_first_sale` tính từ tháng của `first_sale_date` (âm ở tháng trước đó chỉ có đơn Failed, NULL nếu seller chưa bán được; cột cho phép NULL), lưới tháng vẫn bắt đầu từ tháng có đơn đầu ở mọi trạng thái để không bỏ sót đơn Failed | Toàn kho: 62 trong 3.095 seller có đơn đổi `first_sale_date` (42 seller chỉ có đơn Failed chuyển thành NULL, 20 seller dời sang ngày muộn hơn); còn 3.053 seller có `first_sale_date`. Seller của funnel: 2 seller đổi (1 seller chỉ có đơn Failed mất `first_sale`; 1 seller dời từ 2018-08-06 sang 2018-08-10). `Sellers with first sale` 380 → 379, `Won to first sale rate` 45,1% → 45,0%, `Avg days won to first sale` 51,8 → 51,9, `Σ seller_gmv_first_90d` 538.271,72 không đổi. Con số 380 / 842 (45,1%) trong EDA vẫn đúng vì EDA đếm seller có đơn ở mọi trạng thái. Sửa test `dim_seller.first_sale_date` và test tháng đầu của `fact_seller_monthly`; test EDA đổi thành "seller của funnel có ít nhất một đơn (mọi trạng thái) = 380" |
+| 12/11 | Mốc chốt thiết kế: xem lại các dòng "Chốt 05/11" ở trên; mọi thay đổi sau đó phải cập nhật file này trước rồi mới sửa code | |
 
 ---
 
@@ -140,7 +143,7 @@ etl_log: job_run, rejected_rows, watermark  (giám sát → dashboard D7)
 **Công nghệ:** PostgreSQL 18 (16+ đều chạy được) cài trực tiếp trên máy (không dùng Docker, không PostGIS), extension `unaccent`;
 Python 3.11 (pandas, SQLAlchemy, psycopg2); SQL stored procedure (PL/pgSQL); Git/GitHub; Power BI Desktop/Service.
 
-**Cầu nối sang Power BI:** chỉ KT1 chạy database, nên `dw`, `mart_*` và `etl_log` được xuất ra CSV (`exports/powerbi/`)
+**Cầu nối sang Power BI:** chỉ Phú chạy database, nên `dw`, `mart_*` và `etl_log` được xuất ra CSV (`exports/powerbi/`)
 sau mỗi lần chạy pipeline; cả nhóm dựng Power BI ở chế độ Import từ các file này. Publish to web cũng cần chế độ Import.
 
 ---
@@ -243,7 +246,7 @@ Grain: 1 seller. 3.095 dòng (+ seller chỉ có trong closed_deals nếu có �
 | acquisition_channel | nhóm kênh (xem 6.9) |
 | business_segment, lead_type, business_type | từ closed_deals |
 | won_date | date |
-| first_sale_date | ngày mua của đơn đầu tiên có seller này (tính sau khi nạp fact_order_item, cập nhật lại) |
+| first_sale_date | ngày mua của đơn đầu tiên **không thuộc nhóm Failed** có seller này (tính sau khi nạp fact_order_item, cập nhật lại); NULL nếu mọi đơn của seller đều Failed |
 
 Phân cấp: Seller → Thành phố → Bang → Vùng; Seller → Kênh thu hút → Origin.
 
@@ -346,7 +349,7 @@ Cột: order_id, payment_sequential (DD), purchase_date_key, customer_key, payme
 ### 7.4 `dw.fact_review` – Transaction
 **Grain:** 1 review gắn với 1 đơn (`review_id`, `order_id`). ~99k dòng.
 Cột: review_id, order_id (DD), review_creation_date_key, review_answer_date_key, customer_key, review_score (1–5),
-is_negative (score ≤ 2), has_comment_title, has_comment_message, comment_length, response_hours, delivered_late (0/1, lấy từ fact_order_fulfillment – thuận tiện phân tích trễ → điểm).
+is_negative (score ≤ 2), has_comment_title, has_comment_message, comment_length, response_hours, delivered_late (0/1, lấy từ fact_order_fulfillment – thuận tiện phân tích trễ → điểm), is_delivered (0/1, lấy từ fact_order_fulfillment: 1 nếu đơn đã giao, tức có `order_delivered_customer_date`). Khi so sánh điểm review của đơn đúng hạn với đơn trễ phải lọc `is_delivered = 1`, vì đơn chưa giao cũng có `delivered_late = 0` nhưng chưa thể gọi là đúng hạn.
 
 ### 7.5 `dw.fact_lead_funnel` – Accumulating snapshot
 **Grain:** 1 MQL. ~8.000 dòng.
@@ -355,7 +358,7 @@ is_negative (score ≤ 2), has_comment_title, has_comment_message, comment_lengt
 | --- | --- |
 | mql_id | PK, degenerate |
 | landing_page_id | degenerate |
-| first_contact_date_key, won_date_key, first_sale_date_key | role-playing; −1 nếu chưa xảy ra |
+| first_contact_date_key, won_date_key, first_sale_date_key | role-playing; −1 nếu chưa xảy ra. `first_sale_date_key` lấy từ `dim_seller.first_sale_date` (đơn đầu không Failed) |
 | lead_origin_key, lead_profile_key | |
 | seller_key | −1 nếu chưa chốt |
 | sdr_key, sr_key | FK dim_sales_rep; −1 nếu chưa chốt |
@@ -364,10 +367,10 @@ is_negative (score ≤ 2), has_comment_title, has_comment_message, comment_lengt
 | days_to_close | won_date − first_contact_date |
 | days_won_to_first_sale | first_sale_date − won_date |
 | declared_product_catalog_size, declared_monthly_revenue | non-additive, dùng AVG/median |
-| seller_gmv_first_90d | GMV (đơn không thuộc nhóm Failed) của seller trong 90 ngày kể từ ngày của đơn đầu (ngày 0…89), nối với fact_order_item; NULL nếu seller chưa có đơn |
+| seller_gmv_first_90d | GMV (đơn không thuộc nhóm Failed) của seller trong 90 ngày kể từ `first_sale_date` (ngày 0…89), nối với fact_order_item; NULL nếu seller chưa có đơn |
 
 ### 7.6 `dw.fact_seller_monthly` – Periodic snapshot
-**Grain:** 1 seller × 1 tháng, **dày đặc** từ tháng có đơn đầu tiên của seller đến tháng cuối cùng có đơn hàng trong dữ liệu (để tổng GMV khớp fact_order_item; dashboard tự lọc giai đoạn hiển thị).
+**Grain:** 1 seller × 1 tháng, **dày đặc** từ tháng có đơn đầu tiên của seller (mọi trạng thái, để không bỏ sót đơn Failed) đến tháng cuối cùng có đơn hàng trong dữ liệu (để tổng GMV khớp fact_order_item; dashboard tự lọc giai đoạn hiển thị).
 `month_date_key` = date_key của ngày 1 trong tháng.
 
 | Cột | Ghi chú |
@@ -379,7 +382,7 @@ is_negative (score ≤ 2), has_comment_title, has_comment_message, comment_lengt
 | canceled_orders | |
 | avg_review_score | NULL nếu không có review |
 | is_active | orders > 0 |
-| months_since_first_sale | |
+| months_since_first_sale | số tháng kể từ tháng của `dim_seller.first_sale_date` (0 = tháng có đơn bán được đầu tiên); âm nếu là tháng trước đó chỉ có đơn Failed; NULL nếu seller chưa có đơn bán được (cột cho phép NULL) |
 
 ---
 
@@ -399,14 +402,17 @@ Lưu ý giai đoạn dữ liệu: đơn 2016 rất thưa và 09–10/2018 gần 
 | KPI | Định nghĩa |
 | --- | --- |
 | GMV | Σ price của đơn không ở nhóm Failed |
-| Orders / AOV | COUNT DISTINCT order_id; GMV ÷ Orders |
+| Orders | COUNT DISTINCT order_id của các đơn **có doanh thu** (không thuộc nhóm Failed, cùng phạm vi với GMV) |
+| AOV | GMV ÷ Orders |
+| Orders placed | COUNT DISTINCT order_id của **mọi đơn đã đặt** (`fact_order_fulfillment`), kể cả đơn Failed; là mẫu số của Cancel rate |
 | MoM %, YoY % | Time intelligence trên dim_date |
 | Freight ratio | Σ freight_value ÷ Σ price |
-| Cancel rate | Đơn status_group = Failed ÷ tổng đơn |
+| Cancel rate | Đơn status_group = Failed ÷ Orders placed |
 | On-time rate | Đơn giao có delay_days ≤ 0 ÷ đơn đã giao |
+| Late rate | Đơn giao trễ (`is_late = 1`) ÷ đơn đã giao (`is_delivered = 1`) = `DIVIDE([Late orders], [Delivered orders])` |
 | Avg lead time / từng chặng | AVG lead_days, approval_hours, handling_days, transit_days |
 | Ngày hứa giao TB so với ngày giao thực tế | AVG promised_days và AVG lead_days trên đơn đã giao; chênh lệch = AVG(promised_days − lead_days) (dương = giao sớm hơn hứa); dùng cho D3 |
-| Avg review, % negative | AVG review_score; Σ is_negative ÷ số review |
+| Avg review, % negative | AVG review_score; Σ is_negative ÷ số review. Điểm review theo đúng hạn / trễ chỉ tính đơn đã giao (`fact_review.is_delivered = 1`) |
 | Repeat customer rate | Khách có ≥ 2 đơn ÷ tổng khách (theo customer_unique_id) |
 | MQL → Won conversion | Σ is_won ÷ số MQL |
 | Avg days to close | AVG days_to_close (won) |
@@ -424,7 +430,7 @@ Lưu ý giai đoạn dữ liệu: đơn 2016 rất thưa và 09–10/2018 gần 
 | D6 | Seller Acquisition & Performance | Vận hành | fact_lead_funnel, fact_seller_monthly |
 | D7 | Data Quality & ETL Monitor | Vận hành hệ thống | etl_log |
 
-Cả nhóm dựng một semantic model chung trong một file .pbix và chia nhau các dashboard (phân công làm sau). KT1 cung cấp dữ liệu, `powerbi/measures.md` và `powerbi/model.md`.
+Cả nhóm dựng một semantic model chung trong một file .pbix và chia nhau các dashboard (phân công làm sau). Phú cung cấp dữ liệu, `powerbi/measures.md` và `powerbi/model.md`.
 
 ## 11. Giám sát ETL (`etl_log`)
 

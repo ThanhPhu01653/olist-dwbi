@@ -278,7 +278,7 @@ def q_e() -> tuple[list[str], dict]:
         "nhưng thêm cột mới vào đặc tả và pha tạp dữ liệu thật với dữ liệu suy ra.",
         "3. Loại các đơn/khách có zip thiếu: **không chấp nhận** (mất doanh thu, vi phạm nguyên tắc không bỏ dữ liệu).", "",
         f"**Khuyến nghị:** phương án 1. Chỉ {pct(100 * imp.orders / tot_orders, 2)} số đơn và {pct(100 * imp.gmv / tot_gmv, 2)} GMV bị ảnh hưởng; "
-        "dim_geography vẫn đủ mọi zip (khoá ngoại luôn trỏ được), toạ độ NULL được ghi rõ trong tài liệu. Nếu KT3 cần bản đồ đầy đủ thì nâng lên phương án 2 sau, "
+        "dim_geography vẫn đủ mọi zip (khoá ngoại luôn trỏ được), toạ độ NULL được ghi rõ trong tài liệu. Nếu nhóm cần bản đồ đầy đủ thì nâng lên phương án 2 sau, "
         "khi đó cập nhật DW_DESIGN trước.", ""]
     return lines, {"cust_missing": int(r.cust_missing_zips), "sell_missing": int(r.sell_missing_zips), "orders": int(imp.orders),
                    "gmv_share": 100 * imp.gmv / tot_gmv, "union": int(r.union_zips), "extra": extra}

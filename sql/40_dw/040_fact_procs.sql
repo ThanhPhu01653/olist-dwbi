@@ -243,7 +243,7 @@ BEGIN
            (nullif(trim(r.review_comment_message), '') IS NOT NULL)::int AS has_message,
            coalesce(length(nullif(trim(r.review_comment_message), '')), 0) AS comment_length,
            extract(epoch FROM r.review_answer_timestamp - r.review_creation_date) / 3600.0 AS response_raw,
-           coalesce(f.is_late, 0) AS delivered_late, (f.order_id IS NULL) AS no_fulfillment
+           coalesce(f.is_late, 0) AS delivered_late, coalesce(f.is_delivered, 0)::smallint AS is_delivered, (f.order_id IS NULL) AS no_fulfillment
     FROM ods.order_reviews r
     JOIN ods.orders o ON o.order_id = r.order_id
     JOIN ods.customers c ON c.customer_id = o.customer_id
@@ -255,16 +255,16 @@ BEGIN
 
     WITH up AS (
         INSERT INTO dw.fact_review AS t (review_id, order_id, review_creation_date_key, review_answer_date_key, customer_key, review_score, is_negative,
-                                         has_comment_title, has_comment_message, comment_length, response_hours, delivered_late, etl_batch_id)
+                                         has_comment_title, has_comment_message, comment_length, response_hours, delivered_late, is_delivered, etl_batch_id)
         SELECT review_id, order_id, creation_key, answer_key, customer_key, review_score, (review_score <= 2)::int, has_title, has_message,
-               comment_length, CASE WHEN response_raw >= 0 THEN round(response_raw::numeric, 2) END, delivered_late, p_batch_id
+               comment_length, CASE WHEN response_raw >= 0 THEN round(response_raw::numeric, 2) END, delivered_late, is_delivered, p_batch_id
         FROM tmp_frev
         ON CONFLICT (review_id, order_id) DO UPDATE
             SET review_creation_date_key = EXCLUDED.review_creation_date_key, review_answer_date_key = EXCLUDED.review_answer_date_key,
                 customer_key = EXCLUDED.customer_key, review_score = EXCLUDED.review_score, is_negative = EXCLUDED.is_negative,
                 has_comment_title = EXCLUDED.has_comment_title, has_comment_message = EXCLUDED.has_comment_message,
                 comment_length = EXCLUDED.comment_length, response_hours = EXCLUDED.response_hours,
-                delivered_late = EXCLUDED.delivered_late, etl_batch_id = EXCLUDED.etl_batch_id
+                delivered_late = EXCLUDED.delivered_late, is_delivered = EXCLUDED.is_delivered, etl_batch_id = EXCLUDED.etl_batch_id
             WHERE to_jsonb(t) - 'etl_batch_id' IS DISTINCT FROM to_jsonb(EXCLUDED) - 'etl_batch_id'
         RETURNING (xmax = 0) AS ins)
     SELECT count(*) FILTER (WHERE ins), count(*) FILTER (WHERE NOT ins) INTO p_inserted, p_updated FROM up;
@@ -277,22 +277,28 @@ BEGIN
     CALL dw.log_fact_issue(p_batch_id, 'fact_review', 'unknown_member', 'customer_key', v.customer);
     CALL dw.log_fact_issue(p_batch_id, 'fact_review', 'unknown_member', 'review_creation_date_key (value outside dim_date)', v.c_date);
     CALL dw.log_fact_issue(p_batch_id, 'fact_review', 'unknown_member', 'review_answer_date_key (value outside dim_date)', v.a_date);
-    CALL dw.log_fact_issue(p_batch_id, 'fact_review', 'unknown_member', 'delivered_late (no fulfillment row, set to 0)', v.no_ful);
+    CALL dw.log_fact_issue(p_batch_id, 'fact_review', 'unknown_member', 'delivered_late, is_delivered (no fulfillment row, set to 0)', v.no_ful);
     CALL dw.log_fact_issue(p_batch_id, 'fact_review', 'negative_interval', 'response_hours', v.n_resp);
 END $$;
 
 -- ---------------------------------------------------------------- dim_seller.first_sale_date (after fact_order_item)
--- date of the first order that contains the seller, any order status (DW_DESIGN 6.4)
+-- purchase date of the first order of the seller that is NOT in status group Failed (a canceled / unavailable order is not a sale; same scope as GMV, DW_DESIGN 6.4)
 CREATE OR REPLACE PROCEDURE dw.load_dim_seller_first_sale(p_batch_id bigint, INOUT p_read bigint DEFAULT 0, INOUT p_inserted bigint DEFAULT 0,
                                                           INOUT p_updated bigint DEFAULT 0, INOUT p_rejected bigint DEFAULT 0)
 LANGUAGE plpgsql AS $$
 BEGIN
-    SELECT count(DISTINCT seller_key) INTO p_read FROM dw.fact_order_item WHERE seller_key <> -1;
+    SELECT count(DISTINCT f.seller_key) INTO p_read
+    FROM dw.fact_order_item f JOIN dw.dim_order_status os ON os.order_status_key = f.order_status_key AND os.status_group <> 'Failed'
+    WHERE f.seller_key <> -1;
+    -- sellers whose orders are all Failed get NULL (also clears a date set by an earlier run)
     UPDATE dw.dim_seller s SET first_sale_date = m.d, dw_updated_at = now()
-    FROM (SELECT f.seller_key, min(dd.full_date) AS d
-          FROM dw.fact_order_item f JOIN dw.dim_date dd ON dd.date_key = f.purchase_date_key
-          WHERE f.seller_key <> -1 GROUP BY f.seller_key) m
-    WHERE s.seller_key = m.seller_key AND s.first_sale_date IS DISTINCT FROM m.d;
+    FROM dw.dim_seller s0
+    LEFT JOIN (SELECT f.seller_key, min(dd.full_date) AS d
+               FROM dw.fact_order_item f
+               JOIN dw.dim_date dd ON dd.date_key = f.purchase_date_key
+               JOIN dw.dim_order_status os ON os.order_status_key = f.order_status_key AND os.status_group <> 'Failed'
+               WHERE f.seller_key <> -1 GROUP BY f.seller_key) m ON m.seller_key = s0.seller_key
+    WHERE s.seller_key = s0.seller_key AND s.seller_key <> -1 AND s.first_sale_date IS DISTINCT FROM m.d;
     GET DIAGNOSTICS p_updated = ROW_COUNT;
     p_inserted := 0;
     p_rejected := 0;
@@ -376,6 +382,8 @@ END $$;
 -- ---------------------------------------------------------------- fact_seller_monthly (periodic snapshot, dense, recomputed completely)
 -- One row per seller and month from the seller's first month with an order to the last month with any order in the data.
 -- orders / items / canceled / delivered / late count every order; gmv and freight exclude Failed orders (KPI "GMV", DW_DESIGN 9).
+-- months_since_first_sale is counted from the month of dim_seller.first_sale_date (first non-Failed order): negative in earlier months that
+-- only hold Failed orders, NULL for sellers that never had a non-Failed order.
 CREATE OR REPLACE PROCEDURE dw.load_fact_seller_monthly(p_batch_id bigint, INOUT p_read bigint DEFAULT 0, INOUT p_inserted bigint DEFAULT 0,
                                                         INOUT p_updated bigint DEFAULT 0, INOUT p_rejected bigint DEFAULT 0)
 LANGUAGE plpgsql AS $$
@@ -413,8 +421,10 @@ BEGIN
            CASE WHEN ao.delivered_orders > 0 THEN round(ao.late_orders::numeric / ao.delivered_orders, 4) END AS late_rate,
            coalesce(ao.canceled_orders, 0) AS canceled_orders, round(ar.avg_score, 2) AS avg_review_score,
            (coalesce(ao.orders, 0) > 0)::int AS is_active,
-           ((extract(year FROM g.m) - extract(year FROM g.first_m)) * 12 + extract(month FROM g.m) - extract(month FROM g.first_m))::int AS months_since_first_sale
+           CASE WHEN ds.first_sale_date IS NOT NULL THEN
+               ((extract(year FROM g.m) - extract(year FROM ds.first_sale_date)) * 12 + extract(month FROM g.m) - extract(month FROM ds.first_sale_date))::int END AS months_since_first_sale
     FROM grid g
+    JOIN dw.dim_seller ds ON ds.seller_key = g.seller_key
     LEFT JOIN a_it ai ON ai.seller_key = g.seller_key AND ai.m = g.m
     LEFT JOIN a_ord ao ON ao.seller_key = g.seller_key AND ao.m = g.m
     LEFT JOIN a_rev ar ON ar.seller_key = g.seller_key AND ar.m = g.m;

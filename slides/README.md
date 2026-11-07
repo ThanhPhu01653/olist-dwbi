@@ -1,6 +1,6 @@
 # Bộ slide Beamer (theme HUST)
 
-Bộ slide 16:9 theo theme HUST Beamer (Đại học Bách khoa Hà Nội, logo Khoa Toán - Tin): **114 slide chính + 10 slide dự phòng** (dàn bài và lời thoại ở [`slide-script.md`](slide-script.md)). Tổng cộng 133 trang PDF: 123 trang chính (gồm bìa, mục lục, 7 trang chuyển mục, 114 slide) và 10 trang dự phòng đặt sau slide kết luận, **không tính vào thanh tiến trình và số trang**.
+Bộ slide 16:9 theo theme HUST Beamer (Đại học Bách khoa Hà Nội, logo Khoa Toán - Tin): **114 slide nội dung + 10 slide dự phòng, 133 trang PDF** (dàn bài và lời thoại ở [`slide-script.md`](slide-script.md)). Trong 133 trang PDF có 123 trang chính (gồm bìa, mục lục, 7 trang chuyển mục, 114 slide) và 10 trang dự phòng đặt sau slide kết luận, **không tính vào thanh tiến trình và số trang**.
 
 ## 1. Cấu trúc
 ```

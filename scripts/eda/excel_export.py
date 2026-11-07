@@ -78,7 +78,7 @@ def write_guide(df: pd.DataFrame, pool: int) -> None:
     X, y = df.delay_days.astype(float), df.review_score.astype(float)
     slope = float(np.cov(X, y)[0, 1] / X.var(ddof=1))
     r2 = float(np.corrcoef(X, y)[0, 1] ** 2)
-    lines = ["# Hướng dẫn Excel Data Analysis ToolPak (cho KT3)", "", source_note("excel_export.py"), "",
+    lines = ["# Hướng dẫn Excel Data Analysis ToolPak (cho nhóm)", "", source_note("excel_export.py"), "",
              "Môn học yêu cầu đa dạng công cụ phân tích: ngoài Power BI, dùng Excel Data Analysis ToolPak cho thống kê mô tả, tương quan, histogram.", "",
              "## File dữ liệu", "",
              f"- `exports/eda_sample.xlsx`, sheet **du_lieu**: {n(len(df))} đơn đã giao (mẫu cố định từ {n(pool)} đơn đủ điều kiện), 21 cột, **không có ô trống**.",

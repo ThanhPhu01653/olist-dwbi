@@ -50,7 +50,7 @@ def layers() -> None:
     dw = d.box(740, 120, 190, 250, "KHO dw\n10 dimension + 6 fact\n614.223 dòng\nhình sao, SCD2, khoá thay thế, dòng Unknown −1", fill=BLUE, bold=True)
     mart = d.box(980, 120, 170, 250, "DATA MART\nmart_sales, mart_fulfillment, mart_cx, mart_acquisition\n17 view (4 materialized)", fill=ORANGE)
     bi = d.box(1200, 120, 170, 250, "POWER BI\n37 file CSV (Import)\nmô hình quan hệ + DAX\n7 dashboard\nPublish to web", fill=PURPLE, bold=True)
-    log = d.box(300, 440, 850, 70, "etl_log: job_run, rejected_rows, watermark, dq_check (133 test), fact_load_issue, batch_metrics, v_run_summary… → dashboard D7", fill=YELLOW)
+    log = d.box(300, 440, 850, 70, "etl_log: job_run, rejected_rows, watermark, dq_check (136 test), fact_load_issue, batch_metrics, v_run_summary… → dashboard D7", fill=YELLOW)
     for s, t, lab in [(a, stg, "extract"), (b, stg, ""), (stg, ods, "SQL procedure"), (ods, dw, "dim + fact"), (dw, mart, "view"), (mart, bi, "export CSV")]:
         d.arrow(s, t, lab)
     d.arrow(dw, bi, "export CSV (dim, fact)", dashed=True)
@@ -98,7 +98,7 @@ def pipeline() -> None:
     dim = d.box(1060, 100, 120, 70, "3. dimension\nSCD1 / SCD2", fill=BLUE)
     fact = d.box(1220, 100, 140, 70, "4. fact\ninsert / upsert / tính lại", fill=ORANGE)
     mart = d.box(1220, 240, 140, 70, "5. mart\nrefresh materialized view", fill=ORANGE)
-    tst = d.box(1060, 240, 120, 70, "6. tests\n133 phép + đối chiếu EDA", fill=YELLOW)
+    tst = d.box(1060, 240, 120, 70, "6. tests\n136 phép + đối chiếu EDA", fill=YELLOW)
     snap = d.box(880, 240, 140, 70, "7. snapshot\nbatch_metrics", fill=YELLOW)
     exp = d.box(720, 240, 120, 70, "8. export_powerbi\nCSV", fill=PURPLE)
     pbi = d.box(540, 240, 140, 70, "Power BI\nImport + DAX\n7 dashboard", fill=PURPLE)
@@ -107,7 +107,7 @@ def pipeline() -> None:
         d.arrow(s, t)
     for s in (ext, ods, fact, tst):
         d.arrow(s, log, "", dashed=True)
-    d.box(20, 240, 480, 120, "Chế độ full: xoá và dựng lại toàn bộ (~56 giây trên dữ liệu đến 2017-12-31).\nChế độ incremental: chỉ lấy dòng chưa có (~20 giây/đợt, 11 đợt hằng tháng).\nKết quả incremental = full (16/16 bảng khớp).", fill="#FFFFFF", style="rounded=0", font=12)
+    d.box(20, 240, 480, 120, "Chế độ full: xoá và dựng lại toàn bộ (~52 giây trên dữ liệu đến 2017-12-31).\nChế độ incremental: chỉ lấy dòng chưa có (~20 giây/đợt, 11 đợt hằng tháng).\nKết quả incremental = full (16/16 bảng khớp).", fill="#FFFFFF", style="rounded=0", font=12)
     d.save("pipeline-etl.drawio")
 
 

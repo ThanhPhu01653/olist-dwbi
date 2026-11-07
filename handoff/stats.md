@@ -1,4 +1,4 @@
-# Thống kê dữ liệu (sinh tự động 2026-11-05 20:33)
+# Thống kê dữ liệu (sinh tự động 2026-11-08 00:11)
 
 ## File CSV nguồn
 
@@ -36,7 +36,7 @@
 | crm.closed_deals | 842 | 14 | 400.0 KB |
 | **Tổng (11 bảng)** | **1,559,764** | **71** | |
 
-- Dung lượng cả database: **861.60 MB**
+- Dung lượng cả database: **861.88 MB**
 - Số dòng trong etl_log.rejected_rows: **42**
 
 ### Database `olist_full`
@@ -83,7 +83,7 @@
 | dw | fact_review | 99,224 |
 | dw | fact_seller_monthly | 36,583 |
 | etl_log | batch_metrics | 13 |
-| etl_log | dq_check | 1,755 |
+| etl_log | dq_check | 1,846 |
 | etl_log | fact_load_issue | 20 |
 | etl_log | job_run | 712 |
 | etl_log | rejected_rows | 42 |
@@ -271,7 +271,7 @@ Phân cấp / số phần tử: Vai trò (2) → Nhân viên-vai trò (54)
 | Số đơn đã giao / giao trễ | 96470 / 6534 |
 | Số đơn bị hủy | 625 |
 | Điểm review trung bình / % review tiêu cực | 4.09 / 14.7% |
-| MQL / đã chốt (won) / seller đã có đơn | 8000 / 842 / 380 |
+| MQL / đã chốt (won) / seller đã có đơn | 8000 / 842 / 379 |
 | Số seller trong fact_seller_monthly / số tháng | 3095 / 25 |
 | Σ gmv của fact_seller_monthly (phải bằng GMV ở trên, giai đoạn có đơn) | 13,494,400.74 |
 
@@ -315,20 +315,20 @@ Phân cấp / số phần tử: Vai trò (2) → Nhân viên-vai trò (54)
 
 ### dw.fact_review – 5 dòng mẫu
 
-| review_id | order_id | review_creation_date_key | review_answer_date_key | customer_key | review_score | is_negative | has_comment_title | has_comment_message | comment_length | response_hours | delivered_late |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 0001239bc1de2e33cb5839 | fc046d7776171871436844 | 20180320 | 20180320 | 53172 | 5 | 0 | 0 | 0 | 0 | 18.6 | 0 |
-| 0001cc6860aeaf5b9017fe | d4665434b01caa9dc3e3e7 | 20180622 | 20180626 | 79393 | 5 | 0 | 0 | 0 | 0 | 109.86 | 0 |
-| 00020c7512a52e92212f12 | e28abf2eb2f1fbcbdc2dd0 | 20180425 | 20180426 | 71129 | 5 | 0 | 1 | 1 | 68 | 38.93 | 0 |
-| 00032b0141443497c898b3 | 04fb47576993a3cb0c12d4 | 20170530 | 20170601 | 38566 | 5 | 0 | 0 | 0 | 0 | 71.48 | 0 |
-| 00034d88989f9a4c393bdc | 5f358d797a49fe2f24352f | 20170812 | 20170813 | 3831 | 5 | 0 | 0 | 0 | 0 | 43.95 | 0 |
+| review_id | order_id | review_creation_date_key | review_answer_date_key | customer_key | review_score | is_negative | has_comment_title | has_comment_message | comment_length | response_hours | delivered_late | is_delivered |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 0001239bc1de2e33cb5839 | fc046d7776171871436844 | 20180320 | 20180320 | 53172 | 5 | 0 | 0 | 0 | 0 | 18.6 | 0 | 1 |
+| 0001cc6860aeaf5b9017fe | d4665434b01caa9dc3e3e7 | 20180622 | 20180626 | 79393 | 5 | 0 | 0 | 0 | 0 | 109.86 | 0 | 1 |
+| 00020c7512a52e92212f12 | e28abf2eb2f1fbcbdc2dd0 | 20180425 | 20180426 | 71129 | 5 | 0 | 1 | 1 | 68 | 38.93 | 0 | 1 |
+| 00032b0141443497c898b3 | 04fb47576993a3cb0c12d4 | 20170530 | 20170601 | 38566 | 5 | 0 | 0 | 0 | 0 | 71.48 | 0 | 1 |
+| 00034d88989f9a4c393bdc | 5f358d797a49fe2f24352f | 20170812 | 20170813 | 3831 | 5 | 0 | 0 | 0 | 0 | 43.95 | 0 | 1 |
 
 ### dw.fact_lead_funnel – 5 dòng mẫu
 
 | mql_id | landing_page_id | first_contact_date_key | won_date_key | first_sale_date_key | lead_origin_key | lead_profile_key | seller_key | sdr_key | sr_key | is_won | has_first_sale | days_to_close | days_won_to_first_sale | declared_product_catalog_size | declared_monthly_revenue | seller_gmv_first_90d |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 0002ac0d783338cfeab0b2 | b76ef37428e6799c421989 | 20171114 | -1 | -1 | 10 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |
-| 000dd3543ac84d906eae52 | b48ec5f3b04e9068441002 | 20180405 | 20180424 | -1 | 1 | 607 | 15943 | 29 | 89 | 1 | 0 | 19.0 | NULL | NULL | 0.0 | NULL |
+| 000dd3543ac84d906eae52 | b48ec5f3b04e9068441002 | 20180405 | 20180424 | -1 | 1 | 607 | 15943 | 29 | 87 | 1 | 0 | 19.0 | NULL | NULL | 0.0 | NULL |
 | 001d3439223b7bb23ed89b | 35c9b150ab36fe584c1f24 | 20180414 | -1 | -1 | 4 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |
 | 00275937100699204a3d5a | a7982125ff7aa3b2054c6e | 20180111 | -1 | -1 | 1 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |
 | 003d859bbd84a526b9e063 | 22c29808c4f815213303f8 | 20180402 | -1 | -1 | 2 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |
@@ -339,6 +339,6 @@ Phân cấp / số phần tử: Vai trò (2) → Nhân viên-vai trò (54)
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 20160901 | 524 | 1 | 2 | 72.89 | 63.34 | 0 | 0 | NULL | 0 | 1.0 | 1 | 0 |
 | 20160901 | 1717 | 1 | 3 | 134.97 | 8.49 | 1 | 1 | 1.0 | 0 | 1.0 | 1 | 0 |
-| 20160901 | 2041 | 1 | 1 | 0.0 | 0.0 | 0 | 0 | NULL | 1 | 1.0 | 1 | 0 |
+| 20160901 | 2041 | 1 | 1 | 0.0 | 0.0 | 0 | 0 | NULL | 1 | 1.0 | 1 | -13 |
 | 20161001 | 23 | 1 | 1 | 119.99 | 29.4 | 1 | 0 | 0.0 | 0 | 5.0 | 1 | 0 |
 | 20161001 | 56 | 2 | 2 | 72.8 | 30.57 | 2 | 0 | 0.0 | 0 | 4.5 | 1 | 0 |

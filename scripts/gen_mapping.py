@@ -98,7 +98,7 @@ _dim("dim_seller", [("seller_key", "-", "-", KEY), ("seller_id", "ods.sellers �
     ("acquisition_origin", "ods.mql", "origin", "origin của MQL; 'not_from_funnel' nếu không từ funnel"),
     ("acquisition_channel", "ods.ref_lead_origin_group", "channel_group", "Nhóm kênh; 'Not from funnel' nếu không từ funnel"),
     ("business_segment / lead_type / business_type", "ods.closed_deals", "business_segment, lead_type, business_type", "Giữ nguyên"),
-    ("won_date", "ods.closed_deals", "won_date", "cast date"), ("first_sale_date", "dw.fact_order_item", "purchase_date_key", "min(ngày mua) của các dòng fact_order_item có seller này (cập nhật sau khi nạp fact)")])
+    ("won_date", "ods.closed_deals", "won_date", "cast date"), ("first_sale_date", "dw.fact_order_item", "purchase_date_key", "min(ngày mua) của các dòng fact_order_item có seller này và đơn không thuộc nhóm Failed (join dim_order_status); NULL nếu mọi đơn đều Failed (cập nhật sau khi nạp fact)")])
 _dim("dim_product", [("product_key", "-", "-", KEY), ("product_id", "ods.products", "product_id", "Khoá tự nhiên"),
     ("category_name_pt", "ods.products", "product_category_name", "Giữ nguyên ('unknown' nếu rỗng)"),
     ("category_name_en", "ods.category_translation / ods.ref_category_translation_extra", "product_category_name_english", "Bản dịch gốc, thiếu thì lấy seed bổ sung"),
@@ -165,7 +165,8 @@ _dim("fact_review", [
     ("has_comment_title / has_comment_message", "ods.order_reviews", "review_comment_title, review_comment_message", "1 nếu khác rỗng sau trim"),
     ("comment_length", "ods.order_reviews", "review_comment_message", "Số ký tự sau trim (0 nếu không có)"),
     ("response_hours", "ods.order_reviews", "review_answer_timestamp − review_creation_date", "Số giờ; NULL nếu thiếu hoặc âm"),
-    ("delivered_late", "dw.fact_order_fulfillment", "is_late", "Lấy từ fulfillment của cùng đơn; không có → 0")])
+    ("delivered_late", "dw.fact_order_fulfillment", "is_late", "Lấy từ fulfillment của cùng đơn; không có → 0"),
+    ("is_delivered", "dw.fact_order_fulfillment", "is_delivered", "Lấy từ fulfillment của cùng đơn (1 nếu đơn đã giao); không có → 0")])
 _dim("fact_lead_funnel", [
     ("mql_id / landing_page_id", "ods.mql", "mql_id, landing_page_id", "Giữ nguyên (mỗi MQL một dòng)"),
     ("first_contact_date_key", "ods.mql", "first_contact_date", DK),
@@ -175,13 +176,13 @@ _dim("fact_lead_funnel", [
     ("lead_profile_key", "ods.closed_deals, dw.dim_lead_profile", "7 thuộc tính của deal", "Tra theo tổ hợp 7 thuộc tính; MQL chưa chốt → -1"),
     ("seller_key", "ods.closed_deals, dw.dim_seller", "seller_id", "Tra theo seller_id; MQL chưa chốt → -1"),
     ("sdr_key / sr_key", "ods.closed_deals, dw.dim_sales_rep", "sdr_id, sr_id", "Tra theo (rep_id, vai trò); không có → -1"),
-    ("is_won / has_first_sale", "ods.closed_deals, dw.dim_seller", "mql_id, first_sale_date", "1 nếu có deal / nếu seller đã có đơn"),
+    ("is_won / has_first_sale", "ods.closed_deals, dw.dim_seller", "mql_id, first_sale_date", "1 nếu có deal / nếu seller đã có đơn không thuộc nhóm Failed"),
     ("days_to_close", "ods.closed_deals, ods.mql", "won_date, first_contact_date", "won::date − first_contact_date; NULL nếu chưa chốt hoặc âm"),
     ("days_won_to_first_sale", "dw.dim_seller, ods.closed_deals", "first_sale_date, won_date", "first_sale_date − won::date; NULL nếu chưa có hoặc âm"),
     ("declared_product_catalog_size / declared_monthly_revenue", "ods.closed_deals", "cùng tên", "Giữ nguyên (non-additive)"),
-    ("seller_gmv_first_90d", "dw.fact_order_item", "price", "Σ price của đơn không Failed của seller trong 90 ngày kể từ ngày đơn đầu; NULL nếu chưa có đơn")])
+    ("seller_gmv_first_90d", "dw.fact_order_item", "price", "Σ price của đơn không Failed của seller trong 90 ngày kể từ first_sale_date (ngày đơn đầu không Failed); NULL nếu chưa có đơn bán được")])
 _dim("fact_seller_monthly", [
-    ("month_date_key", "dw.fact_order_item", "purchase_date_key", "Ngày 1 của tháng mua; dày đặc từ tháng đơn đầu của seller đến tháng cuối có đơn"),
+    ("month_date_key", "dw.fact_order_item", "purchase_date_key", "Ngày 1 của tháng mua; dày đặc từ tháng có đơn đầu của seller (mọi trạng thái) đến tháng cuối có đơn"),
     ("seller_key", "dw.fact_order_item", "seller_key", "Giữ nguyên"),
     ("orders / items", "dw.fact_order_item", "order_id", "count(distinct order_id) / count(*) trong tháng, mọi trạng thái; 0 nếu tháng không có đơn"),
     ("gmv / freight", "dw.fact_order_item", "price, freight_value", "Σ của đơn không thuộc nhóm Failed"),
@@ -189,7 +190,7 @@ _dim("fact_seller_monthly", [
     ("late_rate", "(tính)", "late_orders, delivered_orders", "late_orders ÷ delivered_orders; NULL nếu chưa có đơn giao"),
     ("avg_review_score", "dw.fact_review", "review_score", "avg theo review của các đơn trong tháng; NULL nếu không có"),
     ("is_active", "(tính)", "orders", "1 nếu orders > 0"),
-    ("months_since_first_sale", "(tính)", "month_date_key", "Số tháng kể từ tháng có đơn đầu của seller (0 = tháng đầu)")])
+    ("months_since_first_sale", "(tính)", "month_date_key", "Số tháng kể từ tháng của dim_seller.first_sale_date (đơn đầu không Failed); âm nếu tháng đó chỉ có đơn Failed; NULL nếu seller chưa có đơn bán được")])
 
 
 def build() -> list[dict]:

@@ -138,9 +138,9 @@ Tỷ lệ đơn đã giao đúng hoặc sớm hơn ngày dự kiến (`delay_day
 
 ### Late rate
 ```dax
-Late rate = 1 - [On-time rate]
+Late rate = DIVIDE ( [Late orders], [Delivered orders] )
 ```
-Tỷ lệ đơn giao trễ. Định dạng: `0.0%`.
+Tỷ lệ đơn giao trễ = đơn giao trễ ÷ đơn đã giao (`is_late = 1` trên `is_delivered = 1`). Định dạng: `0.0%`.
 
 ### Avg lead days
 ```dax
@@ -265,15 +265,15 @@ Tỷ lệ review tiêu cực (điểm ≤ 2). Định dạng: `0.0%`.
 
 ### Avg review - late delivery
 ```dax
-Avg review - late delivery = CALCULATE ( [Avg review], fact_review[delivered_late] = 1 )
+Avg review - late delivery = CALCULATE ( [Avg review], fact_review[is_delivered] = 1, fact_review[delivered_late] = 1 )
 ```
-Điểm trung bình của các đơn giao trễ. Định dạng: `0.00`.
+Điểm trung bình của các đơn đã giao và giao trễ. Định dạng: `0.00`.
 
 ### Avg review - on time
 ```dax
-Avg review - on time = CALCULATE ( [Avg review], fact_review[delivered_late] = 0 )
+Avg review - on time = CALCULATE ( [Avg review], fact_review[is_delivered] = 1, fact_review[delivered_late] = 0 )
 ```
-Điểm trung bình của các đơn không trễ. Định dạng: `0.00`.
+Điểm trung bình của các đơn **đã giao** đúng hạn hoặc sớm. Phải có `is_delivered = 1`: đơn chưa giao cũng có `delivered_late = 0` nhưng chưa thể gọi là đúng hạn. Định dạng: `0.00`.
 
 ### Customers
 ```dax
@@ -523,7 +523,7 @@ Dùng để đối chiếu số trên Power BI: đặt các slicer/bộ lọc gi
 | Avg review | 4.09 | 4.09 | 4.11 | 4.11 |
 | % negative | 14.7% | 14.6% | 13.9% | 13.4% |
 | Avg review - late delivery | 2.27 | 2.27 | 2.35 | 2.63 |
-| Avg review - on time | 4.21 | 4.21 | 4.20 | 4.18 |
+| Avg review - on time | 4.29 | 4.29 | 4.29 | 4.27 |
 | Customers | 96,096 | 95,774 | 43,713 | 7,430 |
 | Repeat customers | 2,997 | 2,975 | 1,256 | 109 |
 | Repeat customer rate | 3.12% | 3.11% | 2.87% | 1.47% |
@@ -531,9 +531,9 @@ Dùng để đối chiếu số trên Power BI: đặt các slicer/bộ lọc gi
 | Won deals | 842 | 842 | 61 | 18 |
 | MQL to won rate | 10.5% | 10.5% | 3.0% | 4.0% |
 | Avg days to close | 48.5 | 48.5 | 212.2 | 155.1 |
-| Sellers with first sale | 380 | 380 | 19 | 6 |
-| Won to first sale rate | 45.1% | 45.1% | 31.1% | 33.3% |
-| Avg days won to first sale | 51.8 | 51.8 | 42.9 | 42.8 |
+| Sellers with first sale | 379 | 379 | 19 | 6 |
+| Won to first sale rate | 45.0% | 45.0% | 31.1% | 33.3% |
+| Avg days won to first sale | 51.9 | 51.9 | 42.9 | 42.8 |
 | Seller GMV first 90d | 538,271.72 | 538,271.72 | 19,413.78 | 2,085.32 |
 | Active sellers (fact_seller_monthly) | 3,095 | 3,068 | 1,784 | 965 |
 | Seller GMV (monthly) | 13,494,400.74 | 13,449,529.68 | 6,108,492.27 | 1,003,862.14 |

@@ -1,10 +1,10 @@
 # Dữ liệu xuất cho Power BI
 
-> Sinh tự động bằng `python scripts/export_powerbi.py` lúc 2026-11-05 20:33 từ database `olist_dw` (lô ETL mới nhất: 61; đơn mua muộn nhất trong dữ liệu: 2018-10-17). Đừng sửa tay.
+> Sinh tự động bằng `python scripts/export_powerbi.py` lúc 2026-11-08 00:10 từ database `olist_dw` (lô ETL mới nhất: 61; đơn mua muộn nhất trong dữ liệu: 2018-10-17). Đừng sửa tay.
 
 **Định dạng**: UTF-8 có BOM, phân cách `,`, số thập phân `.`, ngày `YYYY-MM-DD`, cột đúng/sai ghi `true`/`false`, ô trống = NULL, tên file = tên bảng. Trong Power BI chọn *Get data → Text/CSV*, đặt *File origin* = UTF-8, rồi **Transform Data** để đặt kiểu cột (xem hướng dẫn trong `handoff/`).
 
-**Dung lượng**: 79.5 MB tổng cộng. **Trên 50 MB nên các file `*.csv` không được commit** (đã có trong `.gitignore`); cả thư mục được chia sẻ qua Google Drive, link ở `exports/README.md`. Tên file giữ nguyên giữa các lần xuất nên Power BI chỉ cần *Refresh*.
+**Dung lượng**: 79.7 MB tổng cộng. **Trên 50 MB nên các file `*.csv` không được commit** (đã có trong `.gitignore`); cả thư mục được chia sẻ qua Google Drive, link ở `exports/README.md`. Tên file giữ nguyên giữa các lần xuất nên Power BI chỉ cần *Refresh*.
 
 ## Danh sách file
 
@@ -23,7 +23,7 @@
 | fact_order_item.csv | Fact giao dịch: 1 dòng hàng của 1 đơn | 112,650 | 11.03 MB | 14 |
 | fact_order_fulfillment.csv | Fact accumulating snapshot: 1 đơn | 99,441 | 23.75 MB | 30 |
 | fact_payment.csv | Fact giao dịch: 1 lần thanh toán | 103,886 | 6.23 MB | 8 |
-| fact_review.csv | Fact giao dịch: 1 review | 99,224 | 10.50 MB | 13 |
+| fact_review.csv | Fact giao dịch: 1 review | 99,224 | 10.69 MB | 14 |
 | fact_lead_funnel.csv | Fact accumulating snapshot: 1 MQL | 8,000 | 0.83 MB | 18 |
 | fact_seller_monthly.csv | Fact periodic snapshot: 1 seller × 1 tháng | 36,583 | 1.70 MB | 14 |
 | job_run.csv | Nhật ký chạy ETL từng job (cho dashboard D7) | 712 | 0.09 MB | 13 |
@@ -91,7 +91,7 @@ Mọi khoá `*_key` là số nguyên; `-1` là dòng Unknown của chiều (ví 
 
 **fact_payment** – `order_id`, `payment_sequential`, `purchase_date_key`, `customer_key`, `payment_type_key`, `payment_installments`, `payment_value`, `etl_batch_id`
 
-**fact_review** – `review_id`, `order_id`, `review_creation_date_key`, `review_answer_date_key`, `customer_key`, `review_score`, `is_negative`, `has_comment_title`, `has_comment_message`, `comment_length`, `response_hours`, `delivered_late`, `etl_batch_id`
+**fact_review** – `review_id`, `order_id`, `review_creation_date_key`, `review_answer_date_key`, `customer_key`, `review_score`, `is_negative`, `has_comment_title`, `has_comment_message`, `comment_length`, `response_hours`, `delivered_late`, `is_delivered`, `etl_batch_id`
 
 **fact_lead_funnel** – `mql_id`, `landing_page_id`, `first_contact_date_key`, `won_date_key`, `first_sale_date_key`, `lead_origin_key`, `lead_profile_key`, `seller_key`, `sdr_key`, `sr_key`, `is_won`, `has_first_sale`, `days_to_close`, `days_won_to_first_sale`, `declared_product_catalog_size`, `declared_monthly_revenue`, `seller_gmv_first_90d`, `etl_batch_id`
 

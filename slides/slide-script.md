@@ -1,4 +1,4 @@
-# Kịch bản slide – 114 slide chính + 10 slide dự phòng
+# Kịch bản slide – 114 slide nội dung + 10 slide dự phòng (133 trang PDF)
 
 *Dùng được cho PowerPoint lẫn Beamer: mỗi slide là một mục `###` gồm **tiêu đề (câu kết luận có số)**, 1–3 dòng nội dung, **hình** (đường dẫn trong `figures/`, `docs/diagrams/` hoặc "ảnh chụp dashboard Dx") và **ghi chú người nói** (2–3 câu). Số liệu lấy từ kho ở trạng thái cuối (99.441 đơn, GMV 13.494.400,74 BRL) và khớp `handoff/00-TONG-QUAN.md`; chi tiết ở các file `handoff/` và `huong-dan/`.*
 *Cách dùng: PowerPoint → mỗi `###` là một slide (dòng tiêu đề = title, gạch đầu dòng = nội dung, "Hình" = ảnh, "Nói" = phần Notes). Beamer → mỗi `###` là một `\begin{frame}{tiêu đề}`; ảnh bằng `\includegraphics{figures/...}`, "Nói" đưa vào `\note{...}`.*
@@ -22,7 +22,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 ### S03. Dự án trong một trang: 1,56 triệu dòng nguồn thành 6 fact, 17 view mart và 7 dashboard
 - 2 hệ thống nguồn → staging → ODS → kho (10 chiều + 6 fact) → 4 data mart → Power BI
 - Hình: `figures/3-4-1_pipeline.png`
-- Nói: Toàn bộ dựng lại từ đầu bằng một lệnh trong khoảng 7 phút và cho kết quả giống hệt; 133 phép kiểm thử đạt. Đây là bức tranh để quay lại khi cần.
+- Nói: Toàn bộ dựng lại từ đầu bằng một lệnh trong khoảng 7 phút và cho kết quả giống hệt; 136 phép kiểm thử đạt. Đây là bức tranh để quay lại khi cần.
 
 ### S04. Kho dữ liệu là nơi tích hợp dữ liệu hướng chủ đề, biến thiên theo thời gian và không bị ghi đè
 - Bốn đặc tính của Inmon: hướng chủ đề, tích hợp, biến thiên theo thời gian, không biến động
@@ -118,11 +118,11 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Nói: Đây là chỗ hệ thống phân tích "bám" vào quy trình.
 
 ### S22. Quy trình thu hút seller đi từ MQL đến seller có đơn, trung bình mất 100 ngày
-- Liên hệ → chốt (TB 48,5 ngày) → đơn đầu (TB 51,8 ngày)
+- Liên hệ → chốt (TB 48,5 ngày) → đơn đầu (TB 51,9 ngày)
 - Hình: `figures/3-2-2_bpmn_thu_hut_seller.png`
 - Nói: Hai khoảng thời gian này là hai chỉ số của fact lead funnel.
 
-### S23. Phễu thu hút: 8.000 MQL → 842 deal (10,5%) → 380 seller có đơn (45,1% số deal)
+### S23. Phễu thu hút: 8.000 MQL → 842 deal (10,5%) → 379 seller có đơn bán được (45,0% số deal)
 - 462 deal đã chốt nhưng chưa bán gì
 - Hình: `figures/3-3-1_funnel_seller_overlap.png`
 - Nói: Đây là kết quả phân tích, không phải lỗi dữ liệu.
@@ -247,6 +247,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 
 ### S47. Chỉ 380/842 deal (45,1%) có đơn: funnel và bán hàng chỉ giao nhau một phần
 - 380 seller tạo 674.005 BRL, 4,99% GMV
+- 380 là số seller có đơn ở mọi trạng thái; kho chỉ tính đơn không bị huỷ nên có 379 seller (45,0%)
 - Hình: `figures/3-3-1_funnel_seller_overlap.png`
 - Nói: Quyết định D6 hiển thị cả nhóm "chốt nhưng chưa bán".
 
@@ -334,7 +335,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Nói: Nếu dùng transaction fact phải ghép nhiều dòng mới tính được lead time.
 
 ### S64. `fact_lead_funnel` ghi lại hành trình MQL: ba mốc ngày và hai khoảng thời gian
-- `days_to_close` TB 48,5; `days_won_to_first_sale` TB 51,8
+- `days_to_close` TB 48,5; `days_won_to_first_sale` TB 51,9
 - Hình: dòng ví dụ MQL
 - Nói: Cũng là accumulating snapshot, 8.000 dòng.
 
@@ -357,7 +358,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Nói: Mỗi bước ghi `job_run`; lỗi thì dừng và đánh dấu failed.
 
 ### S68. Extract chỉ lấy dòng chưa có: đơn theo watermark, bảng nhỏ theo khoá
-- Chế độ full 56 giây; incremental khoảng 20 giây
+- Chế độ full 52 giây; incremental khoảng 22 giây
 - Hình: `figures/3-4-1_pipeline.png`
 - Nói: MQL và deal không dùng watermark ngày vì deal có thể đến trước MQL.
 
@@ -411,7 +412,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: bảng đợt (`report/tables/increments.tex`)
 - Nói: Đợt 1–8 mang 99,95% bản ghi mới; ba đợt cuối mang nốt 20 đơn và 50 deal.
 
-### S79. Funnel lấp đầy dần: MQL 2.002 → 8.000, deal 3 → 842, seller có đơn 0 → 380
+### S79. Funnel lấp đầy dần: MQL 2.002 → 8.000, deal 3 → 842, seller có đơn 0 → 379
 - Số liệu mỗi đợt từ `batch_metrics`
 - Hình: biểu đồ đường từ `batch_metrics` (dashboard D7)
 - Nói: Đây là điểm trình bày của nạp tăng dần.
@@ -426,7 +427,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: sơ đồ 3 bước (loại → cha đến → nạp lại)
 - Nói: Trong 11 đợt thật không có dòng mồ côi nào; nhóm nói thẳng điều này.
 
-### S82. 133 phép kiểm thử đạt 100%, cộng 5 phép đối chiếu với khám phá dữ liệu
+### S82. 136 phép kiểm thử đạt 100%, cộng 6 phép đối chiếu với khám phá dữ liệu
 - Số dòng, tổng tiền, grain, khoá ngoại, SCD2, mart khớp fact
 - Hình: bảng nhóm kiểm thử
 - Nói: Chạy sau mỗi lần pipeline, lưu `etl_log.dq_check`.
@@ -544,7 +545,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: ảnh chụp dashboard D6 trang 2 [nhóm chèn]
 - Nói: Email chỉ có 6 seller có đơn nên đánh dấu mẫu nhỏ.
 
-### S105. D7 giám sát ETL: 11 đợt chạy 20–26 giây, 133 test đạt 100%
+### S105. D7 giám sát ETL: 11 đợt chạy 20–26 giây, 136 test đạt 100%
 - Thời gian theo lô, funnel lấp đầy dần, dòng bị loại theo lý do
 - Hình: ảnh chụp dashboard D7 [nhóm chèn]
 - Nói: Dòng bị loại duy nhất là 42 điểm toạ độ.
@@ -569,7 +570,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: bảng so sánh (`report/chapters/3-5-2-dia-ly.tex`)
 - Nói: Nhóm không cài PostGIS nên chọn giải pháp thuần SQL.
 
-### S110. Dựng lại toàn bộ dự án từ đầu mất 413 giây và cho kết quả giống hệt
+### S110. Dựng lại toàn bộ dự án từ đầu mất 407 giây và cho kết quả giống hệt
 - Xóa hai database, chạy một lệnh, 16/16 bảng khớp
 - Hình: bảng `report/tables/rebuild.tex`
 - Nói: Khả năng tái lập là bằng chứng độ tin cậy của pipeline.
@@ -577,7 +578,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 ---
 ## PHẦN 7 – Kết luận (4 slide)
 
-### S111. Kết quả: một kho dữ liệu chạy được từ đầu đến cuối với 133 kiểm thử đạt và bảy dashboard
+### S111. Kết quả: một kho dữ liệu chạy được từ đầu đến cuối với 136 kiểm thử đạt và bảy dashboard
 - 10 chiều, 6 fact, 17 view mart; 99.441 đơn; GMV 13,49 triệu BRL
 - Hình: `figures/3-3-4_constellation.png`
 - Nói: Tổng kết các con số chính của dự án.

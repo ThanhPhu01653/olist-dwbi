@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS dw.fact_review (              -- transaction
     customer_key int NOT NULL REFERENCES dw.dim_customer (customer_key),
     review_score int NOT NULL CHECK (review_score BETWEEN 1 AND 5),
     is_negative int NOT NULL, has_comment_title int NOT NULL, has_comment_message int NOT NULL,
-    comment_length int NOT NULL, response_hours numeric(10,2), delivered_late int NOT NULL,
+    comment_length int NOT NULL, response_hours numeric(10,2), delivered_late int NOT NULL, is_delivered smallint NOT NULL,
     etl_batch_id bigint NOT NULL,
     PRIMARY KEY (review_id, order_id));
 
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS dw.fact_seller_monthly (      -- periodic snapshot, d
     seller_key int NOT NULL REFERENCES dw.dim_seller (seller_key),
     orders int NOT NULL, items int NOT NULL, gmv numeric(12,2) NOT NULL, freight numeric(12,2) NOT NULL,
     delivered_orders int NOT NULL, late_orders int NOT NULL, late_rate numeric(7,4), canceled_orders int NOT NULL,
-    avg_review_score numeric(4,2), is_active int NOT NULL, months_since_first_sale int NOT NULL,
+    avg_review_score numeric(4,2), is_active int NOT NULL, months_since_first_sale int,
     etl_batch_id bigint NOT NULL,
     PRIMARY KEY (month_date_key, seller_key));
 
@@ -165,11 +165,11 @@ BEGIN
         ('fact_review', 'customer_key', '-> dim_customer'), ('fact_review', 'review_score', 'Điểm 1-5'), ('fact_review', 'is_negative', '1 nếu điểm <= 2'),
         ('fact_review', 'has_comment_title', '1 nếu có tiêu đề'), ('fact_review', 'has_comment_message', '1 nếu có nội dung'),
         ('fact_review', 'comment_length', 'Số ký tự nội dung (0 nếu không có)'), ('fact_review', 'response_hours', 'Giờ từ tạo đến trả lời; NULL nếu thiếu hoặc âm'),
-        ('fact_review', 'delivered_late', '1 nếu đơn được giao trễ (lấy từ fact_order_fulfillment)'), ('fact_review', 'etl_batch_id', 'Lô ETL đã nạp'),
+        ('fact_review', 'delivered_late', '1 nếu đơn được giao trễ (lấy từ fact_order_fulfillment)'), ('fact_review', 'is_delivered', '1 nếu đơn đã giao (có order_delivered_customer_date; lấy từ fact_order_fulfillment), 0 nếu chưa giao'), ('fact_review', 'etl_batch_id', 'Lô ETL đã nạp'),
         ('fact_lead_funnel', NULL, 'Fact accumulating snapshot: 1 dòng / MQL; cập nhật khi MQL được chốt (won) và khi seller có đơn đầu'),
         ('fact_lead_funnel', 'mql_id', 'Mã MQL (khoá chính)'), ('fact_lead_funnel', 'landing_page_id', 'Trang đích (degenerate)'),
         ('fact_lead_funnel', 'first_contact_date_key', 'Mốc 1: ngày liên hệ đầu'), ('fact_lead_funnel', 'won_date_key', 'Mốc 2: ngày chốt deal (-1 nếu chưa chốt)'),
-        ('fact_lead_funnel', 'first_sale_date_key', 'Mốc 3: ngày mua của đơn đầu tiên của seller (-1 nếu chưa)'),
+        ('fact_lead_funnel', 'first_sale_date_key', 'Mốc 3: ngày mua của đơn đầu tiên không thuộc nhóm Failed của seller (-1 nếu chưa)'),
         ('fact_lead_funnel', 'lead_origin_key', '-> dim_lead_origin'), ('fact_lead_funnel', 'lead_profile_key', '-> dim_lead_profile (-1 nếu chưa chốt)'),
         ('fact_lead_funnel', 'seller_key', '-> dim_seller (-1 nếu chưa chốt)'), ('fact_lead_funnel', 'sdr_key', 'Nhân viên SDR -> dim_sales_rep'), ('fact_lead_funnel', 'sr_key', 'Nhân viên SR -> dim_sales_rep'),
         ('fact_lead_funnel', 'is_won', '1 nếu đã chốt deal'), ('fact_lead_funnel', 'has_first_sale', '1 nếu seller đã có đơn'),
@@ -186,7 +186,7 @@ BEGIN
         ('fact_seller_monthly', 'delivered_orders', 'Số đơn đã giao'), ('fact_seller_monthly', 'late_orders', 'Số đơn giao trễ'),
         ('fact_seller_monthly', 'late_rate', 'late_orders / delivered_orders; NULL nếu chưa có đơn giao'), ('fact_seller_monthly', 'canceled_orders', 'Số đơn bị hủy'),
         ('fact_seller_monthly', 'avg_review_score', 'Điểm review trung bình; NULL nếu không có review'), ('fact_seller_monthly', 'is_active', '1 nếu orders > 0'),
-        ('fact_seller_monthly', 'months_since_first_sale', 'Số tháng kể từ tháng có đơn đầu của seller (0 = tháng đầu)'), ('fact_seller_monthly', 'etl_batch_id', 'Lô ETL đã ghi')
+        ('fact_seller_monthly', 'months_since_first_sale', 'Số tháng kể từ tháng của first_sale_date (đơn đầu không thuộc nhóm Failed); 0 = tháng đó, âm = tháng trước đó chỉ có đơn Failed, NULL nếu seller chưa có đơn bán được'), ('fact_seller_monthly', 'etl_batch_id', 'Lô ETL đã ghi')
     ) AS t(tbl, col, cmt)
     LOOP
         IF r.col IS NULL THEN

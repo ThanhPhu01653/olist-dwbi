@@ -1,10 +1,12 @@
 # Prompt cho Claude Code – theo từng phase
 
-Chỉ **KT1 (Phú)** chạy các prompt này. Các thành viên khác không code; họ nhận output qua `handoff/`, `figures/`,
-`exports/powerbi/` trên GitHub và làm phần thiết kế, Power BI, báo cáo, slide.
+File hướng dẫn cho Claude Code; thành viên nhóm không cần đọc.
+
+Chỉ **Phú** chạy các prompt này. Phú là người duy nhất viết và chạy code; cả nhóm nhận output qua `handoff/`, `figures/`,
+`exports/powerbi/` trên GitHub và cùng làm dashboard, báo cáo, slide.
 
 Chuẩn bị một lần:
-1. Cài PostgreSQL 16 trực tiếp trên máy (installer EnterpriseDB; ở Stack Builder không cần tick gì – nhóm không dùng PostGIS). Ghi lại user/mật khẩu.
+1. Cài PostgreSQL 18 trực tiếp trên máy (installer EnterpriseDB; ở Stack Builder không cần tick gì – nhóm không dùng PostGIS). Ghi lại user/mật khẩu.
 2. Cài Python 3.11 và Git. Tạo repo private trên GitHub, clone về máy.
 3. Copy `CLAUDE.md` vào gốc repo, `DW_DESIGN.md` vào `docs/`.
 4. Tải 2 bộ dữ liệu Kaggle, giải nén vào `data/raw/ecommerce/` và `data/raw/marketing/`
@@ -13,14 +15,14 @@ Chuẩn bị một lần:
 
 | Phase | Hạn | Phụ thuộc | Ai dùng output |
 | --- | --- | --- | --- |
-| P0 Khởi tạo & nạp nguồn | 8/11 | – | KT2 (ERD OLTP), VB1 (3.2.3, 3.2.4) |
-| P1 Profiling & EDA | 10/11 | P0 | Cả nhóm trước buổi chốt thiết kế 12/11; VB1 (3.3.1); KT3 (Excel ToolPak) |
-| P2 Staging & ODS | 14/11 | Chốt thiết kế 12/11, mapping của KT2 | KT2 (kiểm tra), VB1 (3.3.3, 3.4) |
-| P3 Dimension | 16/11 | P2 | KT2 (data model), KT3 (phân cấp) |
-| P4 Fact, kiểm thử, **xuất bản đầu cho Power BI** | 18/11 | P3 | KT3 bắt đầu dựng dashboard |
-| P5 Incremental & điều phối | 20/11 | P4 | KT2 (pipeline), D7 |
-| P6 Data mart, OLAP, đặc tả Power BI, xuất bản cuối | 21/11 | P4 | KT3, KT2, VB1 (3.4.4) |
-| P7 Mở rộng: hiệu năng + địa lý | 25/11 | P4 | VB1 (3.5), KT3 (bản đồ) |
+| P0 Khởi tạo & nạp nguồn | 8/11 | – | nhóm: ERD OLTP, mục 3.2.3, 3.2.4 |
+| P1 Profiling & EDA | 10/11 | P0 | Cả nhóm trước mốc chốt thiết kế 12/11; mục 3.3.1; Excel ToolPak |
+| P2 Staging & ODS | 14/11 | Chốt thiết kế 12/11, mapping (nhóm duyệt) | nhóm: kiểm tra mapping, mục 3.3.3, 3.4 |
+| P3 Dimension | 16/11 | P2 | nhóm: data model, phân cấp |
+| P4 Fact, kiểm thử, **xuất bản đầu cho Power BI** | 18/11 | P3 | nhóm bắt đầu dựng dashboard |
+| P5 Incremental & điều phối | 20/11 | P4 | nhóm (pipeline), D7 |
+| P6 Data mart, OLAP, đặc tả Power BI, xuất bản cuối | 21/11 | P4 | nhóm: dashboard, pipeline, mục 3.4.4 |
+| P7 Mở rộng: hiệu năng + địa lý | 25/11 | P4 | nhóm: mục 3.5, bản đồ |
 
 ---
 
@@ -42,9 +44,9 @@ Nhiệm vụ phase P0: dựng môi trường (KHÔNG dùng Docker – PostgreSQL
    - `--full --database olist_full`: nạp toàn bộ (dùng cho EDA);
    - dùng COPY (psycopg2 copy_expert); geolocation 1 triệu dòng phải nạp dưới 1 phút;
    - không làm sạch ở bước này (nguồn phải "bẩn" như thật); dòng vi phạm FK ghi vào etl_log.rejected_rows.
-7. docs/erd_oltp.mmd: sơ đồ Mermaid erDiagram cho oltp + crm (cột, PK, FK; quan hệ qua seller_id vẽ riêng kèm chú thích). Render thêm ra figures/3-2-4_erd_oltp.png (dùng mermaid-cli nếu có, nếu không thì hướng dẫn KT2 dán vào mermaid.live).
+7. docs/erd_oltp.mmd: sơ đồ Mermaid erDiagram cho oltp + crm (cột, PK, FK; quan hệ qua seller_id vẽ riêng kèm chú thích). Render thêm ra figures/3-2-4_erd_oltp.png (dùng mermaid-cli nếu có, nếu không thì hướng dẫn nhóm dán vào mermaid.live).
 8. Chạy thật: setup_db, nạp --full vào olist_full và --initial vào olist_dw. In bảng số dòng từng bảng cho cả hai.
-9. Viết handoff/<ngày>-P0.md theo mẫu trong CLAUDE.md: số bảng, số dòng, số cột, dung lượng từng file CSV, dung lượng database; phần "Việc cho thành viên khác" giao KT2 vẽ lại ERD OLTP bằng draw.io (gạch chân các cột sẽ dùng sang OLAP); đoạn nháp cho 3.2.3 và 3.2.4; gợi ý slide. Commit.
+9. Viết handoff/<ngày>-P0.md theo mẫu trong CLAUDE.md: số bảng, số dòng, số cột, dung lượng từng file CSV, dung lượng database; phần "Việc cho thành viên khác" giao nhóm vẽ lại ERD OLTP bằng draw.io (gạch chân các cột sẽ dùng sang OLAP); đoạn nháp cho 3.2.3 và 3.2.4; gợi ý slide. Commit.
 
 Tiêu chí xong: chạy lại toàn bộ trên database trống không lỗi; số dòng olist_full khớp số dòng CSV (trừ dòng bị reject có log).
 ```
@@ -70,7 +72,7 @@ Script trong scripts/eda/, hình vào figures/ (png, 200 dpi, tiêu đề và tr
    c) nếu fact_seller_monthly dày đặc thì bao nhiêu dòng, nếu thưa thì bao nhiêu;
    d) liệt kê toàn bộ danh mục sản phẩm kèm số đơn để nhóm duyệt bảng nhóm ngành hàng.
    Xuất handoff/design-questions.md, mỗi câu kèm khuyến nghị.
-7. scripts/eda/excel_export.py: xuất exports/eda_sample.xlsx (5.000 dòng đơn đã join, cột số đã sạch) để KT3 chạy Excel Data Analysis ToolPak (Descriptive Statistics, Correlation, Histogram) – môn học yêu cầu đa dạng công cụ. Kèm hướng dẫn từng bước trong handoff.
+7. scripts/eda/excel_export.py: xuất exports/eda_sample.xlsx (5.000 dòng đơn đã join, cột số đã sạch) để nhóm chạy Excel Data Analysis ToolPak (Descriptive Statistics, Correlation, Histogram) – môn học yêu cầu đa dạng công cụ. Kèm hướng dẫn từng bước trong handoff.
 8. handoff/<ngày>-P1.md: mỗi hình một dòng mô tả + 1–2 câu kết luận có số cụ thể; đoạn nháp cho 3.3.1 (~1 trang); gợi ý 8–10 slide. Commit.
 
 Tiêu chí xong: mọi hình mở được; mọi con số trong handoff truy ngược được về script.
@@ -81,7 +83,7 @@ Tiêu chí xong: mọi hình mở được; mọi con số trong handoff truy ng
 ## P2 – Staging và ODS
 
 ```
-Đọc CLAUDE.md, docs/DW_DESIGN.md mục 2.3, 3, 11 và docs/mapping.csv (source-to-target mapping do KT2 lập; nếu chưa có thì tạo bản nháp từ DW_DESIGN để KT2 duyệt).
+Đọc CLAUDE.md, docs/DW_DESIGN.md mục 2.3, 3, 11 và docs/mapping.csv (source-to-target mapping do nhóm lập; nếu chưa có thì tạo bản nháp từ DW_DESIGN để nhóm duyệt).
 
 Nhiệm vụ phase P2: xây tầng staging và ODS trên database olist_dw.
 
@@ -97,7 +99,7 @@ Nhiệm vụ phase P2: xây tầng staging và ODS trên database olist_dw.
    - dòng mồ côi → etl_log.rejected_rows kèm reason.
 5. scripts/export_samples.py: với mỗi bảng có biến đổi, xuất 5 dòng TRƯỚC (staging) và SAU (ods) của cùng bản ghi ra bảng markdown, và render ảnh figures/3-4-3_before_after_<bảng>.png có tô màu ô bị thay đổi (báo cáo yêu cầu "before–after có tô phần tiền xử lý").
 6. Chạy thật, in số dòng staging / ods / rejected từng bảng.
-7. handoff/<ngày>-P2.md: bảng đối soát số dòng; bảng quy tắc làm sạch (quy tắc – số dòng bị ảnh hưởng); việc cho KT2 (đối chiếu với mapping, vẽ sơ đồ luồng staging → ods); đoạn nháp cho 3.3.3 và 3.4.2–3.4.3; gợi ý slide. Commit.
+7. handoff/<ngày>-P2.md: bảng đối soát số dòng; bảng quy tắc làm sạch (quy tắc – số dòng bị ảnh hưởng); việc cho nhóm (đối chiếu với mapping, vẽ sơ đồ luồng staging → ods); đoạn nháp cho 3.3.3 và 3.4.2–3.4.3; gợi ý slide. Commit.
 
 Tiêu chí xong: chạy lại 2 lần không lỗi, không trùng; staging = ods + rejected cho mọi bảng.
 ```
@@ -121,7 +123,7 @@ Nhiệm vụ phase P3: tạo và nạp toàn bộ dimension trong schema dw.
    - dim_lead_profile là junk dimension; dim_sales_rep tách SDR/SR.
 4. sql/90_tests/dim_tests.sql (mục 13 phần dim) + etl/run_tests.py chạy và ghi etl_log.dq_check.
 5. scripts/report_stats.py: sinh handoff/stats.md gồm số dòng mọi bảng mọi schema; với mỗi dim: số bản ghi, 5 dòng mẫu, các phân cấp và số phần tử mỗi cấp (vd 5 vùng → 27 bang → N thành phố → M zip).
-6. handoff/<ngày>-P3.md: bảng dim (tên – grain – số dòng – phân cấp – SCD); việc cho KT2 (vẽ hệ thống chiều khái niệm / phân cấp dim bằng draw.io) và KT3 (các phân cấp cần tạo trong Power BI); đoạn nháp cho 3.3.4 phần dimension; gợi ý slide. Commit.
+6. handoff/<ngày>-P3.md: bảng dim (tên – grain – số dòng – phân cấp – SCD); việc cho nhóm (vẽ hệ thống chiều khái niệm / phân cấp dim bằng draw.io; các phân cấp cần tạo trong Power BI); đoạn nháp cho 3.3.4 phần dimension; gợi ý slide. Commit.
 
 Tiêu chí xong: test dim pass; mỗi dim đúng 1 dòng -1; (nếu SCD2) không chồng khoảng hiệu lực.
 ```
@@ -133,7 +135,7 @@ Tiêu chí xong: test dim pass; mỗi dim đúng 1 dòng -1; (nếu SCD2) không
 ```
 Đọc CLAUDE.md và docs/DW_DESIGN.md mục 4, 7, 13.
 
-Nhiệm vụ phase P4: tạo và nạp 6 bảng fact, kiểm thử, rồi xuất dữ liệu để KT3 bắt đầu dựng Power BI.
+Nhiệm vụ phase P4: tạo và nạp 6 bảng fact, kiểm thử, rồi xuất dữ liệu để nhóm bắt đầu dựng Power BI.
 
 1. sql/40_dw/020_fact_ddl.sql: DDL fact_order_item, fact_order_fulfillment, fact_payment, fact_review, fact_lead_funnel, fact_seller_monthly đúng đặc tả; PK theo grain; FOREIGN KEY sang dim; index B-tree trên mọi FK; COMMENT ON tiếng Việt.
 2. Procedure nạp theo thứ tự: fact_order_item → fact_payment → fact_order_fulfillment (UPSERT theo order_id) → fact_review (delivered_late lấy từ fulfillment) → cập nhật dim_seller.first_sale_date → fact_lead_funnel (UPSERT theo mql_id) → fact_seller_monthly (theo quyết định dày đặc/thưa ngày 12/11).
@@ -143,11 +145,11 @@ Nhiệm vụ phase P4: tạo và nạp 6 bảng fact, kiểm thử, rồi xuất
 3. sql/90_tests/fact_tests.sql: toàn bộ kiểm thử mục 13; chạy qua etl/run_tests.py, in bảng pass/fail.
 4. docs/erd_dw.mmd: Mermaid erDiagram của dw (ghi chú loại fact); thêm bản tách theo data mart (constellation). Render ra figures/3-3-4_*.png nếu được.
 5. docs/mapping_oltp_olap.md: bảng mapping cột nguồn → cột đích → phép biến đổi cho mọi cột của dim và fact (mục 3.2.4 báo cáo cần "ghi chú mapping OLTP → OLAP").
-6. scripts/export_powerbi.py: xuất toàn bộ dim + fact + etl_log.job_run ra exports/powerbi/*.csv theo quy ước CSV trong CLAUDE.md, kèm exports/powerbi/README.md liệt kê file, số dòng, cột, và cột nào là khóa nối. Nếu tổng > 50 MB thì không commit, ghi rõ để KT1 tải lên Google Drive.
+6. scripts/export_powerbi.py: xuất toàn bộ dim + fact + etl_log.job_run ra exports/powerbi/*.csv theo quy ước CSV trong CLAUDE.md, kèm exports/powerbi/README.md liệt kê file, số dòng, cột, và cột nào là khóa nối. Nếu tổng > 50 MB thì không commit, ghi rõ để Phú tải lên Google Drive.
 7. Cập nhật report_stats.py thêm phần fact (grain, số dòng, measure, tổng GMV, số đơn).
-8. handoff/<ngày>-P4.md: bảng fact (tên – loại – grain – số dòng – measure); kết quả test; việc cho KT2 (vẽ data model logic và vật lý bằng draw.io, fact màu cam, dim màu xanh, nhóm theo data mart) và KT3 (nạp CSV vào Power BI, tạo quan hệ – hướng dẫn từng bước, không cần biết SQL); đoạn nháp cho 3.3.4 phần fact và model vật lý; gợi ý slide. Commit.
+8. handoff/<ngày>-P4.md: bảng fact (tên – loại – grain – số dòng – measure); kết quả test; việc cho nhóm (vẽ data model logic và vật lý bằng draw.io, fact màu cam, dim màu xanh, nhóm theo data mart) và việc nạp CSV vào Power BI, tạo quan hệ (hướng dẫn từng bước, không đòi hỏi truy cập database); đoạn nháp cho 3.3.4 phần fact và model vật lý; gợi ý slide. Commit.
 
-Tiêu chí xong: tất cả test pass; tổng price ở fact khớp nguồn (chênh lệch giải thích được bằng rejected_rows); KT3 mở được CSV trong Power BI.
+Tiêu chí xong: tất cả test pass; tổng price ở fact khớp nguồn (chênh lệch giải thích được bằng rejected_rows); nhóm mở được CSV trong Power BI.
 ```
 
 ---
@@ -163,7 +165,7 @@ Nhiệm vụ phase P5:
 3. Kịch bản demo: initial (đến 2017-12) → full → lặp simulate +1 tháng và incremental cho tới khi hết dữ liệu nguồn (khoảng 11 đợt, tới 2018-11 vì won_date của closed_deals kéo dài hơn đơn hàng) → so sánh với một lần full trên dữ liệu đầy đủ (số dòng và tổng GMV phải khớp). Bảng thời gian chạy mỗi đợt.
 4. View etl_log.v_run_summary và etl_log.v_dq_summary cho dashboard D7; thêm vào export_powerbi.
 5. Mermaid flowchart của pipeline: docs/pipeline.mmd (+ png nếu render được).
-6. handoff/<ngày>-P5.md: sơ đồ pipeline, bảng các đợt incremental (đợt – số bản ghi mới – thời gian chạy), giới hạn của mô phỏng; việc cho KT2 (vẽ lại sơ đồ pipeline / ETL jobs có logo công nghệ) và KT2/D7 (dữ liệu monitor); đoạn nháp về tần suất cập nhật và incremental load; gợi ý slide. Commit.
+6. handoff/<ngày>-P5.md: sơ đồ pipeline, bảng các đợt incremental (đợt – số bản ghi mới – thời gian chạy), giới hạn của mô phỏng; việc cho nhóm (vẽ lại sơ đồ pipeline / ETL jobs có logo công nghệ) và nhóm/D7 (dữ liệu monitor); đoạn nháp về tần suất cập nhật và incremental load; gợi ý slide. Commit.
 
 Tiêu chí xong: kết quả incremental = kết quả full; chạy lại một đợt đã chạy không sinh trùng.
 ```
@@ -179,12 +181,12 @@ Nhiệm vụ phase P6:
 1. sql/50_mart: view trong 4 schema mart theo mục 8 (view nặng dùng MATERIALIZED VIEW + procedure refresh), mỗi view có COMMENT tiếng Việt.
 2. sql/60_olap_examples: 5 file, mỗi file một thao tác OLAP trên dw, có comment giải thích: roll-up (ngày → tháng → quý → năm; zip → bang → vùng), drill-down, slice (năm 2017), dice (Sudeste × Home & Furniture × quý 4), pivot (vùng × năm bằng FILTER hoặc crosstab); thêm ví dụ GROUPING SETS / ROLLUP / CUBE. Xuất kết quả mỗi truy vấn ra handoff dạng bảng. Thêm một đoạn giải thích vì sao đây là ROLAP và khác MOLAP ở đâu.
 3. powerbi/measures.md: thư viện measure DAX cho KPI mục 9 (GMV, Orders, AOV, MoM %, YoY %, Freight ratio, Cancel rate, On-time rate, lead time từng chặng, Avg review, % negative, Repeat rate, MQL→Won, Avg days to close, Won→first sale), mỗi measure: code DAX, giải thích 1 dòng, định dạng hiển thị; measure cảnh báo cho conditional formatting (vd On-time rate < 90% → đỏ). Viết để người không biết DAX copy-paste được.
-4. powerbi/model.md: hướng dẫn từng bước cho KT3 – nạp file CSV nào, kiểu dữ liệu từng cột, quan hệ (bảng – cột – cardinality – active/inactive, role-playing date dùng USERELATIONSHIP), phân cấp cần tạo, slicer và visual gợi ý cho D1–D7, cách Publish to web.
+4. powerbi/model.md: hướng dẫn từng bước cho nhóm – nạp file CSV nào, kiểu dữ liệu từng cột, quan hệ (bảng – cột – cardinality – active/inactive, role-playing date dùng USERELATIONSHIP), phân cấp cần tạo, slicer và visual gợi ý cho D1–D7, cách Publish to web.
 5. powerbi/theme.json: theme màu thống nhất (fact / cảnh báo / tăng trưởng), font Segoe UI.
 6. Cập nhật export_powerbi.py xuất thêm các view mart cần cho dashboard; chạy xuất bản cuối.
-7. handoff/<ngày>-P6.md: danh sách mart (view – mô tả – số dòng); kết quả 5 thao tác OLAP; bảng KPI với giá trị tính bằng SQL để KT3 đối chiếu số trên Power BI; đoạn nháp cho 3.4.4; gợi ý slide. Commit.
+7. handoff/<ngày>-P6.md: danh sách mart (view – mô tả – số dòng); kết quả 5 thao tác OLAP; bảng KPI với giá trị tính bằng SQL để nhóm đối chiếu số trên Power BI; đoạn nháp cho 3.4.4; gợi ý slide. Commit.
 
-Tiêu chí xong: mọi view chạy dưới 3 giây (hoặc là materialized view); giá trị KPI trong handoff khớp với Power BI khi KT3 đối chiếu.
+Tiêu chí xong: mọi view chạy dưới 3 giây (hoặc là materialized view); giá trị KPI trong handoff khớp với Power BI khi nhóm đối chiếu.
 ```
 
 ---
@@ -205,7 +207,7 @@ B. CSDL địa lý: sql/70_geo/ (KHÔNG dùng PostGIS)
  - hàm SQL dw.haversine_km(lat1, lng1, lat2, lng2) bằng PL/pgSQL/SQL thuần; khoảng cách seller → khách (km) cho từng order item, view mart_fulfillment.v_shipping_distance;
  - so sánh ngắn trong handoff: haversine thuần SQL vs PostGIS (kiểu geometry/geography, chỉ mục không gian GiST) – nêu ưu nhược để báo cáo phần "Cơ sở dữ liệu địa lý" vẫn có nội dung lý thuyết;
  - quan hệ khoảng cách với freight_value và lead_days theo nhóm 0–100, 100–500, 500–1000, >1000 km, kèm tương quan;
- - xuất exports/powerbi/geo_state.csv và geo_zip.csv có tọa độ để KT3 vẽ bản đồ; hình figures/3-5-2_*.png.
+ - xuất exports/powerbi/geo_state.csv và geo_zip.csv có tọa độ để nhóm vẽ bản đồ; hình figures/3-5-2_*.png.
 
 handoff/<ngày>-P7-perf.md và handoff/<ngày>-P7-geo.md: bảng kết quả, hình, đoạn nháp cho 3.5.1 / 3.5.2, gợi ý slide. Commit.
 ```

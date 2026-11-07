@@ -226,7 +226,7 @@ Mỗi câu có số liệu, các phương án và khuyến nghị. GMV = tổng 
 2. Như 1 nhưng **điền toạ độ gần đúng theo trung tâm thành phố** và thêm cờ `is_approx_location`: bản đồ đầy đủ hơn, nhưng thêm cột mới vào đặc tả và pha tạp dữ liệu thật với dữ liệu suy ra.
 3. Loại các đơn/khách có zip thiếu: **không chấp nhận** (mất doanh thu, vi phạm nguyên tắc không bỏ dữ liệu).
 
-**Khuyến nghị:** phương án 1. Chỉ 0,28% số đơn và 0,27% GMV bị ảnh hưởng; dim_geography vẫn đủ mọi zip (khoá ngoại luôn trỏ được), toạ độ NULL được ghi rõ trong tài liệu. Nếu KT3 cần bản đồ đầy đủ thì nâng lên phương án 2 sau, khi đó cập nhật DW_DESIGN trước.
+**Khuyến nghị:** phương án 1. Chỉ 0,28% số đơn và 0,27% GMV bị ảnh hưởng; dim_geography vẫn đủ mọi zip (khoá ngoại luôn trỏ được), toạ độ NULL được ghi rõ trong tài liệu. Nếu nhóm cần bản đồ đầy đủ thì nâng lên phương án 2 sau, khi đó cập nhật DW_DESIGN trước.
 
 ## f) (Bổ sung) Mốc tách dữ liệu nạp ban đầu / incremental – đang chờ review ở nhật ký quyết định
 
