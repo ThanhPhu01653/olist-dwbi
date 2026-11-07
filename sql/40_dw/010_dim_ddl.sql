@@ -161,7 +161,7 @@ BEGIN
         ('dim_seller', 'acquisition_channel', 'Nhóm kênh thu hút (Organic, Paid, Social, Email, Other, Unknown, Not from funnel)'),
         ('dim_seller', 'business_segment', 'Phân khúc kinh doanh khai báo khi chốt deal'), ('dim_seller', 'lead_type', 'Loại lead'),
         ('dim_seller', 'business_type', 'Loại hình kinh doanh'), ('dim_seller', 'won_date', 'Ngày chốt deal'),
-        ('dim_seller', 'first_sale_date', 'Ngày mua của đơn đầu tiên có seller này (cập nhật sau khi nạp fact_order_item)'),
+        ('dim_seller', 'first_sale_date', 'Ngày mua của đơn đầu tiên không thuộc nhóm Failed của seller (cập nhật sau khi nạp fact_order_item); NULL nếu mọi đơn đều Failed'),
         ('dim_product', NULL, 'Chiều sản phẩm: 1 dòng / sản phẩm; phân cấp Sản phẩm - Danh mục - Nhóm ngành hàng'),
         ('dim_product', 'product_key', 'Khoá thay thế'), ('dim_product', 'product_id', 'Mã sản phẩm (khoá tự nhiên)'),
         ('dim_product', 'category_name_pt', 'Tên danh mục tiếng Bồ Đào Nha (unknown nếu rỗng)'), ('dim_product', 'category_name_en', 'Tên danh mục tiếng Anh'),

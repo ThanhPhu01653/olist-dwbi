@@ -57,10 +57,15 @@ def run(cmd: list[str]) -> tuple[int, str, float]:
     last = out[-1] if out else ""
     if cmd[0].endswith("replay_increments.py"):
         batches = [l for l in out if re.match(r"\| \d+ \|", l)]
-        last = f"{len(batches)} đợt hằng tháng; sau đợt cuối: " + (batches[-1].strip("| ") if batches else "?")
+        c = [x.strip() for x in batches[-1].strip().strip("|").split("|")] if batches else []
+        # columns of the last batch: ... | MQL | deals | sellers with a sale | orders | GMV
+        last = f"{len(batches)} đợt hằng tháng (01/2018 → 11/2018); sau đợt cuối: " + (
+            f"{c[-5]} MQL, {c[-4]} deal, {c[-3]} seller có đơn bán được, {c[-2]} đơn, GMV {c[-1]}" if len(c) >= 5 else "?")
     elif last.startswith("pipeline "):
-        m = re.search(r"tests \{[^}]*\}", last)
-        last = (m.group(0) if m else "") + "; " + (re.search(r"total [\d.]+s", last).group(0) if re.search(r"total [\d.]+s", last) else "")
+        m = re.search(r"tests \{'seconds': [\d.]+, 'passed': (\d+), 'failed': (\d+), 'eda': '([^']*)'\}", last)
+        t = re.search(r"total ([\d.]+)s", last)
+        last = (f"tests: {m.group(1)}/{int(m.group(1)) + int(m.group(2))} đạt, {m.group(2)} lỗi; đối chiếu EDA {m.group(3)} khớp" if m
+                else "") + (f"; pipeline {t.group(1)}s" if t else "")
     return p.returncode, last, time.perf_counter() - t0
 
 

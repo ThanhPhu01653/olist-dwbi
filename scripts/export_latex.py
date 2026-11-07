@@ -220,7 +220,7 @@ def main() -> None:
 
     # 12. rebuild report
     md = (ROOT / "handoff" / "rebuild-report.md").read_text(encoding="utf-8")
-    rows = [[x.strip() for x in l.strip("|").split("|")][:2] + [[x.strip() for x in l.strip("|").split("|")][2][:90]] for l in md.splitlines() if l.startswith("| ") and not l.startswith("| Bước") and not l.startswith("| ---")]
+    rows = [[x.strip() for x in l.strip("|").split("|")][:2] + [[x.strip() for x in l.strip("|").split("|")][2][:220]] for l in md.splitlines() if l.startswith("| ") and not l.startswith("| Bước") and not l.startswith("| ---")]
     table("rebuild", "Dựng lại toàn bộ dự án từ đầu bằng một lệnh (kiểm chứng tái lập)", "tab:rebuild", ["Bước", "Giây", "Kết quả"], rows, "p{6cm}rp{6cm}")
 
     # 13. mapping (ods -> dw)

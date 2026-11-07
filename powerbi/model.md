@@ -103,7 +103,7 @@ Power BI có thể tự dò quan hệ theo tên cột: **xoá các quan hệ t�
 | 31 | fact_seller_monthly[month_date_key] | dim_date[date_key] | *:1 | Active |
 | 32 | fact_seller_monthly[seller_key] | dim_seller[seller_key] | *:1 | Active |
 
-Không tạo: `dim_customer[geography_key]` và `dim_seller[geography_key]` → `dim_geography` (sẽ tạo đường lọc thứ hai, gây mơ hồ); `fact_review[order_id]` → `fact_order_fulfillment` (cũng gây mơ hồ – dùng cột `delivered_late` có sẵn trong `fact_review`); các bảng mart và bảng giám sát ETL để rời.
+Không tạo: `dim_customer[geography_key]` và `dim_seller[geography_key]` → `dim_geography` (sẽ tạo đường lọc thứ hai, gây mơ hồ); `fact_review[order_id]` → `fact_order_fulfillment` (cũng gây mơ hồ – dùng hai cột `delivered_late` và `is_delivered` có sẵn trong `fact_review`); các bảng mart và bảng giám sát ETL để rời.
 Khi Power BI cảnh báo "ambiguous path" nghĩa là đã lỡ tạo thừa quan hệ: xoá hoặc chuyển thành Inactive.
 
 **Role-playing date với `USERELATIONSHIP`**: mỗi fact chỉ **một** quan hệ ngày Active (in đậm ở bảng); các quan hệ ngày Inactive được "bật" tạm trong từng measure bằng
@@ -472,7 +472,7 @@ let
         {"review_answer_date_key", Int64.Type}, {"customer_key", Int64.Type}, {"review_score", Int64.Type},
         {"is_negative", Int64.Type}, {"has_comment_title", Int64.Type}, {"has_comment_message", Int64.Type},
         {"comment_length", Int64.Type}, {"response_hours", type number}, {"delivered_late", Int64.Type},
-        {"etl_batch_id", Int64.Type}
+        {"is_delivered", Int64.Type}, {"etl_batch_id", Int64.Type}
     })
 in
     Source

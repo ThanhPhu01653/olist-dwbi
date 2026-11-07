@@ -144,11 +144,20 @@ UNION ALL
 SELECT 'fact_review.delivered_late = fact_order_fulfillment.is_late', 'dw.fact_review', '0', count(*)::text, count(*) = 0
 FROM dw.fact_review r JOIN dw.fact_order_fulfillment o ON o.order_id = r.order_id WHERE r.delivered_late <> o.is_late
 UNION ALL
+SELECT 'fact_review.is_delivered = fact_order_fulfillment.is_delivered', 'dw.fact_review', '0',
+       (count(*) FILTER (WHERE r.is_delivered <> coalesce(o.is_delivered, 0)))::text,
+       count(*) FILTER (WHERE r.is_delivered <> coalesce(o.is_delivered, 0)) = 0
+FROM dw.fact_review r LEFT JOIN dw.fact_order_fulfillment o ON o.order_id = r.order_id
+UNION ALL
+SELECT 'fact_review: delivered_late = 1 implies is_delivered = 1', 'dw.fact_review', '0', count(*)::text, count(*) = 0
+FROM dw.fact_review WHERE delivered_late = 1 AND is_delivered = 0
+UNION ALL
 SELECT 'fact_review.is_negative = (review_score <= 2)', 'dw.fact_review', '0', count(*)::text, count(*) = 0
 FROM dw.fact_review WHERE is_negative <> (review_score <= 2)::int
 UNION ALL
-SELECT 'dim_seller.first_sale_date = earliest purchase date in fact_order_item', 'dw.dim_seller', '0', count(*)::text, count(*) = 0
+SELECT 'dim_seller.first_sale_date = earliest purchase date of a non-Failed order in fact_order_item (NULL if all orders are Failed)', 'dw.dim_seller', '0', count(*)::text, count(*) = 0
 FROM dw.dim_seller s LEFT JOIN (SELECT f.seller_key, min(d.full_date) AS d FROM dw.fact_order_item f JOIN dw.dim_date d ON d.date_key = f.purchase_date_key
+                                 JOIN dw.dim_order_status os ON os.order_status_key = f.order_status_key AND os.status_group <> 'Failed'
                                  WHERE f.seller_key <> -1 GROUP BY f.seller_key) m ON m.seller_key = s.seller_key
 WHERE s.seller_key <> -1 AND s.first_sale_date IS DISTINCT FROM m.d
 UNION ALL
@@ -174,9 +183,17 @@ SELECT 'fact_seller_monthly is dense: first month of the seller .. last month of
 FROM mo CROSS JOIN gl
 WHERE mo.last_m <> gl.last_m OR mo.n <> ((extract(year FROM gl.last_m) - extract(year FROM mo.first_m)) * 12 + extract(month FROM gl.last_m) - extract(month FROM mo.first_m) + 1)
 UNION ALL
-SELECT 'fact_seller_monthly: every seller with items has a monthly row, first month = first sale month', 'dw.fact_seller_monthly', '0', count(*)::text, count(*) = 0
-FROM dw.dim_seller s LEFT JOIN mo ON mo.seller_key = s.seller_key
-WHERE s.first_sale_date IS NOT NULL AND (mo.seller_key IS NULL OR mo.first_m <> date_trunc('month', s.first_sale_date)::date)
+SELECT 'fact_seller_monthly: every seller with items has a monthly row starting at the month of the seller''s first order (any status)', 'dw.fact_seller_monthly', '0', count(*)::text, count(*) = 0
+FROM (SELECT f.seller_key, date_trunc('month', min(d.full_date))::date AS first_order_m FROM dw.fact_order_item f JOIN dw.dim_date d ON d.date_key = f.purchase_date_key
+      WHERE f.seller_key <> -1 AND f.purchase_date_key <> -1 GROUP BY f.seller_key) x
+LEFT JOIN mo ON mo.seller_key = x.seller_key
+WHERE mo.seller_key IS NULL OR mo.first_m <> x.first_order_m
+UNION ALL
+SELECT 'fact_seller_monthly.months_since_first_sale = 0 in the month of dim_seller.first_sale_date; NULL <=> no first sale; no GMV before that month', 'dw.fact_seller_monthly', '0', count(*)::text, count(*) = 0
+FROM dw.fact_seller_monthly f JOIN dw.dim_seller s ON s.seller_key = f.seller_key
+WHERE (s.first_sale_date IS NULL) <> (f.months_since_first_sale IS NULL)
+   OR (s.first_sale_date IS NOT NULL AND (f.months_since_first_sale = 0) <> (to_date(f.month_date_key::text, 'YYYYMMDD') = date_trunc('month', s.first_sale_date)::date))
+   OR (s.first_sale_date IS NOT NULL AND f.months_since_first_sale < 0 AND f.gmv <> 0)
 UNION ALL
 SELECT 'fact_seller_monthly: is_active <=> orders > 0; late_orders <= delivered_orders', 'dw.fact_seller_monthly', '0', count(*)::text, count(*) = 0
 FROM dw.fact_seller_monthly WHERE (is_active = 1) <> (orders > 0) OR late_orders > delivered_orders OR (orders = 0 AND (items <> 0 OR gmv <> 0))
