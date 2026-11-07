@@ -84,7 +84,7 @@ flowchart LR
     class K1,K2,K3,K4,K5,K6 kho
 ```
 
-Số liệu: 8.000 MQL → 842 chốt (10,5%, TB 48,5 ngày) → 380 seller có đơn (45,1% số đã chốt; TB 51,8 ngày từ chốt đến đơn đầu).
+Số liệu: 8.000 MQL → 842 chốt (10,5%, TB 48,5 ngày) → 379 seller có đơn bán được (45,0% số đã chốt; TB 51,9 ngày từ chốt đến đơn đầu).
 
 ## 3. Business Model Canvas của Olist (9 ô, bản nháp)
 *Suy luận từ dữ liệu và mô tả công khai về Olist (sàn kết nối người bán nhỏ với các marketplace lớn ở Brazil); các ô về doanh thu và đối tác cần nhóm kiểm tra lại.*

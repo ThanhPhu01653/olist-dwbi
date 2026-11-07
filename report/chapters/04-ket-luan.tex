@@ -1,5 +1,5 @@
 \section{Kết quả đạt được}
-\todo{Viết lại bằng lời của nhóm. Gợi ý các ý đã có số liệu: kho dữ liệu hình sao với 10 bảng chiều và 6 bảng fact thuộc cả ba loại; hai hệ thống nguồn và 1,56 triệu dòng; pipeline chạy lại từ đầu bằng một lệnh trong khoảng 7 phút, kết quả nạp tăng dần trùng khớp nạp đầy đủ (16/16 bảng); 133 phép kiểm thử đạt; 4 data mart, 17 view; 7 dashboard; các phát hiện chính (giao trễ làm điểm review giảm từ 4,29 xuống 1,70; funnel chỉ nối được 45,1\% deal với seller có đơn; khoảng cách seller--khách làm phí vận chuyển và lead time tăng).}
+\todo{Viết lại bằng lời của nhóm. Gợi ý các ý đã có số liệu: kho dữ liệu hình sao với 10 bảng chiều và 6 bảng fact thuộc cả ba loại; hai hệ thống nguồn và 1,56 triệu dòng; pipeline chạy lại từ đầu bằng một lệnh trong khoảng 7 phút, kết quả nạp tăng dần trùng khớp nạp đầy đủ (16/16 bảng); 136 phép kiểm thử đạt; 4 data mart, 17 view; 7 dashboard; các phát hiện chính (giao trễ làm điểm review giảm từ 4,29 xuống 1,70; funnel chỉ nối được 45,0\% deal với seller có đơn; khoảng cách seller--khách làm phí vận chuyển và lead time tăng).}
 
 \section{Bài học kinh nghiệm}
 \begin{itemize}
@@ -15,7 +15,7 @@
 \begin{itemize}
   \item Nạp tăng dần chỉ mô phỏng bản ghi mới với trạng thái cuối, chưa có đơn đổi trạng thái giữa chừng; cơ chế thử lại dòng mồ côi mới được chứng minh bằng kịch bản kiểm thử, chưa phát sinh từ dữ liệu thật.
   \item Toạ độ theo mã bưu chính (không phải địa chỉ); haversine là khoảng cách đường chim bay.
-  \item Dữ liệu 2016 và cuối 2018 rất thưa; chỉ 45,1\% deal đã chốt có đơn nên so sánh theo kênh có cỡ mẫu nhỏ.
+  \item Dữ liệu 2016 và cuối 2018 rất thưa; chỉ 45,0\% deal đã chốt có đơn nên so sánh theo kênh có cỡ mẫu nhỏ.
   \item Hướng phát triển: CDC thật với trạng thái trung gian, lịch chạy tự động, PostGIS cho truy vấn không gian, phân vùng bảng fact, đo hiệu năng nhiều người dùng.
 \end{itemize}
 \todo{Chỉnh danh sách hạn chế theo thực tế sau khi dựng dashboard.}

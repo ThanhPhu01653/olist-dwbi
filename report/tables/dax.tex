@@ -118,9 +118,9 @@ Tỷ lệ đơn đã giao đúng hoặc sớm hơn ngày dự kiến (delay\_day
 
 \subsection*{Late rate}
 \begin{lstlisting}[language={}]
-Late rate = 1 - [On-time rate]
+Late rate = DIVIDE ( [Late orders], [Delivered orders] )
 \end{lstlisting}
-Tỷ lệ đơn giao trễ. Định dạng: 0.0\%.
+Tỷ lệ đơn giao trễ = đơn giao trễ ÷ đơn đã giao (is\_late = 1 trên is\_delivered = 1). Định dạng: 0.0\%.
 
 \subsection*{Avg lead days}
 \begin{lstlisting}[language={}]
@@ -241,15 +241,15 @@ Tỷ lệ review tiêu cực (điểm ≤ 2). Định dạng: 0.0\%.
 
 \subsection*{Avg review - late delivery}
 \begin{lstlisting}[language={}]
-Avg review - late delivery = CALCULATE ( [Avg review], fact_review[delivered_late] = 1 )
+Avg review - late delivery = CALCULATE ( [Avg review], fact_review[is_delivered] = 1, fact_review[delivered_late] = 1 )
 \end{lstlisting}
-Điểm trung bình của các đơn giao trễ. Định dạng: 0.00.
+Điểm trung bình của các đơn đã giao và giao trễ. Định dạng: 0.00.
 
 \subsection*{Avg review - on time}
 \begin{lstlisting}[language={}]
-Avg review - on time = CALCULATE ( [Avg review], fact_review[delivered_late] = 0 )
+Avg review - on time = CALCULATE ( [Avg review], fact_review[is_delivered] = 1, fact_review[delivered_late] = 0 )
 \end{lstlisting}
-Điểm trung bình của các đơn không trễ. Định dạng: 0.00.
+Điểm trung bình của các đơn đã giao đúng hạn hoặc sớm. Phải có is\_delivered = 1: đơn chưa giao cũng có delivered\_late = 0 nhưng chưa thể gọi là đúng hạn. Định dạng: 0.00.
 
 \subsection*{Customers}
 \begin{lstlisting}[language={}]

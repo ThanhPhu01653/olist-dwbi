@@ -15,7 +15,7 @@
 \begin{frame}{Extract chỉ lấy dòng chưa có: đơn theo watermark, bảng nhỏ theo khoá}
 \begin{columns}[T]\begin{column}{0.4\textwidth}
 \begin{itemize}
-  \item Chế độ full 56 giây; incremental khoảng 20 giây
+  \item Chế độ full 52 giây; incremental khoảng 22 giây
 \end{itemize}
 \end{column}\begin{column}{0.58\textwidth}
 \begin{center}\anh[0.74\textheight]{3-4-1_pipeline.png}\end{center}
@@ -140,24 +140,24 @@ coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.r
 \toprule
 \textbf{Đợt} & \textbf{Đến tháng} & \textbf{Bản ghi mới ở nguồn} & \textbf{ODS chèn} & \textbf{ODS loại} & \textbf{DW chèn / cập nhật} & \textbf{Giây} & \textbf{MQL} & \textbf{Deal} & \textbf{Seller có đơn} & \textbf{Đơn} \\
 \midrule
-1 & 2018-01 & 38.768 & 38.768 & 0 & 40.535 / 216 & 21,7 & 3.143 & 76 & 3 & 52.699 \\
-2 & 2018-02 & 35.979 & 35.979 & 0 & 37.817 / 255 & 21,3 & 4.171 & 189 & 30 & 59.427 \\
-3 & 2018-03 & 38.659 & 38.659 & 0 & 40.668 / 311 & 22,2 & 5.345 & 336 & 55 & 66.638 \\
-4 & 2018-04 & 37.515 & 37.515 & 0 & 39.700 / 489 & 23,5 & 6.697 & 543 & 117 & 73.577 \\
-5 & 2018-05 & 37.079 & 37.079 & 0 & 39.402 / 450 & 24,4 & 8.000 & 665 & 199 & 80.450 \\
-6 & 2018-06 & 32.035 & 32.035 & 0 & 34.594 / 468 & 25,3 & 8.000 & 722 & 281 & 86.617 \\
-7 & 2018-07 & 32.489 & 32.489 & 0 & 35.245 / 435 & 24,8 & 8.000 & 759 & 341 & 92.909 \\
-8 & 2018-08 & 33.490 & 33.490 & 0 & 36.399 / 369 & 26,2 & 8.000 & 792 & 380 & 99.421 \\
-9 & 2018-09 & 87 & 87 & 0 & 3.195 / 23 & 21,1 & 8.000 & 815 & 380 & 99.437 \\
-10 & 2018-10 & 37 & 37 & 0 & 54 / 21 & 20,7 & 8.000 & 836 & 380 & 99.441 \\
-11 & 2018-11 & 6 & 6 & 0 & 18 / 6 & 20,7 & 8.000 & 842 & 380 & 99.441 \\
+1 & 2018-01 & 38.768 & 38.768 & 0 & 40.535 / 216 & 21,3 & 3.143 & 76 & 3 & 52.699 \\
+2 & 2018-02 & 35.979 & 35.979 & 0 & 37.817 / 251 & 21,4 & 4.171 & 189 & 30 & 59.427 \\
+3 & 2018-03 & 38.659 & 38.659 & 0 & 40.668 / 312 & 21,9 & 5.345 & 336 & 55 & 66.638 \\
+4 & 2018-04 & 37.515 & 37.515 & 0 & 39.700 / 486 & 22,8 & 6.697 & 543 & 117 & 73.577 \\
+5 & 2018-05 & 37.079 & 37.079 & 0 & 39.402 / 446 & 23,9 & 8.000 & 665 & 198 & 80.450 \\
+6 & 2018-06 & 32.035 & 32.035 & 0 & 34.594 / 467 & 24,5 & 8.000 & 722 & 280 & 86.617 \\
+7 & 2018-07 & 32.489 & 32.489 & 0 & 35.245 / 431 & 25,1 & 8.000 & 759 & 340 & 92.909 \\
+8 & 2018-08 & 33.490 & 33.490 & 0 & 36.399 / 365 & 25,8 & 8.000 & 792 & 379 & 99.421 \\
+9 & 2018-09 & 87 & 87 & 0 & 3.195 / 23 & 21,4 & 8.000 & 815 & 379 & 99.437 \\
+10 & 2018-10 & 37 & 37 & 0 & 54 / 21 & 21,2 & 8.000 & 836 & 379 & 99.441 \\
+11 & 2018-11 & 6 & 6 & 0 & 18 / 6 & 21,5 & 8.000 & 842 & 379 & 99.441 \\
 \bottomrule
 \end{tabular}}\end{center}
 
 \note{[S78] Đợt 1–8 mang 99,95\% bản ghi mới; ba đợt cuối mang nốt 20 đơn và 50 deal.}
 \end{frame}
 
-\begin{frame}{Funnel lấp đầy dần: MQL 2.002 $\rightarrow$ 8.000, deal 3 $\rightarrow$ 842, seller có đơn 0 $\rightarrow$ 380}
+\begin{frame}{Funnel lấp đầy dần: MQL 2.002 $\rightarrow$ 8.000, deal 3 $\rightarrow$ 842, seller có đơn 0 $\rightarrow$ 379}
 \begin{itemize}
   \item Số liệu mỗi đợt từ \texttt{batch\_\allowbreak{}metrics}
 \end{itemize}
@@ -184,7 +184,7 @@ coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.r
 \note{[S81] Trong 11 đợt thật không có dòng mồ côi nào; nhóm nói thẳng điều này.}
 \end{frame}
 
-\begin{frame}{133 phép kiểm thử đạt 100\%, cộng 5 phép đối chiếu với khám phá dữ liệu}
+\begin{frame}{136 phép kiểm thử đạt 100\%, cộng 6 phép đối chiếu với khám phá dữ liệu}
 \begin{itemize}
   \item Số dòng, tổng tiền, grain, khoá ngoại, SCD2, mart khớp fact
 \end{itemize}
@@ -192,11 +192,11 @@ coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.r
 \textbf{Nhóm kiểm thử} & \textbf{Số phép} \\\midrule
 ODS (số dòng, loại, cleaning) & 25 \\
 Dimension (Unknown, SCD2, phủ khoá) & 42 \\
-Fact (đối soát, grain, khoá ngoại, logic) & 46 \\
+Fact (đối soát, grain, khoá ngoại, logic) & 49 \\
 Data mart (khớp fact) & 17 \\
 Thử lại dòng mồ côi (kịch bản) & 3 \\
-\textbf{Tổng} & \textbf{133 (đạt 100\%)} \\
-Đối chiếu khám phá dữ liệu (chỉ báo cáo) & 5/5 khớp \\
+\textbf{Tổng} & \textbf{136 (đạt 100\%)} \\
+Đối chiếu khám phá dữ liệu (chỉ báo cáo) & 6/6 khớp \\
 \bottomrule\end{tabular}}\end{center}
 
 \note{[S82] Chạy sau mỗi lần pipeline, lưu \texttt{etl\_\allowbreak{}log.dq\_\allowbreak{}check}.}

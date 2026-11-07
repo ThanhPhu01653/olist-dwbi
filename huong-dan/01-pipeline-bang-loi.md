@@ -16,7 +16,7 @@ Dữ liệu đi một chiều qua 6 lớp. Mỗi lớp có **một việc** và 
 | **Data mart** `mart_sales`, `mart_fulfillment`, `mart_cx`, `mart_acquisition` | View (4 cái là materialized view) tổng hợp sẵn cho từng chủ đề dashboard. | Nhanh (dưới 1 ms thay vì 150–750 ms) và gọn khi dựng dashboard. |
 | **Power BI** | 37 file CSV xuất từ kho → mô hình quan hệ + measure DAX → 7 dashboard. | Lớp ngữ nghĩa và tương tác kéo thả cho người dùng cuối. |
 
-Song song có **`etl_log`**: ghi mỗi lần chạy (thời gian, số dòng đọc/chèn/cập nhật/loại), dòng bị loại, kết quả kiểm thử (133 phép), khoá rơi về Unknown. Đây là nguồn của dashboard D7.
+Song song có **`etl_log`**: ghi mỗi lần chạy (thời gian, số dòng đọc/chèn/cập nhật/loại), dòng bị loại, kết quả kiểm thử (136 phép), khoá rơi về Unknown. Đây là nguồn của dashboard D7.
 
 **Hai cách nạp**: `full` (xoá và dựng lại toàn bộ) và `incremental` (chỉ lấy dòng mới). Dự án nạp ban đầu đến 31/12/2017 (45.430 đơn) rồi **11 đợt hằng tháng** để mô phỏng cập nhật; kết quả cuối giống hệt một lần nạp full.
 
@@ -516,6 +516,6 @@ MQL được theo dõi: `mql_id = 08fdf1038af7dd3070bdcd18922e23b2`; sau khi ch�
 - **Khoá thay thế**: khoá số nguyên nhỏ, nhanh, và cho phép SCD2 (một khách nhiều phiên bản địa chỉ).
 - **Tính sẵn trong fact**: lead time, số ngày trễ, ngày hứa giao… tính một lần ở ETL để mọi dashboard dùng cùng một định nghĩa.
 - **Mart + materialized view**: tổng hợp sẵn các truy vấn nặng; làm mới tự động mỗi lần chạy pipeline (~2 giây).
-- **Kiểm thử mỗi lần chạy**: 133 phép (đối soát số dòng và tổng tiền nguồn → kho, khoá ngoại hợp lệ, SCD2 không chồng thời gian, mart khớp fact…).
+- **Kiểm thử mỗi lần chạy**: 136 phép (đối soát số dòng và tổng tiền nguồn → kho, khoá ngoại hợp lệ, SCD2 không chồng thời gian, mart khớp fact…).
 
 Tiếp theo: thuật ngữ ở `02-thuat-ngu.md`, tra cứu từng cột ở `03-tu-dien-du-lieu.md`.

@@ -38,7 +38,7 @@ dim\_seller & acquisition\_origin & ods.mql: origin & origin của MQL; 'not\_fr
 dim\_seller & acquisition\_channel & ods.ref\_lead\_origin\_group: channel\_group & Nhóm kênh; 'Not from funnel' nếu không từ funnel \\
 dim\_seller & business\_segment / lead\_type / business\_type & ods.closed\_deals: business\_segment, lead\_type, business\_type & Giữ nguyên \\
 dim\_seller & won\_date & ods.closed\_deals: won\_date & cast date \\
-dim\_seller & first\_sale\_date & dw.fact\_order\_item: purchase\_date\_key & min(ngày mua) của các dòng fact\_order\_item có seller này (cập nhật sau khi nạp fact) \\
+dim\_seller & first\_sale\_date & dw.fact\_order\_item: purchase\_date\_key & min(ngày mua) của các dòng fact\_order\_item có seller này và đơn không thuộc nhóm Failed (join dim\_order\_status); NULL nếu mọi đơn đều Failed (cập nhật sau khi nạp fact) \\
 dim\_product & product\_key & -: - & Khoá thay thế tự sinh (identity); dòng Unknown có key -1 \\
 dim\_product & product\_id & ods.products: product\_id & Khoá tự nhiên \\
 dim\_product & category\_name\_pt & ods.products: product\_category\_name & Giữ nguyên ('unknown' nếu rỗng) \\
@@ -96,6 +96,7 @@ fact\_review & has\_comment\_title / has\_comment\_message & ods.order\_reviews:
 fact\_review & comment\_length & ods.order\_reviews: review\_comment\_message & Số ký tự sau trim (0 nếu không có) \\
 fact\_review & response\_hours & ods.order\_reviews: review\_answer\_timestamp − review\_creation\_date & Số giờ; NULL nếu thiếu hoặc âm \\
 fact\_review & delivered\_late & dw.fact\_order\_fulfillment: is\_late & Lấy từ fulfillment của cùng đơn; không có → 0 \\
+fact\_review & is\_delivered & dw.fact\_order\_fulfillment: is\_delivered & Lấy từ fulfillment của cùng đơn (1 nếu đơn đã giao); không có → 0 \\
 fact\_lead\_funnel & mql\_id / landing\_page\_id & ods.mql: mql\_id, landing\_page\_id & Giữ nguyên (mỗi MQL một dòng) \\
 fact\_lead\_funnel & first\_contact\_date\_key & ods.mql: first\_contact\_date & Ngày → yyyymmdd (dim\_date); NULL hoặc ngoài 2016–2020 → -1 \\
 fact\_lead\_funnel & won\_date\_key & ods.closed\_deals: won\_date & Ngày → yyyymmdd (dim\_date); NULL hoặc ngoài 2016–2020 → -1; MQL chưa chốt → -1 \\
@@ -104,12 +105,12 @@ fact\_lead\_funnel & lead\_origin\_key & ods.mql, dw.dim\_lead\_origin: origin &
 fact\_lead\_funnel & lead\_profile\_key & ods.closed\_deals, dw.dim\_lead\_profile: 7 thuộc tính của deal & Tra theo tổ hợp 7 thuộc tính; MQL chưa chốt → -1 \\
 fact\_lead\_funnel & seller\_key & ods.closed\_deals, dw.dim\_seller: seller\_id & Tra theo seller\_id; MQL chưa chốt → -1 \\
 fact\_lead\_funnel & sdr\_key / sr\_key & ods.closed\_deals, dw.dim\_sales\_rep: sdr\_id, sr\_id & Tra theo (rep\_id, vai trò); không có → -1 \\
-fact\_lead\_funnel & is\_won / has\_first\_sale & ods.closed\_deals, dw.dim\_seller: mql\_id, first\_sale\_date & 1 nếu có deal / nếu seller đã có đơn \\
+fact\_lead\_funnel & is\_won / has\_first\_sale & ods.closed\_deals, dw.dim\_seller: mql\_id, first\_sale\_date & 1 nếu có deal / nếu seller đã có đơn không thuộc nhóm Failed \\
 fact\_lead\_funnel & days\_to\_close & ods.closed\_deals, ods.mql: won\_date, first\_contact\_date & won::date − first\_contact\_date; NULL nếu chưa chốt hoặc âm \\
 fact\_lead\_funnel & days\_won\_to\_first\_sale & dw.dim\_seller, ods.closed\_deals: first\_sale\_date, won\_date & first\_sale\_date − won::date; NULL nếu chưa có hoặc âm \\
 fact\_lead\_funnel & declared\_product\_catalog\_size / declared\_monthly\_revenue & ods.closed\_deals: cùng tên & Giữ nguyên (non-additive) \\
-fact\_lead\_funnel & seller\_gmv\_first\_90d & dw.fact\_order\_item: price & Σ price của đơn không Failed của seller trong 90 ngày kể từ ngày đơn đầu; NULL nếu chưa có đơn \\
-fact\_seller\_monthly & month\_date\_key & dw.fact\_order\_item: purchase\_date\_key & Ngày 1 của tháng mua; dày đặc từ tháng đơn đầu của seller đến tháng cuối có đơn \\
+fact\_lead\_funnel & seller\_gmv\_first\_90d & dw.fact\_order\_item: price & Σ price của đơn không Failed của seller trong 90 ngày kể từ first\_sale\_date (ngày đơn đầu không Failed); NULL nếu chưa có đơn bán được \\
+fact\_seller\_monthly & month\_date\_key & dw.fact\_order\_item: purchase\_date\_key & Ngày 1 của tháng mua; dày đặc từ tháng có đơn đầu của seller (mọi trạng thái) đến tháng cuối có đơn \\
 fact\_seller\_monthly & seller\_key & dw.fact\_order\_item: seller\_key & Giữ nguyên \\
 fact\_seller\_monthly & orders / items & dw.fact\_order\_item: order\_id & count(distinct order\_id) / count(*) trong tháng, mọi trạng thái; 0 nếu tháng không có đơn \\
 fact\_seller\_monthly & gmv / freight & dw.fact\_order\_item: price, freight\_value & Σ của đơn không thuộc nhóm Failed \\
@@ -117,5 +118,5 @@ fact\_seller\_monthly & delivered\_orders / late\_orders / canceled\_orders & dw
 fact\_seller\_monthly & late\_rate & (tính): late\_orders, delivered\_orders & late\_orders ÷ delivered\_orders; NULL nếu chưa có đơn giao \\
 fact\_seller\_monthly & avg\_review\_score & dw.fact\_review: review\_score & avg theo review của các đơn trong tháng; NULL nếu không có \\
 fact\_seller\_monthly & is\_active & (tính): orders & 1 nếu orders > 0 \\
-fact\_seller\_monthly & months\_since\_first\_sale & (tính): month\_date\_key & Số tháng kể từ tháng có đơn đầu của seller (0 = tháng đầu) \\
+fact\_seller\_monthly & months\_since\_first\_sale & (tính): month\_date\_key & Số tháng kể từ tháng của dim\_seller.first\_sale\_date (đơn đầu không Failed); âm nếu tháng đó chỉ có đơn Failed; NULL nếu seller chưa có đơn bán được \\
 \end{longtable}}
