@@ -1,6 +1,6 @@
 # Báo cáo LaTeX – khung để nhóm viết tiếp
 
-Khung báo cáo bài tập lớn **MI4214 – Kho dữ liệu và Kinh doanh thông minh**, biên dịch bằng **XeLaTeX** (class `report`, 12pt, A4, tiếng Việt, font Times New Roman; nếu máy không có thì tự dùng TeX Gyre Termes). Đã biên dịch thử thành công trên máy KT1 (TeX Live 2025, `latexmk -xelatex main.tex`): **87 trang** khung, không lỗi, không tham chiếu thiếu.
+Khung báo cáo bài tập lớn **MI4214 – Kho dữ liệu và Kinh doanh thông minh**, biên dịch bằng **XeLaTeX** (class `report`, 12pt, A4, tiếng Việt, font Times New Roman; nếu máy không có thì tự dùng TeX Gyre Termes). Đã biên dịch thử thành công trên máy Phú (TeX Live 2025, `latexmk -xelatex main.tex`): **88 trang PDF** (khung, chưa tính phần nhóm viết thêm), không lỗi, không tham chiếu thiếu.
 
 ## 1. Cấu trúc
 ```

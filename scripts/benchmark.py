@@ -118,7 +118,7 @@ def main() -> None:
     lab = {"oltp": "oltp (join chuẩn hoá)", "dw": "dw (star, có index FK)", "dw_noidx": "dw không index FK", "view": "view thường", "matview": "materialized view"}
     lines = ["# Benchmark gọn (P7-A) – sinh tự động", "",
              f"Mỗi ô là trung bình {RUNS} lần chạy `EXPLAIN (ANALYZE)` sau 1 lần chạy nóng (cache), đơn vị **mili giây** (execution time, không tính truyền kết quả). Dữ liệu: trạng thái cuối của `olist_dw` "
-             "(112.650 dòng hàng, 99.441 đơn). Máy dev của KT1 (laptop), PostgreSQL mặc định.", "", "## 1. oltp (chuẩn hoá) và dw (star schema)", "",
+             "(112.650 dòng hàng, 99.441 đơn). Máy dev của Phú (laptop), PostgreSQL mặc định.", "", "## 1. oltp (chuẩn hoá) và dw (star schema)", "",
              "| Truy vấn | oltp | dw (có index FK) | dw nhanh hơn |", "| --- | ---: | ---: | ---: |"]
     for n, r in res.items():
         lines.append(f"| {n} | {r['oltp']['mean']:.1f} | {r['dw']['mean']:.1f} | {r['oltp']['mean'] / r['dw']['mean']:.1f}× |")

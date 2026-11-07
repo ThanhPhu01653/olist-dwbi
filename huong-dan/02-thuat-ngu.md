@@ -41,8 +41,8 @@
 | **ODS (Operational Data Store)** | Lớp dữ liệu đã làm sạch, chuẩn hoá, chưa chuyển thành mô hình chiều. | `ods.orders` có `dq_flags`; `ods.customers` có zip `char(5)`. |
 | **Data quality flag (`dq_flags`)** | Cờ đánh dấu lỗi mà **không xoá** dòng. | `carrier_before_approved` (1.359 đơn), `carrier_before_purchase` (166). |
 | **Rejected rows** | Dòng không nạp được, ghi cùng lý do. | `etl_log.rejected_rows`: 42 điểm toạ độ ngoài Brazil. |
-| **Full load** | Xoá và nạp lại toàn bộ. | `run_pipeline --mode full` (khoảng 56 giây trên dữ liệu đến 2017-12-31). |
-| **Incremental load (nạp tăng dần)** | Chỉ nạp dữ liệu mới/thay đổi từ lần trước. | 11 đợt hằng tháng 01–11/2018, mỗi đợt ~20 giây gồm cả test. |
+| **Full load** | Xoá và nạp lại toàn bộ. | `run_pipeline --mode full` (khoảng 52 giây trên dữ liệu đến 2017-12-31). |
+| **Incremental load (nạp tăng dần)** | Chỉ nạp dữ liệu mới/thay đổi từ lần trước. | 11 đợt hằng tháng 01–11/2018, mỗi đợt ~22 giây gồm cả test. |
 | **Watermark (dấu mốc)** | Giá trị đánh dấu "đã nạp đến đâu", lần sau chỉ lấy phần lớn hơn. | `etl_log.watermark`: mốc `order_purchase_timestamp` của đơn đã vào staging. |
 | **Upsert** | Chèn nếu chưa có, cập nhật nếu đã có. | `fact_order_fulfillment` cập nhật theo `order_id` khi đơn đi qua mốc mới. |
 | **Idempotent** | Chạy lại nhiều lần cho cùng kết quả, không sinh trùng. | Chạy lại `run_pipeline --mode incremental` → 0 dòng chèn, 0 cập nhật. |
@@ -66,7 +66,7 @@
 | **Pareto 80/20** | Một phần nhỏ nguyên nhân tạo phần lớn kết quả. | 18/74 danh mục tạo 80% GMV (`v_category_pareto`). |
 | **RFM** | Phân khúc khách theo Recency (gần đây), Frequency (tần suất), Monetary (giá trị). | `mart_cx.v_customer_rfm`: 6 phân khúc. |
 | **Cohort** | Nhóm khách theo tháng mua đầu, xem tỷ lệ quay lại theo thời gian. | `mart_cx.v_customer_cohort`. |
-| **Funnel (phễu)** | Chuỗi bước giảm dần. | MQL → chốt deal → có đơn: 8.000 → 842 → 380. |
+| **Funnel (phễu)** | Chuỗi bước giảm dần. | MQL → chốt deal → có đơn: 8.000 → 842 → 379. |
 | **Time intelligence** | Hàm DAX so sánh theo thời gian (MoM, YoY, YTD). | `GMV MoM %`, `GMV YoY %` (`powerbi/measures.md`). |
 
 ## E. Power BI

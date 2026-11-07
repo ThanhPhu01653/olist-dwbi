@@ -67,7 +67,7 @@ EXTRAS = {
     "S20": TAB([["Mua $\\rightarrow$ duyệt", "`approval_hours`", "10,3 giờ"], ["Duyệt $\\rightarrow$ bàn giao", "`handling_days`", "2,9 ngày"], ["Bàn giao $\\rightarrow$ giao", "`transit_days`", "9,3 ngày"],
                 ["Mua $\\rightarrow$ giao", "`lead_days`", "12,6 ngày"], ["Ngày hứa giao", "`promised_days`", "24,4 ngày"]], "lll", ["Chặng", "Chỉ số của kho", "Trung bình"]),
     "S48": TAB([["Câu a", "`dim_customer` dùng SCD2", "chỉ 0,26% khách đổi zip"], ["Câu b", "D6 hai trang", "380/842 deal có đơn"], ["Câu c", "snapshot seller dày đặc", "36.583 so với 16.441 dòng"],
-                ["Câu d", "13 nhóm ngành hàng", "73 danh mục"], ["Câu e", "zip thiếu toạ độ vẫn có dòng", "168 zip, không mất đơn"], ["Câu f", "mốc nạp đầu 2017-12-31", "45.430 đơn, 11 đợt sau"]], "lll", ["Quyết định", "Nội dung", "Số liệu đi kèm"]),
+                ["Câu d", "13 nhóm ngành hàng", "73 danh mục"], ["Câu e", "zip thiếu toạ độ vẫn có dòng", "167 zip, không mất đơn"], ["Câu f", "mốc nạp đầu 2017-12-31", "45.430 đơn, 11 đợt sau"]], "lll", ["Quyết định", "Nội dung", "Số liệu đi kèm"]),
     "S53": TAB([[f, *["\\ding{51}" if c else "" for c in row]] for f, row in [("fact\\_order\\_item", [1, 1, 1, 1, 1, 1, 0, 0, 0, 0]), ("fact\\_order\\_fulfillment", [1, 1, 0, 0, 1, 1, 0, 0, 0, 0]),
                 ("fact\\_payment", [1, 1, 0, 0, 0, 0, 1, 0, 0, 0]), ("fact\\_review", [1, 1, 0, 0, 0, 0, 0, 0, 0, 0]), ("fact\\_lead\\_funnel", [1, 0, 1, 0, 0, 0, 0, 1, 1, 1]), ("fact\\_seller\\_monthly", [1, 0, 1, 0, 0, 0, 0, 0, 0, 0])]],
                "l" + "c" * 10, ["Fact", "Date", "Customer", "Seller", "Product", "Geo", "Status", "Payment", "Origin", "Profile", "Rep"]),
@@ -75,8 +75,8 @@ EXTRAS = {
                "llllllll", ["customer\\_key", "khách thật", "zip", "thành phố", "effective\\_from", "effective\\_to", "is\\_current", "version"]),
     "S63": TAB([["approval\\_hours", "36,61"], ["handling\\_days", "0,71"], ["transit\\_days", "12,84"], ["lead\\_days", "15,07"], ["promised\\_days", "21"], ["delay\\_days", "-6 (giao sớm 6 ngày)"], ["order\\_value", "43,00"], ["freight\\_total", "45,30"], ["payment\\_total", "88,30"]],
                "ll", ["Cột của fact\\_order\\_fulfillment (đơn 19c36691…)", "Giá trị"]),
-    "S82": TAB([["ODS (số dòng, loại, cleaning)", "25"], ["Dimension (Unknown, SCD2, phủ khoá)", "42"], ["Fact (đối soát, grain, khoá ngoại, logic)", "46"], ["Data mart (khớp fact)", "17"], ["Thử lại dòng mồ côi (kịch bản)", "3"],
-                ["\\textbf{Tổng}", "\\textbf{133 (đạt 100\\%)}"], ["Đối chiếu khám phá dữ liệu (chỉ báo cáo)", "5/5 khớp"]], "ll", ["Nhóm kiểm thử", "Số phép"]),
+    "S82": TAB([["ODS (số dòng, loại, cleaning)", "25"], ["Dimension (Unknown, SCD2, phủ khoá)", "42"], ["Fact (đối soát, grain, khoá ngoại, logic)", "49"], ["Data mart (khớp fact)", "17"], ["Thử lại dòng mồ côi (kịch bản)", "3"],
+                ["\\textbf{Tổng}", "\\textbf{136 (đạt 100\\%)}"], ["Đối chiếu khám phá dữ liệu (chỉ báo cáo)", "6/6 khớp"]], "ll", ["Nhóm kiểm thử", "Số phép"]),
     "S84": TAB([["mart\\_sales", "6", "D1, D2, D4"], ["mart\\_fulfillment", "4", "D3, D4"], ["mart\\_cx", "4 (RFM, cohort materialized)", "D5"], ["mart\\_acquisition", "3 (scorecard, theo kênh materialized)", "D6"]], "lll", ["Mart", "Số view", "Dashboard"]),
 }
 GRID7 = "\\begin{columns}[c]" + "".join(f"\\begin{{column}}{{0.24\\textwidth}}\\includegraphics[width=\\linewidth,height=0.3\\textheight,keepaspectratio]{{3-2-7_cay_phan_tich_D{i}.png}}\\end{{column}}" + ("\\end{columns}\\vspace{0.3em}\\begin{columns}[c]" if i == 4 else "")

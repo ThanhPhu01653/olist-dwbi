@@ -1,6 +1,6 @@
 # Benchmark gọn (P7-A) – sinh tự động
 
-Mỗi ô là trung bình 5 lần chạy `EXPLAIN (ANALYZE)` sau 1 lần chạy nóng (cache), đơn vị **mili giây** (execution time, không tính truyền kết quả). Dữ liệu: trạng thái cuối của `olist_dw` (112.650 dòng hàng, 99.441 đơn). Máy dev của KT1 (laptop), PostgreSQL mặc định.
+Mỗi ô là trung bình 5 lần chạy `EXPLAIN (ANALYZE)` sau 1 lần chạy nóng (cache), đơn vị **mili giây** (execution time, không tính truyền kết quả). Dữ liệu: trạng thái cuối của `olist_dw` (112.650 dòng hàng, 99.441 đơn). Máy dev của Phú (laptop), PostgreSQL mặc định.
 
 ## 1. oltp (chuẩn hoá) và dw (star schema)
 

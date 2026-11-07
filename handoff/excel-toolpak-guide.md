@@ -1,4 +1,4 @@
-# Hướng dẫn Excel Data Analysis ToolPak (cho KT3)
+# Hướng dẫn Excel Data Analysis ToolPak (cho nhóm)
 
 *Sinh tự động bởi `scripts/eda/excel_export.py` trên database `olist_full`; chạy lại script để cập nhật số liệu.*
 
