@@ -22,6 +22,7 @@ BEGIN
         INSERT INTO dw.dim_geography (zip_code_prefix, city, state_code, state_name, region, latitude, longitude)
         SELECT t.zip, t.city, t.st, coalesce(r.state_name, 'Unknown'), coalesce(r.region, 'Unknown'), t.latitude, t.longitude
         FROM tmp_geo t LEFT JOIN ods.ref_state_region r ON r.state_code = t.st
+        ORDER BY t.zip                                   -- fixed order => the same surrogate keys on every rebuild
         ON CONFLICT (zip_code_prefix) DO UPDATE
             SET city = EXCLUDED.city, state_code = EXCLUDED.state_code, state_name = EXCLUDED.state_name, region = EXCLUDED.region,
                 latitude = EXCLUDED.latitude, longitude = EXCLUDED.longitude, dw_updated_at = now()
@@ -64,7 +65,8 @@ BEGIN
     INSERT INTO dw.dim_customer (customer_unique_id, zip_code_prefix, city, state_code, geography_key, effective_from, effective_to, is_current, version_no)
     SELECT v.uid, v.zip, v.city, v.st, coalesce(g.geography_key, -1), v.eff_from, v.eff_to, v.is_cur, v.vn
     FROM tmp_cust_ver v LEFT JOIN dw.dim_geography g ON g.zip_code_prefix = v.zip
-    WHERE NOT EXISTS (SELECT 1 FROM dw.dim_customer d WHERE d.customer_unique_id = v.uid AND d.effective_from = v.eff_from);
+    WHERE NOT EXISTS (SELECT 1 FROM dw.dim_customer d WHERE d.customer_unique_id = v.uid AND d.effective_from = v.eff_from)
+    ORDER BY v.uid, v.eff_from;                          -- fixed order => the same surrogate keys on every rebuild
     GET DIAGNOSTICS p_inserted = ROW_COUNT;
 
     UPDATE dw.dim_customer d
@@ -100,6 +102,7 @@ BEGIN
         LEFT JOIN ods.closed_deals d ON d.seller_id = t.seller_id
         LEFT JOIN ods.mql m ON m.mql_id = d.mql_id
         LEFT JOIN ods.ref_lead_origin_group og ON og.origin = m.origin
+        ORDER BY t.seller_id                             -- fixed order => the same surrogate keys on every rebuild
         ON CONFLICT (seller_id) DO UPDATE
             SET zip_code_prefix = EXCLUDED.zip_code_prefix, city = EXCLUDED.city, state_code = EXCLUDED.state_code,
                 geography_key = EXCLUDED.geography_key, is_from_funnel = EXCLUDED.is_from_funnel, mql_id = EXCLUDED.mql_id,
@@ -138,6 +141,7 @@ BEGIN
         LEFT JOIN ods.category_translation t ON t.product_category_name = p.product_category_name
         LEFT JOIN ods.ref_category_translation_extra x ON x.product_category_name = p.product_category_name
         LEFT JOIN ods.ref_category_group gr ON gr.product_category_name = p.product_category_name
+        ORDER BY p.product_id                            -- fixed order => the same surrogate keys on every rebuild
         ON CONFLICT (product_id) DO UPDATE
             SET category_name_pt = EXCLUDED.category_name_pt, category_name_en = EXCLUDED.category_name_en, category_group = EXCLUDED.category_group,
                 weight_g = EXCLUDED.weight_g, length_cm = EXCLUDED.length_cm, height_cm = EXCLUDED.height_cm, width_cm = EXCLUDED.width_cm,
@@ -160,7 +164,7 @@ BEGIN
     SELECT count(*) INTO p_read FROM ods.ref_order_status;
     WITH up AS (
         INSERT INTO dw.dim_order_status (order_status, status_group, is_final)
-        SELECT order_status, status_group, is_final FROM ods.ref_order_status
+        SELECT order_status, status_group, is_final FROM ods.ref_order_status ORDER BY order_status
         ON CONFLICT (order_status) DO UPDATE SET status_group = EXCLUDED.status_group, is_final = EXCLUDED.is_final, dw_updated_at = now()
             WHERE (dw.dim_order_status.status_group, dw.dim_order_status.is_final) IS DISTINCT FROM (EXCLUDED.status_group, EXCLUDED.is_final)
         RETURNING (xmax = 0) AS ins)
@@ -175,7 +179,7 @@ BEGIN
     SELECT count(*) INTO p_read FROM ods.ref_payment_type;
     WITH up AS (
         INSERT INTO dw.dim_payment_type (payment_type, payment_group, display_name)
-        SELECT payment_type, payment_group, display_name FROM ods.ref_payment_type
+        SELECT payment_type, payment_group, display_name FROM ods.ref_payment_type ORDER BY payment_type
         ON CONFLICT (payment_type) DO UPDATE SET payment_group = EXCLUDED.payment_group, display_name = EXCLUDED.display_name, dw_updated_at = now()
             WHERE (dw.dim_payment_type.payment_group, dw.dim_payment_type.display_name) IS DISTINCT FROM (EXCLUDED.payment_group, EXCLUDED.display_name)
         RETURNING (xmax = 0) AS ins)
@@ -190,7 +194,7 @@ BEGIN
     SELECT count(*) INTO p_read FROM ods.ref_lead_origin_group;
     WITH up AS (
         INSERT INTO dw.dim_lead_origin (origin, channel_group)
-        SELECT origin, channel_group FROM ods.ref_lead_origin_group
+        SELECT origin, channel_group FROM ods.ref_lead_origin_group ORDER BY origin
         ON CONFLICT (origin) DO UPDATE SET channel_group = EXCLUDED.channel_group, dw_updated_at = now()
             WHERE dw.dim_lead_origin.channel_group IS DISTINCT FROM EXCLUDED.channel_group
         RETURNING (xmax = 0) AS ins)
@@ -206,6 +210,7 @@ BEGIN
     SELECT count(*) INTO p_read FROM ods.closed_deals;
     INSERT INTO dw.dim_lead_profile (business_segment, lead_type, lead_behaviour_profile, business_type, has_company, has_gtin, average_stock)
     SELECT DISTINCT business_segment, lead_type, lead_behaviour_profile, business_type, has_company, has_gtin, average_stock FROM ods.closed_deals
+    ORDER BY business_segment, lead_type, lead_behaviour_profile, business_type, has_company, has_gtin, average_stock
     ON CONFLICT (business_segment, lead_type, lead_behaviour_profile, business_type, has_company, has_gtin, average_stock) DO NOTHING;
     GET DIAGNOSTICS p_inserted = ROW_COUNT;
     p_updated := 0;
@@ -218,8 +223,10 @@ LANGUAGE plpgsql AS $$
 BEGIN
     SELECT count(*) INTO p_read FROM ods.closed_deals;
     INSERT INTO dw.dim_sales_rep (rep_id, rep_role)
-    SELECT DISTINCT sdr_id, 'SDR' FROM ods.closed_deals WHERE sdr_id IS NOT NULL
-    UNION SELECT DISTINCT sr_id, 'SR' FROM ods.closed_deals WHERE sr_id IS NOT NULL
+    SELECT rep_id, rep_role FROM (
+        SELECT sdr_id AS rep_id, 'SDR' AS rep_role FROM ods.closed_deals WHERE sdr_id IS NOT NULL
+        UNION SELECT sr_id, 'SR' FROM ods.closed_deals WHERE sr_id IS NOT NULL) r
+    ORDER BY rep_role, rep_id                            -- fixed order => the same surrogate keys on every rebuild
     ON CONFLICT (rep_id, rep_role) DO NOTHING;
     GET DIAGNOSTICS p_inserted = ROW_COUNT;
     p_updated := 0;

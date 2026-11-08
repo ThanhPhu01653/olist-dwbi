@@ -40,7 +40,7 @@ def load_compare():
 def signature(database: str) -> dict:
     cmp = load_compare()
     with get_engine(database).connect() as conn:
-        return {t: list(cmp.measure(conn, t)) for t in cmp.CHECKS}
+        return {t: list(cmp.measure(conn, t)) + list(cmp.measure_keys(conn, t))[1:] for t in cmp.CHECKS}   # [rows, content md5, money, surrogate-key md5]
 
 
 def drop_databases() -> None:
@@ -112,7 +112,8 @@ def main() -> None:
         before = json.loads(Path(a.compare).read_text(encoding="utf-8"))
         after = signature(config.DB_NAME)
         diff = [t for t in before if before[t] != after[t]]
-        cmp_note = f"{len(before) - len(diff)}/{len(before)} bảng dim/fact khớp tín hiệu trước khi xoá (số dòng, tổng tiền, checksum nội dung)" + (f"; LỆCH: {diff}" if diff else "")
+        cmp_note = (f"{len(before) - len(diff)}/{len(before)} bảng dim/fact khớp tín hiệu trước khi xoá "
+                    "(số dòng, tổng tiền, checksum nội dung, checksum giá trị khoá thay thế)" + (f"; LỆCH: {diff}" if diff else ""))
         print("compare:", cmp_note)
     total = time.perf_counter() - t_all
     md = [f"# Kiểm chứng tái lập – chạy lại từ đầu bằng `python scripts/rebuild_all.py{' --drop' if a.drop else ''}` ({started:%Y-%m-%d %H:%M})", "",

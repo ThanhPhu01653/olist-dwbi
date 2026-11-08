@@ -1,4 +1,4 @@
-# 03 – Từ điển dữ liệu (sinh tự động 2026-11-08 00:11)
+# 03 – Từ điển dữ liệu (sinh tự động 2026-11-08 13:51)
 
 Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy từ `COMMENT ON` trong database (tiếng Việt), kiểu và khoá từ `information_schema` / `pg_catalog`, số dòng và **ví dụ giá trị** lấy từ `olist_dw` ở trạng thái cuối. Chạy lại: `python scripts/gen_data_dictionary.py`. Quy ước: khoá thay thế `<tên>_key`; `-1` = dòng Unknown; cột kỹ thuật `etl_batch_id`, `dw_created_at`, `dw_updated_at` cho biết lô nạp. Cột mart không có COMMENT riêng lấy nghĩa từ cột cùng tên ở `dw` hoặc từ bảng chú thích của script.
 
@@ -66,12 +66,12 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `zip_code_prefix` | character(5) | có | Zip của phiên bản (thuộc tính theo dõi SCD2) | 18040 |
 | `city` | text | có | Thành phố của phiên bản | sorocaba |
 | `state_code` | character(2) | có | Bang của phiên bản | SP |
-| `geography_key` | integer | không | Khoá sang dim_geography → `dim_geography` | 5983 |
+| `geography_key` | integer | không | Khoá sang dim_geography → `dim_geography` | 5991 |
 | `effective_from` | date | không | Ngày bắt đầu hiệu lực (phiên bản đầu = 1900-01-01) | 1900-01-01 |
 | `effective_to` | date | không | Ngày kết thúc hiệu lực (phiên bản hiện hành = 9999-12-31) | 9999-12-31 |
 | `is_current` | boolean | không | Phiên bản hiện hành | True |
 | `version_no` | integer | không | Số thứ tự phiên bản của khách (1, 2, ...) | 1 |
-| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.437212+07:00 |
+| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.588018+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.dim_date
@@ -102,7 +102,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `is_holiday_br` | boolean | có | Ngày lễ quốc gia của Brazil | False |
 | `holiday_name` | text | có | Tên ngày lễ | Sexta-feira Santa |
 | `is_black_friday` | boolean | có | Black Friday (thứ Sáu sau thứ Năm thứ 4 của tháng 11) | False |
-| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.401957+07:00 |
+| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.543946+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.dim_geography
@@ -126,7 +126,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `country` | text | không | Quốc gia | Brazil |
 | `latitude` | double precision | có | Vĩ độ (median của zip); NULL nếu zip không có trong bảng toạ độ | -23.54897652899767 |
 | `longitude` | double precision | có | Kinh độ (median của zip); NULL nếu zip không có trong bảng toạ độ | -46.63531311226845 |
-| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.437212+07:00 |
+| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.588018+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.dim_lead_origin
@@ -142,9 +142,9 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | Cột | Kiểu | Null? | Ý nghĩa | Ví dụ |
 | --- | --- | --- | --- | --- |
 | `lead_origin_key` | integer | không | -> dim_lead_origin | 3 |
-| `origin` | text | không | Kênh gốc (organic_search, paid_search, ...) | referral |
-| `channel_group` | text | không | Nhóm kênh: Organic, Paid, Social, Email, Other, Unknown | Organic |
-| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.437212+07:00 |
+| `origin` | text | không | Kênh gốc (organic_search, paid_search, ...) | email |
+| `channel_group` | text | không | Nhóm kênh: Organic, Paid, Social, Email, Other, Unknown | Email |
+| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.588018+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.dim_lead_profile
@@ -160,14 +160,14 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | Cột | Kiểu | Null? | Ý nghĩa | Ví dụ |
 | --- | --- | --- | --- | --- |
 | `lead_profile_key` | integer | không | -> dim_lead_profile (-1 nếu chưa chốt) | 3 |
-| `business_segment` | text | không | Phân khúc kinh doanh | food_supplement |
-| `lead_type` | text | không | Loại lead | industry |
-| `lead_behaviour_profile` | text | không | Hồ sơ hành vi | cat |
+| `business_segment` | text | không | Phân khúc kinh doanh | health_beauty |
+| `lead_type` | text | không | Loại lead | online_small |
+| `lead_behaviour_profile` | text | không | Hồ sơ hành vi | wolf |
 | `business_type` | text | không | Loại hình kinh doanh | manufacturer |
 | `has_company` | text | không | Có công ty (true/false/unknown) | unknown |
 | `has_gtin` | text | không | Có mã GTIN (true/false/unknown) | unknown |
 | `average_stock` | text | không | Tồn kho trung bình khai báo | unknown |
-| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.437212+07:00 |
+| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.588018+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.dim_order_status
@@ -183,10 +183,10 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | Cột | Kiểu | Null? | Ý nghĩa | Ví dụ |
 | --- | --- | --- | --- | --- |
 | `order_status_key` | integer | không | Trạng thái đơn -> dim_order_status | 3 |
-| `order_status` | text | không | Trạng thái gốc | invoiced |
+| `order_status` | text | không | Trạng thái gốc | created |
 | `status_group` | text | không | Nhóm: Completed, In progress, Failed | In progress |
 | `is_final` | boolean | không | Trạng thái cuối (không đổi nữa) | False |
-| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.437212+07:00 |
+| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.588018+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.dim_payment_type
@@ -202,10 +202,10 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | Cột | Kiểu | Null? | Ý nghĩa | Ví dụ |
 | --- | --- | --- | --- | --- |
 | `payment_type_key` | integer | không | -> dim_payment_type | -1 |
-| `payment_type` | text | không | Loại gốc (credit_card, boleto, ...) | credit_card |
+| `payment_type` | text | không | Loại gốc (credit_card, boleto, ...) | boleto |
 | `payment_group` | text | không | Nhóm (Card, Bank slip, Voucher, Unknown) | Unknown |
 | `display_name` | text | không | Tên hiển thị | Unknown |
-| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.158496+07:00 |
+| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.200850+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.dim_product
@@ -221,20 +221,20 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | Cột | Kiểu | Null? | Ý nghĩa | Ví dụ |
 | --- | --- | --- | --- | --- |
 | `product_key` | integer | không | Khoá thay thế | 3 |
-| `product_id` | character(32) | không | Mã sản phẩm (khoá tự nhiên) | 96bd76ec8810374ed1b65e291975717f |
-| `category_name_pt` | text | có | Tên danh mục tiếng Bồ Đào Nha (unknown nếu rỗng) | esporte_lazer |
-| `category_name_en` | text | có | Tên danh mục tiếng Anh | sports_leisure |
-| `category_group` | text | có | Nhóm ngành hàng (13 nhóm, từ seeds/category_group.csv) | Sports & Leisure |
-| `weight_g` | integer | có | Cân nặng (gram) | 154 |
-| `length_cm` | integer | có | Chiều dài (cm) | 18 |
-| `height_cm` | integer | có | Chiều cao (cm) | 9 |
-| `width_cm` | integer | có | Chiều rộng (cm) | 15 |
-| `volume_cm3` | bigint | có | Thể tích = dài x cao x rộng (cm3) | 2430 |
+| `product_id` | character(32) | không | Mã sản phẩm (khoá tự nhiên) | 0009406fd7479715e4bef61dd91f2462 |
+| `category_name_pt` | text | có | Tên danh mục tiếng Bồ Đào Nha (unknown nếu rỗng) | cama_mesa_banho |
+| `category_name_en` | text | có | Tên danh mục tiếng Anh | bed_bath_table |
+| `category_group` | text | có | Nhóm ngành hàng (13 nhóm, từ seeds/category_group.csv) | Home & Furniture |
+| `weight_g` | integer | có | Cân nặng (gram) | 300 |
+| `length_cm` | integer | có | Chiều dài (cm) | 45 |
+| `height_cm` | integer | có | Chiều cao (cm) | 15 |
+| `width_cm` | integer | có | Chiều rộng (cm) | 35 |
+| `volume_cm3` | bigint | có | Thể tích = dài x cao x rộng (cm3) | 23625 |
 | `size_class` | text | có | Cỡ hàng: S (<500 g), M (<2 kg), L (<10 kg), XL (>=10 kg), Unknown | S |
-| `photos_qty` | integer | có | Số ảnh | 1 |
-| `name_length` | integer | có | Độ dài tên sản phẩm (ký tự) | 46 |
-| `description_length` | integer | có | Độ dài mô tả (ký tự) | 250 |
-| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.437212+07:00 |
+| `photos_qty` | integer | có | Số ảnh | 2 |
+| `name_length` | integer | có | Độ dài tên sản phẩm (ký tự) | 50 |
+| `description_length` | integer | có | Độ dài mô tả (ký tự) | 266 |
+| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.588018+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.dim_sales_rep
@@ -250,9 +250,9 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | Cột | Kiểu | Null? | Ý nghĩa | Ví dụ |
 | --- | --- | --- | --- | --- |
 | `sales_rep_key` | integer | không | (xem mô tả bảng) | 3 |
-| `rep_id` | character(32) | không | Mã nhân viên | c638112b43f1d1b86dcabb0da720c901 |
-| `rep_role` | text | không | Vai trò: SDR hoặc SR | SR |
-| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.437212+07:00 |
+| `rep_id` | character(32) | không | Mã nhân viên | f6c6ab65a1c732f154b371401448be6d |
+| `rep_role` | text | không | Vai trò: SDR hoặc SR | SDR |
+| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.588018+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.dim_seller
@@ -267,23 +267,23 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 
 | Cột | Kiểu | Null? | Ý nghĩa | Ví dụ |
 | --- | --- | --- | --- | --- |
-| `seller_key` | integer | không | Khoá thay thế | 33 |
-| `seller_id` | character(32) | không | Mã seller (khoá tự nhiên) | d52cbce9845184537284a23c3bc3da0e |
-| `zip_code_prefix` | character(5) | có | Zip của seller (NULL nếu seller chỉ có trong CRM) | 88495 |
-| `city` | text | có | Thành phố của seller | garopaba |
-| `state_code` | character(2) | có | Bang của seller | SC |
-| `geography_key` | integer | không | Khoá sang dim_geography (-1 nếu chưa biết) → `dim_geography` | 17414 |
-| `is_from_funnel` | boolean | không | Seller có trong closed_deals của CRM | False |
-| `mql_id` | character(32) | có | MQL đã dẫn tới seller; NULL nếu không từ funnel | e866f5b284008f65db1641dae437f9c2 |
-| `acquisition_origin` | text | không | Kênh gốc của MQL; not_from_funnel nếu seller không từ funnel | not_from_funnel |
-| `acquisition_channel` | text | không | Nhóm kênh thu hút (Organic, Paid, Social, Email, Other, Unknown, Not from funnel) | Not from funnel |
-| `business_segment` | text | có | Phân khúc kinh doanh khai báo khi chốt deal | toys |
+| `seller_key` | integer | không | Khoá thay thế | 9593 |
+| `seller_id` | character(32) | không | Mã seller (khoá tự nhiên) | 0f5f7caa3e6a2b466fabe6bfaf25b06b |
+| `zip_code_prefix` | character(5) | có | Zip của seller (NULL nếu seller chỉ có trong CRM) | 30170 |
+| `city` | text | có | Thành phố của seller | belo horizonte |
+| `state_code` | character(2) | có | Bang của seller | MG |
+| `geography_key` | integer | không | Khoá sang dim_geography (-1 nếu chưa biết) → `dim_geography` | -1 |
+| `is_from_funnel` | boolean | không | Seller có trong closed_deals của CRM | True |
+| `mql_id` | character(32) | có | MQL đã dẫn tới seller; NULL nếu không từ funnel | d54be8a176d25fedda751546f6276fb6 |
+| `acquisition_origin` | text | không | Kênh gốc của MQL; not_from_funnel nếu seller không từ funnel | paid_search |
+| `acquisition_channel` | text | không | Nhóm kênh thu hút (Organic, Paid, Social, Email, Other, Unknown, Not from funnel) | Paid |
+| `business_segment` | text | có | Phân khúc kinh doanh khai báo khi chốt deal | audio_video_electronics |
 | `lead_type` | text | có | Loại lead | online_medium |
 | `business_type` | text | có | Loại hình kinh doanh | reseller |
-| `won_date` | date | có | Ngày chốt deal | 2018-01-30 |
-| `first_sale_date` | date | có | Ngày mua của đơn đầu tiên không thuộc nhóm Failed của seller (cập nhật sau khi nạp fact_order_item); NULL nếu mọi đơn đều Failed | 2018-02-02 |
-| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.437212+07:00 |
-| `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) | 2026-11-08 00:06:18.875123+07:00 |
+| `won_date` | date | có | Ngày chốt deal | 2018-03-26 |
+| `first_sale_date` | date | có | Ngày mua của đơn đầu tiên không thuộc nhóm Failed của seller (cập nhật sau khi nạp fact_order_item); NULL nếu mọi đơn đều Failed | 2018-03-21 |
+| `dw_created_at` | timestamp with time zone | không | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:46:05.660713+07:00 |
+| `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) | 2026-11-08 13:46:06.790247+07:00 |
 
 ### dw.fact_lead_funnel
 
@@ -302,18 +302,18 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `first_contact_date_key` | integer | không | Mốc 1: ngày liên hệ đầu → `dim_date` | 20171208 |
 | `won_date_key` | integer | không | Mốc 2: ngày chốt deal (-1 nếu chưa chốt) → `dim_date` | -1 |
 | `first_sale_date_key` | integer | không | Mốc 3: ngày mua của đơn đầu tiên không thuộc nhóm Failed của seller (-1 nếu chưa) → `dim_date` | -1 |
-| `lead_origin_key` | integer | không | -> dim_lead_origin → `dim_lead_origin` | 4 |
+| `lead_origin_key` | integer | không | -> dim_lead_origin → `dim_lead_origin` | 7 |
 | `lead_profile_key` | integer | không | -> dim_lead_profile (-1 nếu chưa chốt) → `dim_lead_profile` | -1 |
 | `seller_key` | integer | không | -> dim_seller (-1 nếu chưa chốt) → `dim_seller` | -1 |
 | `sdr_key` | integer | không | Nhân viên SDR -> dim_sales_rep → `dim_sales_rep` | -1 |
 | `sr_key` | integer | không | Nhân viên SR -> dim_sales_rep → `dim_sales_rep` | -1 |
 | `is_won` | integer | không | 1 nếu đã chốt deal | 0 |
 | `has_first_sale` | integer | không | 1 nếu seller đã có đơn | 0 |
-| `days_to_close` | integer | có | Ngày từ liên hệ đầu đến chốt; NULL nếu chưa chốt hoặc âm (lỗi nguồn) |  |
-| `days_won_to_first_sale` | integer | có | Ngày từ chốt đến đơn đầu; NULL nếu chưa có hoặc âm (seller bán trước khi chốt) |  |
+| `days_to_close` | integer | có | Ngày từ liên hệ đầu đến chốt; NULL nếu chưa chốt hoặc âm (lỗi nguồn) | 267 |
+| `days_won_to_first_sale` | integer | có | Ngày từ chốt đến đơn đầu; NULL nếu chưa có hoặc âm (seller bán trước khi chốt) | 16 |
 | `declared_product_catalog_size` | numeric(12,1) | có | Số sản phẩm khai báo (non-additive, dùng AVG/median) |  |
-| `declared_monthly_revenue` | numeric(14,2) | có | Doanh thu tháng khai báo (non-additive) |  |
-| `seller_gmv_first_90d` | numeric(12,2) | có | GMV (đơn không bị Failed) của seller trong 90 ngày kể từ ngày đơn đầu tiên; NULL nếu chưa có đơn |  |
+| `declared_monthly_revenue` | numeric(14,2) | có | Doanh thu tháng khai báo (non-additive) | 0.00 |
+| `seller_gmv_first_90d` | numeric(12,2) | có | GMV (đơn không bị Failed) của seller trong 90 ngày kể từ ngày đơn đầu tiên; NULL nếu chưa có đơn | 573.50 |
 | `etl_batch_id` | bigint | không | Lô ETL cuối cùng ghi dòng này | 2 |
 
 ### dw.fact_order_fulfillment
@@ -330,8 +330,8 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | --- | --- | --- | --- | --- |
 | `order_id` | character(32) | không | Mã đơn (khoá chính, degenerate dimension) | 00048cc3ae777c65dbb7d2a0634bc1ea |
 | `customer_key` | integer | không | Phiên bản SCD2 của khách tại ngày mua → `dim_customer` | 23072 |
-| `customer_geography_key` | integer | không | Địa lý khách -> dim_geography → `dim_geography` | 9448 |
-| `order_status_key` | integer | không | -> dim_order_status → `dim_order_status` | 1 |
+| `customer_geography_key` | integer | không | Địa lý khách -> dim_geography → `dim_geography` | 9470 |
+| `order_status_key` | integer | không | -> dim_order_status → `dim_order_status` | 4 |
 | `purchase_date_key` | integer | không | Mốc 1: ngày mua → `dim_date` | 20170515 |
 | `approved_date_key` | integer | không | Mốc 2: ngày duyệt thanh toán (-1 nếu chưa xảy ra) → `dim_date` | 20170517 |
 | `carrier_date_key` | integer | không | Mốc 3: ngày bàn giao cho vận chuyển (-1 nếu chưa) → `dim_date` | 20170517 |
@@ -376,11 +376,11 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `purchase_date_key` | integer | không | Ngày mua -> dim_date → `dim_date` | 20170515 |
 | `shipping_limit_date_key` | integer | không | Hạn seller bàn giao cho vận chuyển -> dim_date → `dim_date` | 20170523 |
 | `customer_key` | integer | không | Phiên bản SCD2 của khách có hiệu lực tại ngày mua -> dim_customer → `dim_customer` | 23072 |
-| `customer_geography_key` | integer | không | Địa lý khách (vai trò 1) -> dim_geography → `dim_geography` | 9448 |
-| `seller_geography_key` | integer | không | Địa lý seller (vai trò 2) -> dim_geography → `dim_geography` | 5303 |
-| `seller_key` | integer | không | -> dim_seller → `dim_seller` | 660 |
-| `product_key` | integer | không | -> dim_product → `dim_product` | 3940 |
-| `order_status_key` | integer | không | Trạng thái đơn -> dim_order_status → `dim_order_status` | 1 |
+| `customer_geography_key` | integer | không | Địa lý khách (vai trò 1) -> dim_geography → `dim_geography` | 9470 |
+| `seller_geography_key` | integer | không | Địa lý seller (vai trò 2) -> dim_geography → `dim_geography` | 5310 |
+| `seller_key` | integer | không | -> dim_seller → `dim_seller` | 1225 |
+| `product_key` | integer | không | -> dim_product → `dim_product` | 30848 |
+| `order_status_key` | integer | không | Trạng thái đơn -> dim_order_status → `dim_order_status` | 4 |
 | `price` | numeric(12,2) | không | Giá bán (BRL), additive | 21.90 |
 | `freight_value` | numeric(12,2) | không | Phí vận chuyển phân bổ cho dòng (BRL), additive | 12.69 |
 | `item_total` | numeric(12,2) | không | price + freight_value | 34.59 |
@@ -402,7 +402,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `payment_sequential` | integer | không | Lần thanh toán thứ mấy của đơn | 1 |
 | `purchase_date_key` | integer | không | Ngày mua của đơn -> dim_date → `dim_date` | 20170605 |
 | `customer_key` | integer | không | -> dim_customer → `dim_customer` | 27147 |
-| `payment_type_key` | integer | không | -> dim_payment_type → `dim_payment_type` | 1 |
+| `payment_type_key` | integer | không | -> dim_payment_type → `dim_payment_type` | 2 |
 | `payment_installments` | integer | không | Số kỳ trả góp (>= 1) | 3 |
 | `payment_value` | numeric(12,2) | không | Giá trị thanh toán (BRL) | 51.84 |
 | `etl_batch_id` | bigint | không | Lô ETL đã nạp | 2 |
@@ -446,8 +446,8 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 
 | Cột | Kiểu | Null? | Ý nghĩa | Ví dụ |
 | --- | --- | --- | --- | --- |
-| `month_date_key` | integer | không | Ngày 1 của tháng -> dim_date → `dim_date` | 20170101 |
-| `seller_key` | integer | không | -> dim_seller → `dim_seller` | 70 |
+| `month_date_key` | integer | không | Ngày 1 của tháng -> dim_date → `dim_date` | 20170601 |
+| `seller_key` | integer | không | -> dim_seller → `dim_seller` | 377 |
 | `orders` | integer | không | Số đơn (distinct) có seller này trong tháng, mọi trạng thái | 0 |
 | `items` | integer | không | Số dòng sản phẩm | 0 |
 | `gmv` | numeric(12,2) | không | Σ price của đơn không bị Failed (khớp định nghĩa GMV) | 0.00 |
@@ -456,7 +456,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `late_orders` | integer | không | Số đơn giao trễ | 0 |
 | `late_rate` | numeric(7,4) | có | late_orders / delivered_orders; NULL nếu chưa có đơn giao | 0.0000 |
 | `canceled_orders` | integer | không | Số đơn bị hủy | 0 |
-| `avg_review_score` | numeric(4,2) | có | Điểm review trung bình; NULL nếu không có review | 1.00 |
+| `avg_review_score` | numeric(4,2) | có | Điểm review trung bình; NULL nếu không có review | 2.00 |
 | `is_active` | integer | không | 1 nếu orders > 0 | 0 |
 | `months_since_first_sale` | integer | có | Số tháng kể từ tháng của first_sale_date (đơn đầu không thuộc nhóm Failed); 0 = tháng đó, âm = tháng trước đó chỉ có đơn Failed, NULL nếu seller chưa có đơn bán được | 0 |
 | `etl_batch_id` | bigint | không | Lô ETL đã ghi | 2 |
@@ -485,7 +485,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `is_holiday_br` | boolean | có | Ngày lễ quốc gia của Brazil | False |
 | `holiday_name` | text | có | Tên ngày lễ | Sexta-feira Santa |
 | `is_black_friday` | boolean | có | Black Friday (thứ Sáu sau thứ Năm thứ 4 của tháng 11) | False |
-| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.401957+07:00 |
+| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.543946+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.v_dim_carrier_date
@@ -512,7 +512,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `is_holiday_br` | boolean | có | Ngày lễ quốc gia của Brazil | False |
 | `holiday_name` | text | có | Tên ngày lễ | Sexta-feira Santa |
 | `is_black_friday` | boolean | có | Black Friday (thứ Sáu sau thứ Năm thứ 4 của tháng 11) | False |
-| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.401957+07:00 |
+| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.543946+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.v_dim_delivered_date
@@ -539,7 +539,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `is_holiday_br` | boolean | có | Ngày lễ quốc gia của Brazil | False |
 | `holiday_name` | text | có | Tên ngày lễ | Sexta-feira Santa |
 | `is_black_friday` | boolean | có | Black Friday (thứ Sáu sau thứ Năm thứ 4 của tháng 11) | False |
-| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.401957+07:00 |
+| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.543946+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.v_dim_estimated_date
@@ -566,7 +566,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `is_holiday_br` | boolean | có | Ngày lễ quốc gia của Brazil | False |
 | `holiday_name` | text | có | Tên ngày lễ | Sexta-feira Santa |
 | `is_black_friday` | boolean | có | Black Friday (thứ Sáu sau thứ Năm thứ 4 của tháng 11) | False |
-| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.401957+07:00 |
+| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.543946+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.v_dim_first_contact_date
@@ -593,7 +593,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `is_holiday_br` | boolean | có | Ngày lễ quốc gia của Brazil | False |
 | `holiday_name` | text | có | Tên ngày lễ | Sexta-feira Santa |
 | `is_black_friday` | boolean | có | Black Friday (thứ Sáu sau thứ Năm thứ 4 của tháng 11) | False |
-| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.401957+07:00 |
+| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.543946+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.v_dim_first_sale_date
@@ -620,7 +620,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `is_holiday_br` | boolean | có | Ngày lễ quốc gia của Brazil | False |
 | `holiday_name` | text | có | Tên ngày lễ | Sexta-feira Santa |
 | `is_black_friday` | boolean | có | Black Friday (thứ Sáu sau thứ Năm thứ 4 của tháng 11) | False |
-| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.401957+07:00 |
+| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.543946+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.v_dim_purchase_date
@@ -647,7 +647,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `is_holiday_br` | boolean | có | Ngày lễ quốc gia của Brazil | False |
 | `holiday_name` | text | có | Tên ngày lễ | Sexta-feira Santa |
 | `is_black_friday` | boolean | có | Black Friday (thứ Sáu sau thứ Năm thứ 4 của tháng 11) | False |
-| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.401957+07:00 |
+| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.543946+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.v_dim_review_answer_date
@@ -674,7 +674,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `is_holiday_br` | boolean | có | Ngày lễ quốc gia của Brazil | False |
 | `holiday_name` | text | có | Tên ngày lễ | Sexta-feira Santa |
 | `is_black_friday` | boolean | có | Black Friday (thứ Sáu sau thứ Năm thứ 4 của tháng 11) | False |
-| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.401957+07:00 |
+| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.543946+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.v_dim_review_creation_date
@@ -701,7 +701,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `is_holiday_br` | boolean | có | Ngày lễ quốc gia của Brazil | False |
 | `holiday_name` | text | có | Tên ngày lễ | Sexta-feira Santa |
 | `is_black_friday` | boolean | có | Black Friday (thứ Sáu sau thứ Năm thứ 4 của tháng 11) | False |
-| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.401957+07:00 |
+| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.543946+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.v_dim_shipping_limit_date
@@ -728,7 +728,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `is_holiday_br` | boolean | có | Ngày lễ quốc gia của Brazil | False |
 | `holiday_name` | text | có | Tên ngày lễ | Sexta-feira Santa |
 | `is_black_friday` | boolean | có | Black Friday (thứ Sáu sau thứ Năm thứ 4 của tháng 11) | False |
-| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.401957+07:00 |
+| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.543946+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### dw.v_dim_won_date
@@ -755,7 +755,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | `is_holiday_br` | boolean | có | Ngày lễ quốc gia của Brazil | False |
 | `holiday_name` | text | có | Tên ngày lễ | Sexta-feira Santa |
 | `is_black_friday` | boolean | có | Black Friday (thứ Sáu sau thứ Năm thứ 4 của tháng 11) | False |
-| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 00:05:17.401957+07:00 |
+| `dw_created_at` | timestamp with time zone | có | Thời điểm tạo dòng trong kho (cột kỹ thuật) | 2026-11-08 13:44:34.543946+07:00 |
 | `dw_updated_at` | timestamp with time zone | có | Thời điểm cập nhật dòng gần nhất (cột kỹ thuật; trống nếu chưa từng cập nhật) |  |
 
 ### mart_acquisition.v_funnel_by_origin_month
@@ -805,7 +805,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 
 | Cột | Kiểu | Null? | Ý nghĩa | Ví dụ |
 | --- | --- | --- | --- | --- |
-| `seller_key` | integer | có | Khoá thay thế | 558 |
+| `seller_key` | integer | có | Khoá thay thế | 3027 |
 | `seller_id` | character(32) | có | Mã seller (khoá tự nhiên) | fa1c13f2614d7b5c4749cbc52fecda94 |
 | `city` | text | có | Tên thành phố đã chuẩn hoá (chữ thường, không dấu) | sumare |
 | `state_code` | character(2) | có | Mã bang 2 ký tự | SP |
@@ -981,7 +981,7 @@ Mọi bảng trong schema `dw` (kho) và `mart_*` (data mart). Ý nghĩa lấy t
 | --- | --- | --- | --- | --- |
 | `order_id` | character(32) | có | Mã đơn (degenerate dimension) | 00024acbcdf0a6daa1e931b038114c75 |
 | `order_item_id` | integer | có | Số thứ tự dòng trong đơn (degenerate dimension) | 1 |
-| `seller_key` | integer | có | Khoá thay thế | 2024 |
+| `seller_key` | integer | có | Khoá thay thế | 1921 |
 | `seller_state` | character(2) | có | Bang của seller | SP |
 | `customer_state` | character(2) | có | Bang của khách | SP |
 | `customer_region` | text | có | Vùng của khách | Sudeste |

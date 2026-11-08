@@ -1,4 +1,4 @@
-# Thống kê dữ liệu (sinh tự động 2026-11-08 00:11)
+# Thống kê dữ liệu (sinh tự động 2026-11-08 13:51)
 
 ## File CSV nguồn
 
@@ -36,7 +36,7 @@
 | crm.closed_deals | 842 | 14 | 400.0 KB |
 | **Tổng (11 bảng)** | **1,559,764** | **71** | |
 
-- Dung lượng cả database: **861.88 MB**
+- Dung lượng cả database: **861.74 MB**
 - Số dòng trong etl_log.rejected_rows: **42**
 
 ### Database `olist_full`
@@ -159,11 +159,11 @@ Phân cấp / số phần tử: Bang (27) → Thành phố (4,310) → Khách th
 
 | customer_key | customer_unique_id | zip_code_prefix | city | state_code | geography_key | effective_from | effective_to | is_current | version_no |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 0000f46a3911fa3c080544 | 88115 | sao jose | SC | 17310 | 1900-01-01 | 9999-12-31 | True | 1 |
-| 2 | 0000f6ccb0745a6a4b8866 | 66812 | belem | PA | 13649 | 1900-01-01 | 9999-12-31 | True | 1 |
-| 3 | 0004aac84e0df4da2b147f | 18040 | sorocaba | SP | 5983 | 1900-01-01 | 9999-12-31 | True | 1 |
-| 4 | 0005e1862207bf6ccc02e4 | 25966 | teresopolis | RJ | 7187 | 1900-01-01 | 9999-12-31 | True | 1 |
-| 5 | 0006fdc98a402fceb4eb0e | 29400 | mimoso do sul | ES | 7937 | 1900-01-01 | 9999-12-31 | True | 1 |
+| 1 | 0000f46a3911fa3c080544 | 88115 | sao jose | SC | 17404 | 1900-01-01 | 9999-12-31 | True | 1 |
+| 2 | 0000f6ccb0745a6a4b8866 | 66812 | belem | PA | 13688 | 1900-01-01 | 9999-12-31 | True | 1 |
+| 3 | 0004aac84e0df4da2b147f | 18040 | sorocaba | SP | 5991 | 1900-01-01 | 9999-12-31 | True | 1 |
+| 4 | 0005e1862207bf6ccc02e4 | 25966 | teresopolis | RJ | 7198 | 1900-01-01 | 9999-12-31 | True | 1 |
+| 5 | 0006fdc98a402fceb4eb0e | 29400 | mimoso do sul | ES | 7954 | 1900-01-01 | 9999-12-31 | True | 1 |
 
 ### dw.dim_seller – 3,558 dòng (gồm dòng Unknown key −1)
 
@@ -171,11 +171,11 @@ Phân cấp / số phần tử: Bang (23) → Thành phố (636) → Nhóm kênh
 
 | seller_key | seller_id | zip_code_prefix | city | state_code | geography_key | is_from_funnel | mql_id | acquisition_origin | acquisition_channel | business_segment | lead_type | business_type | won_date | first_sale_date |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 3442f8959a84dea7ee197c | 13023 | campinas | SP | 4811 | False | NULL | not_from_funnel | Not from funnel | NULL | NULL | NULL | NULL | 2017-05-05 |
-| 2 | d1b65fc7debc3361ea86b5 | 13844 | mogi guacu | SP | 5210 | False | NULL | not_from_funnel | Not from funnel | NULL | NULL | NULL | NULL | 2017-03-28 |
-| 3 | ce3ad9de960102d0677a81 | 20031 | rio de janeiro | RJ | 6354 | False | NULL | not_from_funnel | Not from funnel | NULL | NULL | NULL | NULL | 2018-07-30 |
-| 4 | c0f3eea2e14555b6faeea3 | 04195 | sao paulo | SP | 1834 | False | NULL | not_from_funnel | Not from funnel | NULL | NULL | NULL | NULL | 2018-08-03 |
-| 5 | 51a04a8a6bdcb23deccc82 | 12914 | braganca paulista | SP | 4773 | False | NULL | not_from_funnel | Not from funnel | NULL | NULL | NULL | NULL | 2017-11-14 |
+| 1 | 0015a82c2db000af6aaaf3 | 09080 | santo andre | SP | 4065 | False | NULL | not_from_funnel | Not from funnel | NULL | NULL | NULL | NULL | 2017-09-26 |
+| 2 | 001cca7ae9ae17fb1caed9 | 29156 | cariacica | ES | 7849 | False | NULL | not_from_funnel | Not from funnel | NULL | NULL | NULL | NULL | 2017-02-04 |
+| 3 | 001e6ad469a905060d9599 | 24754 | sao goncalo | RJ | 6936 | False | NULL | not_from_funnel | Not from funnel | NULL | NULL | NULL | NULL | NULL |
+| 4 | 002100f778ceb8431b7a10 | 14405 | franca | SP | 5362 | False | NULL | not_from_funnel | Not from funnel | NULL | NULL | NULL | NULL | 2017-09-14 |
+| 5 | 003554e2dce176b5555353 | 74565 | goiania | GO | 14991 | False | NULL | not_from_funnel | Not from funnel | NULL | NULL | NULL | NULL | 2017-12-15 |
 
 ### dw.dim_product – 32,952 dòng (gồm dòng Unknown key −1)
 
@@ -183,11 +183,11 @@ Phân cấp / số phần tử: Nhóm ngành hàng (13) → Danh mục (74) → 
 
 | product_key | product_id | category_name_pt | category_name_en | category_group | weight_g | length_cm | height_cm | width_cm | volume_cm3 | size_class | photos_qty | name_length | description_length |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 1e9e8ef04dbcff4541ed26 | perfumaria | perfumery | Health & Beauty | 225 | 16 | 10 | 14 | 2240 | S | 1 | 40 | 287 |
-| 2 | 3aa071139cb16b67ca9e5d | artes | art | Gifts & Others | 1000 | 30 | 18 | 20 | 10800 | M | 1 | 44 | 276 |
-| 3 | 96bd76ec8810374ed1b65e | esporte_lazer | sports_leisure | Sports & Leisure | 154 | 18 | 9 | 15 | 2430 | S | 1 | 46 | 250 |
-| 4 | cef67bcfe19066a932b767 | bebes | baby | Toys & Baby | 371 | 26 | 4 | 26 | 2704 | S | 1 | 27 | 261 |
-| 5 | 9dc1a7de274444849c219c | utilidades_domesticas | housewares | Home & Furniture | 625 | 20 | 17 | 13 | 4420 | M | 4 | 37 | 402 |
+| 1 | 00066f42aeeb9f3007548b | perfumaria | perfumery | Health & Beauty | 300 | 20 | 16 | 16 | 5120 | S | 6 | 53 | 596 |
+| 2 | 00088930e925c41fd95ebf | automotivo | auto | Auto, Tools & Construc | 1225 | 55 | 10 | 26 | 14300 | M | 4 | 56 | 752 |
+| 3 | 0009406fd7479715e4bef6 | cama_mesa_banho | bed_bath_table | Home & Furniture | 300 | 45 | 15 | 35 | 23625 | S | 2 | 50 | 266 |
+| 4 | 000b8f95fcb9e009648827 | utilidades_domesticas | housewares | Home & Furniture | 550 | 19 | 24 | 12 | 5472 | M | 3 | 25 | 364 |
+| 5 | 000d9be29b5207b54e86aa | relogios_presentes | watches_gifts | Gifts & Others | 250 | 22 | 11 | 15 | 3630 | S | 4 | 48 | 613 |
 
 ### dw.dim_order_status – 9 dòng (gồm dòng Unknown key −1)
 
@@ -195,11 +195,11 @@ Phân cấp / số phần tử: Nhóm trạng thái (3) → Trạng thái (8)
 
 | order_status_key | order_status | status_group | is_final |
 | --- | --- | --- | --- |
-| 1 | delivered | Completed | True |
-| 2 | shipped | In progress | False |
-| 3 | invoiced | In progress | False |
-| 4 | processing | In progress | False |
-| 5 | approved | In progress | False |
+| 1 | approved | In progress | False |
+| 2 | canceled | Failed | True |
+| 3 | created | In progress | False |
+| 4 | delivered | Completed | True |
+| 5 | invoiced | In progress | False |
 
 ### dw.dim_payment_type – 6 dòng (gồm dòng Unknown key −1)
 
@@ -207,11 +207,11 @@ Phân cấp / số phần tử: Nhóm (4) → Loại (5)
 
 | payment_type_key | payment_type | payment_group | display_name |
 | --- | --- | --- | --- |
-| 1 | credit_card | Card | Credit card |
-| 2 | debit_card | Card | Debit card |
-| 3 | boleto | Bank slip | Boleto |
-| 4 | voucher | Voucher | Voucher |
-| 5 | not_defined | Unknown | Not defined |
+| 1 | boleto | Bank slip | Boleto |
+| 2 | credit_card | Card | Credit card |
+| 3 | debit_card | Card | Debit card |
+| 4 | not_defined | Unknown | Not defined |
+| 5 | voucher | Voucher | Voucher |
 
 ### dw.dim_lead_origin – 11 dòng (gồm dòng Unknown key −1)
 
@@ -219,11 +219,11 @@ Phân cấp / số phần tử: Nhóm kênh (6) → Origin (10)
 
 | lead_origin_key | origin | channel_group |
 | --- | --- | --- |
-| 1 | organic_search | Organic |
-| 2 | direct_traffic | Organic |
-| 3 | referral | Organic |
-| 4 | paid_search | Paid |
-| 5 | display | Paid |
+| 1 | direct_traffic | Organic |
+| 2 | display | Paid |
+| 3 | email | Email |
+| 4 | organic_search | Organic |
+| 5 | other | Other |
 
 ### dw.dim_lead_profile – 503 dòng (gồm dòng Unknown key −1)
 
@@ -232,10 +232,10 @@ Phân cấp / số phần tử: Phân khúc (34) → Tổ hợp hồ sơ (502)
 | lead_profile_key | business_segment | lead_type | lead_behaviour_profile | business_type | has_company | has_gtin | average_stock |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | computers | offline | unknown | reseller | unknown | unknown | unknown |
-| 2 | health_beauty | online_small | unknown | manufacturer | unknown | unknown | unknown |
-| 3 | food_supplement | industry | unknown | manufacturer | unknown | unknown | unknown |
-| 4 | home_office_furniture | industry | unknown | reseller | unknown | unknown | unknown |
-| 5 | construction_tools_hou | online_medium | unknown | reseller | unknown | unknown | unknown |
+| 2 | food_supplement | industry | unknown | manufacturer | unknown | unknown | unknown |
+| 3 | health_beauty | online_small | unknown | manufacturer | unknown | unknown | unknown |
+| 4 | air_conditioning | online_big | unknown | reseller | unknown | unknown | unknown |
+| 5 | audio_video_electronic | online_big | unknown | reseller | unknown | unknown | unknown |
 
 ### dw.dim_sales_rep – 55 dòng (gồm dòng Unknown key −1)
 
@@ -245,7 +245,7 @@ Phân cấp / số phần tử: Vai trò (2) → Nhân viên-vai trò (54)
 | --- | --- | --- |
 | 1 | 56bf83c4bb35763a51c2ba | SDR |
 | 2 | 9ae085775a198122c5586f | SDR |
-| 3 | c638112b43f1d1b86dcabb | SR |
+| 3 | f6c6ab65a1c732f154b371 | SDR |
 | 4 | 060c0a26f19f4d66b42e0d | SR |
 | 5 | 495d4e95a8cf8bbf8b432b | SR |
 
@@ -287,31 +287,31 @@ Phân cấp / số phần tử: Vai trò (2) → Nhân viên-vai trò (54)
 
 | order_id | order_item_id | purchase_date_key | shipping_limit_date_key | customer_key | customer_geography_key | seller_geography_key | seller_key | product_key | order_status_key | price | freight_value | item_total |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 00010242fe8c5a6d1ba2dd | 1 | 20170913 | 20170919 | 23284 | 7570 | 7453 | 514 | 25866 | 1 | 58.9 | 13.29 | 72.19 |
-| 00018f77f2f0320c557190 | 1 | 20170426 | 20170503 | 40549 | 5642 | 1307 | 472 | 27231 | 1 | 239.9 | 19.93 | 259.83 |
-| 000229ec398224ef6ca065 | 1 | 20180114 | 20180118 | 45642 | 8798 | 9349 | 1825 | 22625 | 1 | 199.0 | 17.87 | 216.87 |
-| 00024acbcdf0a6daa1e931 | 1 | 20180808 | 20180815 | 94349 | 4797 | 5353 | 2024 | 15404 | 1 | 12.99 | 12.79 | 25.78 |
-| 00042b26cf59d7ce69dfab | 1 | 20170204 | 20170213 | 17414 | 4934 | 17249 | 1598 | 8863 | 1 | 199.9 | 18.14 | 218.04 |
+| 00010242fe8c5a6d1ba2dd | 1 | 20170913 | 20170919 | 23284 | 7582 | 7464 | 856 | 8629 | 4 | 58.9 | 13.29 | 72.19 |
+| 00018f77f2f0320c557190 | 1 | 20170426 | 20170503 | 40549 | 5649 | 1308 | 2680 | 29598 | 4 | 239.9 | 19.93 | 259.83 |
+| 000229ec398224ef6ca065 | 1 | 20180114 | 20180118 | 45642 | 8817 | 9370 | 1119 | 25668 | 4 | 199.0 | 17.87 | 216.87 |
+| 00024acbcdf0a6daa1e931 | 1 | 20180808 | 20180815 | 94349 | 4804 | 5360 | 1921 | 15323 | 4 | 12.99 | 12.79 | 25.78 |
+| 00042b26cf59d7ce69dfab | 1 | 20170204 | 20170213 | 17414 | 4941 | 17343 | 2699 | 22080 | 4 | 199.9 | 18.14 | 218.04 |
 
 ### dw.fact_order_fulfillment – 5 dòng mẫu
 
 | order_id | customer_key | customer_geography_key | order_status_key | purchase_date_key | approved_date_key | carrier_date_key | delivered_date_key | estimated_date_key | purchase_ts | approved_ts | carrier_ts | delivered_ts | estimated_ts | approval_hours | handling_days | transit_days | lead_days | delay_days | promised_days | is_delivered | is_late | is_canceled | item_count | seller_count | order_value | freight_total | payment_total | dq_flag_count |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 00010242fe8c5a6d1ba2dd | 23284 | 7570 | 1 | 20170913 | 20170913 | 20170919 | 20170920 | 20170929 | 2017-09-13 08:59:02 | 2017-09-13 09:45:35 | 2017-09-19 18:34:16 | 2017-09-20 23:43:48 | 2017-09-29 | 0.78 | 6.37 | 1.21 | 7.61 | -9 | 16 | 1 | 0 | 0 | 1 | 1 | 58.9 | 13.29 | 72.19 | 0 |
-| 00018f77f2f0320c557190 | 40549 | 5642 | 1 | 20170426 | 20170426 | 20170504 | 20170512 | 20170515 | 2017-04-26 10:53:06 | 2017-04-26 11:05:13 | 2017-05-04 14:35:00 | 2017-05-12 16:04:24 | 2017-05-15 | 0.2 | 8.15 | 8.06 | 16.22 | -3 | 19 | 1 | 0 | 0 | 1 | 1 | 239.9 | 19.93 | 259.83 | 0 |
-| 000229ec398224ef6ca065 | 45642 | 8798 | 1 | 20180114 | 20180114 | 20180116 | 20180122 | 20180205 | 2018-01-14 14:33:31 | 2018-01-14 14:48:30 | 2018-01-16 12:36:48 | 2018-01-22 13:19:16 | 2018-02-05 | 0.25 | 1.91 | 6.03 | 7.95 | -14 | 22 | 1 | 0 | 0 | 1 | 1 | 199.0 | 17.87 | 216.87 | 0 |
-| 00024acbcdf0a6daa1e931 | 94349 | 4797 | 1 | 20180808 | 20180808 | 20180810 | 20180814 | 20180820 | 2018-08-08 10:00:35 | 2018-08-08 10:10:18 | 2018-08-10 13:28:00 | 2018-08-14 13:32:39 | 2018-08-20 | 0.16 | 2.14 | 4.0 | 6.15 | -6 | 12 | 1 | 0 | 0 | 1 | 1 | 12.99 | 12.79 | 25.78 | 0 |
-| 00042b26cf59d7ce69dfab | 17414 | 4934 | 1 | 20170204 | 20170204 | 20170216 | 20170301 | 20170317 | 2017-02-04 13:57:51 | 2017-02-04 14:10:13 | 2017-02-16 09:46:09 | 2017-03-01 16:42:31 | 2017-03-17 | 0.21 | 11.82 | 13.29 | 25.11 | -16 | 41 | 1 | 0 | 0 | 1 | 1 | 199.9 | 18.14 | 218.04 | 0 |
+| 00010242fe8c5a6d1ba2dd | 23284 | 7582 | 4 | 20170913 | 20170913 | 20170919 | 20170920 | 20170929 | 2017-09-13 08:59:02 | 2017-09-13 09:45:35 | 2017-09-19 18:34:16 | 2017-09-20 23:43:48 | 2017-09-29 | 0.78 | 6.37 | 1.21 | 7.61 | -9 | 16 | 1 | 0 | 0 | 1 | 1 | 58.9 | 13.29 | 72.19 | 0 |
+| 00018f77f2f0320c557190 | 40549 | 5649 | 4 | 20170426 | 20170426 | 20170504 | 20170512 | 20170515 | 2017-04-26 10:53:06 | 2017-04-26 11:05:13 | 2017-05-04 14:35:00 | 2017-05-12 16:04:24 | 2017-05-15 | 0.2 | 8.15 | 8.06 | 16.22 | -3 | 19 | 1 | 0 | 0 | 1 | 1 | 239.9 | 19.93 | 259.83 | 0 |
+| 000229ec398224ef6ca065 | 45642 | 8817 | 4 | 20180114 | 20180114 | 20180116 | 20180122 | 20180205 | 2018-01-14 14:33:31 | 2018-01-14 14:48:30 | 2018-01-16 12:36:48 | 2018-01-22 13:19:16 | 2018-02-05 | 0.25 | 1.91 | 6.03 | 7.95 | -14 | 22 | 1 | 0 | 0 | 1 | 1 | 199.0 | 17.87 | 216.87 | 0 |
+| 00024acbcdf0a6daa1e931 | 94349 | 4804 | 4 | 20180808 | 20180808 | 20180810 | 20180814 | 20180820 | 2018-08-08 10:00:35 | 2018-08-08 10:10:18 | 2018-08-10 13:28:00 | 2018-08-14 13:32:39 | 2018-08-20 | 0.16 | 2.14 | 4.0 | 6.15 | -6 | 12 | 1 | 0 | 0 | 1 | 1 | 12.99 | 12.79 | 25.78 | 0 |
+| 00042b26cf59d7ce69dfab | 17414 | 4941 | 4 | 20170204 | 20170204 | 20170216 | 20170301 | 20170317 | 2017-02-04 13:57:51 | 2017-02-04 14:10:13 | 2017-02-16 09:46:09 | 2017-03-01 16:42:31 | 2017-03-17 | 0.21 | 11.82 | 13.29 | 25.11 | -16 | 41 | 1 | 0 | 0 | 1 | 1 | 199.9 | 18.14 | 218.04 | 0 |
 
 ### dw.fact_payment – 5 dòng mẫu
 
 | order_id | payment_sequential | purchase_date_key | customer_key | payment_type_key | payment_installments | payment_value |
 | --- | --- | --- | --- | --- | --- | --- |
-| 00010242fe8c5a6d1ba2dd | 1 | 20170913 | 23284 | 1 | 2 | 72.19 |
-| 00018f77f2f0320c557190 | 1 | 20170426 | 40549 | 1 | 3 | 259.83 |
-| 000229ec398224ef6ca065 | 1 | 20180114 | 45642 | 1 | 5 | 216.87 |
-| 00024acbcdf0a6daa1e931 | 1 | 20180808 | 94349 | 1 | 2 | 25.78 |
-| 00042b26cf59d7ce69dfab | 1 | 20170204 | 17414 | 1 | 3 | 218.04 |
+| 00010242fe8c5a6d1ba2dd | 1 | 20170913 | 23284 | 2 | 2 | 72.19 |
+| 00018f77f2f0320c557190 | 1 | 20170426 | 40549 | 2 | 3 | 259.83 |
+| 000229ec398224ef6ca065 | 1 | 20180114 | 45642 | 2 | 5 | 216.87 |
+| 00024acbcdf0a6daa1e931 | 1 | 20180808 | 94349 | 2 | 2 | 25.78 |
+| 00042b26cf59d7ce69dfab | 1 | 20170204 | 17414 | 2 | 3 | 218.04 |
 
 ### dw.fact_review – 5 dòng mẫu
 
@@ -328,17 +328,17 @@ Phân cấp / số phần tử: Vai trò (2) → Nhân viên-vai trò (54)
 | mql_id | landing_page_id | first_contact_date_key | won_date_key | first_sale_date_key | lead_origin_key | lead_profile_key | seller_key | sdr_key | sr_key | is_won | has_first_sale | days_to_close | days_won_to_first_sale | declared_product_catalog_size | declared_monthly_revenue | seller_gmv_first_90d |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 0002ac0d783338cfeab0b2 | b76ef37428e6799c421989 | 20171114 | -1 | -1 | 10 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |
-| 000dd3543ac84d906eae52 | b48ec5f3b04e9068441002 | 20180405 | 20180424 | -1 | 1 | 607 | 15943 | 29 | 87 | 1 | 0 | 19.0 | NULL | NULL | 0.0 | NULL |
-| 001d3439223b7bb23ed89b | 35c9b150ab36fe584c1f24 | 20180414 | -1 | -1 | 4 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |
-| 00275937100699204a3d5a | a7982125ff7aa3b2054c6e | 20180111 | -1 | -1 | 1 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |
-| 003d859bbd84a526b9e063 | 22c29808c4f815213303f8 | 20180402 | -1 | -1 | 2 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |
+| 000dd3543ac84d906eae52 | b48ec5f3b04e9068441002 | 20180405 | 20180424 | -1 | 4 | 624 | 13690 | 30 | 93 | 1 | 0 | 19.0 | NULL | NULL | 0.0 | NULL |
+| 001d3439223b7bb23ed89b | 35c9b150ab36fe584c1f24 | 20180414 | -1 | -1 | 7 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |
+| 00275937100699204a3d5a | a7982125ff7aa3b2054c6e | 20180111 | -1 | -1 | 4 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |
+| 003d859bbd84a526b9e063 | 22c29808c4f815213303f8 | 20180402 | -1 | -1 | 1 | -1 | -1 | -1 | -1 | 0 | 0 | NULL | NULL | NULL | NULL | NULL |
 
 ### dw.fact_seller_monthly – 5 dòng mẫu
 
 | month_date_key | seller_key | orders | items | gmv | freight | delivered_orders | late_orders | late_rate | canceled_orders | avg_review_score | is_active | months_since_first_sale |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 20160901 | 524 | 1 | 2 | 72.89 | 63.34 | 0 | 0 | NULL | 0 | 1.0 | 1 | 0 |
-| 20160901 | 1717 | 1 | 3 | 134.97 | 8.49 | 1 | 1 | 1.0 | 0 | 1.0 | 1 | 0 |
-| 20160901 | 2041 | 1 | 1 | 0.0 | 0.0 | 0 | 0 | NULL | 1 | 1.0 | 1 | -13 |
-| 20161001 | 23 | 1 | 1 | 119.99 | 29.4 | 1 | 0 | 0.0 | 0 | 5.0 | 1 | 0 |
-| 20161001 | 56 | 2 | 2 | 72.8 | 30.57 | 2 | 0 | 0.0 | 0 | 4.5 | 1 | 0 |
+| 20160901 | 247 | 1 | 2 | 72.89 | 63.34 | 0 | 0 | NULL | 0 | 1.0 | 1 | 0 |
+| 20160901 | 2000 | 1 | 1 | 0.0 | 0.0 | 0 | 0 | NULL | 1 | 1.0 | 1 | -13 |
+| 20160901 | 2865 | 1 | 3 | 134.97 | 8.49 | 1 | 1 | 1.0 | 0 | 1.0 | 1 | 0 |
+| 20161001 | 14 | 1 | 2 | 99.98 | 29.18 | 1 | 0 | 0.0 | 0 | 4.0 | 1 | 0 |
+| 20161001 | 22 | 1 | 1 | 69.9 | 19.26 | 1 | 0 | 0.0 | 0 | 5.0 | 1 | 0 |
