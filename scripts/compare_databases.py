@@ -1,8 +1,11 @@
 """Compare two warehouse databases table by table (row count, sum of the money measures, content checksum on NATURAL keys).
 
-    python scripts/compare_databases.py --a olist_dw --b olist_full_check
+    python scripts/compare_databases.py --a olist_dw --b olist_full_check          # content on natural keys
+    python scripts/compare_databases.py --a olist_dw --b olist_dw_rebuilt --keys   # also the surrogate key VALUES
 Used to prove "incremental result = full result": A = olist_dw after all increments, B = a database loaded in one full run.
-Surrogate keys differ between the two (identity order), so the checksum joins every key back to its natural key first.
+Surrogate keys differ between those two (identity order depends on the load path), so the default checksum joins every key back to
+its natural key first. With --keys the raw key values are compared as well (key -> natural key in every dimension, every *_key
+column in every fact); use it for two builds made by the SAME code and load path, e.g. two `rebuild_all.py --drop` runs.
 """
 from __future__ import annotations
 
@@ -45,6 +48,21 @@ CHECKS = {
     "fact_seller_monthly": ("concat_ws('|', f.month_date_key, s.seller_id, f.orders, f.items, f.gmv, f.freight, f.delivered_orders, f.late_orders, f.late_rate, f.canceled_orders, f.avg_review_score, f.is_active, f.months_since_first_sale)",
                             "dw.fact_seller_monthly f JOIN dw.dim_seller s USING (seller_key)"),
 }
+# surrogate key values: dimension = (key, natural key) pairs; fact = the whole row (all *_key columns and natural keys) without etl_batch_id
+KEY_CHECKS = {
+    "dim_date": ("concat_ws('|', d.date_key, d.full_date)", "dw.dim_date d"),
+    "dim_geography": ("concat_ws('|', d.geography_key, d.zip_code_prefix)", "dw.dim_geography d"),
+    "dim_customer": ("concat_ws('|', d.customer_key, d.customer_unique_id, d.effective_from)", "dw.dim_customer d"),
+    "dim_seller": ("concat_ws('|', d.seller_key, d.seller_id)", "dw.dim_seller d"),
+    "dim_product": ("concat_ws('|', d.product_key, d.product_id)", "dw.dim_product d"),
+    "dim_order_status": ("concat_ws('|', d.order_status_key, d.order_status)", "dw.dim_order_status d"),
+    "dim_payment_type": ("concat_ws('|', d.payment_type_key, d.payment_type)", "dw.dim_payment_type d"),
+    "dim_lead_origin": ("concat_ws('|', d.lead_origin_key, d.origin)", "dw.dim_lead_origin d"),
+    "dim_lead_profile": ("concat_ws('|', d.lead_profile_key, d.business_segment, d.lead_type, d.lead_behaviour_profile, d.business_type, d.has_company, d.has_gtin, d.average_stock)", "dw.dim_lead_profile d"),
+    "dim_sales_rep": ("concat_ws('|', d.sales_rep_key, d.rep_id, d.rep_role)", "dw.dim_sales_rep d"),
+    **{t: (f"(to_jsonb(f) - 'etl_batch_id')::text", f"dw.{t} f") for t in
+       ("fact_order_item", "fact_order_fulfillment", "fact_payment", "fact_review", "fact_lead_funnel", "fact_seller_monthly")},
+}
 MONEY = {"fact_order_item": "sum(f.price)", "fact_payment": "sum(f.payment_value)", "fact_order_fulfillment": "sum(f.order_value)", "fact_seller_monthly": "sum(f.gmv)"}
 
 
@@ -56,10 +74,17 @@ def measure(conn, table: str) -> tuple[int, str, str]:
     return row[0], row[1], "" if money is None else f"{money:,.2f}"
 
 
+def measure_keys(conn, table: str) -> tuple[int, str]:
+    """(row count, md5 of the surrogate key values) - see KEY_CHECKS."""
+    expr, frm = KEY_CHECKS[table]
+    return tuple(conn.execute(text(f"SELECT count(*), md5(string_agg(x, E'\\n' ORDER BY x)) FROM (SELECT {expr} AS x FROM {frm}) t")).one())
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--a", required=True)
     parser.add_argument("--b", required=True)
+    parser.add_argument("--keys", action="store_true", help="also compare the surrogate key values (for two builds made by the same code)")
     args = parser.parse_args()
     ea, eb = get_engine(args.a), get_engine(args.b)
     bad = 0
@@ -73,6 +98,17 @@ def main() -> None:
             bad += not ok
             print(f"| {t} | {na:,} | {nb:,} | {ma if ma == mb else ma + ' ≠ ' + mb} | {'khớp' if ha == hb else 'KHÁC'} | {'khớp' if ok else 'LỆCH'} |")
     print(f"\n{len(CHECKS) - bad}/{len(CHECKS)} bảng khớp hoàn toàn")
+    if args.keys:
+        bad_k = 0
+        print(f"\n| Bảng | Số dòng {args.a} | Số dòng {args.b} | Checksum giá trị khoá | Kết quả |")
+        print("| --- | ---: | ---: | --- | --- |")
+        with ea.connect() as ca, eb.connect() as cb:
+            for t in KEY_CHECKS:
+                ka, kb = measure_keys(ca, t), measure_keys(cb, t)
+                bad_k += ka != kb
+                print(f"| {t} | {ka[0]:,} | {kb[0]:,} | {'khớp' if ka[1] == kb[1] else 'KHÁC'} | {'khớp' if ka == kb else 'LỆCH'} |")
+        print(f"\n{len(KEY_CHECKS) - bad_k}/{len(KEY_CHECKS)} bảng khớp giá trị khoá")
+        bad += bad_k
     sys.exit(1 if bad else 0)
 
 

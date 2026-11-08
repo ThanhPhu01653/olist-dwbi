@@ -56,7 +56,7 @@ Mỗi job ghi `etl_log.job_run` (thời gian, đọc/chèn/cập nhật/loại, 
 Dữ liệu nằm sẵn trong PostgreSQL, xử lý theo tập hợp (window function, upsert) nhanh và ngắn hơn; Python chỉ điều phối và COPY. Nạp full toàn bộ 1,56 triệu dòng nguồn vào kho mất khoảng 1,5 phút.
 
 **18. Dựng lại toàn bộ dự án mất bao lâu và có tái lập không?**
-Một lệnh `python scripts/rebuild_all.py --drop` xoá hai database và dựng lại từ CSV: **407 giây (6,8 phút)**; kết quả giống hệt trước khi xoá (16/16 bảng khớp checksum), 130/130 test đạt khi dựng (133 sau khi thêm test địa lý).
+Một lệnh `python scripts/rebuild_all.py --drop` xoá hai database và dựng lại từ CSV: **443 giây (7,4 phút)**; kết quả giống hệt trước khi xoá (16/16 bảng khớp checksum), 130/130 test đạt khi dựng (133 sau khi thêm test địa lý).
 
 ## C. Chất lượng dữ liệu (6 câu)
 **19. Dữ liệu nguồn có những lỗi gì và xử lý ra sao?**

@@ -102,7 +102,7 @@ figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 - `python -m etl.run_pipeline [--mode full|incremental] [--no-export]` – chạy staging → ods → dim → fact → tests → snapshot → export Power BI
 - `python -m etl.simulate_increment [--until 2018-01-31]` – chèn thêm dữ liệu mới vào nguồn (mặc định +1 tháng)
 - `python scripts/replay_increments.py` – lặp simulate + `run_pipeline --mode incremental` tới hết dữ liệu nguồn (in bảng các đợt)
-- `python scripts/compare_databases.py --a olist_dw --b <db full>` – so sánh hai database kho (số dòng, tổng tiền, checksum)
+- `python scripts/compare_databases.py --a olist_dw --b <db full> [--keys]` – so sánh hai database kho (số dòng, tổng tiền, checksum; `--keys` so cả giá trị khoá thay thế, chỉ dùng cho hai bản dựng cùng code và cùng đường nạp)
 - `python scripts/run_olap_examples.py` – chạy 5 thao tác OLAP ở `sql/60_olap_examples/`, sinh `handoff/olap-examples.md`
 - `python scripts/gen_powerbi_docs.py` – cập nhật giá trị kỳ vọng trong `powerbi/measures.md` và phụ lục M trong `powerbi/model.md`
 - `python scripts/rebuild_all.py [--drop]` – dựng lại TOÀN BỘ bằng một lệnh (setup → nạp nguồn → pipeline full → 11 đợt tăng dần → test → xuất CSV), ghi `handoff/rebuild-report.md`

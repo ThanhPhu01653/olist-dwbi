@@ -1,6 +1,6 @@
 # Dữ liệu xuất cho Power BI
 
-> Sinh tự động bằng `python scripts/export_powerbi.py` lúc 2026-11-08 00:10 từ database `olist_dw` (lô ETL mới nhất: 61; đơn mua muộn nhất trong dữ liệu: 2018-10-17). Đừng sửa tay.
+> Sinh tự động bằng `python scripts/export_powerbi.py` lúc 2026-11-08 13:51 từ database `olist_dw` (lô ETL mới nhất: 61; đơn mua muộn nhất trong dữ liệu: 2018-10-17). Đừng sửa tay.
 
 **Định dạng**: UTF-8 có BOM, phân cách `,`, số thập phân `.`, ngày `YYYY-MM-DD`, cột đúng/sai ghi `true`/`false`, ô trống = NULL, tên file = tên bảng. Trong Power BI chọn *Get data → Text/CSV*, đặt *File origin* = UTF-8, rồi **Transform Data** để đặt kiểu cột (xem hướng dẫn trong `handoff/`).
 

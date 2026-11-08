@@ -24,7 +24,8 @@ BEGIN
     INSERT INTO dw.dim_customer (customer_unique_id, zip_code_prefix, city, state_code, geography_key, effective_from, effective_to, is_current, version_no)
     SELECT v.uid, v.zip, v.city, v.st, coalesce(g.geography_key, -1), v.eff_from, v.eff_to, v.is_cur, v.vn
     FROM tmp_cust_ver v LEFT JOIN dw.dim_geography g ON g.zip_code_prefix = v.zip
-    WHERE NOT EXISTS (SELECT 1 FROM dw.dim_customer d WHERE d.customer_unique_id = v.uid AND d.effective_from = v.eff_from);
+    WHERE NOT EXISTS (SELECT 1 FROM dw.dim_customer d WHERE d.customer_unique_id = v.uid AND d.effective_from = v.eff_from)
+    ORDER BY v.uid, v.eff_from;                          -- fixed order => the same surrogate keys on every rebuild
     GET DIAGNOSTICS p_inserted = ROW_COUNT;
 
     UPDATE dw.dim_customer d

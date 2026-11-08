@@ -570,7 +570,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: bảng so sánh (`report/chapters/3-5-2-dia-ly.tex`)
 - Nói: Nhóm không cài PostGIS nên chọn giải pháp thuần SQL.
 
-### S110. Dựng lại toàn bộ dự án từ đầu mất 407 giây và cho kết quả giống hệt
+### S110. Dựng lại toàn bộ dự án từ đầu mất 443 giây và cho kết quả giống hệt
 - Xóa hai database, chạy một lệnh, 16/16 bảng khớp
 - Hình: bảng `report/tables/rebuild.tex`
 - Nói: Khả năng tái lập là bằng chứng độ tin cậy của pipeline.
