@@ -1,6 +1,8 @@
 # Bộ slide Beamer (theme HUST)
 
-Bộ slide 16:9 theo theme HUST Beamer (Đại học Bách khoa Hà Nội, logo Khoa Toán - Tin): **114 slide nội dung + 10 slide dự phòng, 133 trang PDF** (dàn bài và lời thoại ở [`slide-script.md`](slide-script.md)). Trong 133 trang PDF có 123 trang chính (gồm bìa, mục lục, 7 trang chuyển mục, 114 slide) và 10 trang dự phòng đặt sau slide kết luận, **không tính vào thanh tiến trình và số trang**.
+Bộ slide 16:9 theo theme HUST Beamer (Đại học Bách khoa Hà Nội, logo Khoa Toán - Tin): **113 slide nội dung xếp lại theo barem + 7 slide khung mở rộng + slide dự phòng** (dàn bài và lời thoại ở [`slide-script.md`](slide-script.md)). Trong 133 trang PDF có 123 trang chính (gồm bìa, mục lục, 7 trang chuyển mục, 114 slide) và 10 trang dự phòng đặt sau slide kết luận, **không tính vào thanh tiến trình và số trang**.
+
+> **Sau P8 (13/11/2026)** các slide được xếp lại theo barem: 00 Mở đầu · 01 Khảo sát (2.1–2.5) · 02 Phân tích và thiết kế (3.1–3.5) · 03 Dashboard và bài học (4) · 04 Mở rộng (5, khung) · 05 Tổng kết (6) · 99 Dự phòng. Mỗi slide hiện **nhãn mục barem** ở góc trên bên phải (lệnh `\muc{2.4 · Dữ liệu nguồn}` đặt ngay sau `\begin{frame}`), và theme hiện tên phần ở thanh đầu trang. Số `[Sxx]` trong ghi chú giữ nguyên số cũ. **Không chạy `scripts/gen_beamer.py`** (script sinh theo cấu trúc cũ và sẽ ghi đè các file đã xếp lại); sửa trực tiếp `sections/*.tex` và `slide-script.md`.
 
 ## 1. Cấu trúc
 ```
@@ -8,7 +10,7 @@ slides/
   main.tex            cấu hình theme, thông tin nhóm (mục 3), bìa, mục lục, thứ tự các phần
   slides-notes.tex    cùng nội dung, nhưng mỗi slide kèm trang ghi chú người nói bên phải
   .latexmkrc          LuaLaTeX + đường dẫn theme (hust-theme/)
-  sections/           01-ly-thuyet ... 07-ket-luan (mỗi phần một file), 08-du-phong (slide dự phòng B01-B10)
+  sections/           00-mo-dau, 01-khao-sat, 02-phan-tich-thiet-ke, 03-dashboard, 04-mo-rong, 05-tong-ket (xếp theo barem), 99-du-phong (dự phòng B01-B10 + slide lý thuyết)
   figures/            hình dùng trong slide (bản sao từ figures/ ở gốc repo, để gói Overleaf tự chứa)
   hust-theme/         theme HUST Beamer 2.1.0 (đã bỏ thư mục references/ và các file PDF/PPTX lớn)
   slide-script.md     dàn bài: mỗi slide có tiêu đề (câu kết luận có số), nội dung, hình, ghi chú người nói
@@ -37,7 +39,7 @@ Các giá trị này xuất hiện ở bìa, chân trang và slide cảm ơn. C�
 ## 4. Thay ảnh chụp dashboard
 Các slide cần ảnh dashboard hiện là **khung đỏ trống ghi "CHÈN ẢNH CHỤP D1 … D7"** (slide S93–S105 và vài slide khác). Cách thay:
 1. Xuất ảnh từ Power BI (File → Export → hoặc chụp màn hình trang dashboard, nên PNG 16:9) và đặt vào `slides/figures/`, ví dụ `dashboard_D1.png`.
-2. Mở file phần tương ứng trong `sections/` (ví dụ `06-dashboard.tex`), tìm đoạn `\khungchen{CHÈN ẢNH CHỤP D1}` và thay bằng:
+2. Mở file phần tương ứng trong `sections/` (ví dụ `03-dashboard.tex`), tìm đoạn `\khungchen{CHÈN ẢNH CHỤP D1}` và thay bằng:
    ```latex
    \begin{center}\anh[0.74\textheight]{dashboard_D1.png}\end{center}
    ```
@@ -46,7 +48,7 @@ Các slide cần ảnh dashboard hiện là **khung đỏ trống ghi "CHÈN Ả
 ## 5. Sửa nội dung slide
 - **Sửa trực tiếp** file trong `sections/` nếu chỉ chỉnh vài chữ.
 - **Hoặc sửa `slide-script.md` rồi sinh lại** các file phần: `python scripts/gen_beamer.py` (ghi đè toàn bộ `sections/*.tex`, vì vậy chỉ dùng cách này nếu chưa sửa tay trong `sections/`; số liệu bảng lấy từ `report/tables/`, chạy `python scripts/export_latex.py` trước nếu dữ liệu đổi).
-- Hình mới đặt vào `slides/figures/` và dùng `\anh[0.74\textheight]{ten-file.png}`. Slide dự phòng B01–B10 nằm ở `sections/08-du-phong.tex` (câu hỏi đáp ở `huong-dan/04-cau-hoi-van-dap.md`).
+- Hình mới đặt vào `slides/figures/` và dùng `\anh[0.74\textheight]{ten-file.png}`. Slide dự phòng B01–B10 nằm ở `sections/99-du-phong.tex` (câu hỏi đáp ở `huong-dan/04-cau-hoi-van-dap.md`).
 
 ## 6. Overleaf
 1. Chạy `python scripts/make_slides_zip.py` ở gốc repo → `slides_overleaf.zip` (gồm theme; **không commit**, đã có trong `.gitignore`).

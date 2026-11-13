@@ -1,0 +1,783 @@
+\section[Phân tích và thiết kế]{Phân tích và thiết kế}
+
+\subsection{3.1 Khám phá dữ liệu}
+
+\begin{frame}{Khám phá dữ liệu đo được 45 loại lỗi cần xử lý ở ODS}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Cột thiếu, mốc thời gian sai thứ tự, tên thành phố lệch dấu, trùng lặp
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_data_quality.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S38] Không loại lỗi nào bằng cách xóa dữ liệu.}
+\end{frame}
+
+\begin{frame}{Tỷ lệ ô rỗng cho thấy cột nào cần điền unknown}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Cột review và ngày giao có nhiều ô rỗng hợp lệ
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_null_heatmap.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S39] Ô rỗng của ngày giao đa phần là đơn chưa giao hoặc bị hủy.}
+\end{frame}
+
+\begin{frame}{Bảng toạ độ bẩn nhất: 93,5\% mã bưu chính có nhiều toạ độ, 26,2\% dòng trùng hoàn toàn}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item 7,3\% tên thành phố lệch dấu; 42 điểm ngoài lãnh thổ Brazil
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-4-3_before_after_geolocation.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S40] Giải pháp: lọc khung Brazil, lấy trung vị toạ độ và mode tên thành phố theo zip.}
+\end{frame}
+
+\begin{frame}{Phân bố giá, phí vận chuyển và lead time đều lệch phải}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Nhiều giá trị lớn bất thường ở phí vận chuyển
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_distributions_numeric.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S41] Vì vậy dùng trung vị và Spearman khi cần.}
+\end{frame}
+
+\begin{frame}{Dữ liệu đơn dùng được là 01/2017–08/2018, hai đầu rất thưa}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item 2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_orders_per_month.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S42] Quyết định lọc thời gian đưa vào Power BI.}
+\end{frame}
+
+\begin{frame}{18/74 danh mục (24,3\%) tạo 80\% GMV, dẫn đầu health\symbol{95}beauty 9,3\%}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Quy luật Pareto theo danh mục
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_pareto_category.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S43] Danh mục được gom thành 13 nhóm ngành hàng.}
+\end{frame}
+
+\begin{frame}{Seller thì phân tán hơn: 540 seller tạo 80\% GMV, 5 seller lớn nhất chỉ 7,7\%}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Doanh thu không phụ thuộc vài seller
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_pareto_seller.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S44] Khác với danh mục, rủi ro tập trung vào seller thấp.}
+\end{frame}
+
+\begin{frame}{Giao trễ làm điểm review rơi từ 4,29 xuống 1,70 và 79,2\% review tiêu cực}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Đơn trễ chiếm 6,5\% số review nhưng tạo 27,4\% review tiêu cực
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_delay_vs_review.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S45] Trung bình toàn sàn che mất nhóm nhỏ nhưng đau.}
+\end{frame}
+
+\begin{frame}{Trễ tập trung ở Bắc và Đông Bắc: Nordeste trễ 12,8\%, Norte lead time 22,6 ngày}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Sudeste chỉ 6,1\% trễ, lead time 10,7 ngày
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_late_rate_by_state.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S46] Địa lý quyết định trải nghiệm giao hàng.}
+\end{frame}
+
+\begin{frame}{Chỉ 380/842 deal (45,1\%) có đơn: funnel và bán hàng chỉ giao nhau một phần}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item 380 seller tạo 674.005 BRL, 4,99\% GMV
+  \item 380 là số seller có đơn ở mọi trạng thái; kho chỉ tính đơn không bị huỷ nên có 379 seller (45,0\%)
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_funnel_seller_overlap.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S47] Quyết định D6 hiển thị cả nhóm "chốt nhưng chưa bán".}
+\end{frame}
+
+\begin{frame}{Sáu quyết định thiết kế đến từ khám phá dữ liệu}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{itemize}
+  \item SCD2 khách (0,26\% đổi zip); D6 hai trang; snapshot seller dày đặc; 13 nhóm ngành; zip thiếu toạ độ vẫn có dòng; mốc nạp 2017-12-31
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
+\textbf{Quyết định} & \textbf{Nội dung} & \textbf{Số liệu đi kèm} \\\midrule
+Câu a & \texttt{dim\_customer} dùng SCD2 & chỉ 0,26\% khách đổi zip \\
+Câu b & D6 hai trang & 380/842 deal có đơn \\
+Câu c & snapshot seller dày đặc & 36.583 so với 16.441 dòng \\
+Câu d & 13 nhóm ngành hàng & 73 danh mục \\
+Câu e & zip thiếu toạ độ vẫn có dòng & 167 zip, không mất đơn \\
+Câu f & mốc nạp đầu 2017-12-31 & 45.430 đơn, 11 đợt sau \\
+\bottomrule\end{tabular}}\end{center}
+
+\note{[S48] Mỗi quyết định có số liệu trong \texttt{handoff/design-questions.md}.}
+\end{frame}
+
+\begin{frame}{Mở rộng địa lý: hàm haversine SQL thuần tính khoảng cách seller $\rightarrow$ khách cho 112.650 dòng hàng}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{itemize}
+  \item 555 dòng (0,49\%) thiếu toạ độ vẫn được giữ lại với giá trị trống
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: đoạn SQL \texttt{dw.haversine\_\allowbreak{}km} (Phụ lục B)}
+
+\note{[S107] São Paulo – Rio tính ra 360,9 km, gần với thực tế.}
+\end{frame}
+
+\begin{frame}{Khoảng cách tăng từ dưới 100 km lên trên 1.000 km làm phí vận chuyển gấp 2,7 lần và lead time gấp 2,9 lần}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{itemize}
+  \item Phí 11,75 $\rightarrow$ 31,65 BRL; lead time 6,5 $\rightarrow$ 19,0 ngày; trễ 4,5\% $\rightarrow$ 10,3\%
+\end{itemize}
+\begin{columns}[c]\begin{column}{0.48\textwidth}\anh[0.46\textheight]{3-5-2_distance_vs_freight.png}\end{column}\begin{column}{0.48\textwidth}\anh[0.46\textheight]{3-5-2_distance_vs_leadtime.png}\end{column}\end{columns}
+
+\note{[S108] Tương quan Spearman 0,63 với phí và 0,54 với lead time; đó là tương quan, không phải nhân quả.}
+\end{frame}
+
+\begin{frame}{Haversine thuần đủ cho khoảng cách điểm–điểm; PostGIS cần khi truy vấn bán kính hoặc đa giác}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{itemize}
+  \item GiST chỉ mục không gian; haversine sai số tối đa 0,5\%
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng so sánh (\texttt{report/chapters/3-1-kham-pha.tex})}
+
+\note{[S109] Nhóm không cài PostGIS nên chọn giải pháp thuần SQL.}
+\end{frame}
+
+\subsection{3.2 Kiến trúc}
+
+\begin{frame}{Kiến trúc sáu lớp từ hai hệ thống nguồn đến bảy dashboard}
+\muc{3.2 · Kiến trúc}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item oltp/crm $\rightarrow$ staging $\rightarrow$ ODS $\rightarrow$ kho $\rightarrow$ data mart $\rightarrow$ Power BI; etl\_log giám sát
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-4-1_pipeline.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S49] Mỗi lớp có một việc và một cách kiểm tra riêng.}
+\end{frame}
+
+\begin{frame}{Tách lớp giúp đối soát: staging = ODS + dòng bị loại cho mọi bảng}
+\muc{3.2 · Kiến trúc}
+\begin{itemize}
+  \item Chỗ nào hỏng biết ngay lớp nào
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng đối soát (handoff P2)}
+
+\note{[S50] Không phải lấy lại dữ liệu từ nguồn khi ODS lỗi.}
+\end{frame}
+
+\begin{frame}{Công nghệ: PostgreSQL 18, Python 3.11, SQL procedure, Power BI, Git}
+\muc{3.2 · Kiến trúc}
+\begin{itemize}
+  \item Không Docker, không PostGIS; điều phối bằng một lệnh
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: logo công nghệ (chèn)}
+
+\note{[S51] Chạy được trên laptop sinh viên 8 GB.}
+\end{frame}
+
+\subsection{3.3 ETL}
+
+\begin{frame}{ODS là lớp làm sạch trung gian: 18 bảng, 678.183 dòng, mọi lỗi có cờ hoặc lý do}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item Zip thành 5 chữ số, thành phố bỏ dấu, \texttt{NULL} thành \texttt{unknown}, khử trùng review
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{p{6.2cm}rp{5.5cm}}
+\toprule
+\textbf{Lỗi} & \textbf{Số dòng} & \textbf{Xử lý} \\
+\midrule
+Bàn giao vận chuyển trước khi duyệt thanh toán & 1.359 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Bàn giao vận chuyển trước ngày mua & 166 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Giao khách trước khi bàn giao vận chuyển & 23 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Đơn đã giao nhưng không có ngày duyệt & 14 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Trạng thái delivered nhưng không có ngày giao & 8 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Có ngày giao nhưng trạng thái chưa là delivered & 6 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Đã giao nhưng không có ngày bàn giao & 2 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Giá trị thanh toán = 0 & 9 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+Hình thức thanh toán not\_defined & 3 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+Số kỳ trả góp = 0 (đặt thành 1) & 2 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+Doanh thu tháng khai báo = 0 & 797 & Gắn cờ, giữ nguyên giá trị \\
+Chốt deal trước ngày liên hệ đầu & 1 & Gắn cờ, giữ nguyên giá trị \\
+coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.rejected\_rows \\
+\bottomrule
+\end{tabular}}\end{center}
+
+\note{[S52] 1.411 đơn (1,4\%) có ít nhất một cờ chất lượng.}
+\end{frame}
+
+\begin{frame}{Một lệnh chạy sáu bước ETL và ghi lại từng bước}
+\muc{3.3 · ETL}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item extract $\rightarrow$ ODS $\rightarrow$ dim $\rightarrow$ fact $\rightarrow$ mart $\rightarrow$ tests $\rightarrow$ snapshot $\rightarrow$ export
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-4-1_pipeline.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S67] Mỗi bước ghi \texttt{job\_\allowbreak{}run}; lỗi thì dừng và đánh dấu failed.}
+\end{frame}
+
+\begin{frame}{Extract chỉ lấy dòng chưa có: đơn theo watermark, bảng nhỏ theo khoá}
+\muc{3.3 · ETL}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Chế độ full 52 giây; incremental khoảng 22 giây
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-4-1_pipeline.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S68] MQL và deal không dùng watermark ngày vì deal có thể đến trước MQL.}
+\end{frame}
+
+\begin{frame}{ODS xử lý lỗi theo ba cách: chuẩn hóa, gắn cờ hoặc loại có lý do}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item 1.359 đơn bàn giao trước khi duyệt được gắn cờ, không xóa
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{p{6.2cm}rp{5.5cm}}
+\toprule
+\textbf{Lỗi} & \textbf{Số dòng} & \textbf{Xử lý} \\
+\midrule
+Bàn giao vận chuyển trước khi duyệt thanh toán & 1.359 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Bàn giao vận chuyển trước ngày mua & 166 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Giao khách trước khi bàn giao vận chuyển & 23 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Đơn đã giao nhưng không có ngày duyệt & 14 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Trạng thái delivered nhưng không có ngày giao & 8 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Có ngày giao nhưng trạng thái chưa là delivered & 6 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Đã giao nhưng không có ngày bàn giao & 2 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Giá trị thanh toán = 0 & 9 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+Hình thức thanh toán not\_defined & 3 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+Số kỳ trả góp = 0 (đặt thành 1) & 2 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+Doanh thu tháng khai báo = 0 & 797 & Gắn cờ, giữ nguyên giá trị \\
+Chốt deal trước ngày liên hệ đầu & 1 & Gắn cờ, giữ nguyên giá trị \\
+coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.rejected\_rows \\
+\bottomrule
+\end{tabular}}\end{center}
+
+\note{[S69] Khoảng thời gian âm đặt NULL ở fact và được đếm lại.}
+\end{frame}
+
+\begin{frame}{Trước và sau ETL: bảng đơn hàng có thêm cờ lỗi và kiểu dữ liệu chuẩn}
+\muc{3.3 · ETL}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Ví dụ trước/sau
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-4-3_before_after_orders.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S70] Cùng 99.441 đơn nhưng thêm \texttt{dq\_\allowbreak{}flags}.}
+\end{frame}
+
+\begin{frame}{Trước và sau ETL: sản phẩm và seller được chuẩn hóa tên cột và thành phố}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item \texttt{*\_\allowbreak{}lenght} $\rightarrow$ \texttt{*\_\allowbreak{}length}; thành phố bỏ dấu, chữ thường
+\end{itemize}
+\begin{columns}[c]\begin{column}{0.48\textwidth}\anh[0.46\textheight]{3-4-3_before_after_products.png}\end{column}\begin{column}{0.48\textwidth}\anh[0.46\textheight]{3-4-3_before_after_sellers.png}\end{column}\end{columns}
+
+\note{[S71] Hai hình cùng một slide.}
+\end{frame}
+
+\begin{frame}{Trước và sau ETL: 1.000.163 dòng toạ độ gom thành 19.178 mã bưu chính}
+\muc{3.3 · ETL}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Trung vị toạ độ, mode thành phố
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-4-3_before_after_geolocation.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S72] 42 điểm ngoài Brazil được ghi vào bảng loại.}
+\end{frame}
+
+\begin{frame}{Trước và sau ETL: MQL và deal có giá trị trống thành unknown}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item \texttt{origin} rỗng $\rightarrow$ \texttt{unknown}; doanh thu khai báo 0 gắn cờ
+\end{itemize}
+\begin{columns}[c]\begin{column}{0.48\textwidth}\anh[0.46\textheight]{3-4-3_before_after_mql.png}\end{column}\begin{column}{0.48\textwidth}\anh[0.46\textheight]{3-4-3_before_after_closed_deals.png}\end{column}\end{columns}
+
+\note{[S73] Không đoán giá trị, chỉ đánh dấu.}
+\end{frame}
+
+\begin{frame}{Đối soát số dòng: nguồn = staging = ODS + loại, và tổng tiền khớp từng đồng}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item $\Sigma$ price 13.591.643,70 BRL = file CSV
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng đối soát (handoff P4)}
+
+\note{[S74] Chênh lệch nếu có phải giải thích được bằng \texttt{rejected\_\allowbreak{}rows}.}
+\end{frame}
+
+\begin{frame}{SCD2 được nạp bằng window function: mỗi lần zip đổi mở một phiên bản mới}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item \texttt{lag(zip)} so với đơn trước; \texttt{effective\_\allowbreak{}from} = ngày mua
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: đoạn SQL (Phụ lục B, \texttt{code/scd2\_\allowbreak{}dim\_\allowbreak{}customer.sql})}
+
+\note{[S75] Khoá thay thế cũ không đổi khi chạy lại.}
+\end{frame}
+
+\begin{frame}{Nạp fact: tra khoá theo phiên bản có hiệu lực, khoảng thời gian âm thành NULL}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item 1.359 đơn có \texttt{handling\_\allowbreak{}days} âm (bàn giao trước khi duyệt) được đặt NULL và đếm
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng \texttt{fact\_\allowbreak{}load\_\allowbreak{}issue}}
+
+\note{[S76] Tra không thấy thì dùng -1 và ghi nhận.}
+\end{frame}
+
+\begin{frame}{Nạp tăng dần mô phỏng: 11 đợt hằng tháng, tổng 286.144 bản ghi mới}
+\muc{3.3 · ETL}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item \texttt{simulate\_\allowbreak{}increment} rồi \texttt{run\_\allowbreak{}pipeline --mode incremental}
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-4-1_pipeline.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S77] Đơn vào với trạng thái cuối; đó là giới hạn của mô phỏng.}
+\end{frame}
+
+\begin{frame}{Mỗi đợt chạy 20–26 giây, trong đó kiểm thử chiếm hơn một nửa}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item Bảng 11 đợt: bản ghi mới, thời gian
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{clrrrrrrrrr}
+\toprule
+\textbf{Đợt} & \textbf{Đến tháng} & \textbf{Bản ghi mới ở nguồn} & \textbf{ODS chèn} & \textbf{ODS loại} & \textbf{DW chèn / cập nhật} & \textbf{Giây} & \textbf{MQL} & \textbf{Deal} & \textbf{Seller có đơn} & \textbf{Đơn} \\
+\midrule
+1 & 2018-01 & 38.768 & 38.768 & 0 & 40.535 / 216 & 21,9 & 3.143 & 76 & 3 & 52.699 \\
+2 & 2018-02 & 35.979 & 35.979 & 0 & 37.817 / 251 & 24,0 & 4.171 & 189 & 30 & 59.427 \\
+3 & 2018-03 & 38.659 & 38.659 & 0 & 40.668 / 312 & 22,8 & 5.345 & 336 & 55 & 66.638 \\
+4 & 2018-04 & 37.515 & 37.515 & 0 & 39.700 / 486 & 24,6 & 6.697 & 543 & 117 & 73.577 \\
+5 & 2018-05 & 37.079 & 37.079 & 0 & 39.402 / 446 & 24,8 & 8.000 & 665 & 198 & 80.450 \\
+6 & 2018-06 & 32.035 & 32.035 & 0 & 34.594 / 467 & 25,5 & 8.000 & 722 & 280 & 86.617 \\
+7 & 2018-07 & 32.489 & 32.489 & 0 & 35.245 / 431 & 25,6 & 8.000 & 759 & 340 & 92.909 \\
+8 & 2018-08 & 33.490 & 33.490 & 0 & 36.399 / 365 & 27,6 & 8.000 & 792 & 379 & 99.421 \\
+9 & 2018-09 & 87 & 87 & 0 & 3.195 / 23 & 21,9 & 8.000 & 815 & 379 & 99.437 \\
+10 & 2018-10 & 37 & 37 & 0 & 54 / 21 & 21,5 & 8.000 & 836 & 379 & 99.441 \\
+11 & 2018-11 & 6 & 6 & 0 & 18 / 6 & 21,3 & 8.000 & 842 & 379 & 99.441 \\
+\bottomrule
+\end{tabular}}\end{center}
+
+\note{[S78] Đợt 1–8 mang 99,95\% bản ghi mới; ba đợt cuối mang nốt 20 đơn và 50 deal.}
+\end{frame}
+
+\begin{frame}{Funnel lấp đầy dần: MQL 2.002 $\rightarrow$ 8.000, deal 3 $\rightarrow$ 842, seller có đơn 0 $\rightarrow$ 379}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item Số liệu mỗi đợt từ \texttt{batch\_\allowbreak{}metrics}
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: biểu đồ đường từ \texttt{batch\_\allowbreak{}metrics} (dashboard D7)}
+
+\note{[S79] Đây là điểm trình bày của nạp tăng dần.}
+\end{frame}
+
+\begin{frame}{Kết quả incremental trùng nạp full: 16/16 bảng khớp số dòng, tổng tiền và nội dung}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item So sánh bằng checksum trên khoá tự nhiên
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng so sánh (\texttt{handoff/2026-11-05-P5.md})}
+
+\note{[S80] Khoá thay thế khác nhau nên so sánh qua khoá tự nhiên.}
+\end{frame}
+
+\begin{frame}{Dòng mồ côi được thử lại ở đợt sau, nhưng cơ chế mới được chứng minh bằng kiểm thử}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item Kịch bản deal \texttt{b91cf88…} trên bản sao trong giao dịch rồi hoàn tác
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: sơ đồ 3 bước (loại $\rightarrow$ cha đến $\rightarrow$ nạp lại)}
+
+\note{[S81] Trong 11 đợt thật không có dòng mồ côi nào; nhóm nói thẳng điều này.}
+\end{frame}
+
+\begin{frame}{136 phép kiểm thử đạt 100\%, cộng 6 phép đối chiếu với khám phá dữ liệu}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item Số dòng, tổng tiền, grain, khoá ngoại, SCD2, mart khớp fact
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{ll}\toprule
+\textbf{Nhóm kiểm thử} & \textbf{Số phép} \\\midrule
+ODS (số dòng, loại, cleaning) & 25 \\
+Dimension (Unknown, SCD2, phủ khoá) & 42 \\
+Fact (đối soát, grain, khoá ngoại, logic) & 49 \\
+Data mart (khớp fact) & 17 \\
+Thử lại dòng mồ côi (kịch bản) & 3 \\
+\textbf{Tổng} & \textbf{136 (đạt 100\%)} \\
+Đối chiếu khám phá dữ liệu (chỉ báo cáo) & 6/6 khớp \\
+\bottomrule\end{tabular}}\end{center}
+
+\note{[S82] Chạy sau mỗi lần pipeline, lưu \texttt{etl\_\allowbreak{}log.dq\_\allowbreak{}check}.}
+\end{frame}
+
+\begin{frame}{Nhật ký etl\symbol{95}log cho biết mỗi lô chạy gì, mất bao lâu, loại bao nhiêu dòng}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item \texttt{job\_\allowbreak{}run}, \texttt{rejected\_\allowbreak{}rows}, \texttt{dq\_\allowbreak{}check}, \texttt{batch\_\allowbreak{}metrics}
+\end{itemize}
+\khungchen{CHÈN ẢNH CHỤP D7}
+
+\note{[S83] D7 là dashboard giám sát hệ thống.}
+\end{frame}
+
+\begin{frame}{Dựng lại toàn bộ dự án từ đầu mất 443 giây và cho kết quả giống hệt}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item Xóa hai database, chạy một lệnh, 16/16 bảng khớp
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{p{6cm}rp{6cm}}
+\toprule
+\textbf{Bước} & \textbf{Giây} & \textbf{Kết quả} \\
+\midrule
+drop olist\_dw + olist\_full & 0.6 & dropped \\
+setup\_db (schemas, DDL, procedures, views) & 1.8 & Setup done. \\
+load\_source --initial (olist\_dw, to 2017-12-31) & 15.5 & Rejected rows logged in etl\_log.rejected\_rows: 0 (batch 1) \\
+load\_source --full (olist\_full) & 24.0 & Rejected rows logged in etl\_log.rejected\_rows: 0 (batch 1) \\
+run\_pipeline --mode full (initial state) & 55.8 & tests: 136/136 đạt, 0 lỗi; đối chiếu EDA 6/6 khớp; pipeline 54.7s \\
+replay\_increments (11 x simulate + incremental) & 287.1 & 11 đợt hằng tháng (01/2018 → 11/2018); sau đợt cuối: 8,000 MQL, 842 deal, 379 seller có đơn bán được, 99,441 đơn, GMV 13,494,400.74 \\
+run\_pipeline --mode incremental (tests + export\_powerbi) & 30.5 & tests: 136/136 đạt, 0 lỗi; đối chiếu EDA 6/6 khớp; pipeline 29.3s \\
+\bottomrule
+\end{tabular}}\end{center}
+
+\note{[S110] Khả năng tái lập là bằng chứng độ tin cậy của pipeline.}
+\end{frame}
+
+\subsection{3.4 Chiều khái niệm}
+
+\begin{frame}{Mười bảng chiều với số dòng từ 6 đến 96.339}
+\muc{3.4 · Chiều khái niệm}
+\begin{itemize}
+  \item dim\_date 1.828; geography 19.178; customer 96.339; seller 3.558; product 32.952; ...
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{llrc}
+\toprule
+\textbf{Chiều} & \textbf{Grain} & \textbf{Số dòng} & \textbf{SCD} \\
+\midrule
+dim\_date & 1 ngày (2016-01-01 → 2020-12-31) & 1.828 & -- \\
+dim\_geography & 1 mã bưu chính (zip) & 19.178 & 1 \\
+dim\_customer & 1 phiên bản địa chỉ của 1 khách thật & 96.339 & 2 \\
+dim\_seller & 1 seller (chiều dùng chung) & 3.558 & 1 \\
+dim\_product & 1 sản phẩm & 32.952 & 1 \\
+dim\_order\_status & 1 trạng thái đơn & 9 & 1 \\
+dim\_payment\_type & 1 hình thức thanh toán & 6 & 1 \\
+dim\_lead\_origin & 1 giá trị origin của MQL & 11 & 1 \\
+dim\_lead\_profile & 1 tổ hợp thuộc tính deal (junk dimension) & 503 & -- \\
+dim\_sales\_rep & 1 nhân viên và vai trò (SDR/SR) & 55 & -- \\
+\bottomrule
+\end{tabular}}\end{center}
+
+\note{[S57] Mỗi chiều có đúng một dòng Unknown, được kiểm thử.}
+\end{frame}
+
+\begin{frame}{Hệ thống chiều khái niệm: phân cấp ngày, địa lý, sản phẩm, seller, khách}
+\muc{3.4 · Chiều khái niệm}
+\begin{itemize}
+  \item Ngày $\rightarrow$ tháng $\rightarrow$ quý $\rightarrow$ năm; zip $\rightarrow$ thành phố $\rightarrow$ bang $\rightarrow$ vùng
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: sơ đồ phân cấp (vẽ)}
+
+\note{[S58] Phân cấp là cơ sở của roll-up và drill-down.}
+\end{frame}
+
+\begin{frame}{SCD2 giữ lịch sử địa chỉ: 96.096 khách thành 96.339 dòng, 236 khách đổi zip}
+\muc{3.4 · Chiều khái niệm}
+\begin{itemize}
+  \item Đơn cũ vẫn trỏ về địa chỉ lúc mua
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{llllllll}\toprule
+\textbf{customer\_key} & \textbf{khách thật} & \textbf{zip} & \textbf{thành phố} & \textbf{effective\_from} & \textbf{effective\_to} & \textbf{is\_current} & \textbf{version} \\\midrule
+15081 & 570eb70f… & 31930 & belo horizonte & 1900-01-01 & 2017-11-08 & không & 1 \\
+15082 & 570eb70f… & 31130 & belo horizonte & 2017-11-09 & 9999-12-31 & có & 2 \\
+\bottomrule\end{tabular}}\end{center}
+
+\note{[S59] Ví dụ khách \texttt{570eb70f…} đổi zip ngày 09/11/2017; đơn 24/10 thuộc phiên bản 1.}
+\end{frame}
+
+\begin{frame}{dim\symbol{95}seller là chiều dùng chung: nối bán hàng với funnel qua seller\symbol{95}id}
+\muc{3.4 · Chiều khái niệm}
+\begin{itemize}
+  \item 462 seller chỉ có trong CRM vẫn có dòng, địa chỉ Unknown
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng ví dụ seller (\texttt{huong-dan/01-pipeline-bang-loi.md})}
+
+\note{[S60] \texttt{first\_\allowbreak{}sale\_\allowbreak{}date} được điền sau khi nạp fact.}
+\end{frame}
+
+\begin{frame}{Chiều rác và role-playing giúp fact gọn mà vẫn đủ thông tin}
+\muc{3.4 · Chiều khái niệm}
+\begin{itemize}
+  \item \texttt{dim\_\allowbreak{}lead\_\allowbreak{}profile} gom 7 thuộc tính thành 503 tổ hợp; \texttt{dim\_\allowbreak{}date} đóng 5 vai ở fulfillment
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng ví dụ hai kỹ thuật}
+
+\note{[S61] Trong Power BI, vai trò ngày dùng quan hệ không hoạt động và \texttt{USERELATIONSHIP}.}
+\end{frame}
+
+\begin{frame}{Dòng Unknown -1 và khoá thay thế bảo đảm fact không bao giờ có khoá rỗng}
+\muc{3.4 · Chiều khái niệm}
+\begin{itemize}
+  \item Mọi lỗi tra khoá được ghi \texttt{fact\_\allowbreak{}load\_\allowbreak{}issue}
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng \texttt{dim\_\allowbreak{}seller} dòng -1}
+
+\note{[S66] Nhờ đó ETL không làm rơi dòng khi chiều thiếu.}
+\end{frame}
+
+\subsection{3.5 Data model OLAP}
+
+\begin{frame}{Bus matrix: sáu fact dùng chung các chiều ngày, seller, khách, địa lý}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item Seller là chiều dùng chung của hai quy trình
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{lcccccccccc}\toprule
+\textbf{Fact} & \textbf{Date} & \textbf{Customer} & \textbf{Seller} & \textbf{Product} & \textbf{Geo} & \textbf{Status} & \textbf{Payment} & \textbf{Origin} & \textbf{Profile} & \textbf{Rep} \\\midrule
+fact\_order\_item & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} &  &  &  &  \\
+fact\_order\_fulfillment & \ding{51} & \ding{51} &  &  & \ding{51} & \ding{51} &  &  &  &  \\
+fact\_payment & \ding{51} & \ding{51} &  &  &  &  & \ding{51} &  &  &  \\
+fact\_review & \ding{51} & \ding{51} &  &  &  &  &  &  &  &  \\
+fact\_lead\_funnel & \ding{51} &  & \ding{51} &  &  &  &  & \ding{51} & \ding{51} & \ding{51} \\
+fact\_seller\_monthly & \ding{51} &  & \ding{51} &  &  &  &  &  &  &  \\
+\bottomrule\end{tabular}}\end{center}
+
+\note{[S53] Bus matrix cho thấy chiều nào được dùng lại ở đâu.}
+\end{frame}
+
+\begin{frame}{Mô hình constellation: bốn mart, sáu fact (cam), mười chiều (xanh)}
+\muc{3.5 · Data model OLAP}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Khung = data mart
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-4_constellation.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S54] Fact màu cam, chiều màu xanh đúng yêu cầu trình bày.}
+\end{frame}
+
+\begin{frame}{Data model logic: mỗi fact nối đúng các chiều theo bus matrix}
+\muc{3.5 · Data model OLAP}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Ví dụ \texttt{fact\_\allowbreak{}order\_\allowbreak{}item} nối 6 chiều với 2 vai địa lý
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-4_erd_dw.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S55] Địa lý có hai vai: khách và seller.}
+\end{frame}
+
+\begin{frame}{Data model vật lý: khoá chính theo grain, khoá ngoại có index, 112.650 dòng hàng}
+\muc{3.5 · Data model OLAP}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Mọi khoá ngoại NOT NULL, dòng Unknown -1
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-4_erd_dw.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S56] Tiền \texttt{numeric(12,2)}, khoá \texttt{<tên>\_\allowbreak{}key}, ngày \texttt{yyyymmdd}.}
+\end{frame}
+
+\begin{frame}{Sáu fact thuộc đủ ba loại của Kimball}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item Transaction $\times$3, accumulating $\times$2, periodic $\times$1
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{lllr}
+\toprule
+\textbf{Fact} & \textbf{Loại} & \textbf{Grain} & \textbf{Số dòng} \\
+\midrule
+fact\_order\_item & Transaction & 1 dòng hàng của 1 đơn & 112.650 \\
+fact\_order\_fulfillment & Accumulating snapshot & 1 đơn (5 mốc thời gian) & 99.441 \\
+fact\_payment & Transaction & 1 lần thanh toán & 103.886 \\
+fact\_review & Transaction & 1 review của 1 đơn & 99.224 \\
+fact\_lead\_funnel & Accumulating snapshot & 1 MQL & 8.000 \\
+fact\_seller\_monthly & Periodic snapshot (dày đặc) & 1 seller × 1 tháng & 36.583 \\
+\bottomrule
+\end{tabular}}\end{center}
+
+\note{[S62] Tổng 459.784 dòng fact (99.441 + 112.650 + 103.886 + 99.224 + 8.000 + 36.583).}
+\end{frame}
+
+\begin{frame}{fact\symbol{95}order\symbol{95}fulfillment là accumulating snapshot: một đơn một dòng, cập nhật theo mốc}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item Mốc chưa xảy ra có khoá -1; thời gian từng chặng tính sẵn
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{ll}\toprule
+\textbf{Cột của fact\_order\_fulfillment (đơn 19c36691…)} & \textbf{Giá trị} \\\midrule
+approval\_hours & 36,61 \\
+handling\_days & 0,71 \\
+transit\_days & 12,84 \\
+lead\_days & 15,07 \\
+promised\_days & 21 \\
+delay\_days & -6 (giao sớm 6 ngày) \\
+order\_value & 43,00 \\
+freight\_total & 45,30 \\
+payment\_total & 88,30 \\
+\bottomrule\end{tabular}}\end{center}
+
+\note{[S63] Nếu dùng transaction fact phải ghép nhiều dòng mới tính được lead time.}
+\end{frame}
+
+\begin{frame}{fact\symbol{95}lead\symbol{95}funnel ghi lại hành trình MQL: ba mốc ngày và hai khoảng thời gian}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item \texttt{days\_\allowbreak{}to\_\allowbreak{}close} TB 48,5; \texttt{days\_\allowbreak{}won\_\allowbreak{}to\_\allowbreak{}first\_\allowbreak{}sale} TB 51,9
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: dòng ví dụ MQL}
+
+\note{[S64] Cũng là accumulating snapshot, 8.000 dòng.}
+\end{frame}
+
+\begin{frame}{fact\symbol{95}seller\symbol{95}monthly lưu dày đặc 36.583 dòng để thấy seller ngừng bán}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item Dày đặc so với thưa: 36.583 và 16.441 dòng
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng 4 tháng đầu của một seller}
+
+\note{[S65] Tháng không có đơn vẫn có dòng với \texttt{orders = 0}.}
+\end{frame}
+
+\begin{frame}{Bốn data mart gồm 17 view, trong đó 4 là materialized view làm mới trong 2 giây}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item Sales, fulfillment, cx, acquisition
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
+\textbf{Mart} & \textbf{Số view} & \textbf{Dashboard} \\\midrule
+mart\_sales & 6 & D1, D2, D4 \\
+mart\_fulfillment & 4 & D3, D4 \\
+mart\_cx & 4 (RFM, cohort materialized) & D5 \\
+mart\_acquisition & 3 (scorecard, theo kênh materialized) & D6 \\
+\bottomrule\end{tabular}}\end{center}
+
+\note{[S84] Mart được làm mới tự động ở bước mart của pipeline.}
+\end{frame}
+
+\begin{frame}{Roll-up và drill-down: GMV 2017 là 6,11 triệu, 2018 là 7,34 triệu; ngày Black Friday cao gấp 5,2 lần}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item Quý 4/2017: 2,41 triệu BRL; 24/11/2017: 152.654 BRL
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{llrr}
+\toprule
+\textbf{Năm} & \textbf{Quý} & \textbf{Số đơn} & \textbf{GMV (BRL)} \\
+\midrule
+2017 & 2017-Q1 & 5.122 & 733.398,94 \\
+2017 & 2017-Q2 & 9.222 & 1.286.918,78 \\
+2017 & 2017-Q3 & 12.445 & 1.681.949,00 \\
+2017 & 2017-Q4 & 17.586 & 2.406.225,55 \\
+2017 & (cả năm) & 44.375 & 6.108.492,27 \\
+2018 & 2018-Q1 & 20.979 & 2.764.402,78 \\
+2018 & 2018-Q2 & 19.897 & 2.849.730,26 \\
+2018 & 2018-Q3 & 12.655 & 1.727.049,37 \\
+2018 & (cả năm) & 53.531 & 7.341.182,41 \\
+Tổng & (cả năm) & 97.906 & 13.449.674,68 \\
+\bottomrule
+\end{tabular}}\end{center}
+
+\note{[S85] Roll-up dùng \texttt{ROLLUP}, drill-down thêm cấp vào \texttt{GROUP BY}.}
+\end{frame}
+
+\begin{frame}{Slice, dice và pivot: vùng Sudeste chiếm 64,3\% GMV năm 2017}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item Dice Sudeste $\times$ Home \& Furniture $\times$ quý 4: SP 199.179 BRL
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{lrrrr}
+\toprule
+\textbf{Vùng} & \textbf{2016} & \textbf{2017} & \textbf{2018} & \textbf{Tổng} \\
+\midrule
+Sudeste & 27.701 & 3.928.343 & 4.866.293 & 8.822.336 \\
+Sul & 7.456 & 883.020 & 1.047.636 & 1.938.111 \\
+Nordeste & 6.013 & 727.733 & 804.568 & 1.538.314 \\
+Centro-Oeste & 2.356 & 401.380 & 458.090 & 861.825 \\
+Norte & 1.200 & 168.018 & 164.596 & 333.814 \\
+\bottomrule
+\end{tabular}}\end{center}
+
+\note{[S86] Pivot bằng tổng có điều kiện \texttt{FILTER}.}
+\end{frame}
+
+\begin{frame}{Chọn ROLAP vì dữ liệu nhỏ, kho luôn tươi và Power BI làm lớp ngữ nghĩa}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item Khác MOLAP: không phải xử lý lại khối khi nạp dữ liệu
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng ROLAP vs MOLAP (\texttt{handoff/olap-examples.md})}
+
+\note{[S87] Đây là lý do lựa chọn đã nêu ở phần 1.}
+\end{frame}
+
+\begin{frame}{Star schema chỉ nhanh hơn OLTP 1,0–1,6 lần; tốc độ lớn đến từ materialized view và index}
+\muc{3.5 · Data model OLAP}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Chọn lọc một seller nhanh gấp 9 lần nhờ index; materialized view dưới 1 ms so với 150–750 ms
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-5-1_benchmark.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S88] Không phóng đại: giá trị chính của mô hình chiều là truy vấn đơn giản và số liệu nhất quán.}
+\end{frame}

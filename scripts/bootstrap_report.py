@@ -1,4 +1,7 @@
-"""ONE-TIME bootstrap of the LaTeX report skeleton in report/ (main.tex, preamble, chapters/*.tex, refs.bib).
+"""OBSOLETE AFTER P8 (13/11/2026): the report chapters / slide sections were re-ordered by hand to follow the grading rubric.
+Running this script would overwrite them with the old structure. Do not run.
+
+ONE-TIME bootstrap of the LaTeX report skeleton in report/ (main.tex, preamble, chapters/*.tex, refs.bib).
 
     python scripts/bootstrap_report.py [--force]
 Chapter 3 is filled with the draft paragraphs of handoff/*.md and huong-dan/*.md converted to LaTeX; the team then edits report/chapters/*.tex by hand.

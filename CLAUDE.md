@@ -55,7 +55,7 @@ exports/powerbi/                # CSV xuất từ dw/mart/etl_log cho Power BI
 handoff/                        # bàn giao cho cả nhóm (markdown)
 huong-dan/                      # hướng dẫn dùng chung: lộ trình đọc, pipeline bằng lời, thuật ngữ, từ điển dữ liệu, hỏi đáp, D1-D7
 report/                         # báo cáo LaTeX (XeLaTeX): chapters/ viết tay, tables/ sinh từ database (scripts/export_latex.py)
-slides/                         # slide Beamer theme HUST (LuaLaTeX): sections/ sinh từ slide-script.md (scripts/gen_beamer.py), hust-theme/
+slides/                         # slide Beamer theme HUST (LuaLaTeX): sections/ xếp theo barem (sửa tay từ P8; không chạy lại gen_beamer.py), hust-theme/
 figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 ```
 
@@ -109,7 +109,7 @@ figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 - `python scripts/benchmark.py` – benchmark gọn (oltp vs dw, index FK, view vs materialized view) → `handoff/benchmark.md`, `figures/3-5-1_benchmark.png`
 - `python scripts/geo_analysis.py` – khoảng cách seller → khách vs freight / lead time → `handoff/geo-distance.md`, `figures/3-5-2_*.png`
 - `python scripts/export_latex.py` – sinh `report/tables/*.tex`, `report/code/*.sql` từ database; báo cáo: `cd report && latexmk -xelatex main.tex`; zip Overleaf: `python scripts/make_overleaf_zip.py`
-- `python scripts/gen_beamer.py` – sinh `slides/sections/*.tex` từ `slides/slide-script.md`; slide: `cd slides && latexmk -lualatex main.tex` (bản có ghi chú: `slides-notes.tex`); zip: `python scripts/make_slides_zip.py`
+- `python scripts/gen_beamer.py` – (**đã lỗi thời sau P8, không chạy**: sinh theo cấu trúc cũ) sinh `slides/sections/*.tex` từ `slides/slide-script.md`; slide: `cd slides && latexmk -lualatex main.tex` (bản có ghi chú: `slides-notes.tex`); zip: `python scripts/make_slides_zip.py`
 - `python -m etl.test_orphan_retry` – kịch bản thử lại dòng mồ côi (chạy trong transaction rồi rollback)
 - `python scripts/export_powerbi.py` – xuất CSV cho Power BI vào `exports/powerbi/`
 - `python scripts/report_stats.py` – sinh `handoff/stats.md` (số dòng mọi bảng, từng dim và từng fact)

@@ -31,6 +31,8 @@
 % khung ảnh chụp dashboard / hình cần chèn sau (chữ rõ ràng để không bị bỏ sót)
 \newcommand{\khungchen}[2][0.5\textheight]{\par\vspace{2pt}\centering\fcolorbox{red!70!black}{red!4}{\parbox[c][#1][c]{0.86\linewidth}{\centering\bfseries\large\color{red!70!black}#2}}\par}
 \newcommand{\anh}[2][0.56\textheight]{\includegraphics[width=\linewidth,height=#1,keepaspectratio]{#2}}
+% nhãn mục barem ở góc phải trên mỗi slide, ví dụ \muc{2.4 · Dữ liệu nguồn}
+\newcommand{\muc}[1]{\begin{tikzpicture}[remember picture,overlay]\node[anchor=north east,inner xsep=6pt,inner ysep=2pt,font=\fontsize{6.5}{7}\selectfont\bfseries,text=white,fill=black!60,opacity=0.85,text opacity=1]at ([xshift=-4pt,yshift=-26pt]current page.north east){#1};\end{tikzpicture}}
 \newcommand{\canxacnhan}{\hfill{\scriptsize\color{red!70!black}[nhóm xác nhận]}}
 
 \title[Olist DW \& BI]{{\normalsize KHO DỮ LIỆU VÀ KINH DOANH THÔNG MINH (MI4214)}\\[5pt]{\bfseries Xây dựng kho dữ liệu Quản lý đơn hàng -- Olist}}
@@ -50,15 +52,14 @@
   \tableofcontents[hideallsubsections]
 \end{frame}
 
-\input{sections/01-ly-thuyet}
-\input{sections/02-bai-toan}
-\input{sections/03-du-lieu}
-\input{sections/04-kien-truc}
-\input{sections/05-etl-mart-olap}
-\input{sections/06-dashboard}
-\input{sections/07-ket-luan}
+\input{sections/00-mo-dau}
+\input{sections/01-khao-sat}
+\input{sections/02-phan-tich-thiet-ke}
+\input{sections/03-dashboard}
+\input{sections/04-mo-rong}
+\input{sections/05-tong-ket}
 
 \appendix
 \hustsection[panel=false]
-\input{sections/08-du-phong}
+\input{sections/99-du-phong}
 \end{document}

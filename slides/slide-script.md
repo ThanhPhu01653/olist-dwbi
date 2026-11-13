@@ -1,4 +1,4 @@
-# Kịch bản slide – 114 slide nội dung + 10 slide dự phòng (133 trang PDF)
+# Kịch bản slide – xếp theo barem (113 slide cũ + 7 khung mở rộng, 10 slide dự phòng)
 
 *Dùng được cho PowerPoint lẫn Beamer: mỗi slide là một mục `###` gồm **tiêu đề (câu kết luận có số)**, 1–3 dòng nội dung, **hình** (đường dẫn trong `figures/`, `docs/diagrams/` hoặc "ảnh chụp dashboard Dx") và **ghi chú người nói** (2–3 câu). Số liệu lấy từ kho ở trạng thái cuối (99.441 đơn, GMV 13.494.400,74 BRL) và khớp `handoff/00-TONG-QUAN.md`; chi tiết ở các file `handoff/` và `huong-dan/`.*
 *Cách dùng: PowerPoint → mỗi `###` là một slide (dòng tiêu đề = title, gạch đầu dòng = nội dung, "Hình" = ảnh, "Nói" = phần Notes). Beamer → mỗi `###` là một `\begin{frame}{tiêu đề}`; ảnh bằng `\includegraphics{figures/...}`, "Nói" đưa vào `\note{...}`.*
@@ -6,16 +6,18 @@
 
 Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc thay bằng ảnh thật sau khi dựng dashboard.
 
+*Sau P8 các slide được xếp lại theo barem (khảo sát → phân tích và thiết kế → dashboard → mở rộng → tổng kết). Số `Sxx` giữ nguyên số cũ để tra ghi chú và câu hỏi đáp; thứ tự trình bày là thứ tự các mục dưới đây. Slide lý thuyết S06–S12 chuyển sang phụ lục (file `sections/99-du-phong.tex`). Mỗi slide hiện nhãn mục barem ở góc trên bên phải.*
+
 ---
-## PHẦN 1 – Mở đầu và lý thuyết rút gọn (12 slide)
+## MỞ ĐẦU – tiêu đề, mục lục, tối đa 2 slide lý thuyết (file `sections/00-mo-dau.tex`)
 
 ### S01. Xây kho dữ liệu và BI cho 99.441 đơn hàng thương mại điện tử Olist
 - Học phần MI4214 – Kho dữ liệu và Kinh doanh thông minh; nhóm …; giảng viên …
 - Hình: logo trường (chèn) + `figures/3-3-4_constellation.png` (làm nền mờ)
 - Nói: Chúng em xây một kho dữ liệu hoàn chỉnh từ hai bộ dữ liệu Olist: nguồn, ETL, kho hình sao, data mart và bảy dashboard Power BI. Bài trình bày đi từ bài toán đến kết quả và bài học.
 
-### S02. Bài trình bày gồm bảy phần, đi từ lý thuyết đến sản phẩm chạy được
-- 1 Lý thuyết · 2 Bài toán và nghiệp vụ · 3 Dữ liệu và khám phá · 4 Kiến trúc và thiết kế · 5 ETL, mart, OLAP, hiệu năng · 6 Dashboard và mở rộng · 7 Kết luận
+### S02. Bài trình bày gồm năm phần theo thứ tự khảo sát, phân tích thiết kế, dashboard, mở rộng và tổng kết
+- 2 Khảo sát · 3 Phân tích và thiết kế · 4 Dashboard và bài học · 5 Mở rộng · 6 Kết luận (mỗi slide hiện mục barem ở góc)
 - Hình: không (danh sách đánh số)
 - Nói: Mỗi phần có số liệu thật từ kho; cuối mỗi phần nhóm nêu điều học được.
 
@@ -34,43 +36,10 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: bảng so sánh OLTP/OLAP (vẽ) + `figures/3-2-4_erd_oltp.png`
 - Nói: Cùng một câu hỏi "GMV theo bang theo tháng" cần nối ba bảng ở nguồn nhưng chỉ nối một fact với hai chiều ở kho.
 
-### S06. Kimball xây từ các data mart có chiều dùng chung, Inmon xây kho 3NF rồi mới tách mart
-- Nhóm chọn hướng Kimball: bus matrix, conformed dimension
-- Hình: sơ đồ so sánh hai kiến trúc (vẽ)
-- Nói: Vì bài toán có hai quy trình nghiệp vụ dùng chung chiều seller và ngày, cách Kimball phù hợp và nhanh ra kết quả.
-
-### S07. Mô hình chiều gồm fact, dimension và grain: chọn grain trước, mọi thứ còn lại theo sau
-- Grain của dự án: 1 dòng hàng, 1 đơn, 1 lần thanh toán, 1 review, 1 MQL, 1 seller × tháng
-- Hình: `figures/3-3-4_erd_dw.png`
-- Nói: Grain mịn nhất cho phép cộng lên mọi cấp; ví dụ GMV tính từ grain dòng hàng.
-
-### S08. Ba loại fact và hai kiểu SCD đủ để mô tả mọi nhu cầu của bài toán
-- Transaction · periodic snapshot · accumulating snapshot; SCD1 (ghi đè) và SCD2 (giữ lịch sử)
-- Hình: bảng 3 loại fact với ví dụ của dự án
-- Nói: Dự án có đủ cả ba loại fact và dùng SCD2 cho khách, SCD1 cho seller.
-
-### S09. ETL biến dữ liệu nguồn bẩn thành dữ liệu đáng tin qua staging và ODS
-- Extract → làm sạch ở ODS → nạp chiều và fact; full và incremental
-- Hình: `figures/3-4-1_pipeline.png`
-- Nói: Nguyên tắc của nhóm là không xóa âm thầm: dòng lỗi được gắn cờ hoặc ghi vào bảng loại kèm lý do.
-
-### S10. Năm thao tác OLAP đều quy về SQL trên lược đồ sao
-- Roll-up, drill-down, slice, dice, pivot
-- Hình: bảng ví dụ 5 thao tác (từ `handoff/olap-examples.md`)
-- Nói: Mỗi thao tác là một câu SQL ngắn; phần 5 sẽ cho kết quả thật.
-
-### S11. MOLAP tính sẵn khối đa chiều, ROLAP tính lúc truy vấn, HOLAP kết hợp: nhóm chọn ROLAP
-- Lý do: PostgreSQL không có khối đa chiều, dữ liệu 112.650 dòng hàng trả lời dưới 1 giây, kho luôn cập nhật sau mỗi lần nạp
-- Hình: bảng so sánh MOLAP/ROLAP/HOLAP (vẽ)
-- Nói: Đổi lại, truy vấn nặng được tăng tốc bằng materialized view; phần hiệu năng sẽ cho thấy lợi ích.
-
-### S12. BI đưa kho dữ liệu đến người ra quyết định qua mô hình ngữ nghĩa, KPI và dashboard
-- Power BI: nạp CSV, quan hệ, measure DAX, dashboard
-- Hình: sơ đồ chuỗi dữ liệu → kho → mô hình → dashboard (vẽ)
-- Nói: Mọi KPI được định nghĩa một lần bằng DAX và đối chiếu với giá trị tính bằng SQL.
-
 ---
-## PHẦN 2 – Bài toán và nghiệp vụ (20 slide)
+## PHẦN 2 – Khảo sát (file `sections/01-khao-sat.tex`)
+
+#### 2.1 Nghiệp vụ
 
 ### S13. Olist kết nối người bán nhỏ với các sàn lớn: 3.095 seller bán 99.441 đơn trong 2 năm
 - Dữ liệu Brazil, 09/2016–10/2018; hai bộ Kaggle
@@ -132,6 +101,8 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: `figures/3-2-5_cay_nghiep_vu.png`
 - Nói: Kho chủ yếu phục vụ nhóm quản lý đơn hàng và thu hút seller.
 
+#### 2.2 Yêu cầu phân tích
+
 ### S25. Cây yêu cầu phân tích đi từ sáu chủ điểm đến các câu hỏi cụ thể
 - Chủ điểm → câu hỏi → chiều cần quan tâm
 - Hình: `figures/3-2-6_cay_yeu_cau_phan_tich.png`
@@ -157,6 +128,8 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: `figures/3-3-1_funnel_win_rate_by_origin.png`
 - Nói: Luôn nêu cỡ mẫu vì nhiều kênh chỉ có vài chục seller.
 
+#### 2.3 KPI và dashboard
+
 ### S30. Bảng KPI chính gồm 19 chỉ số, mỗi chỉ số có một định nghĩa DAX duy nhất
 - GMV, Orders, AOV, on-time, lead time, review, repeat, MQL→seller…
 - Hình: bảng KPI (`report/tables/kpi.tex`)
@@ -167,13 +140,12 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: `figures/3-2-7_cay_phan_tich_D1.png` … `D7.png` (lưới 7 ô)
 - Nói: Ví dụ D3: mục tiêu giám sát giao hàng, chỉ số on-time, promised vs actual, chiều vùng và nhóm trễ.
 
+#### 2.4 Dữ liệu nguồn (quy mô, tần suất, luồng dữ liệu)
+
 ### S32. Phạm vi: dữ liệu 01/2017–08/2018 chiếm 99,6% số đơn nên được dùng cho xu hướng
 - 2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn
 - Hình: `figures/3-3-1_orders_per_month.png`
 - Nói: Bộ lọc InWindow trong Power BI cố định cửa sổ này cho D1–D6.
-
----
-## PHẦN 3 – Dữ liệu và khám phá dữ liệu (16 slide)
 
 ### S33. Hai hệ thống nguồn có 11 bảng, 121 MB và 1.559.764 dòng
 - oltp 9 bảng 1.550.922 dòng; crm 2 bảng 8.842 dòng
@@ -185,6 +157,13 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: bảng nguồn (làm nổi dòng geolocation)
 - Nói: Đây là bảng cần xử lý nhiều nhất ở ODS.
 
+### S37. Luồng dữ liệu và tần suất cập nhật: nạp ban đầu 45.430 đơn rồi 11 đợt hằng tháng
+- Tổng 286.144 bản ghi mới qua 11 đợt
+- Hình: `figures/3-4-1_pipeline.png`
+- Nói: Dữ liệu Kaggle là ảnh tĩnh nên nhóm mô phỏng cập nhật.
+
+#### 2.5 ERD OLTP
+
 ### S35. ERD hệ thống bán hàng: chín bảng nối quanh đơn hàng
 - orders → items, payments, reviews; customers, sellers, products
 - Hình: `figures/3-2-4_erd_oltp.png`
@@ -195,10 +174,10 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: ERD đã gạch chân (vẽ lại) [nhóm hoàn thiện]
 - Nói: Bảng mapping đầy đủ 108 dòng ODS → kho nằm ở phụ lục.
 
-### S37. Luồng dữ liệu và tần suất cập nhật: nạp ban đầu 45.430 đơn rồi 11 đợt hằng tháng
-- Tổng 286.144 bản ghi mới qua 11 đợt
-- Hình: `figures/3-4-1_pipeline.png`
-- Nói: Dữ liệu Kaggle là ảnh tĩnh nên nhóm mô phỏng cập nhật.
+---
+## PHẦN 3 – Phân tích và thiết kế (file `sections/02-phan-tich-thiet-ke.tex`)
+
+#### 3.1 Khám phá dữ liệu (gồm khoảng cách địa lý)
 
 ### S38. Khám phá dữ liệu đo được 45 loại lỗi cần xử lý ở ODS
 - Cột thiếu, mốc thời gian sai thứ tự, tên thành phố lệch dấu, trùng lặp
@@ -256,8 +235,22 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: bảng quyết định (`handoff/00-TONG-QUAN.md` mục 7)
 - Nói: Mỗi quyết định có số liệu trong `handoff/design-questions.md`.
 
----
-## PHẦN 4 – Kiến trúc và thiết kế kho dữ liệu (18 slide)
+### S107. Mở rộng địa lý: hàm haversine SQL thuần tính khoảng cách seller → khách cho 112.650 dòng hàng
+- 555 dòng (0,49%) thiếu toạ độ vẫn được giữ lại với giá trị trống
+- Hình: đoạn SQL `dw.haversine_km` (Phụ lục B)
+- Nói: São Paulo – Rio tính ra 360,9 km, gần với thực tế.
+
+### S108. Khoảng cách tăng từ dưới 100 km lên trên 1.000 km làm phí vận chuyển gấp 2,7 lần và lead time gấp 2,9 lần
+- Phí 11,75 → 31,65 BRL; lead time 6,5 → 19,0 ngày; trễ 4,5% → 10,3%
+- Hình: `figures/3-5-2_distance_vs_freight.png`, `figures/3-5-2_distance_vs_leadtime.png`
+- Nói: Tương quan Spearman 0,63 với phí và 0,54 với lead time; đó là tương quan, không phải nhân quả.
+
+### S109. Haversine thuần đủ cho khoảng cách điểm–điểm; PostGIS cần khi truy vấn bán kính hoặc đa giác
+- GiST chỉ mục không gian; haversine sai số tối đa 0,5%
+- Hình: bảng so sánh (`report/chapters/3-1-kham-pha.tex`)
+- Nói: Nhóm không cài PostGIS nên chọn giải pháp thuần SQL.
+
+#### 3.2 Kiến trúc
 
 ### S49. Kiến trúc sáu lớp từ hai hệ thống nguồn đến bảy dashboard
 - oltp/crm → staging → ODS → kho → data mart → Power BI; etl_log giám sát
@@ -274,83 +267,12 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: logo công nghệ (chèn)
 - Nói: Chạy được trên laptop sinh viên 8 GB.
 
+#### 3.3 ETL (gồm đối soát, nạp tăng dần, dựng lại toàn bộ)
+
 ### S52. ODS là lớp làm sạch trung gian: 18 bảng, 678.183 dòng, mọi lỗi có cờ hoặc lý do
 - Zip thành 5 chữ số, thành phố bỏ dấu, `NULL` thành `unknown`, khử trùng review
 - Hình: bảng lỗi và xử lý (`report/tables/dq_errors.tex`)
 - Nói: 1.411 đơn (1,4%) có ít nhất một cờ chất lượng.
-
-### S53. Bus matrix: sáu fact dùng chung các chiều ngày, seller, khách, địa lý
-- Seller là chiều dùng chung của hai quy trình
-- Hình: bus matrix (`docs/DW_DESIGN.md` mục 4, vẽ lại)
-- Nói: Bus matrix cho thấy chiều nào được dùng lại ở đâu.
-
-### S54. Mô hình constellation: bốn mart, sáu fact (cam), mười chiều (xanh)
-- Khung = data mart
-- Hình: `figures/3-3-4_constellation.png` / `docs/diagrams/data-model-theo-mart.drawio`
-- Nói: Fact màu cam, chiều màu xanh đúng yêu cầu trình bày.
-
-### S55. Data model logic: mỗi fact nối đúng các chiều theo bus matrix
-- Ví dụ `fact_order_item` nối 6 chiều với 2 vai địa lý
-- Hình: `figures/3-3-4_erd_dw.png`
-- Nói: Địa lý có hai vai: khách và seller.
-
-### S56. Data model vật lý: khoá chính theo grain, khoá ngoại có index, 112.650 dòng hàng
-- Mọi khoá ngoại NOT NULL, dòng Unknown −1
-- Hình: `figures/3-3-4_erd_dw.png` (kèm kiểu dữ liệu) [nhóm hoàn thiện]
-- Nói: Tiền `numeric(12,2)`, khoá `<tên>_key`, ngày `yyyymmdd`.
-
-### S57. Mười bảng chiều với số dòng từ 6 đến 96.339
-- dim_date 1.828; geography 19.178; customer 96.339; seller 3.558; product 32.952; …
-- Hình: bảng chiều (`report/tables/dims.tex`)
-- Nói: Mỗi chiều có đúng một dòng Unknown, được kiểm thử.
-
-### S58. Hệ thống chiều khái niệm: phân cấp ngày, địa lý, sản phẩm, seller, khách
-- Ngày → tháng → quý → năm; zip → thành phố → bang → vùng
-- Hình: sơ đồ phân cấp (vẽ) [nhóm hoàn thiện]
-- Nói: Phân cấp là cơ sở của roll-up và drill-down.
-
-### S59. SCD2 giữ lịch sử địa chỉ: 96.096 khách thành 96.339 dòng, 236 khách đổi zip
-- Đơn cũ vẫn trỏ về địa chỉ lúc mua
-- Hình: bảng 2 phiên bản của một khách (`huong-dan/01-pipeline-bang-loi.md`)
-- Nói: Ví dụ khách `570eb70f…` đổi zip ngày 09/11/2017; đơn 24/10 thuộc phiên bản 1.
-
-### S60. `dim_seller` là chiều dùng chung: nối bán hàng với funnel qua `seller_id`
-- 462 seller chỉ có trong CRM vẫn có dòng, địa chỉ Unknown
-- Hình: bảng ví dụ seller (`huong-dan/01-pipeline-bang-loi.md`)
-- Nói: `first_sale_date` được điền sau khi nạp fact.
-
-### S61. Chiều rác và role-playing giúp fact gọn mà vẫn đủ thông tin
-- `dim_lead_profile` gom 7 thuộc tính thành 503 tổ hợp; `dim_date` đóng 5 vai ở fulfillment
-- Hình: bảng ví dụ hai kỹ thuật
-- Nói: Trong Power BI, vai trò ngày dùng quan hệ không hoạt động và `USERELATIONSHIP`.
-
-### S62. Sáu fact thuộc đủ ba loại của Kimball
-- Transaction ×3, accumulating ×2, periodic ×1
-- Hình: bảng fact (`report/tables/facts.tex`)
-- Nói: Tổng 459.784 dòng fact (99.441 + 112.650 + 103.886 + 99.224 + 8.000 + 36.583).
-
-### S63. `fact_order_fulfillment` là accumulating snapshot: một đơn một dòng, cập nhật theo mốc
-- Mốc chưa xảy ra có khoá −1; thời gian từng chặng tính sẵn
-- Hình: dòng ví dụ (`huong-dan/01-pipeline-bang-loi.md`)
-- Nói: Nếu dùng transaction fact phải ghép nhiều dòng mới tính được lead time.
-
-### S64. `fact_lead_funnel` ghi lại hành trình MQL: ba mốc ngày và hai khoảng thời gian
-- `days_to_close` TB 48,5; `days_won_to_first_sale` TB 51,9
-- Hình: dòng ví dụ MQL
-- Nói: Cũng là accumulating snapshot, 8.000 dòng.
-
-### S65. `fact_seller_monthly` lưu dày đặc 36.583 dòng để thấy seller ngừng bán
-- Dày đặc so với thưa: 36.583 và 16.441 dòng
-- Hình: bảng 4 tháng đầu của một seller
-- Nói: Tháng không có đơn vẫn có dòng với `orders = 0`.
-
-### S66. Dòng Unknown −1 và khoá thay thế bảo đảm fact không bao giờ có khoá rỗng
-- Mọi lỗi tra khoá được ghi `fact_load_issue`
-- Hình: bảng `dim_seller` dòng −1
-- Nói: Nhờ đó ETL không làm rơi dòng khi chiều thiếu.
-
----
-## PHẦN 5 – ETL, data mart, OLAP, hiệu năng (22 slide)
 
 ### S67. Một lệnh chạy sáu bước ETL và ghi lại từng bước
 - extract → ODS → dim → fact → mart → tests → snapshot → export
@@ -437,6 +359,85 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: ảnh chụp dashboard D7 [nhóm chèn]
 - Nói: D7 là dashboard giám sát hệ thống.
 
+### S110. Dựng lại toàn bộ dự án từ đầu mất 443 giây và cho kết quả giống hệt
+- Xóa hai database, chạy một lệnh, 16/16 bảng khớp
+- Hình: bảng `report/tables/rebuild.tex`
+- Nói: Khả năng tái lập là bằng chứng độ tin cậy của pipeline.
+
+#### 3.4 Hệ thống chiều khái niệm
+
+### S57. Mười bảng chiều với số dòng từ 6 đến 96.339
+- dim_date 1.828; geography 19.178; customer 96.339; seller 3.558; product 32.952; …
+- Hình: bảng chiều (`report/tables/dims.tex`)
+- Nói: Mỗi chiều có đúng một dòng Unknown, được kiểm thử.
+
+### S58. Hệ thống chiều khái niệm: phân cấp ngày, địa lý, sản phẩm, seller, khách
+- Ngày → tháng → quý → năm; zip → thành phố → bang → vùng
+- Hình: sơ đồ phân cấp (vẽ) [nhóm hoàn thiện]
+- Nói: Phân cấp là cơ sở của roll-up và drill-down.
+
+### S59. SCD2 giữ lịch sử địa chỉ: 96.096 khách thành 96.339 dòng, 236 khách đổi zip
+- Đơn cũ vẫn trỏ về địa chỉ lúc mua
+- Hình: bảng 2 phiên bản của một khách (`huong-dan/01-pipeline-bang-loi.md`)
+- Nói: Ví dụ khách `570eb70f…` đổi zip ngày 09/11/2017; đơn 24/10 thuộc phiên bản 1.
+
+### S60. `dim_seller` là chiều dùng chung: nối bán hàng với funnel qua `seller_id`
+- 462 seller chỉ có trong CRM vẫn có dòng, địa chỉ Unknown
+- Hình: bảng ví dụ seller (`huong-dan/01-pipeline-bang-loi.md`)
+- Nói: `first_sale_date` được điền sau khi nạp fact.
+
+### S61. Chiều rác và role-playing giúp fact gọn mà vẫn đủ thông tin
+- `dim_lead_profile` gom 7 thuộc tính thành 503 tổ hợp; `dim_date` đóng 5 vai ở fulfillment
+- Hình: bảng ví dụ hai kỹ thuật
+- Nói: Trong Power BI, vai trò ngày dùng quan hệ không hoạt động và `USERELATIONSHIP`.
+
+### S66. Dòng Unknown −1 và khoá thay thế bảo đảm fact không bao giờ có khoá rỗng
+- Mọi lỗi tra khoá được ghi `fact_load_issue`
+- Hình: bảng `dim_seller` dòng −1
+- Nói: Nhờ đó ETL không làm rơi dòng khi chiều thiếu.
+
+#### 3.5 Data model OLAP (logic, vật lý, mart, OLAP, hiệu năng)
+
+### S53. Bus matrix: sáu fact dùng chung các chiều ngày, seller, khách, địa lý
+- Seller là chiều dùng chung của hai quy trình
+- Hình: bus matrix (`docs/DW_DESIGN.md` mục 4, vẽ lại)
+- Nói: Bus matrix cho thấy chiều nào được dùng lại ở đâu.
+
+### S54. Mô hình constellation: bốn mart, sáu fact (cam), mười chiều (xanh)
+- Khung = data mart
+- Hình: `figures/3-3-4_constellation.png` / `docs/diagrams/data-model-theo-mart.drawio`
+- Nói: Fact màu cam, chiều màu xanh đúng yêu cầu trình bày.
+
+### S55. Data model logic: mỗi fact nối đúng các chiều theo bus matrix
+- Ví dụ `fact_order_item` nối 6 chiều với 2 vai địa lý
+- Hình: `figures/3-3-4_erd_dw.png`
+- Nói: Địa lý có hai vai: khách và seller.
+
+### S56. Data model vật lý: khoá chính theo grain, khoá ngoại có index, 112.650 dòng hàng
+- Mọi khoá ngoại NOT NULL, dòng Unknown −1
+- Hình: `figures/3-3-4_erd_dw.png` (kèm kiểu dữ liệu) [nhóm hoàn thiện]
+- Nói: Tiền `numeric(12,2)`, khoá `<tên>_key`, ngày `yyyymmdd`.
+
+### S62. Sáu fact thuộc đủ ba loại của Kimball
+- Transaction ×3, accumulating ×2, periodic ×1
+- Hình: bảng fact (`report/tables/facts.tex`)
+- Nói: Tổng 459.784 dòng fact (99.441 + 112.650 + 103.886 + 99.224 + 8.000 + 36.583).
+
+### S63. `fact_order_fulfillment` là accumulating snapshot: một đơn một dòng, cập nhật theo mốc
+- Mốc chưa xảy ra có khoá −1; thời gian từng chặng tính sẵn
+- Hình: dòng ví dụ (`huong-dan/01-pipeline-bang-loi.md`)
+- Nói: Nếu dùng transaction fact phải ghép nhiều dòng mới tính được lead time.
+
+### S64. `fact_lead_funnel` ghi lại hành trình MQL: ba mốc ngày và hai khoảng thời gian
+- `days_to_close` TB 48,5; `days_won_to_first_sale` TB 51,9
+- Hình: dòng ví dụ MQL
+- Nói: Cũng là accumulating snapshot, 8.000 dòng.
+
+### S65. `fact_seller_monthly` lưu dày đặc 36.583 dòng để thấy seller ngừng bán
+- Dày đặc so với thưa: 36.583 và 16.441 dòng
+- Hình: bảng 4 tháng đầu của một seller
+- Nói: Tháng không có đơn vẫn có dòng với `orders = 0`.
+
 ### S84. Bốn data mart gồm 17 view, trong đó 4 là materialized view làm mới trong 2 giây
 - Sales, fulfillment, cx, acquisition
 - Hình: bảng mart (`report/tables/marts.tex`)
@@ -463,7 +464,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Nói: Không phóng đại: giá trị chính của mô hình chiều là truy vấn đơn giản và số liệu nhất quán.
 
 ---
-## PHẦN 6 – Dashboard và mở rộng (22 slide)
+## PHẦN 4 – Dashboard và bài học (file `sections/03-dashboard.tex`)
 
 ### S89. Bảy dashboard chia thành bốn loại: thời gian, OLAP, vận hành, thống kê
 - D1 Executive · D2 Sales · D3 Fulfillment · D4 Geography · D5 Customer · D6 Seller · D7 ETL monitor
@@ -555,48 +556,41 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: ảnh màn hình Publish to web [nhóm chèn]
 - Nói: Nếu tài khoản bị chặn thì dùng PDF xuất từ Power BI.
 
-### S107. Mở rộng địa lý: hàm haversine SQL thuần tính khoảng cách seller → khách cho 112.650 dòng hàng
-- 555 dòng (0,49%) thiếu toạ độ vẫn được giữ lại với giá trị trống
-- Hình: đoạn SQL `dw.haversine_km` (Phụ lục B)
-- Nói: São Paulo – Rio tính ra 360,9 km, gần với thực tế.
-
-### S108. Khoảng cách tăng từ dưới 100 km lên trên 1.000 km làm phí vận chuyển gấp 2,7 lần và lead time gấp 2,9 lần
-- Phí 11,75 → 31,65 BRL; lead time 6,5 → 19,0 ngày; trễ 4,5% → 10,3%
-- Hình: `figures/3-5-2_distance_vs_freight.png`, `figures/3-5-2_distance_vs_leadtime.png`
-- Nói: Tương quan Spearman 0,63 với phí và 0,54 với lead time; đó là tương quan, không phải nhân quả.
-
-### S109. Haversine thuần đủ cho khoảng cách điểm–điểm; PostGIS cần khi truy vấn bán kính hoặc đa giác
-- GiST chỉ mục không gian; haversine sai số tối đa 0,5%
-- Hình: bảng so sánh (`report/chapters/3-5-2-dia-ly.tex`)
-- Nói: Nhóm không cài PostGIS nên chọn giải pháp thuần SQL.
-
-### S110. Dựng lại toàn bộ dự án từ đầu mất 443 giây và cho kết quả giống hệt
-- Xóa hai database, chạy một lệnh, 16/16 bảng khớp
-- Hình: bảng `report/tables/rebuild.tex`
-- Nói: Khả năng tái lập là bằng chứng độ tin cậy của pipeline.
+### S112. Bài học: không xóa âm thầm, chọn grain trước, định nghĩa KPI một lần
+- Mô hình chiều đáng dùng vì nhất quán, tốc độ đến từ materialized view và index
+- Hình: không
+- Nói: [nhóm bổ sung bài học làm việc nhóm].
 
 ---
-## PHẦN 7 – Kết luận (4 slide)
+## PHẦN 5 – Mở rộng (file `sections/04-mo-rong.tex`; khung, P9 và P10 điền)
+
+---
+## PHẦN 6 – Tổng kết (file `sections/05-tong-ket.tex`)
 
 ### S111. Kết quả: một kho dữ liệu chạy được từ đầu đến cuối với 136 kiểm thử đạt và bảy dashboard
 - 10 chiều, 6 fact, 17 view mart; 99.441 đơn; GMV 13,49 triệu BRL
 - Hình: `figures/3-3-4_constellation.png`
 - Nói: Tổng kết các con số chính của dự án.
 
-### S112. Bài học: không xóa âm thầm, chọn grain trước, định nghĩa KPI một lần
-- Mô hình chiều đáng dùng vì nhất quán, tốc độ đến từ materialized view và index
-- Hình: không
-- Nói: [nhóm bổ sung bài học làm việc nhóm].
-
 ### S113. Hạn chế và hướng phát triển: trạng thái trung gian của đơn, PostGIS, lịch chạy tự động
 - Mô phỏng cập nhật chỉ thêm bản ghi mới; cơ chế thử lại mồ côi mới được chứng minh bằng test
 - Hình: không
 - Nói: Nhóm nói rõ giới hạn để kết quả đáng tin.
 
+#### 5.1 Data lakehouse (khung, P10 điền)
+- S115. Kiến trúc lakehouse · S116. Triển khai · S117. Kết quả
+
+#### 5.2 Thu thập dữ liệu thực tế từ API (khung, P9 điền)
+- S118. Bài toán · S119. Kiến trúc · S120. Triển khai · S121. Kết quả
+
 ### S114. Cảm ơn và hỏi đáp
 - Thành viên nhóm; liên kết dashboard (Publish to web) [nhóm chèn]
 - Hình: mã QR tới dashboard [nhóm chèn]
 - Nói: Nhóm sẵn sàng trả lời; các slide dự phòng B01–B10 dùng khi cần.
+
+---
+## PHỤ LỤC – slide lý thuyết rút khỏi bài trình bày chính
+- S06–S12 (Kimball và Inmon, mô hình chiều, ba loại fact và SCD, ETL, năm thao tác OLAP, MOLAP/ROLAP/HOLAP, BI): giữ làm slide dự phòng khi được hỏi lý thuyết.
 
 ---
 ## 10 CÂU VẤN ĐÁP DỄ GẶP NHẤT VÀ SLIDE DỰ PHÒNG

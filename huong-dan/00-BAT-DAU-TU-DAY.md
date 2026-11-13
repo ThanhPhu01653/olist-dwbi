@@ -52,7 +52,7 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | 1 | [`handoff/00-TONG-QUAN.md`](../handoff/00-TONG-QUAN.md) | toàn cảnh, 7 phát hiện, **bảng "Mục báo cáo → file nguồn → hình"** | 25 phút |
 | 2 | [`01-pipeline-bang-loi.md`](01-pipeline-bang-loi.md) | hiểu dữ liệu đi qua từng lớp bằng ví dụ thật | 25 phút |
 | 3 | [`02-thuat-ngu.md`](02-thuat-ngu.md) | thuật ngữ thống nhất (dùng đúng khi viết) | 20 phút |
-| 4 | [`05-nghiep-vu-nhap.md`](05-nghiep-vu-nhap.md) | viết mục 3.1, 3.2.1–3.2.2 (nghiệp vụ, BPMN, canvas) – **bản nháp cần sửa** | 20 phút |
+| 4 | [`05-nghiep-vu-nhap.md`](05-nghiep-vu-nhap.md) | viết mục 2.1–2.3 (nghiệp vụ, BPMN, canvas, yêu cầu, KPI) – **bản nháp cần sửa** | 20 phút |
 | 5 | Các file `handoff/2026-11-05-P*.md` theo bảng mục báo cáo: mỗi file có **đoạn nháp tiếng Việt** sẵn | viết từng mục | 10–15 phút mỗi file |
 | 6 | [`dashboards/D1.md` … `D7.md`](dashboards/) mục "Insight gợi ý" | viết mục phân tích dashboard | 5 phút mỗi file |
 | 7 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | kiểm tra bài viết đã trả lời được 40 câu | 30 phút |
@@ -90,9 +90,9 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 ## 3b. Báo cáo LaTeX và kịch bản slide
 | File | Nội dung |
 | --- | --- |
-| [`../report/README.md`](../report/README.md) | **Khung báo cáo LaTeX** (XeLaTeX, 88 trang PDF, đã biên dịch được): mỗi mục một file trong `report/chapters/`, việc còn lại đánh dấu `\todo{}` (khung cam); cách lên Overleaf và cách nhiều người gửi file `.tex` cho một người ghép lại |
-| [`../slides/README.md`](../slides/README.md) | **Bộ slide Beamer (theme HUST, 114 slide nội dung + 10 slide dự phòng, 133 trang PDF)**: cách biên dịch bằng LuaLaTeX, sửa tên nhóm và thành viên, thay ảnh dashboard, đưa lên Overleaf; có bản kèm ghi chú người nói |
-| [`../slides/slide-script.md`](../slides/slide-script.md) | **Kịch bản 114 slide** chia 7 phần (tiêu đề là câu kết luận có số, hình, ghi chú người nói; dùng được cho PowerPoint và Beamer) + 10 câu vấn đáp dễ gặp kèm slide dự phòng |
+| [`../report/README.md`](../report/README.md) | **Khung báo cáo LaTeX** (XeLaTeX, 88 trang PDF, đã biên dịch được): mỗi mục cấp 2 (x.y) một file trong `report/chapters/`, xếp theo barem chấm điểm, việc còn lại đánh dấu `\todo{}` (khung cam); cách lên Overleaf và cách nhiều người gửi file `.tex` cho một người ghép lại |
+| [`../slides/README.md`](../slides/README.md) | **Bộ slide Beamer (theme HUST, xếp theo barem, có slide dự phòng)**: cách biên dịch bằng LuaLaTeX, sửa tên nhóm và thành viên, thay ảnh dashboard, đưa lên Overleaf; có bản kèm ghi chú người nói |
+| [`../slides/slide-script.md`](../slides/slide-script.md) | **Kịch bản slide** chia theo barem (khảo sát, phân tích và thiết kế, dashboard, mở rộng, tổng kết) (tiêu đề là câu kết luận có số, hình, ghi chú người nói; dùng được cho PowerPoint và Beamer) + 10 câu vấn đáp dễ gặp kèm slide dự phòng |
 
 Viết báo cáo: sau bước 1–4 ở lộ trình B, mở `report/README.md` và chọn mục cần viết. Làm slide: dùng `slides/slide-script.md` làm dàn bài và `slides/README.md` để biên dịch và chỉnh bộ Beamer; hình lấy trong `figures/`.
 

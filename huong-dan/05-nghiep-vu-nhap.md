@@ -302,4 +302,4 @@ mindmap
 ## 7. Việc cho nhóm
 - Đọc kỹ mục 1–2 và **sửa cho khớp cách nhóm hiểu nghiệp vụ**; vẽ lại BPMN chuẩn trong draw.io (có thể dùng thư viện hình BPMN sẵn có), giữ nguyên các **điểm thu thập dữ liệu** (📊).
 - Kiểm tra mục 3 (Business Model Canvas): ô doanh thu và đối tác cần nguồn công khai để dẫn chứng; chỉnh lại câu chữ.
-- Dùng mục 4–6 làm cơ sở cho mục báo cáo 3.2.1–3.2.2 và 3.3.5; ghép hình `3-2-*.png`.
+- Dùng mục 4–6 làm cơ sở cho mục báo cáo 2.1–2.3; ghép hình `3-2-*.png`.
