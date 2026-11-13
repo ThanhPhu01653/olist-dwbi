@@ -35,6 +35,7 @@
 | 07/11 | Làm rõ §9: tách `Orders` (đơn có doanh thu, không Failed) và `Orders placed` (mọi đơn); `Late rate` = đơn giao trễ ÷ đơn đã giao, viết `DIVIDE([Late orders], [Delivered orders])` thay cho `1 - [On-time rate]` | Giá trị không đổi, định nghĩa không còn phụ thuộc measure khác |
 | 07/11 | `dim_seller.first_sale_date` chỉ lấy đơn **không thuộc nhóm Failed** (join `dim_order_status`); lý do: đơn bị huỷ / không có sẵn không phải là bán được hàng, khớp định nghĩa GMV. Sửa theo: `fact_lead_funnel.first_sale_date_key`, `has_first_sale`, `days_won_to_first_sale`, `seller_gmv_first_90d` (cửa sổ 90 ngày bắt đầu từ ngày đơn đầu không Failed); `fact_seller_monthly.months_since_first_sale` tính từ tháng của `first_sale_date` (âm ở tháng trước đó chỉ có đơn Failed, NULL nếu seller chưa bán được; cột cho phép NULL), lưới tháng vẫn bắt đầu từ tháng có đơn đầu ở mọi trạng thái để không bỏ sót đơn Failed | Toàn kho: 62 trong 3.095 seller có đơn đổi `first_sale_date` (42 seller chỉ có đơn Failed chuyển thành NULL, 20 seller dời sang ngày muộn hơn); còn 3.053 seller có `first_sale_date`. Seller của funnel: 2 seller đổi (1 seller chỉ có đơn Failed mất `first_sale`; 1 seller dời từ 2018-08-06 sang 2018-08-10). `Sellers with first sale` 380 → 379, `Won to first sale rate` 45,1% → 45,0%, `Avg days won to first sale` 51,8 → 51,9, `Σ seller_gmv_first_90d` 538.271,72 không đổi. Con số 380 / 842 (45,1%) trong EDA vẫn đúng vì EDA đếm seller có đơn ở mọi trạng thái. Sửa test `dim_seller.first_sale_date` và test tháng đầu của `fact_seller_monthly`; test EDA đổi thành "seller của funnel có ít nhất một đơn (mọi trạng thái) = 380" |
 | 08/11 | Mọi procedure nạp dimension (`sql/40_dw/030_dim_procs.sql`) chèn theo `ORDER BY` khoá tự nhiên (geography: zip; customer: `customer_unique_id`, `effective_from`; seller: `seller_id`; product: `product_id`; order_status, payment_type, lead_origin: giá trị tự nhiên; lead_profile: 7 cột thuộc tính; sales_rep: `rep_role`, `rep_id`); lý do: trước đó thứ tự chèn (và vì vậy giá trị khoá thay thế) phụ thuộc kế hoạch truy vấn, riêng `dim_sales_rep` đổi khoá giữa hai lần dựng | Hai lần `rebuild_all.py --drop` liên tiếp cho cùng giá trị khoá ở cả 10 dimension và 6 fact; `compare_databases.py --keys` so cả giá trị khoá (không dùng khi so nạp tăng dần với nạp full vì hai cách nạp cấp khoá theo thứ tự khác nhau) |
+| 13/11 | Bổ sung §5a (hệ thống chiều khái niệm: phân cấp từng chiều, phân nhóm 10 chiều, kiểm tra phân cấp đúng) theo barem chấm điểm | Không đổi schema `dw`; số liệu §5a đếm từ `olist_dw` bằng `scripts/p8_dimensions.py` (báo cáo mục 3.4) |
 | 12/11 | Mốc chốt thiết kế: xem lại các dòng "Chốt 05/11" ở trên; mọi thay đổi sau đó phải cập nhật file này trước rồi mới sửa code | |
 
 ---
@@ -170,6 +171,38 @@ sau mỗi lần chạy pipeline; cả nhóm dựng Power BI ở chế độ Impo
 - Mỗi dim có **dòng Unknown** với key `-1` (chèn bằng `OVERRIDING SYSTEM VALUE`); fact không bao giờ có FK NULL.
 - Cột kỹ thuật: `dw_created_at timestamptz default now()`, `dw_updated_at timestamptz`.
 - Natural key có ràng buộc UNIQUE (với SCD2: UNIQUE trên (natural key, effective_from)).
+
+## 5a. Hệ thống chiều khái niệm
+
+**Phân cấp của từng chiều** (số giá trị phân biệt đếm từ kho, không tính dòng Unknown):
+
+| Chiều | Phân cấp | Số giá trị mỗi cấp |
+| --- | --- | --- |
+| `dim_date` | Năm → Quý → Tháng → Ngày | 5 / 20 / 60 / 1.827 |
+| `dim_geography` | Vùng → Bang → Thành phố (kèm bang) → Mã bưu chính | 5 / 27 / 6.190 / 19.177 |
+| `dim_product` | Nhóm ngành → Danh mục → Sản phẩm | 13 / 74 / 32.951 |
+| `dim_seller` | Vùng → Bang → Thành phố → Seller; Kênh → Origin → Seller | 6 (gồm Unknown) / 23 / 636 / 3.557 |
+| `dim_customer` (SCD2) | Vùng → Bang → Thành phố → Mã bưu chính → Khách thật → Phiên bản | 5 / 27 / 4.310 / 14.994 / 96.096 / 96.338 |
+| `dim_lead_origin` | Nhóm kênh → Origin | xem `handoff/2026-11-14-P8-dimensions.md` |
+| `dim_order_status`, `dim_payment_type`, `dim_sales_rep` | Nhóm → giá trị; Vai trò → nhân viên | xem file trên |
+
+**Quy tắc đúng của phân cấp** (đã kiểm tra bằng đếm, kết quả trong `handoff/2026-11-14-P8-dimensions.md`):
+- Tháng luôn đi kèm năm: dùng `year_month` và `year_quarter` làm cấp; số tháng một mình (12 giá trị) không xác định một nút.
+- Thành phố luôn đi kèm bang: 5.814 tên thành phố nhưng 6.190 cặp (bang, thành phố); 303 tên thành phố xuất hiện ở từ hai bang trở lên, nên không bao giờ gộp theo tên thành phố.
+- Mã bưu chính → thành phố → bang → vùng, sản phẩm → danh mục → nhóm ngành, origin → nhóm kênh đều là quan hệ một nhiều (0 trường hợp vi phạm).
+
+**Phân nhóm 10 chiều** (một chiều có thể thuộc nhiều nhóm):
+
+| Nhóm | Chiều |
+| --- | --- |
+| Chiều dùng chung (conformed: từ 2 fact trở lên dùng chung) | `dim_date` (6 fact), `dim_customer` (4), `dim_seller` (3), `dim_geography` (2), `dim_order_status` (2) |
+| Chiều đóng vai (role-playing) | `dim_date` (11 view đóng vai), `dim_sales_rep` (SDR, SR) |
+| Chiều SCD loại 2 | `dim_customer` |
+| Chiều rác (junk) | `dim_lead_profile` |
+| Danh mục nhỏ (lookup) | `dim_order_status`, `dim_payment_type`, `dim_lead_origin` |
+| Chiều của một quy trình (một fact) | `dim_product` |
+
+---
 
 ## 6. Dimension
 
