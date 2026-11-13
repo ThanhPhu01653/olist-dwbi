@@ -14,14 +14,14 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 ### S01. Xây kho dữ liệu và BI cho 99.441 đơn hàng thương mại điện tử Olist
 - Học phần MI4214 – Kho dữ liệu và Kinh doanh thông minh; nhóm …; giảng viên …
 - Hình: logo trường (chèn) + `figures/3-3-4_constellation.png` (làm nền mờ)
-- Nói: Chúng em xây một kho dữ liệu hoàn chỉnh từ hai bộ dữ liệu Olist: nguồn, ETL, kho hình sao, data mart và bảy dashboard Power BI. Bài trình bày đi từ bài toán đến kết quả và bài học.
+- Nói: Chúng em xây một kho dữ liệu hoàn chỉnh từ hai bộ dữ liệu Olist: nguồn, ETL, kho hình sao, data mart và bốn dashboard Power BI. Bài trình bày đi từ bài toán đến kết quả và bài học.
 
 ### S02. Bài trình bày gồm năm phần theo thứ tự khảo sát, phân tích thiết kế, dashboard, mở rộng và tổng kết
 - 2 Khảo sát · 3 Phân tích và thiết kế · 4 Dashboard và bài học · 5 Mở rộng · 6 Kết luận (mỗi slide hiện mục barem ở góc)
 - Hình: không (danh sách đánh số)
 - Nói: Mỗi phần có số liệu thật từ kho; cuối mỗi phần nhóm nêu điều học được.
 
-### S03. Dự án trong một trang: 1,56 triệu dòng nguồn thành 6 fact, 17 view mart và 7 dashboard
+### S03. Dự án trong một trang: 1,56 triệu dòng nguồn thành 6 fact, 17 view mart và 4 dashboard
 - 2 hệ thống nguồn → staging → ODS → kho (10 chiều + 6 fact) → 4 data mart → Power BI
 - Hình: `figures/3-4-1_pipeline.png`
 - Nói: Toàn bộ dựng lại từ đầu bằng một lệnh trong khoảng 7 phút và cho kết quả giống hệt; 136 phép kiểm thử đạt. Đây là bức tranh để quay lại khi cần.
@@ -121,7 +121,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 ### S28. Trải nghiệm khách: giao trễ là yếu tố kéo điểm review xuống mạnh nhất
 - Điểm 4,29 khi giao sớm, 1,70 khi trễ trên 7 ngày
 - Hình: `figures/3-3-1_delay_vs_review.png`
-- Nói: Đây là phát hiện trung tâm của dashboard D5.
+- Nói: Đây là phát hiện trung tâm của DB2 (trang trải nghiệm khách).
 
 ### S29. Thu hút seller: câu hỏi là kênh nào chuyển đổi tốt và seller từ funnel bán ra sao
 - Tỷ lệ chốt theo kênh từ 2,7% đến 16,7%
@@ -136,16 +136,16 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Nói: Giá trị trong bảng tính bằng SQL và dùng để đối chiếu với Power BI.
 
 ### S31. Mỗi dashboard có một cây phân tích từ mục tiêu đến chỉ số và chiều
-- Bảy cây phân tích D1–D7
-- Hình: `figures/3-2-7_cay_phan_tich_D1.png` … `D7.png` (lưới 7 ô)
-- Nói: Ví dụ D3: mục tiêu giám sát giao hàng, chỉ số on-time, promised vs actual, chiều vùng và nhóm trễ.
+- Bốn cây phân tích DB1–DB4
+- Hình: `figures/2-3_cay_phan_tich_DB1.png` … `DB4.png` (lưới 4 ô)
+- Nói: Ví dụ DB2: mục tiêu giám sát giao hàng và trải nghiệm khách, chỉ số on-time, promised vs actual, chiều vùng và nhóm trễ.
 
 #### 2.4 Dữ liệu nguồn (quy mô, tần suất, luồng dữ liệu)
 
 ### S32. Phạm vi: dữ liệu 01/2017–08/2018 chiếm 99,6% số đơn nên được dùng cho xu hướng
 - 2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn
 - Hình: `figures/3-3-1_orders_per_month.png`
-- Nói: Bộ lọc InWindow trong Power BI cố định cửa sổ này cho D1–D6.
+- Nói: Bộ lọc InWindow trong Power BI cố định cửa sổ này cho DB1–DB4.
 
 ### S33. Hai hệ thống nguồn có 11 bảng, 121 MB và 1.559.764 dòng
 - oltp 9 bảng 1.550.922 dòng; crm 2 bảng 8.842 dòng
@@ -228,7 +228,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - 380 seller tạo 674.005 BRL, 4,99% GMV
 - 380 là số seller có đơn ở mọi trạng thái; kho chỉ tính đơn không bị huỷ nên có 379 seller (45,0%)
 - Hình: `figures/3-3-1_funnel_seller_overlap.png`
-- Nói: Quyết định D6 hiển thị cả nhóm "chốt nhưng chưa bán".
+- Nói: Quyết định DB4 hiển thị cả nhóm "chốt nhưng chưa bán".
 
 ### S48. Sáu quyết định thiết kế đến từ khám phá dữ liệu
 - SCD2 khách (0,26% đổi zip); D6 hai trang; snapshot seller dày đặc; 13 nhóm ngành; zip thiếu toạ độ vẫn có dòng; mốc nạp 2017-12-31
@@ -252,7 +252,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 
 #### 3.2 Kiến trúc
 
-### S49. Kiến trúc sáu lớp từ hai hệ thống nguồn đến bảy dashboard
+### S49. Kiến trúc sáu lớp từ hai hệ thống nguồn đến bốn dashboard
 - oltp/crm → staging → ODS → kho → data mart → Power BI; etl_log giám sát
 - Hình: `docs/diagrams/kien-truc-cac-lop.drawio` (logo PostgreSQL, Python, Power BI, GitHub) [nhóm hoàn thiện]
 - Nói: Mỗi lớp có một việc và một cách kiểm tra riêng.
@@ -336,7 +336,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 
 ### S79. Funnel lấp đầy dần: MQL 2.002 → 8.000, deal 3 → 842, seller có đơn 0 → 379
 - Số liệu mỗi đợt từ `batch_metrics`
-- Hình: biểu đồ đường từ `batch_metrics` (dashboard D7)
+- Hình: biểu đồ đường từ `batch_metrics` (bảng giám sát ở mục 3.3)
 - Nói: Đây là điểm trình bày của nạp tăng dần.
 
 ### S80. Kết quả incremental trùng nạp full: 16/16 bảng khớp số dòng, tổng tiền và nội dung
@@ -356,8 +356,8 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 
 ### S83. Nhật ký `etl_log` cho biết mỗi lô chạy gì, mất bao lâu, loại bao nhiêu dòng
 - `job_run`, `rejected_rows`, `dq_check`, `batch_metrics`
-- Hình: ảnh chụp dashboard D7 [nhóm chèn]
-- Nói: D7 là dashboard giám sát hệ thống.
+- Hình: bảng giám sát ETL (báo cáo mục 3.3)
+- Nói: Giám sát hệ thống nay là bảng ở mục 3.3 (không còn dashboard).
 
 ### S110. Dựng lại toàn bộ dự án từ đầu mất 443 giây và cho kết quả giống hệt
 - Xóa hai database, chạy một lệnh, 16/16 bảng khớp
@@ -466,9 +466,9 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 ---
 ## PHẦN 4 – Dashboard và bài học (file `sections/03-dashboard.tex`)
 
-### S89. Bảy dashboard chia thành bốn loại: thời gian, OLAP, vận hành, thống kê
-- D1 Executive · D2 Sales · D3 Fulfillment · D4 Geography · D5 Customer · D6 Seller · D7 ETL monitor
-- Hình: bảng 7 dashboard (`huong-dan/dashboards/`)
+### S89. Bốn dashboard theo bốn loại: dòng thời gian có dự báo, thống kê, OLAP và vận hành
+- DB1 Tổng quan và doanh thu · DB2 Giao hàng và trải nghiệm khách · DB3 Địa lý và phí vận chuyển · DB4 Thu hút và hiệu quả seller
+- Hình: bảng 4 dashboard (`huong-dan/dashboards/`)
 - Nói: Mỗi dashboard dùng nhiều loại biểu đồ, slicer và định dạng có điều kiện.
 
 ### S90. Mô hình Power BI có 16 bảng và 32 quan hệ, mỗi fact một quan hệ ngày hoạt động
@@ -486,72 +486,72 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Hình: ảnh chụp theme [nhóm chèn]
 - Nói: Cùng một quy ước màu trên mọi dashboard.
 
-### S93. D1 Executive: GMV 13,49 triệu BRL, 98.199 đơn, đúng hạn 93,2%, review 4,09
+### S93. DB1 trang 1: GMV 13,49 triệu BRL, 98.199 đơn, đúng hạn 93,2%, review 4,09
 - Thẻ KPI, đường GMV theo tháng, cột MoM, thanh theo vùng, treemap ngành
-- Hình: ảnh chụp dashboard D1 [nhóm chèn]
+- Hình: ảnh chụp dashboard DB1 [nhóm chèn]
 - Nói: Trang tổng quan cho lãnh đạo.
 
-### S94. D1 cho thấy tháng 11/2017 là đỉnh (1,0 triệu BRL) và Sudeste chiếm 65% GMV
+### S94. DB1 trang 1: tháng 11/2017 là đỉnh 1,0 triệu BRL, Sudeste 65% GMV, có đường dự báo
 - Black Friday 152.654 BRL trong một ngày
-- Hình: ảnh chụp dashboard D1 [nhóm chèn]
+- Hình: ảnh chụp dashboard DB1 [nhóm chèn]
 - Nói: Từ 03/2018 GMV đi ngang nhưng cao hơn cùng kỳ (05/2018 +97%).
 
-### S95. D2 Sales và Product: 18 danh mục tạo 80% GMV; Home & Furniture dẫn đầu 22,8%
+### S95. DB1 trang 2: 18 danh mục tạo 80% GMV; Home & Furniture dẫn đầu 22,8%
 - Treemap, ma trận drill, Pareto, scatter AOV – freight
-- Hình: ảnh chụp dashboard D2 [nhóm chèn]
+- Hình: ảnh chụp dashboard DB1 [nhóm chèn]
 - Nói: Drill từ nhóm ngành xuống danh mục.
 
-### S96. D2 cho thấy phí vận chuyển nặng ở hàng giá thấp và ở vùng xa
+### S96. DB1 trang 2: phí vận chuyển nặng ở hàng giá thấp và ở vùng xa
 - Freight ratio 16,6% toàn sàn
-- Hình: ảnh chụp D2 (scatter) [nhóm chèn]
+- Hình: ảnh chụp DB1 (scatter) [nhóm chèn]
 - Nói: Danh mục nhẹ giá thấp bị phí vận chuyển ăn vào nhiều nhất.
 
-### S97. D3 Order Fulfillment: lead time 12,6 ngày, phễu trạng thái và tỷ lệ trễ theo bang
+### S97. DB2 trang 1: lead time 12,6 ngày, phễu trạng thái và tỷ lệ trễ theo bang
 - Funnel, cột chồng từng chặng, bản đồ trễ
-- Hình: ảnh chụp dashboard D3 [nhóm chèn]
+- Hình: ảnh chụp dashboard DB2 [nhóm chèn]
 - Nói: KPI "hứa so với thực tế" nằm trên đầu trang.
 
-### S98. D3 cho thấy Olist hứa 24,4 ngày nhưng giao 12,6 ngày: sớm hơn lời hứa 11,8 ngày
+### S98. DB2 trang 1: Olist hứa 24,4 ngày, giao 12,6 ngày, sớm hơn lời hứa 11,8 ngày
 - Đúng hạn tụt 87,6% ở Black Friday 11/2017 và 81,0% ở 03/2018
-- Hình: ảnh chụp dashboard D3 [nhóm chèn]
+- Hình: ảnh chụp dashboard DB2 [nhóm chèn]
 - Nói: Tải cao làm giao chậm dù trung bình vẫn "đúng hạn".
 
-### S99. D4 Geography và Freight: Sudeste 65,4% GMV, Norte và Nordeste chịu phí vận chuyển 22%
+### S99. DB3 trang 1: Sudeste 65,4% GMV, Norte và Nordeste chịu phí vận chuyển 22%
 - Bản đồ bong bóng, ma trận phân cấp, GMV khách và seller
-- Hình: ảnh chụp dashboard D4 [nhóm chèn]
+- Hình: ảnh chụp dashboard DB3 [nhóm chèn]
 - Nói: Dùng `v_geo_state` và `v_geo_zip` cho bản đồ.
 
-### S100. D4 cho thấy 36% dòng hàng có seller và khách cùng bang
+### S100. DB3 trang 1: 36% dòng hàng có seller và khách cùng bang; drill-down vùng đến thành phố
 - Khoảng cách TB 598 km
-- Hình: ảnh chụp dashboard D4 [nhóm chèn]
+- Hình: ảnh chụp dashboard DB3 [nhóm chèn]
 - Nói: Mô hình vai trò địa lý seller cho phép so sánh hai phía.
 
-### S101. D5 Customer Experience: điểm review 4,09; 14,7% review tiêu cực; chỉ 3,1% khách quay lại
+### S101. DB2 trang 2: review 4,09, 14,7% tiêu cực, chỉ 3,1% khách quay lại
 - Cột điểm theo nhóm trễ, donut thanh toán, RFM, cohort
-- Hình: ảnh chụp dashboard D5 [nhóm chèn]
+- Hình: ảnh chụp dashboard DB2 [nhóm chèn]
 - Nói: Có sáu phân khúc RFM trên 94.983 khách.
 
-### S102. D5: thẻ tín dụng chiếm 78,3% giá trị thanh toán và trả góp trung bình 3,5 kỳ
+### S102. DB2 trang 2: thẻ tín dụng 78,3% giá trị thanh toán, trả góp trung bình 3,5 kỳ
 - 66,9% giao dịch thẻ trả góp nhiều kỳ
-- Hình: ảnh chụp dashboard D5 (donut) [nhóm chèn]
+- Hình: ảnh chụp dashboard DB2 (donut) [nhóm chèn]
 - Nói: Boleto chiếm 17,9%.
 
-### S103. D6 trang 1: tỷ lệ chốt theo kênh từ 2,7% (other) đến 16,7% (unknown)
+### S103. DB4 trang 1: tỷ lệ chốt theo kênh từ 2,7% (other) đến 16,7% (unknown)
 - Phễu MQL → deal → seller có đơn; thời gian chốt
-- Hình: ảnh chụp dashboard D6 trang 1 [nhóm chèn]
+- Hình: ảnh chụp dashboard DB4 trang 1 [nhóm chèn]
 - Nói: Luôn kèm cỡ mẫu: email chỉ 493 MQL.
 
-### S104. D6 trang 2: seller từ funnel chỉ tạo 4,99% GMV; kênh nhỏ được cảnh báo mẫu nhỏ
+### S104. DB4 trang 2: seller từ funnel chỉ tạo 4,99% GMV; kênh nhỏ được cảnh báo mẫu nhỏ
 - Scorecard seller, GMV/seller theo kênh
-- Hình: ảnh chụp dashboard D6 trang 2 [nhóm chèn]
+- Hình: ảnh chụp dashboard DB4 trang 2 [nhóm chèn]
 - Nói: Email chỉ có 6 seller có đơn nên đánh dấu mẫu nhỏ.
 
-### S105. D7 giám sát ETL: 11 đợt chạy 20–26 giây, 136 test đạt 100%
+### S105. Giám sát ETL: 11 đợt tăng dần 21–28 giây, 136 test đạt 100%, chỉ 42 dòng bị loại
 - Thời gian theo lô, funnel lấp đầy dần, dòng bị loại theo lý do
-- Hình: ảnh chụp dashboard D7 [nhóm chèn]
+- Hình: bảng giám sát ETL (báo cáo mục 3.3)
 - Nói: Dòng bị loại duy nhất là 42 điểm toạ độ.
 
-### S106. Publish to web chia sẻ cả bảy dashboard bằng một liên kết công khai
+### S106. Publish to web chia sẻ cả bốn dashboard bằng một liên kết công khai và mã QR
 - Dữ liệu Olist công khai nên chấp nhận được
 - Hình: ảnh màn hình Publish to web [nhóm chèn]
 - Nói: Nếu tài khoản bị chặn thì dùng PDF xuất từ Power BI.
@@ -567,7 +567,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 ---
 ## PHẦN 6 – Tổng kết (file `sections/05-tong-ket.tex`)
 
-### S111. Kết quả: một kho dữ liệu chạy được từ đầu đến cuối với 136 kiểm thử đạt và bảy dashboard
+### S111. Kết quả: một kho dữ liệu chạy được từ đầu đến cuối với 136 kiểm thử đạt và bốn dashboard
 - 10 chiều, 6 fact, 17 view mart; 99.441 đơn; GMV 13,49 triệu BRL
 - Hình: `figures/3-3-4_constellation.png`
 - Nói: Tổng kết các con số chính của dự án.
@@ -589,7 +589,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Nói: Nhóm sẵn sàng trả lời; các slide dự phòng B01–B10 dùng khi cần.
 
 ---
-## BỔ SUNG P8 – slide cho nội dung mới (S122–S144)
+## BỔ SUNG P8 – slide cho nội dung mới (S122–S149)
 *Các slide này đã có trong các file `sections/` (xem cột file); tiêu đề là câu kết luận có số, hình lấy từ `figures/` (bản nháp, nhóm vẽ lại cùng tên). Khung chương 5 là S115–S121.*
 
 | Slide | Mục barem | Tiêu đề | File |
@@ -615,8 +615,13 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 | S140 | 3.5 · Data model OLAP | Data model logic: sáu quy trình nối với mười dimension và các cấp phân cấp | `02-phan-tich-thiet-ke.tex` |
 | S141 | 3.5 · Data model OLAP | Data model vật lý sinh từ cơ sở dữ liệu: mọi bảng dw với cột, kiểu, PK và FK | `02-phan-tich-thiet-ke.tex` |
 | S142 | 3.5 · Data model OLAP | Bốn data mart, mỗi mart gồm fact, dimension và 3--4 câu hỏi phân tích | `02-phan-tich-thiet-ke.tex` |
-| S143 | 4 · Dashboard và BI | Bảy dashboard theo cùng checklist: số rút gọn, tiêu đề câu hỏi, drill-through, dự báo | `03-dashboard.tex` |
+| S143 | 4 · Dashboard và BI | Checklist chung: dự báo ở DB1, Key Influencers ở DB2, OLAP và drill-through ở DB3, DB4 | `03-dashboard.tex` |
 | S144 | 4 · Dashboard và BI | Bài học chỉ số: GMV 13,49 so với 13,59 triệu, review đúng hạn 4,21 sửa thành 4,29 | `03-dashboard.tex` |
+| S145 | 4 · DB2 Giao hàng và trải nghiệm khách | DB2 trang 3: Key Influencers cho biết yếu tố nào đi kèm review tiêu cực | `03-dashboard.tex` |
+| S146 | 4 · DB3 Địa lý và phí vận chuyển | DB3 trang 2: drill-through từ một bang sang trang chi tiết bang, kèm tooltip theo bang | `03-dashboard.tex` |
+| S147 | 4 · DB4 Thu hút và hiệu quả seller | DB4 trang 3: drill-through sang chi tiết seller cho thấy tháng seller ngừng bán | `03-dashboard.tex` |
+| S148 | 5.1 · Lakehouse | [P10] DB1 trên Superset: cùng số liệu với Power BI, đọc từ tầng Gold của lakehouse | `04-mo-rong.tex` |
+| S149 | 5.2 · Thu thập từ API | [P9] Dashboard D8 Thị trường Brazil dựng từ dữ liệu API thu thập thực tế | `04-mo-rong.tex` |
 ---
 ## PHỤ LỤC – slide lý thuyết rút khỏi bài trình bày chính
 - S06–S12 (Kimball và Inmon, mô hình chiều, ba loại fact và SCD, ETL, năm thao tác OLAP, MOLAP/ROLAP/HOLAP, BI): giữ làm slide dự phòng khi được hỏi lý thuyết.

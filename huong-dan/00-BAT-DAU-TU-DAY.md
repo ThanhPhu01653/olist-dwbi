@@ -5,7 +5,7 @@
 ## 1. Dự án trong 5 dòng
 1. Dữ liệu: 2 bộ Kaggle của Olist (bán hàng 99.441 đơn + marketing 8.000 MQL) → 11 file CSV.
 2. Chúng ta đã xây **kho dữ liệu** PostgreSQL (nguồn → staging → ODS → kho hình sao → data mart), nạp tăng dần 11 đợt, 136 phép kiểm thử đạt.
-3. Kho xuất ra **37 file CSV** (`exports/powerbi/`, chia sẻ qua Google Drive) để dựng **7 dashboard Power BI**.
+3. Kho xuất ra **37 file CSV** (`exports/powerbi/`, chia sẻ qua Google Drive) để dựng **4 dashboard Power BI**.
 4. Việc còn lại của cả nhóm: **dựng dashboard, vẽ lại sơ đồ, viết báo cáo (> 100 trang), làm slide (> 100 trang)**; báo cáo trước lớp tuần 12 (30/11–6/12/2026).
 5. Trang tổng quan đầy đủ: [`handoff/00-TONG-QUAN.md`](../handoff/00-TONG-QUAN.md).
 
@@ -14,7 +14,7 @@ Mọi thư mục và nhóm file của repo, theo thứ tự nên mở. Cột cu�
 
 | Ở đâu | Là gì | Dùng khi nào | Cách đọc |
 | --- | --- | --- | --- |
-| [`huong-dan/`](.) | Bộ hướng dẫn chung: lộ trình (file này), pipeline bằng ví dụ thật, thuật ngữ, từ điển dữ liệu, 47 câu hỏi đáp, nghiệp vụ (nháp), hướng dẫn D1–D7 | Bắt đầu mọi việc; dựng dashboard, viết báo cáo, làm slide | Đọc kỹ `01`, `02`; tra cứu `03`, `04`, `dashboards/` |
+| [`huong-dan/`](.) | Bộ hướng dẫn chung: lộ trình (file này), pipeline bằng ví dụ thật, thuật ngữ, từ điển dữ liệu, 47 câu hỏi đáp, nghiệp vụ (nháp), hướng dẫn DB1–DB4 | Bắt đầu mọi việc; dựng dashboard, viết báo cáo, làm slide | Đọc kỹ `01`, `02`; tra cứu `03`, `04`, `dashboards/` |
 | [`handoff/00-TONG-QUAN.md`](../handoff/00-TONG-QUAN.md) | Trang tổng quan số liệu và phát hiện: các bảng, KPI, 7 phát hiện, bảng "mục báo cáo → file nguồn → hình" | Cần toàn cảnh hoặc tìm file nguồn cho một mục báo cáo | Đọc kỹ |
 | [`handoff/2026-11-05-P*.md`](../handoff/README.md) | Nhật ký kỹ thuật từng phase P0–P7: đã làm gì, số liệu, đoạn nháp báo cáo, gợi ý slide, SQL tiêu biểu | Viết một mục báo cáo hoặc làm slide của phase tương ứng | Tra cứu (đọc kỹ file của phase mình viết) |
 | Bảng số liệu sinh tự động trong `handoff/`: [`profiling`](../handoff/profiling.md), [`data-quality`](../handoff/data-quality.md), [`distributions`](../handoff/distributions.md), [`correlations`](../handoff/correlations.md), [`funnel`](../handoff/funnel.md), [`design-questions`](../handoff/design-questions.md), [`stats`](../handoff/stats.md), [`benchmark`](../handoff/benchmark.md), [`olap-examples`](../handoff/olap-examples.md), [`geo-distance`](../handoff/geo-distance.md), [`before-after-samples`](../handoff/before-after-samples.md), [`rebuild-report`](../handoff/rebuild-report.md), [`excel-toolpak-guide`](../handoff/excel-toolpak-guide.md) | Bảng và số liệu thô do script sinh từ database | Lấy con số, bảng cho báo cáo hoặc slide; đối chiếu số | Tra cứu |
@@ -40,9 +40,9 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | 2 | [`02-thuat-ngu.md`](02-thuat-ngu.md) (lướt mục A, B, E) | hiểu fact, dimension, role-playing, DAX | 15 phút |
 | 3 | [`powerbi/model.md`](../powerbi/model.md) mục 1–7 | **làm theo từng bước**: tham số `DataFolder`, nạp bảng, quan hệ, phân cấp | 40 phút đọc + 1–2 giờ làm |
 | 4 | [`powerbi/measures.md`](../powerbi/measures.md) | copy-paste measure, rồi **đối chiếu bảng giá trị kỳ vọng** ở cuối file | 30 phút đọc + 1 giờ làm |
-| 5 | [`dashboards/D1.md`](dashboards/D1.md) | bố cục, slicer, định dạng có điều kiện, số kỳ vọng của D1 | 15 phút |
-| 6 | Dựng D1, so số với mục 9 của D1.md. **Chỉ khi D1 khớp số mới sang bước 7** | | |
-| 7 | [`dashboards/D2.md`](dashboards/D2.md) … [`D7.md`](dashboards/D7.md) (mỗi dashboard một file) | chia nhau dựng | 10–15 phút mỗi file |
+| 5 | [`dashboards/README.md`](dashboards/README.md) rồi [`dashboards/DB1.md`](dashboards/DB1.md) | checklist chung và ma trận; bố cục, slicer, định dạng có điều kiện, số kỳ vọng của DB1 | 20 phút |
+| 6 | Dựng DB1 (Phú dựng file gốc), so số với mục 9 của DB1.md. **Chỉ khi DB1 khớp số mới sang bước 7** | | |
+| 7 | [`dashboards/DB2.md`](dashboards/DB2.md) … [`DB4.md`](dashboards/DB4.md) (mỗi dashboard một file, một người dựng) | chia nhau dựng | 15 phút mỗi file |
 | 8 | [`03-tu-dien-du-lieu.md`](03-tu-dien-du-lieu.md) | tra cột/bảng khi cần (không cần đọc hết) | tra cứu |
 | 9 | [`powerbi/model.md`](../powerbi/model.md) mục 9 | Publish to web | 10 phút |
 
@@ -54,7 +54,7 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | 3 | [`02-thuat-ngu.md`](02-thuat-ngu.md) | thuật ngữ thống nhất (dùng đúng khi viết) | 20 phút |
 | 4 | [`05-nghiep-vu-nhap.md`](05-nghiep-vu-nhap.md) | viết mục 2.1–2.3 (nghiệp vụ, BPMN, canvas, yêu cầu, KPI) – **bản nháp cần sửa** | 20 phút |
 | 5 | Các file `handoff/2026-11-05-P*.md` theo bảng mục báo cáo: mỗi file có **đoạn nháp tiếng Việt** sẵn | viết từng mục | 10–15 phút mỗi file |
-| 6 | [`dashboards/D1.md` … `D7.md`](dashboards/) mục "Insight gợi ý" | viết mục phân tích dashboard | 5 phút mỗi file |
+| 6 | [`dashboards/DB1.md` … `DB4.md`](dashboards/) mục "Insight gợi ý" | viết mục phân tích dashboard | 5 phút mỗi file |
 | 7 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | kiểm tra bài viết đã trả lời được 47 câu | 30 phút |
 | 8 | [`03-tu-dien-du-lieu.md`](03-tu-dien-du-lieu.md) | bảng mô tả cột cho phụ lục | tra cứu |
 
@@ -63,7 +63,7 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | ---: | --- | --- | ---: |
 | 1 | [`handoff/00-TONG-QUAN.md`](../handoff/00-TONG-QUAN.md) mục 1, 2, 5, 6, 8 | thông điệp chính, KPI, hình | 15 phút |
 | 2 | Mục **"Gợi ý slide"** trong từng `handoff/2026-11-05-P*.md` (P0 → P7) | khung slide từng phần (2–4 slide mỗi phase) | 5 phút mỗi file |
-| 3 | [`dashboards/D1.md` … `D7.md`](dashboards/) mục "Insight gợi ý" | nội dung slide dashboard | 5 phút mỗi file |
+| 3 | [`dashboards/DB1.md` … `DB4.md`](dashboards/) mục "Insight gợi ý" | nội dung slide dashboard | 5 phút mỗi file |
 | 4 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | chuẩn bị trả lời khi bảo vệ | 30 phút |
 | 5 | Thư mục [`figures/`](../figures/) và [`docs/diagrams/`](../docs/diagrams/) | hình có sẵn; sơ đồ cần vẽ lại | 15 phút |
 
@@ -86,9 +86,9 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | 47 câu giảng viên có thể hỏi + trả lời có số liệu |
 | [`05-nghiep-vu-nhap.md`](05-nghiep-vu-nhap.md) | **bản nháp** BPMN, Business Model Canvas, cây nghiệp vụ / yêu cầu / phân tích |
 | [`06-tu-dien-du-lieu-nguon.md`](06-tu-dien-du-lieu-nguon.md) | từ điển 11 bảng nguồn (oltp, crm): kiểu, miền giá trị, % rỗng, vai trò trong kho (P8, sinh tự động) |
-| [`dashboards/README.md`](dashboards/README.md) | checklist chung của dashboard (định dạng số, tiêu đề câu hỏi, drill-through, tooltip, dự báo, QR) và ma trận đáp ứng D1–D7 (P8) |
+| [`dashboards/README.md`](dashboards/README.md) | checklist chung của dashboard (định dạng số, tiêu đề câu hỏi, drill-through, tooltip, dự báo, QR) và ma trận mục checklist × DB1–DB4 |
 | [`../powerbi/power-query-vi-du.md`](../powerbi/power-query-vi-du.md) | ví dụ Power Query (M): cùng một quy tắc làm sạch với SQL và Python, hướng dẫn chụp before/after (P8) |
-| [`dashboards/D1.md` … `D7.md`](dashboards/) | hướng dẫn dựng từng dashboard: mục tiêu, bố cục lưới, slicer, DAX, số kỳ vọng, insight, checklist giảng viên |
+| [`dashboards/DB1.md` … `DB4.md`](dashboards/) | hướng dẫn dựng từng dashboard: câu hỏi, người dùng, bố cục từng trang, drill-down, drill-through, tooltip, DAX, số kỳ vọng, insight, checklist |
 
 ## 3b. Báo cáo LaTeX và kịch bản slide
 | File | Nội dung |
@@ -117,7 +117,7 @@ Ba file trong [`docs/diagrams/`](../docs/diagrams/): `kien-truc-cac-lop.drawio`,
 | --- | --- |
 | `python scripts/gen_trace_examples.py` | khối "đơn hàng thật" và "MQL thật" trong `01-pipeline-bang-loi.md` |
 | `python scripts/gen_data_dictionary.py` | `03-tu-dien-du-lieu.md` |
-| `python scripts/gen_dashboard_docs.py` | `dashboards/D1.md … D7.md` (số kỳ vọng lấy từ `powerbi/measures.md`; chạy `python scripts/gen_powerbi_docs.py` trước nếu dữ liệu đổi) |
+| `python scripts/gen_dashboard_docs.py` | `dashboards/DB1.md … DB4.md` và `dashboards/README.md` (số kỳ vọng lấy từ `powerbi/measures.md`; chạy `python scripts/gen_powerbi_docs.py` trước nếu dữ liệu đổi) |
 | `python scripts/render_mermaid.py` | hình `figures/3-2-*.png` từ các khối Mermaid trong `05-nghiep-vu-nhap.md` (qua dịch vụ mermaid.ink) |
 | `python scripts/gen_bmc.py` | `figures/3-2-3_business_model_canvas.png` |
 | `python scripts/gen_drawio.py` | ba file `docs/diagrams/*.drawio` |
@@ -127,4 +127,4 @@ Ba file trong [`docs/diagrams/`](../docs/diagrams/): `kien-truc-cac-lop.drawio`,
 | `python scripts/make_slides_zip.py` | `slides_overleaf.zip` (gồm theme HUST) để tải lên Overleaf (không commit) |
 
 ## 7. Trạng thái soạn tài liệu
-Đã xong: 00, 01, 02, 03, 04, 05, `dashboards/D1–D7`, ba sơ đồ draw.io, hình `3-2-*`, liên kết trong `README.md` và `handoff/00-TONG-QUAN.md`. Chưa làm: kiểm tra tài liệu bằng cách dựng thật trên Power BI Desktop (chưa ai chạy), nên các bước ở `powerbi/model.md` và bố cục ở `dashboards/*.md` có thể cần chỉnh nhỏ khi dựng lần đầu.
+Đã xong: 00, 01, 02, 03, 04, 05, `dashboards/DB1–DB4`, ba sơ đồ draw.io, hình `3-2-*`, liên kết trong `README.md` và `handoff/00-TONG-QUAN.md`. Chưa làm: kiểm tra tài liệu bằng cách dựng thật trên Power BI Desktop (chưa ai chạy), nên các bước ở `powerbi/model.md` và bố cục ở `dashboards/*.md` có thể cần chỉnh nhỏ khi dựng lần đầu.

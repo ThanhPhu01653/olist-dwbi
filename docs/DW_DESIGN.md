@@ -37,6 +37,7 @@
 | 08/11 | Mọi procedure nạp dimension (`sql/40_dw/030_dim_procs.sql`) chèn theo `ORDER BY` khoá tự nhiên (geography: zip; customer: `customer_unique_id`, `effective_from`; seller: `seller_id`; product: `product_id`; order_status, payment_type, lead_origin: giá trị tự nhiên; lead_profile: 7 cột thuộc tính; sales_rep: `rep_role`, `rep_id`); lý do: trước đó thứ tự chèn (và vì vậy giá trị khoá thay thế) phụ thuộc kế hoạch truy vấn, riêng `dim_sales_rep` đổi khoá giữa hai lần dựng | Hai lần `rebuild_all.py --drop` liên tiếp cho cùng giá trị khoá ở cả 10 dimension và 6 fact; `compare_databases.py --keys` so cả giá trị khoá (không dùng khi so nạp tăng dần với nạp full vì hai cách nạp cấp khoá theo thứ tự khác nhau) |
 | 12/11 | Mốc chốt thiết kế: xem lại các dòng "Chốt 05/11" ở trên; mọi thay đổi sau đó phải cập nhật file này trước rồi mới sửa code | |
 | 13/11 | Bổ sung §5a (hệ thống chiều khái niệm: phân cấp từng chiều, phân nhóm 10 chiều, kiểm tra phân cấp đúng) theo barem chấm điểm | Không đổi schema `dw`; số liệu §5a đếm từ `olist_dw` bằng `scripts/p8_dimensions.py` (báo cáo mục 3.4) |
+| 13/11 | Gộp bộ dashboard từ 7 xuống 4 (DB1–DB4); bỏ dashboard giám sát ETL (D7) khỏi bộ, số liệu thành bảng ở mục 3.3 báo cáo; D8 (API) thuộc chương 5 | Không đổi schema `dw`; thêm vào §10 |
 
 ---
 
@@ -137,9 +138,9 @@ dw       (star schema / constellation: dim_* + fact_*)
 mart_sales · mart_fulfillment · mart_cx · mart_acquisition
         │
         ▼
-Power BI (semantic model + DAX) → 7 dashboard → Publish to web
+Power BI (semantic model + DAX) → 4 dashboard → Publish to web
 
-etl_log: job_run, rejected_rows, watermark  (giám sát → dashboard D7)
+etl_log: job_run, rejected_rows, watermark  (giám sát → bảng ở mục 3.3 báo cáo)
 ```
 
 **Công nghệ:** PostgreSQL 18 (16+ đều chạy được) cài trực tiếp trên máy (không dùng Docker, không PostGIS), extension `unaccent`;
@@ -452,19 +453,16 @@ Lưu ý giai đoạn dữ liệu: đơn 2016 rất thưa và 09–10/2018 gần 
 | Avg days to close | AVG days_to_close (won) |
 | Won → first sale rate | Σ has_first_sale ÷ Σ is_won |
 
-## 10. Dashboard (7)
+## 10. Dashboard (4)
 
-| # | Dashboard | Loại | Nguồn chính |
-| --- | --- | --- | --- |
-| D1 | Executive Overview | Theo thời gian | mart_sales, fact_order_fulfillment |
-| D2 | Sales & Product | Theo thời gian, OLAP | fact_order_item |
-| D3 | Order Fulfillment | Vận hành | fact_order_fulfillment |
-| D4 | Geography & Freight | OLAP | fact_order_item, dim_geography |
-| D5 | Customer Experience | Thống kê | fact_review, fact_payment, mart_cx |
-| D6 | Seller Acquisition & Performance | Vận hành | fact_lead_funnel, fact_seller_monthly |
-| D7 | Data Quality & ETL Monitor | Vận hành hệ thống | etl_log |
+| # | Dashboard | Loại | Gộp từ (bản trước) | Nguồn chính |
+| --- | --- | --- | --- | --- |
+| DB1 | Tổng quan và doanh thu | Theo dòng thời gian, có dự báo | Executive Overview + Sales & Product | fact_order_item, fact_order_fulfillment, fact_review, mart_sales |
+| DB2 | Giao hàng và trải nghiệm khách | Vận hành + thống kê (Key Influencers) | Order Fulfillment + Customer Experience | fact_order_fulfillment, fact_review, fact_payment, mart_cx |
+| DB3 | Địa lý và phí vận chuyển | OLAP; drill-down vùng → bang → thành phố; drill-through; tooltip | Geography & Freight | fact_order_item, dim_geography |
+| DB4 | Thu hút và hiệu quả seller (2 trang + trang chi tiết) | Vận hành; funnel; drill-through | Seller Acquisition & Performance | fact_lead_funnel, fact_seller_monthly |
 
-Cả nhóm dựng một semantic model chung trong một file .pbix và chia nhau các dashboard (phân công làm sau). Phú cung cấp dữ liệu, `powerbi/measures.md` và `powerbi/model.md`.
+Giám sát chất lượng dữ liệu và ETL không còn là dashboard: số liệu của `etl_log` được trình bày thành bảng kết quả nạp và giám sát ở mục 3.3 của báo cáo. Dashboard D8 (thị trường Brazil, dữ liệu API) thuộc chương 5. Mỗi dashboard do một thành viên dựng; Phú làm file `.pbix` gốc, tổng hợp và chỉnh sửa. Phú cung cấp dữ liệu, `powerbi/measures.md` và `powerbi/model.md`.
 
 ## 11. Giám sát ETL (`etl_log`)
 
@@ -480,7 +478,7 @@ Dữ liệu Kaggle là ảnh chụp tĩnh. Để có nội dung "tần suất c�
 1. Nạp ban đầu vào `oltp`/`crm` mọi bản ghi có mốc thời gian ≤ **2017-12-31** (đơn theo `order_purchase_timestamp`, MQL theo `first_contact_date`; bảng tham chiếu nạp đủ). Bảng tham chiếu gồm `products`, `sellers`, `geolocation`, bảng dịch danh mục; **`customers` không phải bảng tham chiếu** – chỉ nạp khách có đơn trong khoảng thời gian, vì `customer_id` sinh theo từng đơn.
 2. Script `simulate_increment --until YYYY-MM-DD` chèn thêm bản ghi của khoảng tiếp theo (mặc định 1 tháng) từ CSV vào `oltp`/`crm`. **Phải chèn `customers` cùng với đơn mới** (khách của các đơn đó), nếu không đơn mới vi phạm FK `orders.customer_id`.
 3. ETL đọc theo watermark → chỉ lấy bản ghi mới; dim cập nhật SCD; fact transaction INSERT, accumulating snapshot UPSERT, periodic snapshot tính lại các tháng bị ảnh hưởng.
-4. Mỗi lần chạy ghi `etl_log` → dashboard D7 hiển thị số bản ghi mới mỗi đợt.
+4. Mỗi lần chạy ghi `etl_log` → bảng giám sát ở mục 3.3 báo cáo cho thấy số bản ghi mới mỗi đợt.
 
 Giới hạn cần nói rõ khi trình bày: bản ghi đơn được chèn với trạng thái cuối cùng trong CSV (không mô phỏng được trạng thái trung gian).
 

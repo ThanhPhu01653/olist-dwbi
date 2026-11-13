@@ -164,7 +164,7 @@ Ngày hứa giao & \texttt{promised\_days} & 24,4 ngày \\
 \begin{itemize}
   \item A1--A6 trên quy trình đơn: đặt hàng và thanh toán, duyệt, bàn giao, giao hàng, đánh giá, hủy
   \item A7--A10 trên quy trình seller: MQL, SDR và SR, chốt deal, đơn đầu tiên; A11: giám sát nạp dữ liệu
-  \item Ví dụ A4 (giao hàng) $\rightarrow$ D3, D4 $\rightarrow$ Avg lead days, On-time rate, Promised vs actual $\rightarrow$ bang, vùng, khoảng cách
+  \item Ví dụ A4 (giao hàng) $\rightarrow$ DB2, DB3 $\rightarrow$ Avg lead days, On-time rate, Promised vs actual $\rightarrow$ bang, vùng, khoảng cách
 \end{itemize}
 
 \note{[S122] Mỗi điểm phân tích truy ngược được từ dashboard về một bước nghiệp vụ cụ thể (bảng trong báo cáo mục 2.1).}
@@ -173,8 +173,8 @@ Ngày hứa giao & \texttt{promised\_days} & 24,4 ngày \\
 \begin{frame}{Mỗi khối Business Model Canvas dẫn tới một câu hỏi quản trị, một chỉ số và một dashboard}
 \muc{2.1 · Nghiệp vụ}
 \begin{itemize}
-  \item Giá trị đề xuất $\rightarrow$ giao đúng hạn và đủ rẻ? $\rightarrow$ On-time rate, Freight ratio 16,6\% $\rightarrow$ D3, D4
-  \item Kênh $\rightarrow$ kênh nào đưa về seller chốt được? $\rightarrow$ MQL to won rate $\rightarrow$ D6
+  \item Giá trị đề xuất $\rightarrow$ giao đúng hạn và đủ rẻ? $\rightarrow$ On-time rate, Freight ratio 16,6\% $\rightarrow$ DB2, DB3
+  \item Kênh $\rightarrow$ kênh nào đưa về seller chốt được? $\rightarrow$ MQL to won rate $\rightarrow$ DB4
   \item Dòng doanh thu và cấu trúc chi phí: dữ liệu chỉ có giá hàng và phí vận chuyển nên dùng GMV và tỷ lệ phí làm chỉ số thay thế
 \end{itemize}
 
@@ -226,7 +226,7 @@ Ngày hứa giao & \texttt{promised\_days} & 24,4 ngày \\
 \begin{center}\anh[0.74\textheight]{3-3-1_delay_vs_review.png}\end{center}
 \end{column}\end{columns}
 
-\note{[S28] Đây là phát hiện trung tâm của dashboard D5.}
+\note{[S28] Đây là phát hiện trung tâm của DB2 (trang trải nghiệm khách).}
 \end{frame}
 
 \begin{frame}{Thu hút seller: câu hỏi là kênh nào chuyển đổi tốt và seller từ funnel bán ra sao}
@@ -257,9 +257,9 @@ Ngày hứa giao & \texttt{promised\_days} & 24,4 ngày \\
 \begin{frame}{Sáu nhóm người dùng, mỗi nhóm có câu hỏi, dashboard và tần suất xem riêng}
 \muc{2.2 · Yêu cầu phân tích}
 \begin{itemize}
-  \item Ban điều hành $\rightarrow$ D1 (hằng tuần, hằng tháng); quản lý kinh doanh $\rightarrow$ D2
-  \item Vận hành và logistics $\rightarrow$ D3, D4 (hằng ngày đến hằng tuần); chăm sóc khách hàng $\rightarrow$ D5
-  \item Quản lý seller và đội sales $\rightarrow$ D6; quản trị dữ liệu $\rightarrow$ D7 (mỗi lần chạy ETL)
+  \item Ban điều hành $\rightarrow$ DB1 (hằng tuần, hằng tháng); quản lý kinh doanh $\rightarrow$ DB1
+  \item Vận hành và logistics $\rightarrow$ DB2, DB3 (hằng ngày đến hằng tuần); chăm sóc khách hàng $\rightarrow$ DB2
+  \item Quản lý seller và đội sales $\rightarrow$ DB4; quản trị dữ liệu dùng bảng giám sát ETL ở mục 3.3 (không còn dashboard)
 \end{itemize}
 
 \note{[S125] Đối tượng sử dụng, câu hỏi, dashboard và tần suất xem.}
@@ -298,14 +298,14 @@ Won to first sale rate & 45,0\% & 45,0\% \\
 \note{[S30] Giá trị trong bảng tính bằng SQL và dùng để đối chiếu với Power BI.}
 \end{frame}
 
-\begin{frame}{Mỗi dashboard có một cây phân tích từ mục tiêu đến chỉ số và chiều}
+\begin{frame}{Bốn dashboard có bốn cây phân tích từ mục tiêu đến chỉ số và chiều}
 \muc{2.3 · KPI}
 \begin{itemize}
-  \item Bảy cây phân tích D1–D7
+  \item Bốn cây phân tích DB1--DB4
 \end{itemize}
-\begin{columns}[c]\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D1.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D2.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D3.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D4.png}\end{column}\end{columns}\vspace{0.3em}\begin{columns}[c]\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D5.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D6.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D7.png}\end{column}\end{columns}
+\begin{columns}[c]\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.4\textheight,keepaspectratio]{2-3_cay_phan_tich_DB1.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.4\textheight,keepaspectratio]{2-3_cay_phan_tich_DB2.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.4\textheight,keepaspectratio]{2-3_cay_phan_tich_DB3.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.4\textheight,keepaspectratio]{2-3_cay_phan_tich_DB4.png}\end{column}\end{columns}
 
-\note{[S31] Ví dụ D3: mục tiêu giám sát giao hàng, chỉ số on-time, promised vs actual, chiều vùng và nhóm trễ.}
+\note{[S31] Ví dụ DB2: mục tiêu giám sát giao hàng và trải nghiệm khách, chỉ số on-time, promised vs actual, review, chiều vùng và nhóm trễ.}
 \end{frame}
 
 \begin{frame}{Năm giới hạn của dữ liệu làm một KPI có hai con số: GMV 13,49 so với 13,59 triệu BRL}
@@ -332,7 +332,7 @@ Won to first sale rate & 45,0\% & 45,0\% \\
 \begin{center}\anh[0.74\textheight]{3-3-1_orders_per_month.png}\end{center}
 \end{column}\end{columns}
 
-\note{[S32] Bộ lọc InWindow trong Power BI cố định cửa sổ này cho D1–D6.}
+\note{[S32] Bộ lọc InWindow trong Power BI cố định cửa sổ này cho DB1–DB4.}
 \end{frame}
 
 \begin{frame}{Hai hệ thống nguồn có 11 bảng, 121 MB và 1.559.764 dòng}

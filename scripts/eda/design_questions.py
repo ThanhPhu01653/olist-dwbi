@@ -1,7 +1,7 @@
 """P1 step 6: numeric answers for the design review (12/11) -> handoff/design-questions.md + docs/category_group_draft.csv.
 
 a) customers with more than one zip  -> SCD2 or SCD1 for dim_customer
-b) funnel sellers with orders + GMV  -> depth of dashboard D6
+b) funnel sellers with orders + GMV  -> depth of dashboard DB4
 c) fact_seller_monthly dense vs sparse -> number of rows
 d) every product category with its orders -> product category group table (draft mapping to approve)
 e) customer / seller zips that are missing from geolocation -> how to build dim_geography
@@ -105,7 +105,7 @@ def q_b() -> tuple[list[str], dict]:
     by["pct_orders"] = 100 * by.with_orders / by.deals
     won_after = int(scalar("SELECT count(*) FROM crm.closed_deals WHERE won_date > '2017-12-31 23:59:59'"))
     lines = [
-        "## b) Bao nhiêu seller từ funnel có đơn hàng, và tổng GMV của họ? (độ sâu dashboard D6)", "",
+        "## b) Bao nhiêu seller từ funnel có đơn hàng, và tổng GMV của họ? (độ sâu dashboard DB4)", "",
         "**Số liệu**", "",
         f"- {n(tot)} deal đã chốt trong CRM; **{n(len(wo))} seller ({pct(100 * len(wo) / tot)}) có đơn hàng** trong hệ thống bán hàng, "
         f"{n(tot - len(wo))} seller ({pct(100 * (tot - len(wo)) / tot)}) không có đơn nào (tất cả đều không có mặt trong `oltp.sellers`).",
@@ -116,10 +116,10 @@ def q_b() -> tuple[list[str], dict]:
                                "% deal có đơn": by.pct_orders.map(lambda v: pct(v, 1)), "GMV (BRL)": by.gmv.map(lambda v: n(v, 0)),
                                "GMV TB / seller có đơn": by.avg.map(lambda v: n(v, 0))}), ["Deal", "Có đơn", "% deal có đơn", "GMV (BRL)", "GMV TB / seller có đơn"]), "",
         "**Phương án**", "",
-        "1. **D6 đầy đủ** (funnel + hiệu suất seller + GMV theo kênh): đủ dữ liệu cho phần funnel (8.000 MQL, 842 deal) nhưng phần hiệu suất / GMV chỉ dựa trên "
+        "1. **DB4 đầy đủ** (funnel + hiệu suất seller + GMV theo kênh): đủ dữ liệu cho phần funnel (8.000 MQL, 842 deal) nhưng phần hiệu suất / GMV chỉ dựa trên "
         f"{n(len(wo))} seller, và theo nhóm kênh có chỗ chỉ vài chục seller.",
-        "2. **D6 vừa phải**: trang 1 funnel MQL → chốt → có đơn đầu tiên theo kênh và tháng; trang 2 seller từ funnel (GMV, tỷ lệ trễ, điểm review, số ngày từ chốt đến đơn đầu) "
-        "với cảnh báo cỡ mẫu.", "3. **D6 chỉ funnel**: bỏ phần hiệu suất. Mất câu hỏi xuyên quy trình mà đề tài muốn trả lời.", "",
+        "2. **DB4 vừa phải**: trang 1 funnel MQL → chốt → có đơn đầu tiên theo kênh và tháng; trang 2 seller từ funnel (GMV, tỷ lệ trễ, điểm review, số ngày từ chốt đến đơn đầu) "
+        "với cảnh báo cỡ mẫu.", "3. **DB4 chỉ funnel**: bỏ phần hiệu suất. Mất câu hỏi xuyên quy trình mà đề tài muốn trả lời.", "",
         f"**Khuyến nghị:** phương án 2. {pct(100 * len(wo) / tot)} deal liên kết được với đơn hàng là đủ để minh hoạ tích hợp hai nguồn "
         f"qua `dim_seller`, nhưng GMV của nhóm này chỉ {pct(100 * wo.gmv.sum() / platform, 2)} GMV toàn sàn nên không nên kết luận mạnh về hiệu suất theo kênh; "
         "nên gộp kênh theo `dim_lead_origin.channel_group` (5 nhóm) và luôn hiển thị số seller. "
@@ -322,14 +322,14 @@ def main() -> None:
     lf, rf = q_f()
     summary = pd.DataFrame({
         "Câu": ["a", "b", "c", "d", "e"],
-        "Câu hỏi": ["Khách có hơn 1 zip → SCD2 hay SCD1", "Seller từ funnel có đơn / GMV → độ sâu D6", "`fact_seller_monthly` dày đặc hay thưa",
+        "Câu hỏi": ["Khách có hơn 1 zip → SCD2 hay SCD1", "Seller từ funnel có đơn / GMV → độ sâu DB4", "`fact_seller_monthly` dày đặc hay thưa",
                     "Danh mục sản phẩm → bảng nhóm ngành hàng", "Zip thiếu trong geolocation → xây `dim_geography`"],
         "Số chính": [f"{n(ra['multi'])} / {n(ra['uniq'])} khách đổi zip ({pct(100 * ra['multi'] / ra['uniq'], 2)}); +{n(ra['changes'])} phiên bản",
                      f"{n(rb['with_orders'])} / {n(rb['deals'])} seller có đơn; GMV {n(rb['gmv'], 0)} BRL ({pct(rb['gmv_share'], 2)} GMV sàn)",
                      f"dày đặc {n(rc['dense'])} dòng, thưa {n(rc['sparse'])} dòng",
                      f"{n(rd['n_cat'])} danh mục → {n(rd['groups'])} nhóm; {n(rd['missing_tr'])} thiếu bản dịch",
                      f"{n(re_['cust_missing'])} zip khách + {n(re_['sell_missing'])} zip seller thiếu; {pct(100 * re_['orders'] / int(scalar('SELECT count(*) FROM oltp.orders')), 2)} đơn bị ảnh hưởng"],
-        "Khuyến nghị": ["Giữ SCD2", "D6 vừa phải (2 trang), gộp kênh, hiển thị cỡ mẫu", "Dày đặc", "12 nhóm đề xuất, nhóm duyệt các mục tranh luận", "Toạ độ NULL (phương án 1)"]})
+        "Khuyến nghị": ["Giữ SCD2", "DB4 vừa phải (2 trang), gộp kênh, hiển thị cỡ mẫu", "Dày đặc", "12 nhóm đề xuất, nhóm duyệt các mục tranh luận", "Toạ độ NULL (phương án 1)"]})
     summary = pd.concat([summary, pd.DataFrame({"Câu": ["f"], "Câu hỏi": ["(Bổ sung) Mốc tách dữ liệu nạp ban đầu"], "Số chính": [f"2017-12-31: {n(rf['o'])} đơn, {n(rf['m'])} MQL, {n(rf['d'])} deal; còn {n(rf['months'])} đợt incremental"],
                                                   "Khuyến nghị": ["Giữ 2017-12-31"]})], ignore_index=True)
     lines = ["# Câu hỏi thiết kế cần chốt ngày 12/11 – trả lời bằng số (olist_full)", "", source_note("design_questions.py"), "",

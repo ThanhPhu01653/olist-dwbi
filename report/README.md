@@ -30,7 +30,7 @@ Các file trong `chapters/` (xếp theo **barem chấm điểm**; mỗi mục c�
 | `3-3-etl` | 3.3 ETL (ODS, môi trường, làm sạch, đối soát, nạp tăng dần) | đoạn nháp + `\todo` |
 | `3-4-chieu-khai-niem` | 3.4 Hệ thống chiều khái niệm (dimension) | đoạn nháp + `\todo` |
 | `3-5-data-model` | 3.5 Data model OLAP (fact, vật lý, data mart, OLAP, hiệu năng) | đoạn nháp + `\todo` |
-| `4-dashboard` | Chương 4: dashboard D1–D7 và bài học | khung + nhận xét gợi ý + `\todo` |
+| `4-dashboard` | Chương 4: bốn dashboard DB1–DB4, thống kê, publish và QR, bài học | khung + nhận xét gợi ý + `\todo` |
 | `5-1-lakehouse`, `5-2-thu-thap-api` | Chương 5: mở rộng (lakehouse; thu thập dữ liệu từ API) | khung `\todo`, do P10 và P9 điền |
 | `06-ket-luan` | Chương 6: kết luận và bài học | nháp + `\todo` |
 | `phu-luc-dax`, `phu-luc-sql` (+ `tables/mapping`) | Phụ lục A (DAX), B (SQL tiêu biểu), C (mapping) | sinh tự động |
@@ -69,7 +69,7 @@ Các đoạn nháp ở Chương 3 là **ảnh chụp tại thời điểm tạo 
 ## 5. Việc cần làm trước khi nộp (checklist)
 - [ ] Điền bìa (giảng viên, lớp/nhóm, thành viên, logo) và xác nhận tên viện.
 - [ ] Viết Chương 1, Chương 2 (khung ý chính có sẵn; trích dẫn trong `refs.bib` đánh dấu \[GỢI Ý\] cần đọc và kiểm tra).
-- [ ] Giải quyết mọi `\todo` (đặc biệt: Business Model Canvas, BPMN, ERD có gạch chân, sơ đồ kiến trúc có logo công nghệ, ảnh chụp dashboard D1–D7, nhận xét dashboard).
+- [ ] Giải quyết mọi `\todo` (đặc biệt: Business Model Canvas, BPMN, ERD có gạch chân, sơ đồ kiến trúc có logo công nghệ, ảnh chụp dashboard DB1–DB4, nhận xét dashboard).
 - [ ] Vẽ lại các hình nháp bằng draw.io (hình nháp tự động trong `figures/`: `3-2-*`, `3-3-4_*`, `3-4-1_pipeline` (giữ nguyên tên file cũ khi vẽ lại)); thay file trong `report/figures/` (giữ nguyên tên file).
 - [ ] Bảng đánh giá thành viên: trưởng nhóm điền điểm (≥ 4 bậc điểm), cả nhóm ký.
 - [ ] Điền bảng "Tự đánh giá báo cáo".

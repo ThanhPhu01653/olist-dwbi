@@ -130,18 +130,18 @@
 \begin{center}\anh[0.74\textheight]{3-3-1_funnel_seller_overlap.png}\end{center}
 \end{column}\end{columns}
 
-\note{[S47] Quyết định D6 hiển thị cả nhóm "chốt nhưng chưa bán".}
+\note{[S47] Quyết định DB4 hiển thị cả nhóm "chốt nhưng chưa bán".}
 \end{frame}
 
 \begin{frame}{Sáu quyết định thiết kế đến từ khám phá dữ liệu}
 \muc{3.1 · Khám phá dữ liệu}
 \begin{itemize}
-  \item SCD2 khách (0,26\% đổi zip); D6 hai trang; snapshot seller dày đặc; 13 nhóm ngành; zip thiếu toạ độ vẫn có dòng; mốc nạp 2017-12-31
+  \item SCD2 khách (0,26\% đổi zip); DB4 hai trang (cộng trang chi tiết); snapshot seller dày đặc; 13 nhóm ngành; zip thiếu toạ độ vẫn có dòng; mốc nạp 2017-12-31
 \end{itemize}
 \begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
 \textbf{Quyết định} & \textbf{Nội dung} & \textbf{Số liệu đi kèm} \\\midrule
 Câu a & \texttt{dim\_customer} dùng SCD2 & chỉ 0,26\% khách đổi zip \\
-Câu b & D6 hai trang & 380/842 deal có đơn \\
+Câu b & DB4 hai trang & 380/842 deal có đơn \\
 Câu c & snapshot seller dày đặc & 36.583 so với 16.441 dòng \\
 Câu d & 13 nhóm ngành hàng & 73 danh mục \\
 Câu e & zip thiếu toạ độ vẫn có dòng & 167 zip, không mất đơn \\
@@ -228,7 +228,7 @@ Câu f & mốc nạp đầu 2017-12-31 & 45.430 đơn, 11 đợt sau \\
 
 \subsection{3.2 Kiến trúc}
 
-\begin{frame}{Kiến trúc sáu lớp từ hai hệ thống nguồn đến bảy dashboard}
+\begin{frame}{Kiến trúc sáu lớp từ hai hệ thống nguồn đến bốn dashboard}
 \muc{3.2 · Kiến trúc}
 \begin{columns}[T]\begin{column}{0.4\textwidth}
 \begin{itemize}
@@ -479,7 +479,7 @@ coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.r
 \begin{itemize}
   \item Số liệu mỗi đợt từ \texttt{batch\_\allowbreak{}metrics}
 \end{itemize}
-\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: biểu đồ đường từ \texttt{batch\_\allowbreak{}metrics} (dashboard D7)}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: biểu đồ đường từ \texttt{batch\_\allowbreak{}metrics} (bảng giám sát ở mục 3.3)}
 
 \note{[S79] Đây là điểm trình bày của nạp tăng dần.}
 \end{frame}
@@ -528,9 +528,9 @@ Thử lại dòng mồ côi (kịch bản) & 3 \\
 \begin{itemize}
   \item \texttt{job\_\allowbreak{}run}, \texttt{rejected\_\allowbreak{}rows}, \texttt{dq\_\allowbreak{}check}, \texttt{batch\_\allowbreak{}metrics}
 \end{itemize}
-\khungchen{CHÈN ẢNH CHỤP D7}
+\khungchen{CHÈN BẢNG: giám sát ETL (báo cáo mục 3.3)}
 
-\note{[S83] D7 là dashboard giám sát hệ thống.}
+\note{[S83] Giám sát hệ thống nay là bảng ở mục 3.3 (không còn dashboard).}
 \end{frame}
 
 \begin{frame}{Dựng lại toàn bộ dự án từ đầu mất 443 giây và cho kết quả giống hệt}
@@ -578,6 +578,18 @@ run\_pipeline --mode incremental (tests + export\_powerbi) & 30.5 & tests: 136/1
 \end{itemize}
 
 \note{[S138] Nhóm cần chạy mã M trong Power BI và chụp ảnh before/after.}
+\end{frame}
+
+\begin{frame}{Giám sát ETL: 11 đợt tăng dần 21--28 giây, 136 test đạt 100\%, chỉ 42 dòng bị loại}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item Dòng bị loại duy nhất là 42 điểm toạ độ ngoài Brazil; không có dòng mồ côi
+  \item Funnel lấp đầy dần: MQL 2.002 $\rightarrow$ 8.000, deal 3 $\rightarrow$ 842, seller có đơn 0 $\rightarrow$ 379
+  \item Bảng số dòng qua từng lớp, dòng bị loại, thời gian và test đạt từng đợt ở báo cáo mục 3.3 (trước đây là một dashboard)
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN BẢNG: các đợt nạp (tables/p8b\_etl\_batches)}
+
+\note{[S105] Số liệu giám sát lấy từ etl_log.}
 \end{frame}
 
 \subsection{3.4 Chiều khái niệm}
@@ -800,10 +812,10 @@ payment\_total & 88,30 \\
 \end{itemize}
 \begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
 \textbf{Mart} & \textbf{Số view} & \textbf{Dashboard} \\\midrule
-mart\_sales & 6 & D1, D2, D4 \\
-mart\_fulfillment & 4 & D3, D4 \\
-mart\_cx & 4 (RFM, cohort materialized) & D5 \\
-mart\_acquisition & 3 (scorecard, theo kênh materialized) & D6 \\
+mart\_sales & 6 & DB1, DB3 \\
+mart\_fulfillment & 4 & DB2, DB3 \\
+mart\_cx & 4 (RFM, cohort materialized) & DB2 \\
+mart\_acquisition & 3 (scorecard, theo kênh materialized) & DB4 \\
 \bottomrule\end{tabular}}\end{center}
 
 \note{[S84] Mart được làm mới tự động ở bước mart của pipeline.}
