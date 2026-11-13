@@ -1,3 +1,4 @@
+\todo{Rút gọn chương này còn khoảng 10 trang (barem không có mục lý thuyết; chỉ giữ phần phục vụ các chương sau).}
 \todo{Chương 1 chỉ có khung: nhóm tự viết văn bản từ các ý chính bên dưới, trích dẫn nguồn đã đọc. Các trích dẫn dưới đây là gợi ý trong refs.bib; kiểm tra lại trang/phiên bản trước khi dùng. Tham chiếu nội dung môn học: giáo trình và slide chương 1, 2, 5, 6.}
 
 \section{Giới thiệu về kho dữ liệu}
@@ -18,7 +19,7 @@
   \item Kiến trúc Kimball: bus matrix, conformed dimension, data mart theo quy trình nghiệp vụ \cite{kimball2013}.
   \item Kiến trúc Inmon: kho dữ liệu doanh nghiệp (3NF) và data mart phụ thuộc \cite{inmon2005}.
   \item Kiến trúc lai, vai trò của staging và ODS; so sánh ưu nhược điểm.
-  \item Các lớp dữ liệu: nguồn, staging, ODS, kho, data mart, BI (liên hệ kiến trúc nhóm chọn ở mục 3.3.2).
+  \item Các lớp dữ liệu: nguồn, staging, ODS, kho, data mart, BI (liên hệ kiến trúc nhóm chọn ở mục ef{sec:kien-truc}).
 \end{itemize}
 
 \section{Mô hình dữ liệu đa chiều}
@@ -41,11 +42,49 @@
 \begin{itemize}
   \item Các thao tác OLAP: roll-up, drill-down, slice, dice, pivot \cite{chaudhuri1997,codd1993}.
   \item \textbf{So sánh MOLAP / ROLAP / HOLAP} (lưu trữ, tốc độ truy vấn, khả năng mở rộng, chi phí xử lý khối, độ tươi của dữ liệu, công cụ điển hình): nhóm lập bảng so sánh và trích nguồn.
-  \item \textbf{Vì sao nhóm chọn ROLAP}: dùng PostgreSQL (không có khối đa chiều như SSAS), dữ liệu cỡ vài trăm nghìn dòng fact nên SQL trên lược đồ sao trả lời trong vòng một giây, kho luôn cập nhật sau mỗi lần nạp tăng dần mà không phải xử lý lại khối, Power BI đóng vai trò lớp ngữ nghĩa; đổi lại cần materialized view cho truy vấn nặng (liên hệ mục 3.4.4 và 3.5.1).
+  \item \textbf{Vì sao nhóm chọn ROLAP}: dùng PostgreSQL (không có khối đa chiều như SSAS), dữ liệu cỡ vài trăm nghìn dòng fact nên SQL trên lược đồ sao trả lời trong vòng một giây, kho luôn cập nhật sau mỗi lần nạp tăng dần mà không phải xử lý lại khối, Power BI đóng vai trò lớp ngữ nghĩa; đổi lại cần materialized view cho truy vấn nặng (liên hệ mục ef{sec:data-model}).
 \end{itemize}
 
 \section{Data mart và kho dữ liệu trong kinh doanh}
 \begin{itemize}
   \item Khái niệm data mart, độc lập và phụ thuộc; tổng hợp sẵn bằng view / materialized view.
   \item Ứng dụng kho dữ liệu trong bán lẻ, thương mại điện tử, quản lý đơn hàng (giáo trình chương 7).
+\end{itemize}
+
+\todo{Chương 2 chỉ có khung: nhóm tự viết văn bản từ các ý chính bên dưới và trích nguồn đã đọc; các mục tương ứng nội dung môn học (chương 6, 8).}
+
+\section{Tổng quan về kinh doanh thông minh}
+\begin{itemize}
+  \item Khái niệm BI, vòng đời từ dữ liệu đến quyết định; BI và DW bổ trợ nhau \cite{kimball2013}.
+  \item Các cấp phân tích: mô tả, chẩn đoán, dự đoán, đề xuất; phạm vi bài tập (mô tả và chẩn đoán).
+\end{itemize}
+
+\section{Kiến trúc và công cụ BI}
+\begin{itemize}
+  \item Các thành phần: nguồn dữ liệu, kho / data mart, mô hình ngữ nghĩa, báo cáo và dashboard, phân phối.
+  \item So sánh các công cụ phổ biến (Power BI, Tableau, Qlik) và lý do chọn Power BI \cite{powerbi_docs}.
+  \item Chế độ Import so với DirectQuery; Publish to web và các lưu ý về chia sẻ dữ liệu.
+\end{itemize}
+
+\section{KPI và đo lường hiệu quả}
+\begin{itemize}
+  \item KPI, chỉ số dẫn dắt và chỉ số kết quả; tiêu chí SMART; cây KPI.
+  \item Liên hệ KPI của bài toán: GMV, AOV, tỷ lệ giao đúng hạn, điểm review, tỷ lệ chuyển đổi MQL sang seller (mục ef{sec:kpi}).
+\end{itemize}
+
+\section{Trực quan hóa dữ liệu và thiết kế dashboard}
+\begin{itemize}
+  \item Nguyên tắc chọn biểu đồ theo mục đích (so sánh, xu hướng, cấu thành, phân bố, quan hệ, bản đồ).
+  \item Nguyên tắc bố cục, màu sắc, định dạng có điều kiện, slicer và drill-down; các loại dashboard (theo thời gian, OLAP, vận hành, thống kê).
+\end{itemize}
+
+\section{Mô hình ngữ nghĩa và ngôn ngữ DAX}
+\begin{itemize}
+  \item Bảng, quan hệ, cardinality, role-playing date và \code{USERELATIONSHIP}; ngữ cảnh bộ lọc và ngữ cảnh hàng \cite{dax_docs}.
+  \item Measure so với cột tính toán; time intelligence (MoM, YoY).
+\end{itemize}
+
+\section{Xu hướng}
+\begin{itemize}
+  \item BI tự phục vụ, BI nhúng, tích hợp AI; dữ liệu lớn (giáo trình chương 8).
 \end{itemize}

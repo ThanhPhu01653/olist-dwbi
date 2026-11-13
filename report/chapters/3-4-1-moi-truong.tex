@@ -1,4 +1,0 @@
-\subsection{Môi trường và mã nguồn}
-Hệ thống chạy trên PostgreSQL 18 (cài trực tiếp, không dùng Docker và không dùng PostGIS), Python 3.11 (pandas, SQLAlchemy, psycopg2) cho điều phối và nạp dữ liệu, SQL procedure (PL/pgSQL) cho biến đổi, Power BI Desktop cho dashboard và Git/GitHub để quản lý mã nguồn (nhánh theo từng phase, nhánh \code{main} luôn chạy được). Cấu trúc thư mục: \code{sql/} (DDL, procedure, view, kiểm thử), \code{etl/} (gói Python), \code{scripts/} (xuất dữ liệu, báo cáo), \code{powerbi/} (đặc tả mô hình và DAX), \code{handoff/} và \code{huong-dan/} (tài liệu). Toàn bộ dự án dựng lại từ đầu bằng một lệnh \code{python scripts/rebuild\_all.py --drop} và cho kết quả giống hệt lần trước (Bảng \ref{tab:rebuild}).
-\input{tables/rebuild}
-\todo{Thêm bảng công nghệ (logo, phiên bản, vai trò), hình cấu trúc thư mục repo, và hướng dẫn cài đặt rút gọn (README.md). Nêu quy ước đặt tên và quy trình làm việc nhóm với Git.}

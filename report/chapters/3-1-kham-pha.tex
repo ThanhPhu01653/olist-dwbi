@@ -1,3 +1,5 @@
+\section{Khám phá dữ liệu}\label{sec:kham-pha}
+
 \subsection{Khám phá dữ liệu}
 Trước khi thiết kế kho dữ liệu, nhóm khám phá toàn bộ 11 bảng nguồn với 1.559.764 dòng. Dữ liệu đơn hàng trải từ tháng 9/2016 đến tháng 10/2018, nhưng 99,6\% đơn tập trung trong giai đoạn 01/2017–08/2018; năm 2016 chỉ có 329 đơn và hai tháng cuối chỉ có 20 đơn, nên các phân tích xu hướng giới hạn ở giai đoạn này. Về chất lượng, nhóm thực hiện 58 phép kiểm tra và phát hiện 45 loại bất thường có ít nhất một dòng bị ảnh hưởng. Bảng toạ độ địa lý có 1.000.163 dòng nhưng chỉ 19.015 mã bưu chính; 93,5\% mã có nhiều toạ độ khác nhau và 26,2\% dòng trùng hoàn toàn nên phải gom về một điểm cho mỗi mã. Ở bảng đơn hàng, 1.359 đơn (1,4\%) có thời điểm bàn giao vận chuyển sớm hơn thời điểm duyệt, và 8 đơn "đã giao" không có ngày giao. Mã bưu chính trong bản dữ liệu này đã đủ 5 chữ số, không mất số 0 đầu. Về phân phối, giá sản phẩm lệch phải rõ rệt (trung vị 74,99 BRL so với trung bình 120,65 BRL); 18 trong 74 nhóm danh mục (24,3\%) tạo ra 80\% tổng GMV 13,49 triệu BRL, và 540 trong 3.053 seller (17,7\%) tạo ra 80\% GMV. Thời gian giao hàng có trung vị 10,2 ngày, và 91,9\% đơn được giao sớm hơn ngày dự kiến, trong khi 6,8\% giao trễ. Giao trễ ảnh hưởng mạnh đến trải nghiệm: điểm đánh giá trung bình giảm từ 4,29 với đơn giao sớm xuống 1,70 với đơn trễ hơn 7 ngày. Trễ hạn tập trung ở miền Bắc và Đông Bắc: thời gian giao trung vị của vùng Norte là 20,2 ngày so với 8,7 ngày của Sudeste. Với dữ liệu Marketing Funnel, 8.000 khách tiềm năng được chốt thành 842 seller (10,5\%), nhưng chỉ 380 seller (45,1\%) xuất hiện trong hệ thống bán hàng, đóng góp 4,99\% GMV; vì vậy việc nối hai hệ thống qua \code{seller\_\allowbreak{}id} chỉ cho phép phân tích hiệu suất trên một phần nhỏ doanh thu.
 
@@ -16,3 +18,20 @@ Trước khi thiết kế kho dữ liệu, nhóm khám phá toàn bộ 11 bảng
 \input{tables/review_delay}
 \input{tables/funnel_channel}
 \todo{Chọn các hình cần đưa vào thân báo cáo (các hình còn lại chuyển sang phụ lục); thêm hình \texttt{3-3-1\_funnel\_*} khác nếu cần. Bổ sung kết quả Excel Data Analysis ToolPak (thống kê mô tả, tương quan) theo hướng dẫn handoff/excel-toolpak-guide.md.}
+
+\subsection{Cơ sở dữ liệu địa lý}
+Dự án không dùng PostGIS nên khoảng cách giữa seller và khách được tính bằng công thức haversine viết thành hàm SQL trên hai cột vĩ độ và kinh độ của mã bưu chính (lấy trung vị các điểm hợp lệ của từng mã). Với 112.650 dòng hàng, 555 dòng (0,49\%) không tính được khoảng cách vì thiếu toạ độ và được giữ lại với giá trị trống thay vì bị loại âm thầm. Khoảng cách trung bình là 598 km và 36\% dòng hàng có seller và khách cùng bang. Khi khoảng cách tăng từ dưới 100 km lên trên 1.000 km, phí vận chuyển trung bình tăng từ 11,75 lên 31,65 BRL (từ 24\% lên 43\% giá hàng), lead time từ 6,5 lên 19,0 ngày và tỷ lệ giao trễ từ 4,5\% lên 10,3\%; tương quan Spearman giữa khoảng cách với phí vận chuyển là 0,63 và với lead time là 0,54. So với PostGIS, haversine thuần không cần cài thêm nhưng không có chỉ mục không gian GiST nên không phù hợp với các truy vấn bán kính hoặc láng giềng gần nhất trên dữ liệu lớn.
+
+\input{tables/distance}
+\hinh{3-5-2_distance_vs_freight.png}{Khoảng cách seller -- khách và phí vận chuyển}{fig:dist-freight}{1.0}
+\hinh{3-5-2_distance_vs_leadtime.png}{Khoảng cách seller -- khách, lead time và tỷ lệ trễ}{fig:dist-lead}{1.0}
+\begin{table}[htbp]\centering\small\caption{So sánh haversine bằng SQL thuần và PostGIS}\label{tab:haversine-postgis}
+\begin{tabular}{p{2.6cm}p{6cm}p{6cm}}\toprule
+ & \textbf{Haversine SQL thuần} & \textbf{PostGIS}\\\midrule
+Dữ liệu & hai cột vĩ độ, kinh độ kiểu số thực & kiểu \code{geometry} hoặc \code{geography}\\
+Khoảng cách & công thức cầu, sai số tối đa khoảng 0,5\% & có tính trên ellipsoid chính xác hơn\\
+Chỉ mục & chỉ B-tree, không hỗ trợ truy vấn bán kính hay láng giềng gần nhất & chỉ mục không gian GiST (cây R)\\
+Phép toán & khoảng cách điểm--điểm & đa giác, giao cắt, diện tích, hệ toạ độ\\
+Chi phí & không cần cài thêm & cần cài extension\\\bottomrule
+\end{tabular}\end{table}
+\todo{Nhóm bổ sung phần lý thuyết cơ sở dữ liệu địa lý (mô hình vector/raster, kiểu dữ liệu không gian, chỉ mục không gian) từ tài liệu PostGIS \cite{postgis_docs} và công thức haversine \cite{sinnott1984}; thêm bản đồ bong bóng từ dashboard D4 khi dựng xong. Hàm dw.haversine\_km: Phụ lục B.}

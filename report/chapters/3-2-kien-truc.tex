@@ -1,5 +1,5 @@
-\subsection{Kiến trúc kho dữ liệu}
+\section{Kiến trúc kho dữ liệu}\label{sec:kien-truc}
 Kiến trúc gồm sáu lớp (Hình \ref{fig:pipeline}): hai hệ thống nguồn, staging, ODS, kho dữ liệu hình sao, các data mart theo chủ đề và Power BI; lớp giám sát \code{etl\_log} ghi lại mỗi lần chạy, dòng bị loại và kết quả kiểm thử. Python điều phối pipeline, mọi biến đổi chính viết bằng SQL procedure trên PostgreSQL. Vai trò từng lớp: staging giữ bản sao thô để nạp tăng dần và đối soát; ODS làm sạch và chuẩn hóa mà không xóa dữ liệu; kho tổ chức theo mô hình chiều với khóa thay thế và SCD; data mart tổng hợp sẵn cho từng nhóm dashboard.
 \hinh{3-4-1_pipeline.png}{Kiến trúc các lớp và pipeline ETL (bản nháp tự động)}{fig:pipeline}{1.0}
-Số bảng và số dòng của từng lớp ở trạng thái cuối được thống kê ở Bảng \ref{tab:layers} (mục 3.2.3).
+Số bảng và số dòng của từng lớp ở trạng thái cuối được thống kê ở Bảng \ref{tab:layers} (mục ef{sec:du-lieu-nguon}).
 \todo{Yêu cầu của môn: sơ đồ kiến trúc \textbf{có logo công nghệ ở mỗi phần} (PostgreSQL, Python, Power BI, GitHub...), nêu các hoạt động ETL, dimension, fact và tên các dashboard. Vẽ lại bằng draw.io từ các file docs/diagrams/kien-truc-cac-lop.drawio và pipeline-etl.drawio, xuất PNG vào report/figures/.}
