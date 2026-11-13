@@ -119,3 +119,4 @@ if __name__ == "__main__":
     import drawio_p8
 
     drawio_p8.all_p8()
+    drawio_p8.all_p8_erd()

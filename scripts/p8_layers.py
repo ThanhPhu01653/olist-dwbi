@@ -59,7 +59,8 @@ df = pd.DataFrame(ROWS, columns=["Lớp", "Thành phần", "Công nghệ", "Số
 def tex(df: pd.DataFrame, caption: str, label: str, widths: list[str]) -> str:
     head = " & ".join("\\textbf{%s}" % c for c in df.columns) + "\\\\\\midrule"
     body = "\n".join(" & ".join(map(str, r)) + "\\\\" for r in df.itertuples(index=False))
-    cols = "".join("p{%s}" % w for w in widths)
+    ws = [float(w.replace("cm", "")) for w in widths]
+    cols = "".join("p{%.2fcm}" % (x * (15.7 - 0.42 * len(ws)) / sum(ws)) for x in ws)
     return f"\\begin{{table}}[htbp]\\centering\\scriptsize\\caption{{{caption}}}\\label{{{label}}}\n\\begin{{tabular}}{{{cols}}}\\toprule\n{head}\n{body}\n\\bottomrule\\end{{tabular}}\\end{{table}}\n"
 
 

@@ -1,5 +1,5 @@
 \begin{table}[htbp]\centering\scriptsize\caption{Luồng dữ liệu đề xuất: lớp, thành phần, công nghệ, tần suất và ghi chú}\label{tab:p8-dataflow}
-\begin{tabular}{p{1.6cm}p{3.6cm}p{3.6cm}p{3.2cm}p{3.2cm}}\toprule
+\begin{tabular}{p{1.43cm}p{3.22cm}p{3.22cm}p{2.86cm}p{2.86cm}}\toprule
 \textbf{Lớp} & \textbf{Thành phần} & \textbf{Công nghệ} & \textbf{Tần suất} & \textbf{Ghi chú}\\\midrule
 Nguồn & oltp (9 bảng), crm (2 bảng) & PostgreSQL 18; nạp từ 11 file CSV bằng Python (COPY) & mô phỏng cập nhật theo tháng (ban đầu đến 31/12/2017, rồi 11 đợt) & hai hệ thống độc lập, chỉ gặp nhau qua seller\_id\\
 Staging & stg\_* (bản sao thô) & PostgreSQL; extract bằng Python + SQL & mỗi lần chạy pipeline (full hoặc incremental) & thêm mã lô nạp và thời điểm nạp để truy vết\\

@@ -36,3 +36,12 @@ Bàn giao vận chuyển & \code{order\_delivered\_carrier\_date} & \code{handli
 Giao khách & \code{order\_delivered\_customer\_date} & \code{transit\_days}, \code{lead\_days}, \code{delay\_days} & vận chuyển, đúng hạn\\
 Đánh giá & \code{review\_score} & \code{fact\_review} & điểm trung bình, ảnh hưởng của trễ\\\bottomrule
 \end{tabular}\end{table}
+
+\subsection{Điểm phân tích trên quy trình}\label{sec:diem-phan-tich}
+Trên hai quy trình (Hình \ref{fig:bpmn-don} và \ref{fig:bpmn-seller}), nhóm đánh dấu 11 điểm phân tích mã A1 đến A11. Mỗi điểm gắn một bước của quy trình với dashboard, KPI và khía cạnh phân tích sẽ dùng (Bảng \ref{tab:diem-phan-tich}); nhờ vậy dashboard nào cũng truy ngược được về một bước nghiệp vụ cụ thể.
+\input{tables/p8_analysis_points}
+
+\subsection{Business Model Canvas và câu hỏi quản trị}\label{sec:bmc-cau-hoi}
+Từ mỗi khối của Business Model Canvas (Hình \ref{fig:bmc}), nhóm rút ra một câu hỏi quản trị, chỉ số trả lời câu hỏi đó và dashboard hiển thị chỉ số (Bảng \ref{tab:bmc-cau-hoi}). Dữ liệu chỉ có giá hàng và phí vận chuyển nên hai ô \emph{dòng doanh thu} và \emph{cấu trúc chi phí} dùng GMV và tỷ lệ phí vận chuyển làm chỉ số thay thế; chi phí marketing và doanh thu thực của Olist không có trong dữ liệu.
+\input{tables/p8_bmc_questions}
+\todo{Nhóm kiểm tra các câu hỏi quản trị theo cách hiểu nghiệp vụ của nhóm; nguồn nháp: huong-dan/05-nghiep-vu-nhap.md mục 8, 9.}

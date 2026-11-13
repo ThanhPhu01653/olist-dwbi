@@ -10,3 +10,7 @@ Mỗi dashboard có một cây phân tích đi từ mục tiêu đến câu hỏ
 \hinh{3-2-7_cay_phan_tich_D6.png}{Cây phân tích dashboard D6 -- Seller Acquisition}{fig:cay-d6}{0.75}
 \hinh{3-2-7_cay_phan_tich_D7.png}{Cây phân tích dashboard D7 -- Data Quality và ETL Monitor}{fig:cay-d7}{0.75}
 \todo{Nhóm vẽ lại các cây phân tích bằng draw.io nếu muốn thống nhất kiểu trình bày; thêm bảng KPI đầy đủ theo định nghĩa trong docs/DW\_DESIGN.md mục 9 (công thức, nguồn, đơn vị).}
+
+\subsection{Giới hạn của dữ liệu ảnh hưởng tới KPI}\label{sec:gioi-han}
+Một số đặc điểm của dữ liệu làm cùng một khái niệm có thể cho hai con số khác nhau; Bảng \ref{tab:gioi-han} nêu từng trường hợp, số liệu đo được và cách dashboard xử lý. Điểm chung là chọn một định nghĩa, ghi rõ định nghĩa cạnh con số, và sửa sai lệch ở tầng ETL hoặc kho chứ không sửa ở lớp BI.
+\input{tables/p8_data_limits}

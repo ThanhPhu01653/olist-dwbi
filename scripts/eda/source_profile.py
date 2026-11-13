@@ -197,7 +197,8 @@ def tex_table(df: pd.DataFrame, caption: str, label: str, widths: list[str], cod
     for r in df.itertuples(index=False):
         cells = [("\\code{%s}" % esc(v)) if i in code_cols else esc(v) for i, v in enumerate(r)]
         body.append(" & ".join(cells) + "\\\\")
-    cols = "".join("p{%s}" % w for w in widths)
+    ws = [float(w.replace("cm", "")) for w in widths]
+    cols = "".join("p{%.2fcm}" % (x * (15.7 - 0.42 * len(ws)) / sum(ws)) for x in ws)
     return ("\\begin{table}[htbp]\\centering\\scriptsize\\caption{%s}\\label{%s}\n\\begin{tabular}{%s}\\toprule\n%s\n%s\n\\bottomrule\\end{tabular}\\end{table}\n"
             % (caption, label, cols, head, "\n".join(body)))
 

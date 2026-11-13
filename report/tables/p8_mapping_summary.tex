@@ -1,0 +1,17 @@
+\begin{table}[htbp]\centering\scriptsize\caption{Tổng hợp mapping OLTP sang OLAP theo bảng nguồn}\label{tab:mapping-tong-hop}
+\begin{tabular}{p{2.68cm}p{0.89cm}p{1.25cm}p{4.47cm}p{4.29cm}}\toprule
+\textbf{Bảng nguồn} & \textbf{Số cột} & \textbf{Cột dùng sang OLAP} & \textbf{Bảng đích (dim, fact)} & \textbf{Ví dụ phép biến đổi}\\\midrule
+oltp.customers & 5 & 5 & dim\_customer, dim\_geography, fact\_order\_fulfillment, fact\_order\_item, fact\_payment, fact\_review & customer\_zip\_code\_prefix $\rightarrow$ zip\_code\_prefix: Chuẩn hoá char(5): bỏ ký tự không phải số, lpad(…,5,'0')\\
+oltp.geolocation & 6 & 5 & dim\_geography & geolocation\_zip\_code\_prefix $\rightarrow$ zip\_code\_prefix: Chuẩn hoá char(5) rồi GROUP BY zip\\
+oltp.order\_items & 7 & 7 & fact\_order\_fulfillment, fact\_order\_item & giữ nguyên giá trị\\
+oltp.order\_payments & 5 & 5 & fact\_order\_fulfillment, fact\_payment & payment\_type $\rightarrow$ payment\_type: lower(trim())\\
+oltp.order\_reviews & 7 & 7 & fact\_review & review\_id $\rightarrow$ review\_id: Khử trùng trên cặp (review\_id, order\_id): giữ bản có review\_answer\_timestamp mới nhất, dòng còn lại ghi etl\_log.rejected\_rows\\
+oltp.orders & 8 & 8 & dim\_customer, fact\_order\_fulfillment, fact\_order\_item, fact\_payment, fact\_review & order\_status $\rightarrow$ order\_status: lower(trim())\\
+oltp.product\_category\_name\_translation & 2 & 2 & dim\_product & giữ nguyên giá trị\\
+oltp.products & 9 & 6 & dim\_product & product\_category\_name $\rightarrow$ product\_category\_name: trim; rỗng/NULL $\rightarrow$ 'unknown'\\
+oltp.sellers & 4 & 4 & dim\_geography, dim\_seller & seller\_zip\_code\_prefix $\rightarrow$ zip\_code\_prefix: Chuẩn hoá char(5): bỏ ký tự không phải số, lpad(…,5,'0')\\
+crm.closed\_deals & 14 & 8 & dim\_lead\_profile, dim\_sales\_rep, dim\_seller, fact\_lead\_funnel & business\_segment $\rightarrow$ business\_segment: trim; NULL/rỗng $\rightarrow$ 'unknown'\\
+crm.mql & 4 & 4 & dim\_seller, fact\_lead\_funnel & origin $\rightarrow$ origin: lower(trim()); NULL/rỗng $\rightarrow$ 'unknown'\\
+\midrule
+\textbf{Tổng} & 71 & 61 & & \\
+\bottomrule\end{tabular}\end{table}

@@ -1,0 +1,12 @@
+\begin{table}[htbp]\centering\scriptsize\caption{Hiện trạng và yêu cầu cải tiến}\label{tab:hien-trang}
+\begin{tabular}{p{6.08cm}p{6.65cm}p{1.71cm}}\toprule
+\textbf{Hiện trạng} & \textbf{Yêu cầu cải tiến} & \textbf{Mục báo cáo}\\\midrule
+Hai hệ thống nguồn (bán hàng, CRM) tách rời, chỉ gặp nhau qua seller\_id & Tích hợp bằng chiều dùng chung dim\_seller để hỏi được seller đến từ kênh nào thì bán tốt & 2.4, 3.4\\
+Báo cáo phải nối nhiều bảng chuẩn hóa của hệ thống giao dịch & Mô hình chiều (fact và dimension) và data mart tổng hợp sẵn cho từng chủ điểm & 3.5\\
+Trạng thái đơn chỉ là giá trị hiện tại, không có lịch sử các mốc & Bảng fact snapshot tích luỹ ghi 5 mốc thời gian và thời gian từng chặng & 3.5\\
+Địa chỉ khách chỉ giữ bản mới nhất & SCD loại 2 cho dim\_customer để gắn đơn với địa chỉ tại ngày mua & 3.4\\
+Dữ liệu có nhiều lỗi (45 loại bất thường, 58 phép kiểm tra) & Tầng ODS gắn cờ lỗi và ghi dòng bị loại kèm lý do, không xoá âm thầm & 3.3\\
+Mỗi báo cáo có thể định nghĩa KPI khác nhau (GMV, Orders) & Định nghĩa mỗi KPI một lần bằng DAX và đối chiếu với SQL & 2.3\\
+Ngày dự kiến giao quá rộng (trung bình 24,4 ngày so với thực tế 12,6 ngày) nên chỉ số đúng hạn không phản ánh trải nghiệm & KPI ngày hứa giao so với ngày giao thực tế, phân tích theo mức trễ & 2.3, 3.1\\
+Không có công cụ giám sát chất lượng nạp dữ liệu & Nhật ký etl\_log và dashboard D7 & 3.3, 4\\
+\bottomrule\end{tabular}\end{table}

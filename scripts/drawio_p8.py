@@ -95,3 +95,70 @@ def all_p8() -> None:
     dataflow_current()
     dataflow_proposed()
     oltp_to_olap()
+
+
+# ----------------------------------------------------------------------------- ERD OLTP with columns used in OLAP underlined
+def used_oltp_columns():
+    """oltp/crm (table, column) pairs that reach the warehouse, derived from docs/mapping.csv (source -> ods -> dw)."""
+    import re
+    import pandas as pd
+    from diagram_kit import ROOT
+
+    m = pd.read_csv(ROOT / "docs" / "mapping.csv", encoding="utf-8-sig")
+    a, b = m[m.layer == "nguồn → ods"], m[m.layer == "ods → dw"]
+    ods_to_src = {(r.target_table, r.target_column): (r.source_table, r.source_column) for r in a.itertuples()}
+    used = set()
+    for r in b.itertuples():
+        tabs = re.findall(r"ods\.\w+", str(r.source_table))
+        cols = [c.strip() for c in re.split(r"[,/]", str(r.source_column)) if c.strip()]
+        for t in tabs:
+            for c in cols:
+                if (t, c) in ods_to_src:
+                    used.add(ods_to_src[(t, c)])
+    # join keys used only to look up a surrogate key (mapping.csv lists the dw lookup table, not the source column)
+    used |= {("oltp.order_items", "product_id"), ("oltp.product_category_name_translation", "product_category_name")}
+    return used, a
+
+
+def erd_oltp() -> None:
+    from sqlalchemy import text
+    from etl import config
+    from etl.db import get_engine
+
+    used, a = used_oltp_columns()
+    eng = get_engine(config.DB_NAME_FULL)
+    cols, pks = {}, {}
+    with eng.connect() as c:
+        for sch, t, col in c.execute(text("SELECT table_schema, table_name, column_name FROM information_schema.columns WHERE table_schema IN ('oltp','crm') ORDER BY table_schema, table_name, ordinal_position")):
+            cols.setdefault(f"{sch}.{t}", []).append(col)
+        for sch, t, col in c.execute(text("""SELECT kcu.table_schema, kcu.table_name, kcu.column_name FROM information_schema.table_constraints tc
+            JOIN information_schema.key_column_usage kcu USING (constraint_schema, constraint_name) WHERE tc.constraint_type='PRIMARY KEY' AND kcu.table_schema IN ('oltp','crm')""")):
+            pks.setdefault(f"{sch}.{t}", set()).add(col)
+    d = Diagram("ERD OLTP", 1900, 900)
+    d.label(20, 8, 1850, 34, "ERD hệ thống nguồn (oltp, crm): màu = nhóm dữ liệu; gạch chân = cột được dùng sang OLAP; đậm = khoá chính", font=16)
+    GROUP = {"customers": BLUE, "sellers": BLUE, "products": BLUE, "orders": ORANGE, "order_items": ORANGE, "order_payments": ORANGE,
+             "order_reviews": PINK, "mql": PINK, "closed_deals": PINK, "geolocation": GREEN, "product_category_name_translation": GREEN}
+    POS = {"customers": (40, 80), "orders": (420, 80), "order_items": (800, 80), "products": (1180, 80), "product_category_name_translation": (1540, 80),
+           "order_reviews": (40, 350), "order_payments": (420, 350), "sellers": (800, 350), "closed_deals": (1180, 350), "mql": (1540, 350), "geolocation": (420, 640)}
+    ids, stat = {}, []
+    for t, (x, y) in POS.items():
+        sch = "crm" if t in ("mql", "closed_deals") else "oltp"
+        full = f"{sch}.{t}"
+        n_used = sum((full, c) in used for c in cols[full])
+        stat.append((full, len(cols[full]), n_used))
+        rows = [(c, (full, c) in used, c in pks.get(full, set())) for c in cols[full]]
+        ids[t] = d.entity(x, y, 320 if t == "product_category_name_translation" else 300, full, rows, fill=GROUP[t] + "", header=GROUP[t])
+    rel = [("orders", "customers", "customer_id", False), ("order_items", "orders", "order_id", False), ("order_items", "products", "product_id", False), ("order_items", "sellers", "seller_id", False),
+           ("order_payments", "orders", "order_id", False), ("order_reviews", "orders", "order_id", False), ("closed_deals", "mql", "mql_id", False),
+           ("products", "product_category_name_translation", "", True), ("customers", "geolocation", "zip (logic)", True),
+           ("sellers", "geolocation", "zip (logic)", True), ("closed_deals", "sellers", "", True)]
+    for s_, t_, lab, dashed in rel:
+        d.arrow(ids[s_], ids[t_], lab, dashed=dashed)
+    d.box(1180, 660, 700, 160, "Cách đọc: khung xanh dương = dữ liệu chủ, cam = giao dịch, hồng = tương tác, xanh lá = tham chiếu.\nCột gạch chân là cột nguồn được dùng để tạo cột của dimension hoặc fact (suy ra tự động từ docs/mapping.csv: nguồn sang ODS sang kho).\nĐường nét đứt là quan hệ logic, không có khoá ngoại.", fill=WHITE, shape="rect", font=11, dashed=True)
+    d.save("erd-oltp-tomau.drawio", "2-5_erd_oltp_gach_chan.png")
+    return stat
+
+
+def all_p8_erd() -> None:
+    stat = erd_oltp()
+    print("used columns:", sum(s[2] for s in stat), "of", sum(s[1] for s in stat))

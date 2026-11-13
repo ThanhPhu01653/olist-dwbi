@@ -41,6 +41,14 @@ class Diagram:
                                shape=shape, color=color, align=align, dashed=dashed))
         return self.n
 
+    def entity(self, x, y, w, title, cols, fill=GREY, font=11, header=None) -> int:
+        """ER-style table box. cols = [(text, underlined, bold), ...]; height follows the number of columns."""
+        h = 30 + 17 * len(cols) + 6
+        i = self.box(x, y, w, h, title, fill=fill, font=font, shape="entity")
+        it = self._box(i)
+        it["cols"], it["header"] = cols, header or fill
+        return i
+
     def frame(self, x, y, w, h, title, fill="#FFFBEA", font=13) -> int:
         return self.box(x, y, w, h, title, fill=fill, bold=True, font=font, shape="frame", align="top-left", dashed=True)
 
@@ -60,6 +68,12 @@ class Diagram:
         cells = []
         for it in self.items:
             if it["kind"] == "box":
+                if it["shape"] == "entity":
+                    rows = "<br/>".join(("<b>%s</b>" if b else "%s") % (("<u>%s</u>" if u else "%s") % escape(t)) for t, u, b in it["cols"])
+                    val = escape("<b>%s</b><hr size=\"1\"/>" % escape(it["text"]) + rows)
+                    st = f"rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;fillColor={it['fill']};strokeColor={it['stroke']};fontSize={it['font']};"
+                    cells.append(f'<mxCell id="c{it["id"]}" value="{val}" style="{st}" vertex="1" parent="1"><mxGeometry x="{it["x"]}" y="{it["y"]}" width="{it["w"]}" height="{it["h"]}" as="geometry"/></mxCell>')
+                    continue
                 if it["shape"] == "text":
                     st = "text;html=1;whiteSpace=wrap;verticalAlign=middle;align=left;"
                 elif it["shape"] == "frame":
@@ -98,6 +112,19 @@ class Diagram:
             if it["kind"] != "box":
                 continue
             x, y, w, h = it["x"], it["y"], it["w"], it["h"]
+            if it["shape"] == "entity":
+                ax.add_patch(Rectangle((x, y), w, h, fc="white", ec=it["stroke"], lw=1.2))
+                ax.add_patch(Rectangle((x, y), w, 28, fc=it["header"], ec=it["stroke"], lw=1.2))
+                ax.text(x + w / 2, y + 14, it["text"], ha="center", va="center", fontsize=it["font"] * 0.72 * 1.1, fontweight="bold", family=FONT)
+                rend = fig.canvas.get_renderer()
+                for k, (t, u, b) in enumerate(it["cols"]):
+                    ty = y + 28 + 17 * k + 12
+                    tx = ax.text(x + 8, ty, t, ha="left", va="center", fontsize=it["font"] * 0.72, fontweight="bold" if b else "normal", family=FONT)
+                    if u:
+                        bb = tx.get_window_extent(rend).transformed(ax.transData.inverted())
+                        yy = max(bb.y0, bb.y1)
+                        ax.plot([bb.x0, bb.x1], [yy + 0.5, yy + 0.5], color="black", lw=0.9)
+                continue
             if it["shape"] == "frame":
                 ax.add_patch(Rectangle((x, y), w, h, fc=it["fill"], ec="#9CA3AF", lw=1.2, ls="--"))
             elif it["shape"] == "text":
