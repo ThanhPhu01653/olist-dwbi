@@ -1,4 +1,7 @@
-"""Generate the Beamer sections slides/sections/*.tex from slides/slide-script.md (re-runnable).   python scripts/gen_beamer.py
+"""OBSOLETE AFTER P8 (13/11/2026): the report chapters / slide sections were re-ordered by hand to follow the grading rubric.
+Running this script would overwrite them with the old structure. Do not run.
+
+Generate the Beamer sections slides/sections/*.tex from slides/slide-script.md (re-runnable).   python scripts/gen_beamer.py
 
 Rules: '### Sxx. title' -> one frame (title = the conclusion sentence); bullets -> itemize; figures named in the 'Hình:' line -> copied to slides/figures/
 and placed beside the bullets (1 figure) or below (several); 'report/tables/X.tex' -> the tabular of that table; 'ảnh chụp dashboard Dx' -> a red empty box

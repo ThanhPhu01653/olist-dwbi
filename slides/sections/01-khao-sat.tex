@@ -1,0 +1,496 @@
+\section[Khảo sát]{Khảo sát}
+
+\subsection{2.1 Nghiệp vụ}
+
+\begin{frame}{Olist kết nối người bán nhỏ với các sàn lớn: 3.095 seller bán 99.441 đơn trong 2 năm}
+\muc{2.1 · Nghiệp vụ}
+\begin{itemize}
+  \item Dữ liệu Brazil, 09/2016–10/2018; hai bộ Kaggle
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: ảnh/logo Olist}
+\canxacnhan
+\note{[S13] Nhóm tìm hiểu Olist từ nguồn công khai; .}
+\end{frame}
+
+\begin{frame}{Mô hình kinh doanh hai phía: seller được thu hút, người mua mua qua sàn}
+\muc{2.1 · Nghiệp vụ}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Business Model Canvas 9 ô (bản nháp)
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-2-3_business_model_canvas.png}\end{center}
+\end{column}\end{columns}
+\canxacnhan
+\note{[S14] Ô doanh thu là suy luận, dữ liệu không có doanh thu của Olist.}
+\end{frame}
+
+\begin{frame}{Giá trị đề xuất: một hợp đồng, nhiều sàn; dữ liệu cho thấy phí vận chuyển bằng 16,6\% giá hàng}
+\muc{2.1 · Nghiệp vụ}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Giá trị cho seller và cho người mua; chi phí chính là vận chuyển và hậu cần
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-2-3_business_model_canvas.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S15] GMV 13,49 triệu BRL, phí vận chuyển 2,24 triệu BRL.}
+\end{frame}
+
+\begin{frame}{Bài toán: hiểu hiệu suất đơn hàng và hiệu quả thu hút seller từ hai hệ thống rời nhau}
+\muc{2.1 · Nghiệp vụ}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Hai hệ thống chỉ gặp nhau ở \texttt{seller\_\allowbreak{}id}
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-2-4_erd_oltp.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S16] Giá trị của kho là tích hợp để trả lời câu hỏi xuyên quy trình.}
+\end{frame}
+
+\begin{frame}{Sáu nhóm câu hỏi phân tích bao trùm bán hàng, vận hành, khách hàng và thu hút seller}
+\muc{2.1 · Nghiệp vụ}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Bán hàng $\cdot$ xử lý đơn $\cdot$ thanh toán $\cdot$ trải nghiệm khách $\cdot$ seller $\cdot$ thu hút seller
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-2-6_cay_yeu_cau_phan_tich.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S17] Mỗi nhóm trở thành một hoặc nhiều dashboard.}
+\end{frame}
+
+\begin{frame}{Kho phục vụ hai quy trình nghiệp vụ: xử lý đơn và thu hút seller}
+\muc{2.1 · Nghiệp vụ}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Chung chiều seller và ngày
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-4_constellation.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S18] Chiều seller là "chiếc cầu" nối hai quy trình.}
+\end{frame}
+
+\begin{frame}{Đơn hàng đi qua bốn mốc thời gian và có thể bị hủy hoặc không khả dụng}
+\muc{2.1 · Nghiệp vụ}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Đặt $\rightarrow$ duyệt $\rightarrow$ bàn giao vận chuyển $\rightarrow$ giao $\rightarrow$ đánh giá; 1.234 đơn Failed (1,24\%)
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-2-1_bpmn_don_hang.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S19] BPMN nháp; [nhóm vẽ lại bằng draw.io].}
+\end{frame}
+
+\begin{frame}{Mỗi mốc của quy trình là một cột thời gian mà kho biến thành chỉ số}
+\muc{2.1 · Nghiệp vụ}
+\begin{itemize}
+  \item \texttt{approval\_\allowbreak{}hours} 10,3 giờ $\cdot$ \texttt{handling\_\allowbreak{}days} 2,9 ngày $\cdot$ \texttt{transit\_\allowbreak{}days} 9,3 ngày $\cdot$ \texttt{lead\_\allowbreak{}days} 12,6 ngày
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
+\textbf{Chặng} & \textbf{Chỉ số của kho} & \textbf{Trung bình} \\\midrule
+Mua $\rightarrow$ duyệt & \texttt{approval\_hours} & 10,3 giờ \\
+Duyệt $\rightarrow$ bàn giao & \texttt{handling\_days} & 2,9 ngày \\
+Bàn giao $\rightarrow$ giao & \texttt{transit\_days} & 9,3 ngày \\
+Mua $\rightarrow$ giao & \texttt{lead\_days} & 12,6 ngày \\
+Ngày hứa giao & \texttt{promised\_days} & 24,4 ngày \\
+\bottomrule\end{tabular}}\end{center}
+
+\note{[S20] Chặng vận chuyển dài nhất; chặng seller bàn giao gần 3 ngày.}
+\end{frame}
+
+\begin{frame}{Kho thu thập dữ liệu ở bảy điểm của quy trình đơn hàng}
+\muc{2.1 · Nghiệp vụ}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Ô vàng trên BPMN: đặt, duyệt, bàn giao, giao, đánh giá, hủy, thanh toán
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-2-1_bpmn_don_hang.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S21] Đây là chỗ hệ thống phân tích "bám" vào quy trình.}
+\end{frame}
+
+\begin{frame}{Quy trình thu hút seller đi từ MQL đến seller có đơn, trung bình mất 100 ngày}
+\muc{2.1 · Nghiệp vụ}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Liên hệ $\rightarrow$ chốt (TB 48,5 ngày) $\rightarrow$ đơn đầu (TB 51,9 ngày)
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-2-2_bpmn_thu_hut_seller.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S22] Hai khoảng thời gian này là hai chỉ số của fact lead funnel.}
+\end{frame}
+
+\begin{frame}{Phễu thu hút: 8.000 MQL $\rightarrow$ 842 deal (10,5\%) $\rightarrow$ 379 seller có đơn bán được (45,0\% số deal)}
+\muc{2.1 · Nghiệp vụ}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item 462 deal đã chốt nhưng chưa bán gì
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_funnel_seller_overlap.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S23] Đây là kết quả phân tích, không phải lỗi dữ liệu.}
+\end{frame}
+
+\begin{frame}{Cây nghiệp vụ gom hoạt động của Olist thành năm nhóm}
+\muc{2.1 · Nghiệp vụ}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Thu hút seller $\cdot$ quản lý đơn hàng $\cdot$ chăm sóc khách $\cdot$ quản lý seller $\cdot$ quản trị dữ liệu
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-2-5_cay_nghiep_vu.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S24] Kho chủ yếu phục vụ nhóm quản lý đơn hàng và thu hút seller.}
+\end{frame}
+
+\begin{frame}{Mười một điểm phân tích A1--A11 gắn mỗi bước của quy trình với dashboard và KPI}
+\muc{2.1 · Nghiệp vụ}
+\begin{itemize}
+  \item A1--A6 trên quy trình đơn: đặt hàng và thanh toán, duyệt, bàn giao, giao hàng, đánh giá, hủy
+  \item A7--A10 trên quy trình seller: MQL, SDR và SR, chốt deal, đơn đầu tiên; A11: giám sát nạp dữ liệu
+  \item Ví dụ A4 (giao hàng) $\rightarrow$ D3, D4 $\rightarrow$ Avg lead days, On-time rate, Promised vs actual $\rightarrow$ bang, vùng, khoảng cách
+\end{itemize}
+
+\note{[S122] Mỗi điểm phân tích truy ngược được từ dashboard về một bước nghiệp vụ cụ thể (bảng trong báo cáo mục 2.1).}
+\end{frame}
+
+\begin{frame}{Mỗi khối Business Model Canvas dẫn tới một câu hỏi quản trị, một chỉ số và một dashboard}
+\muc{2.1 · Nghiệp vụ}
+\begin{itemize}
+  \item Giá trị đề xuất $\rightarrow$ giao đúng hạn và đủ rẻ? $\rightarrow$ On-time rate, Freight ratio 16,6\% $\rightarrow$ D3, D4
+  \item Kênh $\rightarrow$ kênh nào đưa về seller chốt được? $\rightarrow$ MQL to won rate $\rightarrow$ D6
+  \item Dòng doanh thu và cấu trúc chi phí: dữ liệu chỉ có giá hàng và phí vận chuyển nên dùng GMV và tỷ lệ phí làm chỉ số thay thế
+\end{itemize}
+
+\note{[S123] Chín khối Canvas, mỗi khối một câu hỏi; hai khối thiếu dữ liệu được nêu rõ.}
+\end{frame}
+
+\subsection{2.2 Yêu cầu phân tích}
+
+\begin{frame}{Cây yêu cầu phân tích đi từ sáu chủ điểm đến các câu hỏi cụ thể}
+\muc{2.2 · Yêu cầu phân tích}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Chủ điểm $\rightarrow$ câu hỏi $\rightarrow$ chiều cần quan tâm
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-2-6_cay_yeu_cau_phan_tich.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S25] Cây này là cơ sở thiết kế fact, dimension và dashboard.}
+\end{frame}
+
+\begin{frame}{Bán hàng: GMV cần tăng trưởng MoM, YoY và quy luật 80/20}
+\muc{2.2 · Yêu cầu phân tích}
+\begin{itemize}
+  \item GMV 13,49 triệu BRL; AOV 137,42 BRL
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng chủ điểm bán hàng (3.2.2)}
+
+\note{[S26] GMV không tính đơn hủy để phản ánh doanh thu thật.}
+\end{frame}
+
+\begin{frame}{Xử lý đơn: không chỉ hỏi "đúng hạn không" mà hỏi "hứa so với thực tế chênh bao nhiêu"}
+\muc{2.2 · Yêu cầu phân tích}
+\begin{itemize}
+  \item Đúng hạn 93,2\% nhưng hứa 24,4 ngày, thực tế 12,6 ngày
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng chủ điểm xử lý đơn}
+
+\note{[S27] Vì ngày dự kiến rất rộng nên nhóm thêm KPI ngày hứa so với ngày giao thực tế.}
+\end{frame}
+
+\begin{frame}{Trải nghiệm khách: giao trễ là yếu tố kéo điểm review xuống mạnh nhất}
+\muc{2.2 · Yêu cầu phân tích}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Điểm 4,29 khi giao sớm, 1,70 khi trễ trên 7 ngày
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_delay_vs_review.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S28] Đây là phát hiện trung tâm của dashboard D5.}
+\end{frame}
+
+\begin{frame}{Thu hút seller: câu hỏi là kênh nào chuyển đổi tốt và seller từ funnel bán ra sao}
+\muc{2.2 · Yêu cầu phân tích}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Tỷ lệ chốt theo kênh từ 2,7\% đến 16,7\%
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_funnel_win_rate_by_origin.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S29] Luôn nêu cỡ mẫu vì nhiều kênh chỉ có vài chục seller.}
+\end{frame}
+
+\begin{frame}{Tám điểm hiện trạng của hệ thống nguồn dẫn tới tám yêu cầu cải tiến cho kho dữ liệu}
+\muc{2.2 · Yêu cầu phân tích}
+\begin{itemize}
+  \item Hai hệ thống rời nhau, chỉ gặp qua seller\_id $\rightarrow$ chiều dùng chung dim\_seller
+  \item Trạng thái đơn không có lịch sử mốc $\rightarrow$ snapshot tích luỹ 5 mốc
+  \item 45 loại lỗi dữ liệu $\rightarrow$ ODS gắn cờ, ghi dòng bị loại kèm lý do
+  \item Ngày dự kiến giao trung bình 24,4 ngày so với thực tế 12,6 ngày $\rightarrow$ KPI ngày hứa so với thực tế
+\end{itemize}
+
+\note{[S124] Bảng hiện trạng và yêu cầu cải tiến ở báo cáo mục 2.2.}
+\end{frame}
+
+\begin{frame}{Sáu nhóm người dùng, mỗi nhóm có câu hỏi, dashboard và tần suất xem riêng}
+\muc{2.2 · Yêu cầu phân tích}
+\begin{itemize}
+  \item Ban điều hành $\rightarrow$ D1 (hằng tuần, hằng tháng); quản lý kinh doanh $\rightarrow$ D2
+  \item Vận hành và logistics $\rightarrow$ D3, D4 (hằng ngày đến hằng tuần); chăm sóc khách hàng $\rightarrow$ D5
+  \item Quản lý seller và đội sales $\rightarrow$ D6; quản trị dữ liệu $\rightarrow$ D7 (mỗi lần chạy ETL)
+\end{itemize}
+
+\note{[S125] Đối tượng sử dụng, câu hỏi, dashboard và tần suất xem.}
+\end{frame}
+
+\subsection{2.3 KPI và dashboard}
+
+\begin{frame}{Bảng KPI chính gồm 19 chỉ số, mỗi chỉ số có một định nghĩa DAX duy nhất}
+\muc{2.3 · KPI}
+\begin{itemize}
+  \item GMV, Orders, AOV, on-time, lead time, review, repeat, MQL$\rightarrow$seller...
+\end{itemize}
+\begin{columns}[T]\begin{column}{0.49\textwidth}\adjustbox{max width=\linewidth}{\scriptsize\begin{tabular}{lrr}\toprule \textbf{KPI} & \textbf{Toàn bộ dữ liệu} & \textbf{Cửa sổ 2017-01 → 2018-08} \\ \midrule
+GMV & 13.494.400,74 & 13.449.529,68 \\
+Orders & 98.199 & 97.905 \\
+AOV & 137,42 & 137,37 \\
+Freight ratio & 16,6\% & 16,6\% \\
+Orders placed & 99.441 & 99.092 \\
+Cancel rate & 1,24\% & 1,19\% \\
+On-time rate & 93,2\% & 93,2\% \\
+Avg lead days & 12,56 & 12,54 \\
+Avg promised days & 24,37 & 24,28 \\
+Promised vs actual (days) & 11,81 & 11,75 \\
+\bottomrule\end{tabular}}\end{column}\begin{column}{0.49\textwidth}\adjustbox{max width=\linewidth}{\scriptsize\begin{tabular}{lrr}\toprule \textbf{KPI} & \textbf{Toàn bộ dữ liệu} & \textbf{Cửa sổ 2017-01 → 2018-08} \\ \midrule
+Avg review & 4,09 & 4,09 \\
+\% negative & 14,7\% & 14,6\% \\
+Repeat customer rate & 3,12\% & 3,11\% \\
+MQLs (theo tháng liên hệ đầu) & 8.000 & 8.000 \\
+Won deals & 842 & 842 \\
+MQL to won rate & 10,5\% & 10,5\% \\
+Avg days to close & 48,50 & 48,50 \\
+Sellers with first sale & 379 & 379 \\
+Won to first sale rate & 45,0\% & 45,0\% \\
+\bottomrule\end{tabular}}\end{column}\end{columns}
+
+\note{[S30] Giá trị trong bảng tính bằng SQL và dùng để đối chiếu với Power BI.}
+\end{frame}
+
+\begin{frame}{Mỗi dashboard có một cây phân tích từ mục tiêu đến chỉ số và chiều}
+\muc{2.3 · KPI}
+\begin{itemize}
+  \item Bảy cây phân tích D1–D7
+\end{itemize}
+\begin{columns}[c]\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D1.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D2.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D3.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D4.png}\end{column}\end{columns}\vspace{0.3em}\begin{columns}[c]\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D5.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D6.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D7.png}\end{column}\end{columns}
+
+\note{[S31] Ví dụ D3: mục tiêu giám sát giao hàng, chỉ số on-time, promised vs actual, chiều vùng và nhóm trễ.}
+\end{frame}
+
+\begin{frame}{Năm giới hạn của dữ liệu làm một KPI có hai con số: GMV 13,49 so với 13,59 triệu BRL}
+\muc{2.3 · KPI}
+\begin{itemize}
+  \item GMV loại đơn Failed 13.494.400,74; tổng giá hàng mọi đơn 13.591.643,70 BRL
+  \item Orders 98.199 so với Orders placed 99.441 (chênh 1.242 đơn); 380 so với 379 seller có đơn
+  \item 2016 chỉ 329 đơn, 2018-09 chỉ 16 đơn; 547 đơn có từ 2 review; điểm đúng hạn từng là 4,21 rồi sửa thành 4,29
+  \item Xử lý: chọn một định nghĩa, ghi cạnh con số, sửa ở ETL
+\end{itemize}
+
+\note{[S126] Bảng giới hạn dữ liệu ảnh hưởng tới KPI ở báo cáo mục 2.3.}
+\end{frame}
+
+\subsection{2.4 Dữ liệu nguồn}
+
+\begin{frame}{Phạm vi: dữ liệu 01/2017–08/2018 chiếm 99,6\% số đơn nên được dùng cho xu hướng}
+\muc{2.4 · Dữ liệu nguồn}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item 2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-1_orders_per_month.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S32] Bộ lọc InWindow trong Power BI cố định cửa sổ này cho D1–D6.}
+\end{frame}
+
+\begin{frame}{Hai hệ thống nguồn có 11 bảng, 121 MB và 1.559.764 dòng}
+\muc{2.4 · Dữ liệu nguồn}
+\begin{itemize}
+  \item oltp 9 bảng 1.550.922 dòng; crm 2 bảng 8.842 dòng
+\end{itemize}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{llrrr}
+\toprule
+\textbf{Bảng nguồn} & \textbf{File CSV} & \textbf{Số dòng} & \textbf{Số cột} & \textbf{MB} \\
+\midrule
+oltp.product\_category\_name\_translation & product\_category\_name\_translation.csv & 71 & 2 & 0,00 \\
+oltp.products & olist\_products\_dataset.csv & 32.951 & 9 & 2,27 \\
+oltp.sellers & olist\_sellers\_dataset.csv & 3.095 & 4 & 0,17 \\
+oltp.geolocation & olist\_geolocation\_dataset.csv & 1.000.163 & 6 & 58,44 \\
+oltp.customers & olist\_customers\_dataset.csv & 99.441 & 5 & 8,62 \\
+oltp.orders & olist\_orders\_dataset.csv & 99.441 & 8 & 16,84 \\
+oltp.order\_items & olist\_order\_items\_dataset.csv & 112.650 & 7 & 14,72 \\
+oltp.order\_payments & olist\_order\_payments\_dataset.csv & 103.886 & 5 & 5,51 \\
+oltp.order\_reviews & olist\_order\_reviews\_dataset.csv & 99.224 & 7 & 13,78 \\
+crm.mql & olist\_marketing\_qualified\_leads\_dataset.csv & 8.000 & 4 & 0,67 \\
+crm.closed\_deals & olist\_closed\_deals\_dataset.csv & 842 & 14 & 0,16 \\
+Tổng (11 bảng) &  & 1.559.764 &  & 121,18 \\
+\bottomrule
+\end{tabular}}\end{center}
+
+\note{[S33] Vượt tiêu chí kích thước dữ liệu của môn (trên 100 MB).}
+\end{frame}
+
+\begin{frame}{Bảng toạ độ chiếm 64\% số dòng nhưng chỉ đại diện 19.015 mã bưu chính}
+\muc{2.4 · Dữ liệu nguồn}
+\begin{itemize}
+  \item 1.000.163 dòng geolocation
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng nguồn (làm nổi dòng geolocation)}
+
+\note{[S34] Đây là bảng cần xử lý nhiều nhất ở ODS.}
+\end{frame}
+
+\begin{frame}{Luồng dữ liệu và tần suất cập nhật: nạp ban đầu 45.430 đơn rồi 11 đợt hằng tháng}
+\muc{2.4 · Dữ liệu nguồn}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Tổng 286.144 bản ghi mới qua 11 đợt
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-4-1_pipeline.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S37] Dữ liệu Kaggle là ảnh tĩnh nên nhóm mô phỏng cập nhật.}
+\end{frame}
+
+\begin{frame}{Trung bình 163 đơn mỗi ngày, đỉnh 1.176 đơn ngày Black Friday: lô hằng ngày là đủ}
+\muc{2.4 · Dữ liệu nguồn}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Cửa sổ 01/2017--08/2018: 163 đơn, 185 dòng hàng, 13 MQL, 1,3 deal mỗi ngày
+  \item Bảng tần suất đề xuất công nghệ: lô hằng ngày bằng procedure PostgreSQL; gần thời gian thực thì CDC + Kafka (chương 5)
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{2-4_tan_suat_cap_nhat.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S127] Biểu đồ tần suất cập nhật theo thời gian và bảng công nghệ xử lý đề xuất.}
+\end{frame}
+
+\begin{frame}{Cây phân loại dữ liệu chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu}
+\muc{2.4 · Dữ liệu nguồn}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Mỗi bảng kèm hai cột tiêu biểu và giá trị thật
+  \item Phân loại thêm theo kiểu dữ liệu, độ nhạy cảm (định danh, vị trí) và tính biến động
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{2-4_data_taxonomy.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S128] Data taxonomy của 11 bảng nguồn.}
+\end{frame}
+
+\begin{frame}{Data flow hiện trạng: mũi tên ghi thông tin được truyền, hai hệ thống nguồn tách rời}
+\muc{2.4 · Dữ liệu nguồn}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Thông tin đơn, trạng thái giao, thanh toán, điểm đánh giá, lead
+  \item Marketing funnel (SDR, SR) tách khỏi hệ thống bán hàng
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{2-4_data_flow_hien_trang.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S129] Hiện trạng: luồng thông tin giữa các hệ thống CNTT (bản nháp, nhóm vẽ lại).}
+\end{frame}
+
+\begin{frame}{Data flow đề xuất: nguồn, staging, ODS, kho, mart và BI, có nhật ký ETL giám sát}
+\muc{2.4 · Dữ liệu nguồn}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Bảng lớp, thành phần, công nghệ, tần suất, ghi chú ở báo cáo
+  \item Điều phối bằng một lệnh Python, biến đổi bằng PL/pgSQL
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{2-4_data_flow_de_xuat.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S130] Đề xuất: luồng nguồn đến BI.}
+\end{frame}
+
+\subsection{2.5 ERD OLTP}
+
+\begin{frame}{ERD hệ thống bán hàng: chín bảng nối quanh đơn hàng}
+\muc{2.5 · ERD OLTP}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item orders $\rightarrow$ items, payments, reviews; customers, sellers, products
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-2-4_erd_oltp.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S35] \texttt{customer\_\allowbreak{}id} được sinh riêng cho từng đơn nên cần \texttt{customer\_\allowbreak{}unique\_\allowbreak{}id} để nhận ra khách thật.}
+\end{frame}
+
+\begin{frame}{Các cột được gạch chân trên ERD là cột đi sang kho, kèm ghi chú mapping}
+\muc{2.5 · ERD OLTP}
+\begin{itemize}
+  \item Ví dụ: \texttt{order\_\allowbreak{}purchase\_\allowbreak{}timestamp} $\rightarrow$ \texttt{purchase\_\allowbreak{}date\_\allowbreak{}key}, \texttt{price} $\rightarrow$ \texttt{price}
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: ERD đã gạch chân (vẽ lại)}
+
+\note{[S36] Bảng mapping đầy đủ 108 dòng ODS $\rightarrow$ kho nằm ở phụ lục.}
+\end{frame}
+
+\begin{frame}{ERD tô màu theo nhóm dữ liệu: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP}
+\muc{2.5 · ERD OLTP}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Gạch chân suy ra từ bảng mapping nguồn $\rightarrow$ ODS $\rightarrow$ kho
+  \item 6 cột không dùng: geolocation.id, 3 thuộc tính sản phẩm, 2 thuộc tính khai báo của deal
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{2-5_erd_oltp_gach_chan.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S131] ERD nháp tô màu và gạch chân cột dùng sang OLAP.}
+\end{frame}
+
+\begin{frame}{Luồng OLTP sang OLAP cho thấy bảng nguồn nào nuôi dimension nào và fact nào}
+\muc{2.5 · ERD OLTP}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Bảng tổng hợp mapping theo bảng nguồn ở báo cáo mục 2.5
+  \item Mapping đầy đủ từng cột ở Phụ lục C
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{2-5_data_flow_oltp_olap.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S132] Sơ đồ luồng dữ liệu OLTP sang OLAP.}
+\end{frame}
+

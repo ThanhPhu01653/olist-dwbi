@@ -1,4 +1,4 @@
-# 04 – 40 câu giảng viên có thể hỏi (kèm trả lời có số liệu)
+# 04 – 47 câu giảng viên có thể hỏi (kèm trả lời có số liệu)
 
 *Số liệu từ `olist_dw` ở trạng thái cuối (99.441 đơn, GMV 13.494.400,74 BRL). Mỗi câu trả lời 2–4 câu để nói được trong 30–60 giây; phần "Xem thêm" chỉ nơi có bằng chứng.*
 
@@ -128,3 +128,27 @@ Quyết định thiết kế ngày 05/11 (ghi trong nhật ký của `DW_DESIGN.
 
 **40. Nếu mở rộng, bạn sẽ làm gì tiếp?**
 Thêm trạng thái trung gian của đơn (CDC thật) và lịch chạy tự động; chuyển toạ độ sang PostGIS khi cần truy vấn không gian; phân vùng `fact_order_item` theo năm khi dữ liệu lớn; thêm chiều khuyến mãi/sản phẩm theo thời gian (SCD cho giá); và đo hiệu năng nhiều người dùng đồng thời.
+
+## H. Bổ sung theo barem (P8): 7 câu
+*Số liệu từ `handoff/2026-11-14-P8-eda.md`, `handoff/2026-11-14-P8-dimensions.md`, `handoff/2026-11-14-P8-source.md`.*
+
+**41. Ngoại lai được phát hiện thế nào và vì sao không loại?**
+Nhóm dùng hai phương pháp: **IQR** (ngoại lai nếu ngoài [Q1 − 1,5·IQR, Q3 + 1,5·IQR]) và **Isolation Forest** (`contamination = 0,05`, `random_state = 42`, mô hình một chiều) trên 5 biến: giá, phí vận chuyển, cân nặng, lead time và số ngày trễ. Cộng 5 biến, IQR đánh dấu 45.568 giá trị, iForest 26.212 và 24.213 giá trị cả hai cùng đánh dấu. **Giữ** vì là ngoại lai hợp lệ: 12.134 dòng có phí cao có cân nặng trung vị 5.700 g (so với 700 g toàn bộ) và 76,9% đơn có lead time ngoại lai đều trễ so với ngày dự kiến. Chỉ 8 dòng hàng có cân nặng bằng 0 g là lỗi dữ liệu, được giữ dòng nhưng không dùng cân nặng. Xem thêm: báo cáo mục 3.1.
+
+**42. Cramér's V và tỉ số tương quan η là gì, công thức ra sao?**
+V đo liên hệ giữa **hai biến phân loại**: $V = \sqrt{\varphi^2 / \min(r-1, k-1)}$ với $\varphi^2 = \chi^2/n$; nhóm dùng hiệu chỉnh Bergsma ($\tilde\varphi^2 = \max(0, \varphi^2 - (k-1)(r-1)/(n-1))$, $\tilde r = r - (r-1)^2/(n-1)$, $\tilde k = k - (k-1)^2/(n-1)$, $\tilde V = \sqrt{\tilde\varphi^2/\min(\tilde k-1, \tilde r-1)}$) để không phóng đại khi bảng chéo lớn. η đo liên hệ giữa **biến phân loại và biến số**: $\eta = \sqrt{\sum_g n_g(\bar x_g - \bar x)^2 / \sum_i (x_i - \bar x)^2}$, và η² là tỉ lệ phương sai do nhóm giải thích. Thang đọc: < 0,1 không đáng kể; 0,1–0,3 yếu; 0,3–0,5 vừa; > 0,5 mạnh. Kết quả: V lớn nhất là 0,403 giữa cờ giao trễ và nhóm review; η của điểm review theo cờ trễ là 0,392 (η² = 0,154). Spearman chỉ dùng cho hai biến số hoặc thứ bậc.
+
+**43. STL là gì và độ mạnh xu hướng, mùa vụ tính thế nào? Có kết luận mùa vụ theo năm không?**
+STL tách chuỗi thành xu hướng, mùa vụ và phần dư: $y_t = T_t + S_t + R_t$. Độ mạnh $F_T = \max(0, 1 - \mathrm{Var}(R)/\mathrm{Var}(T+R))$ và $F_S = \max(0, 1 - \mathrm{Var}(R)/\mathrm{Var}(S+R))$. Số đơn theo ngày (chu kỳ 7 ngày): $F_T = 0{,}734$, $F_S = 0{,}223$ (thứ Hai nhiều đơn nhất, thứ Bảy ít nhất). **Không kết luận mùa vụ theo năm**: dữ liệu dưới 2 năm (20 tháng đủ dữ liệu 2017-01 → 2018-08), STL chu kỳ 12 cho $F_S = 0{,}800$ nhưng mỗi tháng chỉ xuất hiện một hoặc hai lần nên không tách được khỏi xu hướng tăng; chỉ ghi nhận Black Friday 24/11/2017 (1.176 đơn, gấp 6,6 lần trung bình tháng 11).
+
+**44. Hệ thống chiều khái niệm của nhóm gồm những gì và kiểm tra phân cấp đúng thế nào?**
+Mỗi chiều có phân cấp: ngày (năm → quý → tháng → ngày), địa lý (vùng → bang → thành phố → zip), sản phẩm (nhóm ngành → danh mục → sản phẩm), seller, khách (SCD2), kênh (nhóm kênh → origin)… Đã kiểm tra bằng đếm trên kho: **tháng phải đi kèm năm** (12 số tháng nhưng 60 cặp năm-tháng), **thành phố phải đi kèm bang** (5.814 tên thành phố nhưng 6.190 cặp bang-thành phố; 303 tên xuất hiện ở từ 2 bang trở lên, nhiều nhất `bom jesus` và `sao domingos` ở 6 bang), mỗi danh mục thuộc đúng một nhóm ngành và mỗi origin thuộc đúng một nhóm kênh. Mười chiều chia thành chiều dùng chung (`dim_date`, `dim_customer`, `dim_seller`, `dim_geography`, `dim_order_status`), đóng vai (`dim_date`, `dim_sales_rep`), SCD2 (`dim_customer`), rác (`dim_lead_profile`) và danh mục nhỏ. Xem thêm: `DW_DESIGN.md` §5a.
+
+**45. Data taxonomy của dữ liệu nguồn là gì?**
+Cây phân loại 11 bảng thành 4 nhóm: **dữ liệu chủ** (customers, sellers, products), **dữ liệu giao dịch** (orders, order_items, order_payments), **dữ liệu tương tác** (order_reviews, mql, closed_deals) và **dữ liệu tham chiếu** (geolocation, product_category_name_translation); mỗi bảng có giá trị thật làm ví dụ và được phân loại thêm theo kiểu dữ liệu, độ nhạy cảm (định danh, vị trí) và tính biến động. Nhờ đó chọn được cách nạp: bảng biến động cao (orders) nạp tăng dần theo watermark, bảng tĩnh (geolocation, bản dịch) nạp lại toàn phần. Xem thêm: hình `figures/2-4_data_taxonomy.png`.
+
+**46. Data flow giữa các hệ thống CNTT hiện trạng và đề xuất khác nhau thế nào?**
+Hiện trạng: marketplace, hệ thống đơn hàng, thanh toán, vận chuyển, đánh giá và marketing funnel (SDR, SR) truyền cho nhau **thông tin** (thông tin đơn, trạng thái giao, thông tin thanh toán, điểm đánh giá, lead); hai hệ thống bán hàng và CRM tách rời, chỉ gặp nhau qua `seller_id`. Đề xuất: nguồn → staging → ODS → kho → mart → BI, có `etl_log` giám sát; mỗi lô full hoặc tăng dần. Với khối lượng trung bình 163 đơn/ngày (đỉnh 1.176 ngày Black Friday), lô hằng ngày bằng procedure PostgreSQL là đủ; nếu cần gần thời gian thực thì thêm CDC + Kafka (chương 5).
+
+**47. Vì sao hình kiến trúc vẽ theo lớp mà không vẽ thành luồng?**
+Kiến trúc trả lời "hệ thống gồm những thành phần nào, công nghệ nào, bao nhiêu bảng" nên các khối xếp tầng (nguồn, staging, ODS, kho, mart, BI) và mỗi lớp liệt kê thành phần, logo công nghệ (PostgreSQL, Python, Power BI, GitHub), số bảng, số dòng và tần suất. Còn "dữ liệu đi từ đâu đến đâu" thể hiện ở hai hình khác: sơ đồ data flow và sơ đồ các job của pipeline (sinh từ `etl_log.job_run`). Tách hai hình giúp người xem nắm được từng thông tin mà không phải đọc một sơ đồ vừa có cấu trúc vừa có luồng.

@@ -14,7 +14,7 @@ Mọi thư mục và nhóm file của repo, theo thứ tự nên mở. Cột cu�
 
 | Ở đâu | Là gì | Dùng khi nào | Cách đọc |
 | --- | --- | --- | --- |
-| [`huong-dan/`](.) | Bộ hướng dẫn chung: lộ trình (file này), pipeline bằng ví dụ thật, thuật ngữ, từ điển dữ liệu, 40 câu hỏi đáp, nghiệp vụ (nháp), hướng dẫn D1–D7 | Bắt đầu mọi việc; dựng dashboard, viết báo cáo, làm slide | Đọc kỹ `01`, `02`; tra cứu `03`, `04`, `dashboards/` |
+| [`huong-dan/`](.) | Bộ hướng dẫn chung: lộ trình (file này), pipeline bằng ví dụ thật, thuật ngữ, từ điển dữ liệu, 47 câu hỏi đáp, nghiệp vụ (nháp), hướng dẫn D1–D7 | Bắt đầu mọi việc; dựng dashboard, viết báo cáo, làm slide | Đọc kỹ `01`, `02`; tra cứu `03`, `04`, `dashboards/` |
 | [`handoff/00-TONG-QUAN.md`](../handoff/00-TONG-QUAN.md) | Trang tổng quan số liệu và phát hiện: các bảng, KPI, 7 phát hiện, bảng "mục báo cáo → file nguồn → hình" | Cần toàn cảnh hoặc tìm file nguồn cho một mục báo cáo | Đọc kỹ |
 | [`handoff/2026-11-05-P*.md`](../handoff/README.md) | Nhật ký kỹ thuật từng phase P0–P7: đã làm gì, số liệu, đoạn nháp báo cáo, gợi ý slide, SQL tiêu biểu | Viết một mục báo cáo hoặc làm slide của phase tương ứng | Tra cứu (đọc kỹ file của phase mình viết) |
 | Bảng số liệu sinh tự động trong `handoff/`: [`profiling`](../handoff/profiling.md), [`data-quality`](../handoff/data-quality.md), [`distributions`](../handoff/distributions.md), [`correlations`](../handoff/correlations.md), [`funnel`](../handoff/funnel.md), [`design-questions`](../handoff/design-questions.md), [`stats`](../handoff/stats.md), [`benchmark`](../handoff/benchmark.md), [`olap-examples`](../handoff/olap-examples.md), [`geo-distance`](../handoff/geo-distance.md), [`before-after-samples`](../handoff/before-after-samples.md), [`rebuild-report`](../handoff/rebuild-report.md), [`excel-toolpak-guide`](../handoff/excel-toolpak-guide.md) | Bảng và số liệu thô do script sinh từ database | Lấy con số, bảng cho báo cáo hoặc slide; đối chiếu số | Tra cứu |
@@ -52,10 +52,10 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | 1 | [`handoff/00-TONG-QUAN.md`](../handoff/00-TONG-QUAN.md) | toàn cảnh, 7 phát hiện, **bảng "Mục báo cáo → file nguồn → hình"** | 25 phút |
 | 2 | [`01-pipeline-bang-loi.md`](01-pipeline-bang-loi.md) | hiểu dữ liệu đi qua từng lớp bằng ví dụ thật | 25 phút |
 | 3 | [`02-thuat-ngu.md`](02-thuat-ngu.md) | thuật ngữ thống nhất (dùng đúng khi viết) | 20 phút |
-| 4 | [`05-nghiep-vu-nhap.md`](05-nghiep-vu-nhap.md) | viết mục 3.1, 3.2.1–3.2.2 (nghiệp vụ, BPMN, canvas) – **bản nháp cần sửa** | 20 phút |
+| 4 | [`05-nghiep-vu-nhap.md`](05-nghiep-vu-nhap.md) | viết mục 2.1–2.3 (nghiệp vụ, BPMN, canvas, yêu cầu, KPI) – **bản nháp cần sửa** | 20 phút |
 | 5 | Các file `handoff/2026-11-05-P*.md` theo bảng mục báo cáo: mỗi file có **đoạn nháp tiếng Việt** sẵn | viết từng mục | 10–15 phút mỗi file |
 | 6 | [`dashboards/D1.md` … `D7.md`](dashboards/) mục "Insight gợi ý" | viết mục phân tích dashboard | 5 phút mỗi file |
-| 7 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | kiểm tra bài viết đã trả lời được 40 câu | 30 phút |
+| 7 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | kiểm tra bài viết đã trả lời được 47 câu | 30 phút |
 | 8 | [`03-tu-dien-du-lieu.md`](03-tu-dien-du-lieu.md) | bảng mô tả cột cho phụ lục | tra cứu |
 
 ### C. Làm slide
@@ -74,7 +74,7 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | 2 | [`02-thuat-ngu.md`](02-thuat-ngu.md) | thuật ngữ (grain, SCD, role-playing, materialized view…) kèm ví dụ trong dự án | 20 phút |
 | 3 | [`handoff/2026-11-05-P2.md`](../handoff/2026-11-05-P2.md) đến [`P5.md`](../handoff/2026-11-05-P5.md) | làm sạch ODS, dimension, fact, nạp tăng dần | 10–15 phút mỗi file |
 | 4 | [`03-tu-dien-du-lieu.md`](03-tu-dien-du-lieu.md) | tra từng bảng và cột của kho | tra cứu |
-| 5 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | kiểm tra mức hiểu bằng 40 câu hỏi đáp | 30 phút |
+| 5 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | kiểm tra mức hiểu bằng 47 câu hỏi đáp | 30 phút |
 
 ## 3. Các file trong `huong-dan/`
 | File | Nội dung |
@@ -83,16 +83,19 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | [`01-pipeline-bang-loi.md`](01-pipeline-bang-loi.md) | giải thích các lớp; đi theo **một đơn hàng thật** và **một MQL thật** qua từng bảng |
 | [`02-thuat-ngu.md`](02-thuat-ngu.md) | thuật ngữ DW/BI, mỗi thuật ngữ có ví dụ ngay trong dự án |
 | [`03-tu-dien-du-lieu.md`](03-tu-dien-du-lieu.md) | từ điển mọi bảng `dw` và `mart_*` (sinh tự động): grain, số dòng, từng cột |
-| [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | 40 câu giảng viên có thể hỏi + trả lời có số liệu |
+| [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | 47 câu giảng viên có thể hỏi + trả lời có số liệu |
 | [`05-nghiep-vu-nhap.md`](05-nghiep-vu-nhap.md) | **bản nháp** BPMN, Business Model Canvas, cây nghiệp vụ / yêu cầu / phân tích |
+| [`06-tu-dien-du-lieu-nguon.md`](06-tu-dien-du-lieu-nguon.md) | từ điển 11 bảng nguồn (oltp, crm): kiểu, miền giá trị, % rỗng, vai trò trong kho (P8, sinh tự động) |
+| [`dashboards/README.md`](dashboards/README.md) | checklist chung của dashboard (định dạng số, tiêu đề câu hỏi, drill-through, tooltip, dự báo, QR) và ma trận đáp ứng D1–D7 (P8) |
+| [`../powerbi/power-query-vi-du.md`](../powerbi/power-query-vi-du.md) | ví dụ Power Query (M): cùng một quy tắc làm sạch với SQL và Python, hướng dẫn chụp before/after (P8) |
 | [`dashboards/D1.md` … `D7.md`](dashboards/) | hướng dẫn dựng từng dashboard: mục tiêu, bố cục lưới, slicer, DAX, số kỳ vọng, insight, checklist giảng viên |
 
 ## 3b. Báo cáo LaTeX và kịch bản slide
 | File | Nội dung |
 | --- | --- |
-| [`../report/README.md`](../report/README.md) | **Khung báo cáo LaTeX** (XeLaTeX, 88 trang PDF, đã biên dịch được): mỗi mục một file trong `report/chapters/`, việc còn lại đánh dấu `\todo{}` (khung cam); cách lên Overleaf và cách nhiều người gửi file `.tex` cho một người ghép lại |
-| [`../slides/README.md`](../slides/README.md) | **Bộ slide Beamer (theme HUST, 114 slide nội dung + 10 slide dự phòng, 133 trang PDF)**: cách biên dịch bằng LuaLaTeX, sửa tên nhóm và thành viên, thay ảnh dashboard, đưa lên Overleaf; có bản kèm ghi chú người nói |
-| [`../slides/slide-script.md`](../slides/slide-script.md) | **Kịch bản 114 slide** chia 7 phần (tiêu đề là câu kết luận có số, hình, ghi chú người nói; dùng được cho PowerPoint và Beamer) + 10 câu vấn đáp dễ gặp kèm slide dự phòng |
+| [`../report/README.md`](../report/README.md) | **Khung báo cáo LaTeX** (XeLaTeX, 88 trang PDF, đã biên dịch được): mỗi mục cấp 2 (x.y) một file trong `report/chapters/`, xếp theo barem chấm điểm, việc còn lại đánh dấu `\todo{}` (khung cam); cách lên Overleaf và cách nhiều người gửi file `.tex` cho một người ghép lại |
+| [`../slides/README.md`](../slides/README.md) | **Bộ slide Beamer (theme HUST, xếp theo barem, có slide dự phòng)**: cách biên dịch bằng LuaLaTeX, sửa tên nhóm và thành viên, thay ảnh dashboard, đưa lên Overleaf; có bản kèm ghi chú người nói |
+| [`../slides/slide-script.md`](../slides/slide-script.md) | **Kịch bản slide** chia theo barem (khảo sát, phân tích và thiết kế, dashboard, mở rộng, tổng kết) (tiêu đề là câu kết luận có số, hình, ghi chú người nói; dùng được cho PowerPoint và Beamer) + 10 câu vấn đáp dễ gặp kèm slide dự phòng |
 
 Viết báo cáo: sau bước 1–4 ở lộ trình B, mở `report/README.md` và chọn mục cần viết. Làm slide: dùng `slides/slide-script.md` làm dàn bài và `slides/README.md` để biên dịch và chỉnh bộ Beamer; hình lấy trong `figures/`.
 

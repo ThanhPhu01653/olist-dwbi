@@ -1,0 +1,220 @@
+\section{Dashboard}\label{sec:dashboard}
+
+Hệ thống có 7 dashboard Power BI dựng trên cùng một mô hình ngữ nghĩa (32 quan hệ, role-playing date, phân cấp thời gian, địa lý, sản phẩm, seller): ba dashboard theo dòng thời gian và phân tích (D1, D2, D6), hai dashboard OLAP/địa lý (D2, D4), hai dashboard vận hành và thống kê (D3, D5) và một dashboard vận hành hệ thống (D7). Cách dựng từng bước: powerbi/model.md.
+
+\todo{Thống kê số dashboard theo loại (theo dòng thời gian, OLAP, vận hành, thống kê/dự án) và liệt kê các loại biểu đồ đã dùng (yêu cầu của môn: đa dạng biểu đồ, slicer, định dạng có điều kiện, DAX tăng trưởng và cảnh báo).}
+
+\subsubsection*{D1 – Executive Overview}
+
+Cho lãnh đạo thấy sức khoẻ toàn doanh nghiệp trong một trang: doanh thu, giao hàng, hài lòng, và xu hướng theo tháng.
+
+\paragraph{Câu hỏi dashboard trả lời.}
+
+\begin{itemize}
+  \item Doanh thu (GMV) bao nhiêu, tăng hay giảm so với tháng trước và cùng kỳ năm trước?
+  \item Giao hàng có đúng hạn không, tỷ lệ hủy bao nhiêu?
+  \item Khách hài lòng không (điểm review)?
+  \item Vùng nào và nhóm ngành nào đóng góp nhiều nhất?
+\end{itemize}
+
+\khunganh{[Ảnh chụp dashboard D1 sau khi dựng trên Power BI]}{Dashboard D1}
+
+\todo{Chèn ảnh chụp dashboard D1 (xuất PNG từ Power BI) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/D1.md mục 4--8).}
+
+\paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
+
+\begin{itemize}
+  \item GMV tăng từ 120.098 BRL (01/2017) lên \textbf{1.003.862 BRL (11/2017)}, tháng cao nhất; \textbf{+52,1\% so với 10/2017} nhờ Black Friday 24/11/2017 (một ngày 152.654 BRL, gấp 5,2 lần ngày thường trong tháng).
+  \item Từ 03/2018 GMV đi ngang quanh 0,85–0,99 triệu BRL/tháng, nhưng vẫn \textbf{cao hơn cùng kỳ năm trước}: 05/2018 +97,3\%, 08/2018 +49,4\%.
+  \item \textbf{Vùng Sudeste chiếm 65,4\% GMV} (8,79 / 13,45 triệu BRL trong cửa sổ), Norte chỉ 2,5\%: thị trường tập trung rất mạnh.
+  \item Giao đúng hạn 93,2\% nhưng \textbf{tụt còn 87,6\% ở 11/2017} (tháng Black Friday) và 81,0\% ở 03/2018: tải cao làm giao chậm.
+  \item Nhóm ngành hàng dẫn đầu: Home \& Furniture 22,8\% GMV, tiếp theo Gifts \& Others và Electronics \& Computers (14,0\% mỗi nhóm).
+\end{itemize}
+\todo{Nhóm kiểm tra các nhận xét của D1 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
+
+\subsubsection*{D2 – Sales \& Product}
+
+Đào sâu doanh số theo sản phẩm: ngành hàng nào bán chạy, quy luật 80/20, giá và phí vận chuyển theo ngành.
+
+\paragraph{Câu hỏi dashboard trả lời.}
+
+\begin{itemize}
+  \item Nhóm ngành / danh mục nào tạo nhiều GMV nhất và thay đổi thế nào theo quý?
+  \item Bao nhiêu danh mục tạo 80\% GMV (Pareto)?
+  \item AOV và phí vận chuyển của từng ngành ra sao?
+\end{itemize}
+
+\khunganh{[Ảnh chụp dashboard D2 sau khi dựng trên Power BI]}{Dashboard D2}
+
+\todo{Chèn ảnh chụp dashboard D2 (xuất PNG từ Power BI) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/D2.md mục 4--8).}
+
+\paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
+
+\begin{itemize}
+  \item \textbf{18/74 danh mục (24,3\%) tạo 80\% GMV}; đứng đầu \code{health\_\allowbreak{}beauty} (9,31\%).
+  \item Home \& Furniture dẫn đầu với 3,07 triệu BRL (22,8\% GMV trong cửa sổ).
+  \item AOV toàn sàn 137,42 BRL; phí vận chuyển chiếm 16,6\% giá hàng, nhưng \textbf{nặng hơn ở hàng giá thấp} (xem scatter AOV – Freight ratio).
+  \item Doanh số theo quý tăng rõ: quý 4/2017 là 2,41 triệu BRL so với 0,73 triệu ở quý 1/2017.
+  \item Quy luật 80/20 ở seller yếu hơn: 540/3.053 seller (17,7\%) tạo 80\% GMV nhưng 5 seller lớn nhất chỉ chiếm 7,7\%.
+\end{itemize}
+\todo{Nhóm kiểm tra các nhận xét của D2 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
+
+\subsubsection*{D3 – Order Fulfillment}
+
+Theo dõi chu trình xử lý đơn: mỗi chặng mất bao lâu, vùng nào chậm, lời hứa giao hàng có sát thực tế không.
+
+\paragraph{Câu hỏi dashboard trả lời.}
+
+\begin{itemize}
+  \item Đơn mất bao lâu ở từng chặng (duyệt $\rightarrow$ bàn giao $\rightarrow$ giao)?
+  \item Tỷ lệ giao trễ và hủy là bao nhiêu, vùng/bang nào chậm nhất?
+  \item Ngày hứa giao so với ngày giao thực tế chênh bao nhiêu?
+\end{itemize}
+
+\khunganh{[Ảnh chụp dashboard D3 sau khi dựng trên Power BI]}{Dashboard D3}
+
+\todo{Chèn ảnh chụp dashboard D3 (xuất PNG từ Power BI) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/D3.md mục 4--8).}
+
+\paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
+
+\begin{itemize}
+  \item Olist \textbf{hứa TB 24,4 ngày nhưng giao thực tế 12,6 ngày}: giao sớm hơn lời hứa 11,8 ngày, 91,9\% đơn giao sớm hơn dự kiến $\rightarrow$ "đúng hạn" 93,2\% dễ đạt vì ngày dự kiến quá rộng.
+  \item Chặng dài nhất là \textbf{vận chuyển (9,3 ngày)}, bàn giao của seller 2,9 ngày, duyệt 10,3 giờ.
+  \item \textbf{Nordeste trễ nhiều nhất (12,8\%)}, Sudeste 6,1\%; Norte có lead time dài nhất (22,6 ngày so với 10,7 ngày ở Sudeste). Bang MA trễ 17,4\%.
+  \item Đúng hạn tụt từ 95,8\% (10/2017) xuống \textbf{87,6\% (11/2017, Black Friday)} và 81,0\% (03/2018): đợt cao điểm làm vận chuyển quá tải.
+  \item Tỷ lệ hủy / không khả dụng toàn sàn chỉ 1,24\% (1.234 đơn).
+\end{itemize}
+\todo{Nhóm kiểm tra các nhận xét của D3 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
+
+\subsubsection*{D4 – Geography \& Freight}
+
+Cho thấy doanh số và phí vận chuyển phân bố theo địa lý, và quan hệ giữa khoảng cách, phí vận chuyển và thời gian giao.
+
+\paragraph{Câu hỏi dashboard trả lời.}
+
+\begin{itemize}
+  \item GMV tập trung ở vùng / bang nào?
+  \item Phí vận chuyển chiếm bao nhiêu \% giá hàng theo vùng?
+  \item Seller và khách xa nhau bao nhiêu và điều đó ảnh hưởng freight và lead time ra sao?
+\end{itemize}
+
+\khunganh{[Ảnh chụp dashboard D4 sau khi dựng trên Power BI]}{Dashboard D4}
+
+\todo{Chèn ảnh chụp dashboard D4 (xuất PNG từ Power BI) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/D4.md mục 4--8).}
+
+\paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
+
+\begin{itemize}
+  \item \textbf{Sudeste 65,4\% GMV, Sul 14,4\%, Nordeste 11,4\%, Centro-Oeste 6,4\%, Norte 2,5\%.}
+  \item Phí vận chuyển nặng ở vùng xa: \textbf{Norte 22,7\% và Nordeste 21,7\% giá hàng so với 15,2\% ở Sudeste}.
+  \item Từ dưới 100 km lên trên 1.000 km, phí vận chuyển TB tăng 11,75 $\rightarrow$ 31,65 BRL và lead time 6,5 $\rightarrow$ 19,0 ngày (xem \code{handoff/geo-distance.md}).
+  \item Seller và khách \textbf{cùng bang ở 36,1\%} dòng hàng; khoảng cách TB 598 km (trung vị 433 km).
+  \item 555 dòng hàng (0,49\%) không tính được khoảng cách vì thiếu toạ độ; cần ghi chú trên trang.
+\end{itemize}
+\todo{Nhóm kiểm tra các nhận xét của D4 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
+
+\subsubsection*{D5 – Customer Experience}
+
+Hiểu trải nghiệm khách hàng: điểm đánh giá, ảnh hưởng của giao trễ, cơ cấu thanh toán, khách quay lại.
+
+\paragraph{Câu hỏi dashboard trả lời.}
+
+\begin{itemize}
+  \item Điểm review TB bao nhiêu, bao nhiêu \% tiêu cực?
+  \item Giao trễ làm điểm review giảm thế nào?
+  \item Khách thanh toán bằng gì, trả góp bao nhiêu kỳ?
+  \item Bao nhiêu khách quay lại; phân khúc RFM và cohort?
+\end{itemize}
+
+\khunganh{[Ảnh chụp dashboard D5 sau khi dựng trên Power BI]}{Dashboard D5}
+
+\todo{Chèn ảnh chụp dashboard D5 (xuất PNG từ Power BI) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/D5.md mục 4--8).}
+
+\paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
+
+\begin{itemize}
+  \item \textbf{Điểm review tụt theo mức trễ: 4,29 (giao sớm) $\rightarrow$ 3,29 (trễ 1–3 ngày) $\rightarrow$ 2,10 (4–7) $\rightarrow$ 1,70 (trên 7 ngày)}; \% tiêu cực tăng 9,2\% $\rightarrow$ 79,2\%.
+  \item Đơn trễ chỉ chiếm 6,5\% số review nhưng tạo \textbf{27,4\% số review tiêu cực} (4.000/14.575).
+  \item Thẻ tín dụng chiếm \textbf{78,3\% giá trị thanh toán}, boleto 17,9\%; thẻ trả góp TB 3,5 kỳ và 66,9\% giao dịch thẻ trả góp nhiều kỳ.
+  \item Chỉ \textbf{3,12\% khách mua lại} (2.997/96.096); cohort cho thấy tỷ lệ quay lại sau 1 tháng chỉ \textasciitilde{}0,5\%.
+  \item RFM: 94.983 khách; "Ngủ đông" 36.957 và "Khách mới" 36.752 chiếm gần hết; chỉ 129 khách Champions.
+\end{itemize}
+\todo{Nhóm kiểm tra các nhận xét của D5 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
+
+\subsubsection*{D6 – Seller Acquisition \& Performance (2 trang)}
+
+Đo hiệu quả thu hút seller: kênh nào chuyển đổi tốt, chốt deal mất bao lâu, seller từ funnel có bán được không (luôn ghi cỡ mẫu).
+
+\paragraph{Câu hỏi dashboard trả lời.}
+
+\begin{itemize}
+  \item Bao nhiêu \% MQL được chốt, theo kênh?
+  \item Chốt deal và có đơn đầu tiên mất bao lâu?
+  \item Seller từ funnel đóng góp GMV bao nhiêu, giao trễ và review ra sao?
+  \item Seller nào GMV cao nhưng hay trễ?
+\end{itemize}
+
+\khunganh{[Ảnh chụp dashboard D6 sau khi dựng trên Power BI]}{Dashboard D6}
+
+\todo{Chèn ảnh chụp dashboard D6 (xuất PNG từ Power BI) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/D6.md mục 4--8).}
+
+\paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
+
+\begin{itemize}
+  \item \textbf{8.000 MQL $\rightarrow$ 842 deal (10,5\%) $\rightarrow$ 379 seller có đơn bán được (45,0\% số đã chốt, tức 4,74\% MQL)}; 462 deal chốt nhưng chưa bán.
+  \item Tỷ lệ chốt theo origin: \code{unknown} 16,7\%, \code{paid\_\allowbreak{}search} 12,3\%, \code{organic\_\allowbreak{}search} 11,8\%… thấp nhất \code{email} 3,0\% (493 MQL) và \code{other} 2,7\% (150 MQL).
+  \item Thời gian chốt TB 48,5 ngày (Social 61,0; Paid 55,0; Organic 45,9; Unknown 41,9); từ chốt đến đơn đầu TB 51,9 ngày.
+  \item Seller từ funnel chỉ tạo \textasciitilde{}5\% GMV: kênh Organic 153 seller có đơn (GMV 246.767), Unknown 85 (214.726), Paid 103 (153.720), Social 31, Email 6 (\textbf{mẫu nhỏ}), Other 2 (\textbf{mẫu nhỏ}).
+  \item Seller Unknown có \textbf{GMV/seller cao nhất (2.526 BRL)} trong các nhóm funnel nhưng mẫu 85 seller; Organic chỉ 1.613 BRL/seller – cần nói rõ cỡ mẫu khi so sánh.
+\end{itemize}
+\todo{Nhóm kiểm tra các nhận xét của D6 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
+
+\subsubsection*{D7 – Data Quality \& ETL Monitor}
+
+Giám sát pipeline: mỗi lô chạy bao lâu, nạp bao nhiêu dòng, bao nhiêu dòng bị loại và vì sao, kiểm thử có đạt không, funnel "lấp đầy dần" qua các đợt.
+
+\paragraph{Câu hỏi dashboard trả lời.}
+
+\begin{itemize}
+  \item Pipeline chạy có ổn định và mất bao lâu mỗi đợt?
+  \item Bao nhiêu dòng bị loại, lý do?
+  \item Bao nhiêu phép kiểm thử đạt?
+  \item Số MQL, deal, seller có đơn thay đổi ra sao qua các đợt?
+\end{itemize}
+
+\khunganh{[Ảnh chụp dashboard D7 sau khi dựng trên Power BI]}{Dashboard D7}
+
+\todo{Chèn ảnh chụp dashboard D7 (xuất PNG từ Power BI) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/D7.md mục 4--8).}
+
+\paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
+
+\begin{itemize}
+  \item 11 đợt tăng dần, mỗi đợt \textbf{\textasciitilde{}20–26 giây} (gồm kiểm thử \textasciitilde{}11–15 giây).
+  \item \textbf{Funnel lấp đầy dần}: MQL 2.002 $\rightarrow$ 8.000 (đủ từ đợt 5), deal chốt 3 $\rightarrow$ 842, seller của funnel có đơn 0 $\rightarrow$ 379 (đủ từ đợt 8).
+  \item Dòng bị loại: chỉ \textbf{42 điểm toạ độ ngoài Brazil}; không có dòng mồ côi; các khoảng thời gian âm được đặt trống và đếm ở \code{fact\_\allowbreak{}load\_\allowbreak{}issue} (1.359 \code{handling\_\allowbreak{}days}, 23 \code{transit\_\allowbreak{}days}, 1 \code{days\_\allowbreak{}to\_\allowbreak{}close}).
+  \item 136 phép kiểm thử đạt 100\% và 6/6 đối chiếu EDA khớp ở lô cuối.
+\end{itemize}
+\todo{Nhóm kiểm tra các nhận xét của D7 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
+
+\subsection{Yêu cầu chung của dashboard}\label{sec:dash-checklist}
+Ngoài nội dung riêng của từng dashboard, mọi trang tuân theo một checklist chung (\code{huong-dan/dashboards/README.md}): định dạng số rút gọn (nghìn K, triệu M, phần trăm một chữ số thập phân, có dấu phân cách); tiêu đề mỗi visual là một câu hỏi; màu đỏ chỉ dùng để cảnh báo (bảng màu dữ liệu của chủ đề không có đỏ); định dạng có điều kiện bằng DAX; slicer và biểu đồ theo phân cấp để roll-up, drill-down như thao tác OLAP; drill-through và tooltip để xem chi tiết; chuỗi thời gian có đường dự báo; và publish công khai kèm mã QR. Mục 12 của mỗi hướng dẫn \code{D1.md}--\code{D7.md} ghi dashboard đó đáp ứng từng mục thế nào: định dạng số, tiêu đề câu hỏi, định dạng có điều kiện và publish đều áp dụng cho cả bảy dashboard; slicer phân cấp áp dụng cho cả bảy; drill-through và tooltip có ở cả bảy; chuỗi thời gian có dự báo chỉ có ở D1, D3 và D5 vì bốn dashboard còn lại không phải chuỗi thời gian kinh doanh.
+\todo{Nhóm đánh dấu từng mục checklist (mục 11 của D*.md) sau khi dựng dashboard trên Power BI, chụp ảnh drill-through, tooltip và đường dự báo; chèn mã QR của link publish (figures/4\_qr\_dashboard.png).}
+
+\subsection{Bài học}\label{sec:bai-hoc}
+Quá trình dựng và đối chiếu số liệu cho dashboard để lại hai nhóm bài học: về chỉ số và về quy trình.
+
+\paragraph{Về chỉ số: cùng một khái niệm có thể cho hai con số.}
+\begin{itemize}
+  \item \textbf{GMV}: tính chỉ đơn không thuộc nhóm Failed là 13.494.400,74 BRL (13,49 triệu), còn tổng giá hàng của mọi đơn là 13.591.643,70 BRL (13,59 triệu); chênh 97.242,96 BRL là giá hàng của các đơn bị hủy hoặc không khả dụng. Dashboard dùng định nghĩa thứ nhất và ghi rõ cạnh con số.
+  \item \textbf{Orders và Orders placed}: Orders (đơn có doanh thu) là 98.199, Orders placed (mọi đơn đã đặt) là 99.441; AOV chia theo Orders, tỷ lệ hủy chia theo Orders placed. Dùng nhầm mẫu số làm AOV hoặc tỷ lệ hủy lệch.
+  \item \textbf{Điểm review nhóm đúng hạn}: ban đầu 4,21 vì 2.871 review của đơn chưa giao bị tính vào nhóm đúng hạn; sau khi thêm cột \code{is\_delivered} vào \code{fact\_review} điểm đúng là 4,29.
+  \item \textbf{380 so với 379 seller có đơn}: 380 deal đã chốt có đơn ở mọi trạng thái, nhưng chỉ 379 seller có đơn không thuộc nhóm Failed; KPI dùng 379, con số 380 chỉ thuộc khám phá dữ liệu.
+\end{itemize}
+
+\paragraph{Về quy trình.}
+\begin{itemize}
+  \item \textbf{Khoá thay thế từng không cố định giữa các lần dựng}: khi chèn dimension không có \code{ORDER BY}, giá trị khoá phụ thuộc kế hoạch truy vấn nên \code{dim\_sales\_rep} đổi khoá giữa hai lần dựng; nhóm sửa bằng cách mọi procedure nạp dimension chèn theo thứ tự khoá tự nhiên và so sánh hai lần dựng bằng \code{compare\_databases.py --keys}.
+  \item \textbf{Sửa ở ETL, không sửa ở BI}: lỗi điểm review đúng hạn được sửa ở bảng fact chứ không bù bằng DAX trong Power BI, để mọi dashboard và mọi công cụ dùng chung một con số.
+  \item \textbf{Số liệu trong tài liệu sinh từ cơ sở dữ liệu}: bảng và hình trong báo cáo, bảng giá trị kỳ vọng của dashboard đều sinh bằng script từ kho, nên khi dữ liệu đổi chỉ cần chạy lại script thay vì sửa tay từng con số.
+\end{itemize}
+\todo{Nhóm bổ sung bài học về làm việc nhóm, công cụ (Git, Power BI) và khó khăn thực tế khi dựng dashboard; viết lại các ý trên bằng lời của nhóm.}

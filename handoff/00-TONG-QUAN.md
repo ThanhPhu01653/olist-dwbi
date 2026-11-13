@@ -1,6 +1,6 @@
 # Tổng quan dự án Olist – Kho dữ liệu & BI (cập nhật 05/11/2026, sau P7)
 
-> 📘 **Bộ hướng dẫn cho cả nhóm: [`huong-dan/00-BAT-DAU-TU-DAY.md`](../huong-dan/00-BAT-DAU-TU-DAY.md)** – lộ trình đọc theo việc (dựng dashboard / viết báo cáo / làm slide), pipeline bằng lời, thuật ngữ, từ điển dữ liệu, 40 câu hỏi đáp, nghiệp vụ (nháp) và hướng dẫn từng dashboard D1–D7.
+> 📘 **Bộ hướng dẫn cho cả nhóm: [`huong-dan/00-BAT-DAU-TU-DAY.md`](../huong-dan/00-BAT-DAU-TU-DAY.md)** – lộ trình đọc theo việc (dựng dashboard / viết báo cáo / làm slide), pipeline bằng lời, thuật ngữ, từ điển dữ liệu, 47 câu hỏi đáp, nghiệp vụ (nháp) và hướng dẫn từng dashboard D1–D7.
 > 📝 **Báo cáo LaTeX (khung 88 trang PDF, đã biên dịch được): [`report/README.md`](../report/README.md)** · **Slide Beamer (theme HUST, 114 slide nội dung + 10 slide dự phòng, 133 trang PDF): [`slides/README.md`](../slides/README.md)** · dàn bài: [`slides/slide-script.md`](../slides/slide-script.md).
 
 *Đây là trang tổng quan số liệu và phát hiện. Điểm vào của tài liệu là [`huong-dan/00-BAT-DAU-TU-DAY.md`](../huong-dan/00-BAT-DAU-TU-DAY.md) (bản đồ tài liệu và lộ trình đọc theo công việc). Mọi số liệu lấy từ truy vấn thật trên trạng thái cuối của kho; chi tiết và cách truy ngược nằm ở các file `handoff/2026-11-05-P0.md` … `P7-*.md`. Hình hiển thị ngay trong trang này khi mở trên GitHub.*
@@ -127,16 +127,16 @@ Ngoài ra: dữ liệu đơn dùng được là **01/2017–08/2018** (99,6% s�
 | Power BI | một file `.pbix` chung, nạp CSV (Import) qua tham số `DataFolder`; Publish to web | cả nhóm dựng dashboard; CSV chia sẻ qua Drive vì > 50 MB |
 
 ## 8. Danh sách hình (`figures/`)
-| Hình | Nội dung | Mục |
+| Hình | Nội dung | Mục báo cáo (sau P8) |
 | --- | --- | --- |
-| `3-2-4_erd_oltp.png` | ERD hai hệ thống nguồn (bản nháp tự động) | 3.2.4 |
+| `3-2-4_erd_oltp.png` | ERD hai hệ thống nguồn (bản nháp tự động) | 2.5 |
 | `3-2-1_bpmn_don_hang.png`, `3-2-2_bpmn_thu_hut_seller.png`, `3-2-3_business_model_canvas.png`, `3-2-5_cay_nghiep_vu.png`, `3-2-6_cay_yeu_cau_phan_tich.png`, `3-2-7_cay_phan_tich_D1…D7.png` | nghiệp vụ (BẢN NHÁP): BPMN, canvas, các cây | 3.1, 3.2.1–3.2.2, 3.3.5 |
-| `3-3-1_*.png` (17 hình) | EDA: lỗi dữ liệu, tỷ lệ rỗng, phân bố, Pareto, đơn theo tháng, review, tương quan, trễ vs review, freight vs cân nặng, lead time theo vùng, trễ theo bang, funnel (5 hình) | 3.3.1 |
-| `3-3-4_erd_dw.png`, `3-3-4_constellation.png` | ERD kho; constellation theo data mart (bản nháp tự động) | 3.3.4 |
-| `3-4-1_pipeline.png` | pipeline / các lớp (bản nháp tự động) | 3.4 |
-| `3-4-3_before_after_*.png` (6 hình) | mẫu dữ liệu trước/sau làm sạch (orders, products, sellers, geolocation, mql, closed_deals) | 3.4.3 |
-| `3-5-1_benchmark.png` | thời gian truy vấn: oltp vs dw, index FK, view vs materialized view | 3.5.1 |
-| `3-5-2_distance_vs_freight.png`, `3-5-2_distance_vs_leadtime.png` | khoảng cách seller → khách với phí vận chuyển, lead time, tỷ lệ trễ | 3.5.2 |
+| `3-3-1_*.png` (17 hình) | EDA: lỗi dữ liệu, tỷ lệ rỗng, phân bố, Pareto, đơn theo tháng, review, tương quan, trễ vs review, freight vs cân nặng, lead time theo vùng, trễ theo bang, funnel (5 hình) | 3.1 |
+| `3-3-4_erd_dw.png`, `3-3-4_constellation.png` | ERD kho; constellation theo data mart (bản nháp tự động) | 3.5 |
+| `3-4-1_pipeline.png` | pipeline / các lớp (bản nháp tự động) | 3.3 |
+| `3-4-3_before_after_*.png` (6 hình) | mẫu dữ liệu trước/sau làm sạch (orders, products, sellers, geolocation, mql, closed_deals) | 3.3 |
+| `3-5-1_benchmark.png` | thời gian truy vấn: oltp vs dw, index FK, view vs materialized view | 3.5 |
+| `3-5-2_distance_vs_freight.png`, `3-5-2_distance_vs_leadtime.png` | khoảng cách seller → khách với phí vận chuyển, lead time, tỷ lệ trễ | 3.1 |
 
 ## 9. Chưa làm hoặc còn hạn chế (nói thẳng)
 - **Chưa có dashboard Power BI nào.** `powerbi/model.md` (quan hệ, M, phân cấp, D1–D7) và `measures.md` (DAX) được viết cùng số kỳ vọng tính bằng SQL, nhưng **chưa ai chạy trên Power BI Desktop**; lúc dựng lần đầu có thể gặp lỗi cú pháp hoặc giao diện nhỏ, hãy ghi lại để sửa tài liệu.
@@ -147,32 +147,31 @@ Ngoài ra: dữ liệu đơn dùng được là **01/2017–08/2018** (99,6% s�
 - Dữ liệu: 2016 và 09–10/2018 rất thưa; chỉ 45,0% deal chốt có đơn bán được nên so sánh theo kênh có cỡ mẫu nhỏ (luôn ghi cỡ mẫu); toạ độ là trung vị theo zip (không phải địa chỉ thật) và khoảng cách haversine là đường chim bay.
 - Hiệu năng: benchmark gọn (4 truy vấn, một laptop, một người dùng); không đo phân vùng bảng, cấu hình PostgreSQL, nhiều người dùng đồng thời.
 - Kho điều phối bằng lệnh Python (không có lịch tự chạy hay Airflow); chưa có phân quyền theo người dùng ngoài mật khẩu trong `.env`.
-- Các số liệu và hình EDA (mục 3.3.1) tính từ lần chạy EDA trước; sau lần dựng lại từ đầu chưa chạy lại `scripts/eda/run_all.py` (dữ liệu nguồn không đổi nên kết quả giống nhau).
+- Các số liệu và hình EDA (mục 3.1) tính từ lần chạy EDA trước; sau lần dựng lại từ đầu chưa chạy lại `scripts/eda/run_all.py` (dữ liệu nguồn không đổi nên kết quả giống nhau).
 - Nhóm chưa xem lại các quyết định "chốt 05/11" trước mốc chốt thiết kế 12/11; nếu đổi (ví dụ SCD2 → SCD1) phải sửa `DW_DESIGN.md` rồi chạy lại `rebuild_all.py`.
 
-## 10. Mục báo cáo → file handoff nguồn → hình dùng
-Các mục dưới đây theo đề cương báo cáo đã dùng trong các file phase. Mục không có file nguồn tự động (mở đầu chung, cơ sở lý thuyết, kết luận) do nhóm tự viết, có thể lấy ý từ `docs/DW_DESIGN.md` mục 1, 4, 9, 10 và `huong-dan/02-thuat-ngu.md`.
+## 10. Mục báo cáo → file nguồn → hình dùng
+Từ P8 (13/11), báo cáo và slide xếp theo **barem chấm điểm** (11 mục + mở rộng): Chương 1 tổng quan lý thuyết · 2 Khảo sát · 3 Phân tích và thiết kế · 4 Dashboard và BI · 5 Mở rộng · 6 Kết luận. Mỗi mục cấp 2 (x.y) là một file trong `report/chapters/`; mục không có file nguồn tự động (lý thuyết, kết luận) do nhóm tự viết. Hình giữ nguyên tên file cũ để nhóm vẽ lại đúng tên; hình mới đặt theo số mục mới.
 
-| Mục báo cáo | File handoff nguồn (đoạn nháp + số liệu) | Hình / file dùng |
-| --- | --- | --- |
-| 3.1 Giới thiệu doanh nghiệp, bài toán và mô hình kinh doanh | `huong-dan/05-nghiep-vu-nhap.md` (mục 3 Business Model Canvas, mục 4 cây nghiệp vụ; **bản nháp cần sửa**), `docs/DW_DESIGN.md` mục 1 | `3-2-3_business_model_canvas.png`, `3-2-5_cay_nghiep_vu.png` |
-| 3.2.1–3.2.2 Quy trình nghiệp vụ (đơn hàng, thu hút seller) và yêu cầu phân tích | `huong-dan/05-nghiep-vu-nhap.md` (mục 1–2 BPMN, mục 5 cây yêu cầu phân tích; **bản nháp cần sửa**) | `3-2-1_bpmn_don_hang.png`, `3-2-2_bpmn_thu_hut_seller.png`, `3-2-6_cay_yeu_cau_phan_tich.png` |
-| 3.2.3 Hệ thống nguồn và dữ liệu | `2026-11-05-P0.md`, `stats.md` | – |
-| 3.2.4 ERD nguồn, mapping OLTP → OLAP | `2026-11-05-P0.md`, `P4.md`; `docs/mapping_oltp_olap.md`, `docs/mapping.csv` | `3-2-4_erd_oltp.png` |
-| 3.3.1 Khám phá dữ liệu (EDA) | `2026-11-05-P1.md`, `profiling.md`, `data-quality.md`, `distributions.md`, `correlations.md`, `funnel.md`, `design-questions.md` | 17 hình `3-3-1_*.png`, `exports/eda_sample.xlsx`, `excel-toolpak-guide.md` |
-| 3.3.2 Kiến trúc hệ thống (các lớp, pipeline) | `huong-dan/01-pipeline-bang-loi.md`, `docs/DW_DESIGN.md` mục 3 | `docs/diagrams/kien-truc-cac-lop.drawio`, `docs/diagrams/pipeline-etl.drawio` (mở bằng draw.io, xuất PNG); nháp: `3-4-1_pipeline.png` |
-| 3.3.3 Staging và ODS (thiết kế, quy tắc làm sạch) | `2026-11-05-P2.md` | sơ đồ luồng (vẽ lại từ `3-4-1_pipeline.png`) |
-| 3.3.4 Mô hình chiều: dimension | `2026-11-05-P3.md`, `stats.md` | `3-3-4_erd_dw.png`; sơ đồ phân cấp (vẽ) |
-| 3.3.4 Mô hình chiều: fact và mô hình vật lý | `2026-11-05-P4.md`, `docs/DW_DESIGN.md` mục 4, 7 | `3-3-4_erd_dw.png`, `3-3-4_constellation.png` |
-| 3.3.5 KPI và cây phân tích | `powerbi/measures.md` (thư viện KPI + giá trị kỳ vọng), `huong-dan/dashboards/D1.md … D7.md`, `huong-dan/05-nghiep-vu-nhap.md` mục 6 (cây phân tích từng dashboard) | `3-2-7_cay_phan_tich_D1.png … D7.png` |
-| 3.4 Tần suất cập nhật, nạp tăng dần, giám sát ETL | `2026-11-05-P5.md`, `rebuild-report.md` | `3-4-1_pipeline.png` (vẽ lại), bảng các đợt |
-| 3.4.1 Môi trường và mã nguồn | `README.md` (cài đặt, chạy một lệnh, cấu trúc thư mục), `CLAUDE.md` (quy ước), `docs/DW_DESIGN.md` mục 3 | `docs/diagrams/` (kiến trúc), sơ đồ cấu trúc thư mục (vẽ) |
-| 3.4.2–3.4.3 Làm sạch và đối soát dữ liệu | `2026-11-05-P2.md`, `before-after-samples.md` | `3-4-3_before_after_*.png` (6 hình) |
-| 3.4.4 Data mart, OLAP (ROLAP), Power BI | `2026-11-05-P6.md`, `olap-examples.md`; `powerbi/model.md`, `powerbi/measures.md` | `3-3-4_constellation.png`; ảnh dashboard D1–D7 (khi dựng xong) |
-| 3.5.1 Hiệu năng truy vấn | `2026-11-05-P7-perf.md`, `benchmark.md` | `3-5-1_benchmark.png` |
-| 3.5.2 Cơ sở dữ liệu địa lý (không PostGIS) | `2026-11-05-P7-geo.md`, `geo-distance.md` | `3-5-2_distance_vs_freight.png`, `3-5-2_distance_vs_leadtime.png` |
+| Mục báo cáo | File `.tex` (`report/chapters/`) | File handoff nguồn (đoạn nháp + số liệu) | Hình / file dùng |
+| --- | --- | --- | --- |
+| 1 Tổng quan lý thuyết DW và BI (rút gọn ~10 trang) | `01-tong-quan-ly-thuyet.tex` | khung ý chính trong file; giáo trình | – |
+| 2.1 Quy trình nghiệp vụ, mô hình kinh doanh | `2-1-nghiep-vu.tex` | `huong-dan/05-nghiep-vu-nhap.md` (BPMN, Business Model Canvas, cây nghiệp vụ; **bản nháp cần sửa**) | `3-2-1_bpmn_don_hang.png`, `3-2-2_bpmn_thu_hut_seller.png`, `3-2-3_business_model_canvas.png`, `3-2-5_cay_nghiep_vu.png` |
+| 2.2 Yêu cầu phân tích | `2-2-yeu-cau.tex` | `huong-dan/05-nghiep-vu-nhap.md` mục 5 | `3-2-6_cay_yeu_cau_phan_tich.png` |
+| 2.3 KPI và cây phân tích | `2-3-kpi.tex` | `powerbi/measures.md`, `huong-dan/dashboards/D1.md … D7.md` | `3-2-7_cay_phan_tich_D1…D7.png` |
+| 2.4 Dữ liệu nguồn (quy mô, tần suất, taxonomy, data flow) | `2-4-du-lieu-nguon.tex` | `2026-11-05-P0.md`, `stats.md` | xem `2026-11-14-P8.md` |
+| 2.5 ERD OLTP và mapping | `2-5-erd-oltp.tex` | `2026-11-05-P0.md`, `P4.md`; `docs/mapping_oltp_olap.md`, `docs/mapping.csv` | `3-2-4_erd_oltp.png` |
+| 3.1 Khám phá dữ liệu (EDA, gồm khoảng cách địa lý) | `3-1-kham-pha.tex` | `2026-11-05-P1.md`, `profiling.md`, `data-quality.md`, `distributions.md`, `correlations.md`, `funnel.md`, `design-questions.md`; `2026-11-05-P7-geo.md`, `geo-distance.md` | `3-3-1_*.png`, `3-5-2_distance_vs_freight.png`, `3-5-2_distance_vs_leadtime.png`, `exports/eda_sample.xlsx` |
+| 3.2 Kiến trúc kho dữ liệu | `3-2-kien-truc.tex` | `huong-dan/01-pipeline-bang-loi.md`, `docs/DW_DESIGN.md` mục 3 | `docs/diagrams/kien-truc-cac-lop.drawio`, `docs/diagrams/pipeline-etl.drawio`, `3-4-1_pipeline.png` |
+| 3.3 ETL (ODS, môi trường, làm sạch, đối soát, nạp tăng dần) | `3-3-etl.tex` | `2026-11-05-P2.md`, `P5.md`, `before-after-samples.md`, `rebuild-report.md` | `3-4-3_before_after_*.png` (6 hình), bảng các đợt |
+| 3.4 Hệ thống chiều khái niệm (dimension) | `3-4-chieu-khai-niem.tex` | `2026-11-05-P3.md`, `stats.md` | `3-3-4_erd_dw.png`; sơ đồ phân cấp (vẽ) |
+| 3.5 Data model OLAP (fact, mô hình vật lý, mart, OLAP, hiệu năng) | `3-5-data-model.tex` | `2026-11-05-P4.md`, `P6.md`, `P7-perf.md`; `docs/DW_DESIGN.md` mục 4, 7; `olap-examples.md`, `benchmark.md` | `3-3-4_erd_dw.png`, `3-3-4_constellation.png`, `3-5-1_benchmark.png` |
+| 4 Dashboard và bài học | `4-dashboard.tex` | `huong-dan/dashboards/D1.md … D7.md`, `powerbi/model.md`, `powerbi/measures.md` | ảnh dashboard D1–D7 (khi dựng xong) |
+| 5.1 Mở rộng: Data lakehouse (khung, P10 điền) | `5-1-lakehouse.tex` | – | – |
+| 5.2 Mở rộng: Thu thập dữ liệu từ API (khung, P9 điền) | `5-2-thu-thap-api.tex` | – | – |
+| 6 Kết luận và bài học kinh nghiệm | `06-ket-luan.tex` | – | – |
 
-Slide: mỗi file phase có mục "Gợi ý slide (2–4 slide)"; ghép theo thứ tự bảng trên.
+Slide (`slides/sections/`): `00-mo-dau` · `01-khao-sat` (2.1–2.5) · `02-phan-tich-thiet-ke` (3.1–3.5) · `03-dashboard` (4) · `04-mo-rong` (5) · `05-tong-ket` (6) · `99-du-phong`; mỗi slide hiện nhãn mục barem ở góc trên bên phải. Mỗi file phase có mục "Gợi ý slide (2–4 slide)"; ghép theo thứ tự bảng trên.
 
 ## 11. Việc cho nhóm (chưa gán người)
 1. **Một người dựng D1 (Executive Overview) trước**, làm theo `powerbi/model.md` từ mục 1: cài Power BI Desktop → tải CSV từ Drive → tạo tham số `DataFolder` và hàm `fnCsv` → nạp bảng → tạo quan hệ → tạo measure từ `powerbi/measures.md` → **đối chiếu với bảng "giá trị kỳ vọng" ở cuối `measures.md`** (ví dụ GMV toàn bộ phải ra 13.494.400,74). Ghi lại mọi chỗ tài liệu hướng dẫn chưa đúng hoặc khó hiểu và báo Phú để sửa.

@@ -1,0 +1,20 @@
+\begin{table}[htbp]\centering\scriptsize\caption{Kết quả nạp kho dữ liệu: loại bảng, số cột, số dòng và đối chiếu với nguồn}\label{tab:etl-results}
+\begin{tabular}{p{2.70cm}p{2.53cm}p{0.84cm}p{1.18cm}p{4.90cm}p{1.01cm}}\toprule
+\textbf{Bảng} & \textbf{Loại} & \textbf{Số cột} & \textbf{Số dòng} & \textbf{Đối chiếu với nguồn} & \textbf{Test đạt}\\\midrule
+\code{dim\_date} & dimension (role-playing) & 18 & 1.828 & 1.827 ngày 2016-01-01 $\rightarrow$ 2020-12-31: 1.827 (+1 dòng Unknown) khớp & 4/4\\
+\code{dim\_geography} & dimension (SCD1) & 11 & 19.178 & số mã bưu chính trong geolocation ∪ customers ∪ sellers: 19.177 (+1 dòng Unknown) khớp & 8/8\\
+\code{dim\_customer} & dimension (SCD2) & 12 & 96.339 & 96.096 khách thật + phiên bản khi đổi mã bưu chính & 8/8\\
+\code{dim\_seller} & dimension (SCD1, conformed) & 17 & 3.558 & seller trong oltp ∪ crm: 3.557 (+1 dòng Unknown) khớp & 5/5\\
+\code{dim\_product} & dimension (SCD1) & 16 & 32.952 & oltp.products: 32.951 (+1 dòng Unknown) khớp & 5/5\\
+\code{dim\_order\_status} & dimension (lookup) & 6 & 9 & seed order\_status & 3/3\\
+\code{dim\_payment\_type} & dimension (lookup) & 6 & 6 & seed payment\_type & 3/3\\
+\code{dim\_lead\_origin} & dimension (lookup) & 5 & 11 & seed lead\_origin\_group + unknown & 3/3\\
+\code{dim\_lead\_profile} & dimension (junk) & 10 & 503 & tổ hợp 7 thuộc tính của deal & 2/2\\
+\code{dim\_sales\_rep} & dimension (role-playing) & 5 & 55 & SDR và SR trong closed\_deals & 2/2\\
+\code{fact\_order\_item} & fact giao dịch & 14 & 112.650 & oltp.order\_items: 112.650 khớp & 11/11\\
+\code{fact\_order\_fulfillment} & fact snapshot tích luỹ & 30 & 99.441 & oltp.orders: 99.441 khớp & 13/13\\
+\code{fact\_payment} & fact giao dịch & 8 & 103.886 & oltp.order\_payments: 103.886 khớp & 3/3\\
+\code{fact\_review} & fact giao dịch & 14 & 99.224 & oltp.order\_reviews: 99.224 khớp & 7/7\\
+\code{fact\_lead\_funnel} & fact snapshot tích luỹ & 18 & 8.000 & crm.mql: 8.000 khớp & 9/9\\
+\code{fact\_seller\_monthly} & fact snapshot định kỳ & 14 & 36.583 & seller × tháng, lưới dày đặc & 8/8\\
+\bottomrule\end{tabular}\end{table}

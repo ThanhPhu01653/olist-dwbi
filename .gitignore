@@ -51,3 +51,6 @@ slides/build*.log
 slides/hust-theme/references/
 slides/hust-theme/*.pdf
 slides/hust-theme/*.pptx
+
+# Reference material from other sources (local only)
+attach/

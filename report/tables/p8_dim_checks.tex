@@ -1,0 +1,10 @@
+\begin{table}[htbp]\centering\scriptsize\caption{Kiểm tra tính đúng của các phân cấp (đếm từ kho dữ liệu)}\label{tab:hier-checks}
+\begin{tabular}{p{3.6cm}p{7.2cm}p{4.6cm}}\toprule
+\textbf{Phân cấp} & \textbf{Kết quả đếm} & \textbf{Kết luận}\\\midrule
+Tháng phải đi kèm năm & chỉ có 12 số tháng nhưng 60 cặp (năm, tháng): tên tháng một mình không xác định một nút của phân cấp & đúng: dùng year\_month ('YYYY-MM') và year\_quarter làm cấp, không dùng month một mình\\
+Thành phố phải đi kèm bang & 5.814 tên thành phố nhưng 6.190 cặp (bang, thành phố); 303 tên thành phố xuất hiện ở từ 2 bang trở lên (nhiều nhất: bom jesus (6 bang), sao domingos (6 bang), boa esperanca (5 bang)) & đúng: cấp thành phố luôn đi kèm bang; không gộp theo tên thành phố\\
+Mã bưu chính xác định một thành phố và một bang & 0 mã có nhiều hơn một thành phố, 0 mã có nhiều hơn một bang & đúng: dim\_geography có một dòng cho mỗi mã bưu chính\\
+Bang thuộc đúng một vùng & 0 bang thuộc nhiều hơn một vùng (27 bang, 5 vùng) & đúng: Vùng → Bang là quan hệ một nhiều\\
+Sản phẩm → danh mục → nhóm ngành & 0 danh mục thuộc nhiều hơn một nhóm ngành (74 danh mục, 13 nhóm ngành) & đúng: mỗi danh mục một nhóm; sản phẩm chưa có danh mục vào nhóm unknown\\
+Origin → nhóm kênh & 0 origin thuộc nhiều hơn một nhóm kênh (10 origin, 6 nhóm kênh) & đúng: mỗi origin một nhóm kênh\\
+\bottomrule\end{tabular}\end{table}

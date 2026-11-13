@@ -1,0 +1,65 @@
+\section[Mở đầu]{Mở đầu}
+\subsection{Mở đầu}
+
+\begin{frame}{Xây kho dữ liệu và BI cho 99.441 đơn hàng thương mại điện tử Olist}
+\muc{Mở đầu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Học phần MI4214 – Kho dữ liệu và Kinh doanh thông minh; nhóm ...; giảng viên ...
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3-4_constellation.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S01] Chúng em xây một kho dữ liệu hoàn chỉnh từ hai bộ dữ liệu Olist: nguồn, ETL, kho hình sao, data mart và bảy dashboard Power BI. Bài trình bày đi từ bài toán đến kết quả và bài học.}
+\end{frame}
+
+\begin{frame}{Bài trình bày gồm năm phần theo thứ tự khảo sát, phân tích thiết kế, dashboard, mở rộng và tổng kết}
+\muc{Mở đầu}
+\begin{itemize}
+  \item 2 Khảo sát (nghiệp vụ, yêu cầu, KPI, dữ liệu nguồn, ERD) $\cdot$ 3 Phân tích và thiết kế (khám phá dữ liệu, kiến trúc, ETL, chiều khái niệm, data model) $\cdot$ 4 Dashboard và bài học $\cdot$ 5 Mở rộng (lakehouse, API) $\cdot$ 6 Kết luận
+\end{itemize}
+
+
+\note{[S02] Mỗi phần có số liệu thật từ kho; cuối mỗi phần nhóm nêu điều học được.}
+\end{frame}
+
+\begin{frame}{Dự án trong một trang: 1,56 triệu dòng nguồn thành 6 fact, 17 view mart và 7 dashboard}
+\muc{Mở đầu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item 2 hệ thống nguồn $\rightarrow$ staging $\rightarrow$ ODS $\rightarrow$ kho (10 chiều + 6 fact) $\rightarrow$ 4 data mart $\rightarrow$ Power BI
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-4-1_pipeline.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S03] Toàn bộ dựng lại từ đầu bằng một lệnh trong khoảng 7 phút và cho kết quả giống hệt; 136 phép kiểm thử đạt. Đây là bức tranh để quay lại khi cần.}
+\end{frame}
+
+\begin{frame}{Kho dữ liệu là nơi tích hợp dữ liệu hướng chủ đề, biến thiên theo thời gian và không bị ghi đè}
+\muc{Mở đầu · lý thuyết rút gọn}
+\begin{itemize}
+  \item Bốn đặc tính của Inmon: hướng chủ đề, tích hợp, biến thiên theo thời gian, không biến động
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: sơ đồ 4 ô (vẽ)}
+
+\note{[S04] Ở dự án này chủ đề là quản lý đơn hàng; tích hợp hai nguồn bán hàng và marketing; lịch sử khách được giữ bằng SCD2.}
+\end{frame}
+
+\begin{frame}{OLTP tối ưu ghi từng giao dịch, OLAP tối ưu đọc và tổng hợp}
+\muc{Mở đầu · lý thuyết rút gọn}
+\begin{itemize}
+  \item OLTP: 9 bảng chuẩn hóa; OLAP: một fact nối các chiều
+\end{itemize}
+\begin{columns}[c]\begin{column}{0.3\textwidth}\anh[0.5\textheight]{3-2-4_erd_oltp.png}\end{column}\begin{column}{0.68\textwidth}\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
+\textbf{Tiêu chí} & \textbf{OLTP} & \textbf{OLAP (kho dữ liệu)} \\\midrule
+Mục đích & ghi từng giao dịch & phân tích, tổng hợp \\
+Mô hình dữ liệu & 9 bảng chuẩn hóa (\texttt{oltp}) & hình sao: 6 fact + 10 chiều (\texttt{dw}) \\
+Truy vấn điển hình & nối nhiều bảng, ít dòng & quét và gom nhiều dòng \\
+Dữ liệu & trạng thái hiện tại & có lịch sử (SCD2 cho khách) \\
+Ví dụ & \texttt{orders}, \texttt{order\_items} & \texttt{fact\_order\_item}, \texttt{dim\_date} \\
+\bottomrule\end{tabular}}\end{center}\end{column}\end{columns}
+
+\note{[S05] Cùng một câu hỏi "GMV theo bang theo tháng" cần nối ba bảng ở nguồn nhưng chỉ nối một fact với hai chiều ở kho.}
+\end{frame}

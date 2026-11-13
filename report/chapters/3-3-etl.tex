@@ -1,0 +1,51 @@
+\section{ETL: từ hệ thống nguồn đến kho dữ liệu}\label{sec:etl}
+\subsection{ODS và phân tích dữ liệu nguồn}\label{sec:ods}
+Dữ liệu từ hai hệ thống nguồn trước hết được chép nguyên trạng vào tầng staging (11 bảng), mỗi dòng gắn mã đợt nạp và thời điểm nạp để truy vết. Có hai chế độ trích xuất: toàn phần (xoá và chép lại) và tăng dần (chỉ lấy dòng mới dựa trên watermark: ngày mua của đơn, ngày liên hệ đầu của MQL, ngày chốt của deal; các bảng con lấy theo đơn mới). Từ staging, các thủ tục SQL làm sạch dữ liệu vào tầng ODS. Bảng toạ độ địa lý 1.000.163 điểm được gom về 19.010 mã bưu chính, lấy median toạ độ và mode tên thành phố sau khi loại 42 điểm nằm ngoài phạm vi Brazil. Tên thành phố được chuẩn hoá chữ thường, bỏ dấu (73.440 điểm toạ độ bị đổi). Cột sai chính tả \code{*\_\allowbreak{}lenght} được đổi tên; 610 sản phẩm không có danh mục được gán \code{unknown}; 13 sản phẩm thuộc hai danh mục thiếu bản dịch được bổ sung bằng bảng seed. Với đơn hàng, thay vì xoá, hệ thống gắn cờ lỗi: 129 trong 45.430 đơn có mốc thời gian sai thứ tự hoặc thiếu ngày (phổ biến nhất là ngày bàn giao vận chuyển trước ngày duyệt, 84 đơn). Các dòng không nạp được đều ghi vào bảng \code{etl\_\allowbreak{}log.rejected\_\allowbreak{}rows} kèm lý do; kiểm thử đối soát cho thấy với mọi bảng số dòng staging bằng số dòng ODS cộng số dòng bị loại.
+
+\input{tables/dq_errors}
+\todo{Nhóm bổ sung phần ``Giới thiệu về ODS'' theo giáo trình (khái niệm, vị trí giữa nguồn và kho, khác biệt với kho) và liên hệ với Chương 1.}
+
+\subsection{Môi trường và mã nguồn}
+Hệ thống chạy trên PostgreSQL 18 (cài trực tiếp, không dùng Docker và không dùng PostGIS), Python 3.11 (pandas, SQLAlchemy, psycopg2) cho điều phối và nạp dữ liệu, SQL procedure (PL/pgSQL) cho biến đổi, Power BI Desktop cho dashboard và Git/GitHub để quản lý mã nguồn (nhánh theo từng phase, nhánh \code{main} luôn chạy được). Cấu trúc thư mục: \code{sql/} (DDL, procedure, view, kiểm thử), \code{etl/} (gói Python), \code{scripts/} (xuất dữ liệu, báo cáo), \code{powerbi/} (đặc tả mô hình và DAX), \code{handoff/} và \code{huong-dan/} (tài liệu). Toàn bộ dự án dựng lại từ đầu bằng một lệnh \code{python scripts/rebuild\_all.py --drop} và cho kết quả giống hệt lần trước (Bảng \ref{tab:rebuild}).
+\input{tables/rebuild}
+\todo{Thêm bảng công nghệ (logo, phiên bản, vai trò), hình cấu trúc thư mục repo, và hướng dẫn cài đặt rút gọn (README.md). Nêu quy ước đặt tên và quy trình làm việc nhóm với Git.}
+
+\subsection{Staging và ODS: làm sạch dữ liệu}\label{sec:staging-ods}
+Quy tắc staging và ODS đã mô tả ở mục \ref{sec:ods}; phần này tổng hợp các quy tắc làm sạch và số dòng bị ảnh hưởng.
+
+Các quy tắc làm sạch và số dòng bị ảnh hưởng được tổng hợp ở Bảng \ref{tab:dq-errors} (mục ef{sec:ods}). Mỗi dòng bị loại được ghi vào \code{etl\_log.rejected\_rows} cùng lý do; không có dòng nào bị bỏ âm thầm.
+\todo{Thêm sơ đồ luồng staging $\rightarrow$ ODS (các job ETL) và bảng ``nguồn $\rightarrow$ đích $\rightarrow$ phép biến đổi'' (Phụ lục C).}
+
+\subsection{Đối soát trước và sau ETL, nạp tăng dần}\label{sec:doi-soat}
+Mẫu dữ liệu trước và sau làm sạch được đối chiếu ở các hình dưới đây (nguồn: handoff/before-after-samples.md).
+\hinh{3-4-3_before_after_orders.png}{Trước và sau ETL: bảng đơn hàng}{fig:ba-orders}{0.95}
+\hinh{3-4-3_before_after_products.png}{Trước và sau ETL: bảng sản phẩm}{fig:ba-products}{0.95}
+\hinh{3-4-3_before_after_sellers.png}{Trước và sau ETL: bảng seller}{fig:ba-sellers}{0.95}
+\hinh{3-4-3_before_after_geolocation.png}{Trước và sau ETL: bảng toạ độ địa lý}{fig:ba-geo}{0.95}
+\hinh{3-4-3_before_after_mql.png}{Trước và sau ETL: bảng MQL}{fig:ba-mql}{0.95}
+\hinh{3-4-3_before_after_closed_deals.png}{Trước và sau ETL: bảng deal đã chốt}{fig:ba-deals}{0.95}
+\paragraph{Nạp tăng dần.}
+Vì bộ dữ liệu Olist là ảnh chụp tĩnh, nhóm mô phỏng việc cập nhật theo tháng. Hệ thống nguồn ban đầu chứa mọi bản ghi đến 31/12/2017 (45.430 đơn); sau đó một chương trình mô phỏng đổ thêm từng tháng vào hệ thống bán hàng và CRM, và kho dữ liệu được nạp tăng dần sau mỗi đợt. Ở mỗi đợt, bước extract chỉ lấy những dòng chưa có ở staging (đơn hàng theo mốc thời gian, các bảng còn lại theo khoá), tầng ODS làm sạch và thử lại các dòng từng bị loại vì thiếu bản ghi cha, chiều khách hàng đóng phiên bản cũ và mở phiên bản mới khi khách đổi mã bưu chính, bảng fact giao dịch thêm dòng, fact snapshot tích luỹ được cập nhật theo mã đơn, còn các snapshot nhỏ được tính lại. Toàn bộ nguồn được đưa vào kho sau 11 đợt hằng tháng (286.144 bản ghi mới), mỗi đợt mất khoảng 17–23 giây gồm cả kiểm thử. Kết quả cuối cùng khớp hoàn toàn với một lần nạp đầy đủ: cả 16 bảng chiều và fact có cùng số dòng, cùng tổng tiền và cùng giá trị kiểm tra nội dung. Mỗi lần chạy đều được ghi vào nhật ký \code{etl\_\allowbreak{}log} (thời gian, số dòng đọc/chèn/cập nhật/loại), làm nguồn cho dashboard giám sát; nhờ đó có thể thấy funnel marketing "lấp đầy" dần: số seller từ funnel có đơn tăng từ 0 lên 379 qua các đợt.
+
+\input{tables/increments}
+\paragraph{Thử lại dòng mồ côi.} Dòng con bị loại vì chưa có dòng cha (ví dụ deal đến trước MQL) được thử lại ở các đợt sau và biến mất khỏi danh sách loại khi đã nạp. \textbf{Lưu ý trung thực}: cơ chế này mới được chứng minh bằng kịch bản kiểm thử; trong 11 đợt thật không có dòng mồ côi nào xảy ra vì nguồn luôn nạp dòng cha trước.
+\todo{Thêm sơ đồ data pipeline hoặc ETL jobs (có logo công nghệ); ví dụ trước/sau cho thêm bảng nếu giảng viên yêu cầu; kết quả so sánh incremental với full: 16/16 bảng khớp (handoff/2026-11-05-P5.md).}
+
+\subsection{Tóm tắt các hoạt động ETL}\label{sec:etl-tom-tat}
+Bảng \ref{tab:etl-stages} tóm tắt các giai đoạn ETL theo thứ tự chạy của \code{python -m etl.run\_pipeline}: nội dung từng giai đoạn, công cụ và kết quả; số dòng lấy từ bảng nhật ký \code{etl\_log.job\_run} (lô đầu là lần nạp full đến 31/12/2017, tổng tính qua mọi lô gồm cả các đợt nạp tăng dần).
+\input{tables/p8_etl_stages}
+
+\subsection{Sơ đồ các job của pipeline}\label{sec:etl-jobs}
+Hình \ref{fig:etl-jobs} liệt kê các job theo thứ tự chạy: 11 job extract vào staging, 17 job seed và ODS, 11 job dimension, 6 job fact, làm mới mart và kiểm thử. Mỗi ô ghi tên job, bảng đích và số dòng chèn của lô full đầu tiên; sơ đồ được sinh từ chính \code{etl\_log.job\_run} nên khớp với những gì đã chạy. Job \code{dw.load\_dim\_seller\_first\_sale} chạy sau khi nạp \code{fact\_order\_item}, vì ngày bán đầu tiên của seller chỉ tính được từ bảng fact.
+\hinh{3-3_etl_jobs.png}{Các job của run\_pipeline theo thứ tự chạy, sinh từ etl\_log.job\_run (bản nháp)}{fig:etl-jobs}{1.0}
+
+\subsection{Ví dụ minh hoạ: một đơn hàng đi qua pipeline}\label{sec:etl-vi-du}
+Để dễ theo dõi, nhóm lần theo đơn \code{19c36691\ldots} (đã giao, ba dòng hàng của một seller, có thanh toán và review). Ở nguồn, đơn có năm mốc thời gian: mua 24/10/2017 14:33, duyệt 26/10 03:09, bàn giao vận chuyển 26/10 20:10, giao 08/11 16:18 và ngày dự kiến 14/11. Staging chép nguyên trạng và chỉ thêm mã lô nạp. Ở ODS, mã bưu chính \code{31930} được chuẩn hoá thành \code{char(5)} và cờ chất lượng \code{dq\_flags} rỗng vì các mốc thời gian đúng thứ tự. Ở kho, mã chữ dài 32 ký tự của seller và sản phẩm đổi thành khoá thay thế số nguyên; khách thật của đơn có hai phiên bản địa chỉ trong \code{dim\_customer} (SCD loại 2) và đơn trỏ tới phiên bản có hiệu lực ngày mua. Bảng \code{fact\_order\_fulfillment} gom cả đơn thành một dòng và tính sẵn thời gian từng chặng: duyệt 36,61 giờ, xử lý 0,71 ngày, vận chuyển 12,84 ngày, tổng lead time 15,07 ngày; ngày hứa giao là 21 ngày nên số ngày trễ là $-6$ (giao sớm 6 ngày) và đơn tính là đúng hạn. Cuối cùng view \code{v\_fulfillment\_order} gắn nhãn ``Giao sớm'' và \code{v\_shipping\_distance} tính khoảng cách seller đến khách là 553,3 km. Bản đầy đủ từng bảng ở mỗi lớp nằm trong \code{huong-dan/01-pipeline-bang-loi.md}.
+
+\subsection{Kết quả nạp kho dữ liệu}\label{sec:etl-ket-qua}
+Bảng \ref{tab:etl-results} cho kết quả nạp từng bảng của schema \code{dw}: loại bảng, số cột, số dòng, đối chiếu với nguồn và số phép kiểm thử đạt. Số dòng của mọi bảng fact bằng số dòng bảng nguồn tương ứng, mỗi dimension có thêm một dòng Unknown (khoá $-1$), và tổng \code{price} của \code{fact\_order\_item} là 13.591.643,70 BRL, khớp từng đồng với nguồn.
+\input{tables/p8_etl_results}
+
+\subsection{Dùng nhiều công cụ cho ETL: SQL, Python và Power Query}\label{sec:etl-nhieu-cong-cu}
+Pipeline chính dùng SQL (procedure PostgreSQL biến đổi và nạp) và Python (điều phối, nạp nguồn, xuất CSV). Để minh hoạ công cụ thứ ba, nhóm viết lại một quy tắc làm sạch bằng \textbf{Power Query (ngôn ngữ M)}: chuẩn hoá tên thành phố của bảng toạ độ (cắt khoảng trắng, chữ thường, bỏ dấu) và đưa mã bưu chính về đủ 5 ký tự. Cùng một quy tắc cho cùng kết quả ở ba công cụ: số tên thành phố giảm từ 8.011 xuống 5.968 và 73.440 dòng bị đổi tên (SQL \code{lower(unaccent(trim(city)))}; Python chuẩn hoá Unicode và cho 73.438 dòng, chênh 2 dòng do ký tự \code{º}; bản M dùng bảng thay thế đã thêm \code{º} nên khớp SQL). Mã M, hướng dẫn chụp ảnh before/after trong Power BI và đối chiếu chi tiết nằm ở \code{powerbi/power-query-vi-du.md}.
+\todo{Nhóm chạy mã M trong Power BI Desktop để xác nhận 5.968 thành phố và 73.440 dòng đổi, chụp ảnh before/after (cột \code{geolocation\_city}, Column distribution) theo powerbi/power-query-vi-du.md mục 4 và đặt vào figures/3-3\_power\_query\_before\_after.png.}
