@@ -1,15 +1,12 @@
 \section{KPI và cây phân tích}\label{sec:kpi}
 Bảng \ref{tab:kpi} liệt kê các KPI chính; mỗi KPI được định nghĩa một lần bằng công thức DAX (Phụ lục A) và đối chiếu với giá trị tính bằng SQL trên kho. \textbf{GMV} chỉ tính đơn không thuộc nhóm Failed (hủy hoặc không khả dụng), vì vậy nhỏ hơn tổng giá hàng của mọi đơn (13,49 triệu so với 13,59 triệu BRL). KPI \emph{ngày hứa giao so với ngày giao thực tế} so sánh số ngày Olist hứa với số ngày giao thực tế: ngày dự kiến rất rộng rãi (trung bình 24,4 ngày) trong khi giao thực tế trung bình 12,6 ngày, nên tỷ lệ ``đúng hạn'' cao (93,2\%) chưa phản ánh trải nghiệm.
 \input{tables/kpi}
-Mỗi dashboard có một cây phân tích đi từ mục tiêu đến câu hỏi, chỉ số và chiều (Hình \ref{fig:cay-d1} đến \ref{fig:cay-d7}).
-\hinh{3-2-7_cay_phan_tich_D1.png}{Cây phân tích dashboard D1 -- Executive Overview}{fig:cay-d1}{0.75}
-\hinh{3-2-7_cay_phan_tich_D2.png}{Cây phân tích dashboard D2 -- Sales và Product}{fig:cay-d2}{0.75}
-\hinh{3-2-7_cay_phan_tich_D3.png}{Cây phân tích dashboard D3 -- Order Fulfillment}{fig:cay-d3}{0.75}
-\hinh{3-2-7_cay_phan_tich_D4.png}{Cây phân tích dashboard D4 -- Geography và Freight}{fig:cay-d4}{0.75}
-\hinh{3-2-7_cay_phan_tich_D5.png}{Cây phân tích dashboard D5 -- Customer Experience}{fig:cay-d5}{0.75}
-\hinh{3-2-7_cay_phan_tich_D6.png}{Cây phân tích dashboard D6 -- Seller Acquisition}{fig:cay-d6}{0.75}
-\hinh{3-2-7_cay_phan_tich_D7.png}{Cây phân tích dashboard D7 -- Data Quality và ETL Monitor}{fig:cay-d7}{0.75}
-\todo{Nhóm vẽ lại các cây phân tích bằng draw.io nếu muốn thống nhất kiểu trình bày; thêm bảng KPI đầy đủ theo định nghĩa trong docs/DW\_DESIGN.md mục 9 (công thức, nguồn, đơn vị).}
+Bộ dashboard có bốn dashboard (DB1--DB4, gộp từ bảy dashboard ở bản trước; mục \ref{sec:dashboard}), mỗi dashboard có một cây phân tích đi từ mục tiêu đến câu hỏi, chỉ số và chiều (Hình \ref{fig:cay-db1} đến \ref{fig:cay-db4}); cột \emph{Dashboard} của Bảng \ref{tab:kpi} cho biết mỗi KPI được dashboard nào dùng.
+\hinh{2-3_cay_phan_tich_DB1.png}{Cây phân tích dashboard DB1 -- Tổng quan và doanh thu}{fig:cay-db1}{0.75}
+\hinh{2-3_cay_phan_tich_DB2.png}{Cây phân tích dashboard DB2 -- Giao hàng và trải nghiệm khách}{fig:cay-db2}{0.75}
+\hinh{2-3_cay_phan_tich_DB3.png}{Cây phân tích dashboard DB3 -- Địa lý và phí vận chuyển}{fig:cay-db3}{0.75}
+\hinh{2-3_cay_phan_tich_DB4.png}{Cây phân tích dashboard DB4 -- Thu hút và hiệu quả seller}{fig:cay-db4}{0.75}
+\todo{Người 1 vẽ lại bốn cây phân tích bằng draw.io nếu muốn thống nhất kiểu trình bày (giữ tên file hình 2-3\_cay\_phan\_tich\_DB1 đến DB4); thêm bảng KPI đầy đủ theo định nghĩa trong docs/DW\_DESIGN.md mục 9 (công thức, nguồn, đơn vị).}
 
 \subsection{Giới hạn của dữ liệu ảnh hưởng tới KPI}\label{sec:gioi-han}
 Một số đặc điểm của dữ liệu làm cùng một khái niệm có thể cho hai con số khác nhau; Bảng \ref{tab:gioi-han} nêu từng trường hợp, số liệu đo được và cách dashboard xử lý. Điểm chung là chọn một định nghĩa, ghi rõ định nghĩa cạnh con số, và sửa sai lệch ở tầng ETL hoặc kho chứ không sửa ở lớp BI.

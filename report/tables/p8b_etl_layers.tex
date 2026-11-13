@@ -1,0 +1,8 @@
+\begin{table}[htbp]\centering\scriptsize\caption{Số dòng đi qua từng lớp trong mọi đợt nạp (từ etl\_log)}\label{tab:etl-layers}
+\begin{tabular}{p{2.81cm}p{2.25cm}p{9.38cm}}\toprule
+\textbf{Lớp} & \textbf{Số dòng} & \textbf{Ghi chú}\\\midrule
+Nguồn (oltp, crm) & 1.559.764 & dòng đã nạp hoặc mô phỏng vào hai hệ thống nguồn qua mọi đợt\\
+Staging & 1.559.764 & dòng chép vào staging (extract); bằng số dòng nguồn\\
+ODS & 578.611 & dòng vào ODS (không tính các bảng seed nạp lại mỗi lô; bảng toạ độ đã gom về mã bưu chính); 42 dòng bị loại\\
+Kho dw & 614.213 & dòng chèn vào dimension và fact; 4.814 dòng cập nhật (snapshot tích luỹ, ngày bán đầu tiên của seller)\\
+\bottomrule\end{tabular}\end{table}

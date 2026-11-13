@@ -1,10 +1,11 @@
-\section{Dashboard}\label{sec:dashboard}
+\section{Dashboard và kinh doanh thông minh}\label{sec:dashboard}
 
-Hệ thống có 7 dashboard Power BI dựng trên cùng một mô hình ngữ nghĩa (32 quan hệ, role-playing date, phân cấp thời gian, địa lý, sản phẩm, seller): ba dashboard theo dòng thời gian và phân tích (D1, D2, D6), hai dashboard OLAP/địa lý (D2, D4), hai dashboard vận hành và thống kê (D3, D5) và một dashboard vận hành hệ thống (D7). Cách dựng từng bước: powerbi/model.md.
+Bộ dashboard có \textbf{4} dashboard Power BI dựng trên cùng một mô hình ngữ nghĩa (32 quan hệ, role-playing date, phân cấp thời gian, địa lý, sản phẩm, seller). Mỗi dashboard thuộc một loại mà môn học yêu cầu và do một thành viên dựng, Phú làm file gốc: DB1 theo dòng thời gian (có dự báo), DB2 vận hành và thống kê (Key Influencers), DB3 OLAP (drill-down vùng, bang, thành phố; drill-through; tooltip) và DB4 vận hành về thu hút seller (funnel, drill-through sang chi tiết seller). Giám sát chất lượng dữ liệu và ETL không còn là dashboard: số liệu nằm ở mục \ref{sec:etl-giam-sat}; dữ liệu thị trường Brazil lấy từ API thuộc chương 5. Cách dựng từng bước: \code{powerbi/model.md}; hướng dẫn từng dashboard: \code{huong-dan/dashboards/DB1.md} đến \code{DB4.md}.
 
-\todo{Thống kê số dashboard theo loại (theo dòng thời gian, OLAP, vận hành, thống kê/dự án) và liệt kê các loại biểu đồ đã dùng (yêu cầu của môn: đa dạng biểu đồ, slicer, định dạng có điều kiện, DAX tăng trưởng và cảnh báo).}
+\subsection{DB1 -- Tổng quan và doanh thu}\label{sec:db1}
+Loại: theo dòng thời gian, có dự báo. Gồm hai trang (tổng quan; doanh thu theo sản phẩm) và một trang tooltip \code{Tooltip\_Thang}; đường GMV theo tháng có đường dự báo ba điểm (Analytics $\rightarrow$ Forecast, tin cậy 95\%).
 
-\subsubsection*{D1 – Executive Overview}
+\subsubsection*{Trang 1 -- Tổng quan}
 
 Cho lãnh đạo thấy sức khoẻ toàn doanh nghiệp trong một trang: doanh thu, giao hàng, hài lòng, và xu hướng theo tháng.
 
@@ -17,9 +18,9 @@ Cho lãnh đạo thấy sức khoẻ toàn doanh nghiệp trong một trang: doa
   \item Vùng nào và nhóm ngành nào đóng góp nhiều nhất?
 \end{itemize}
 
-\khunganh{[Ảnh chụp dashboard D1 sau khi dựng trên Power BI]}{Dashboard D1}
+\khunganh{[Ảnh chụp DB1 trang 1 sau khi dựng trên Power BI]}{DB1 trang 1}
 
-\todo{Chèn ảnh chụp dashboard D1 (xuất PNG từ Power BI) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/D1.md mục 4--8).}
+\todo{Chèn ảnh chụp DB1 trang 1 (xuất PNG từ Power BI, đặt tên 4\_DB1\_\ldots.png) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/DB1.md mục 3--6).}
 
 \paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
 
@@ -30,9 +31,9 @@ Cho lãnh đạo thấy sức khoẻ toàn doanh nghiệp trong một trang: doa
   \item Giao đúng hạn 93,2\% nhưng \textbf{tụt còn 87,6\% ở 11/2017} (tháng Black Friday) và 81,0\% ở 03/2018: tải cao làm giao chậm.
   \item Nhóm ngành hàng dẫn đầu: Home \& Furniture 22,8\% GMV, tiếp theo Gifts \& Others và Electronics \& Computers (14,0\% mỗi nhóm).
 \end{itemize}
-\todo{Nhóm kiểm tra các nhận xét của D1 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
+\todo{Nhóm kiểm tra các nhận xét của DB1 trang 1 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
 
-\subsubsection*{D2 – Sales \& Product}
+\subsubsection*{Trang 2 -- Doanh thu theo sản phẩm}
 
 Đào sâu doanh số theo sản phẩm: ngành hàng nào bán chạy, quy luật 80/20, giá và phí vận chuyển theo ngành.
 
@@ -44,9 +45,9 @@ Cho lãnh đạo thấy sức khoẻ toàn doanh nghiệp trong một trang: doa
   \item AOV và phí vận chuyển của từng ngành ra sao?
 \end{itemize}
 
-\khunganh{[Ảnh chụp dashboard D2 sau khi dựng trên Power BI]}{Dashboard D2}
+\khunganh{[Ảnh chụp DB1 trang 2 sau khi dựng trên Power BI]}{DB1 trang 2}
 
-\todo{Chèn ảnh chụp dashboard D2 (xuất PNG từ Power BI) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/D2.md mục 4--8).}
+\todo{Chèn ảnh chụp DB1 trang 2 (xuất PNG từ Power BI, đặt tên 4\_DB1\_\ldots.png) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/DB1.md mục 3--6).}
 
 \paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
 
@@ -57,9 +58,15 @@ Cho lãnh đạo thấy sức khoẻ toàn doanh nghiệp trong một trang: doa
   \item Doanh số theo quý tăng rõ: quý 4/2017 là 2,41 triệu BRL so với 0,73 triệu ở quý 1/2017.
   \item Quy luật 80/20 ở seller yếu hơn: 540/3.053 seller (17,7\%) tạo 80\% GMV nhưng 5 seller lớn nhất chỉ chiếm 7,7\%.
 \end{itemize}
-\todo{Nhóm kiểm tra các nhận xét của D2 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
+\todo{Nhóm kiểm tra các nhận xét của DB1 trang 2 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
 
-\subsubsection*{D3 – Order Fulfillment}
+\todo{Dự báo trên Power BI chỉ để thấy hướng đi vì dữ liệu chỉ có 20 tháng; ghi chú cạnh biểu đồ, không kết luận mùa vụ theo năm (mục \ref{sec:mua-vu}).}
+
+
+\subsection{DB2 -- Giao hàng và trải nghiệm khách}\label{sec:db2}
+Loại: vận hành và thống kê. Gồm ba trang (giao hàng; trải nghiệm khách; yếu tố ảnh hưởng đến review tiêu cực bằng Key Influencers) và tooltip \code{Tooltip\_Muc\_tre}.
+
+\subsubsection*{Trang 1 -- Giao hàng}
 
 Theo dõi chu trình xử lý đơn: mỗi chặng mất bao lâu, vùng nào chậm, lời hứa giao hàng có sát thực tế không.
 
@@ -71,9 +78,9 @@ Theo dõi chu trình xử lý đơn: mỗi chặng mất bao lâu, vùng nào ch
   \item Ngày hứa giao so với ngày giao thực tế chênh bao nhiêu?
 \end{itemize}
 
-\khunganh{[Ảnh chụp dashboard D3 sau khi dựng trên Power BI]}{Dashboard D3}
+\khunganh{[Ảnh chụp DB2 trang 1 sau khi dựng trên Power BI]}{DB2 trang 1}
 
-\todo{Chèn ảnh chụp dashboard D3 (xuất PNG từ Power BI) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/D3.md mục 4--8).}
+\todo{Chèn ảnh chụp DB2 trang 1 (xuất PNG từ Power BI, đặt tên 4\_DB2\_\ldots.png) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/DB2.md mục 3--6).}
 
 \paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
 
@@ -84,36 +91,9 @@ Theo dõi chu trình xử lý đơn: mỗi chặng mất bao lâu, vùng nào ch
   \item Đúng hạn tụt từ 95,8\% (10/2017) xuống \textbf{87,6\% (11/2017, Black Friday)} và 81,0\% (03/2018): đợt cao điểm làm vận chuyển quá tải.
   \item Tỷ lệ hủy / không khả dụng toàn sàn chỉ 1,24\% (1.234 đơn).
 \end{itemize}
-\todo{Nhóm kiểm tra các nhận xét của D3 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
+\todo{Nhóm kiểm tra các nhận xét của DB2 trang 1 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
 
-\subsubsection*{D4 – Geography \& Freight}
-
-Cho thấy doanh số và phí vận chuyển phân bố theo địa lý, và quan hệ giữa khoảng cách, phí vận chuyển và thời gian giao.
-
-\paragraph{Câu hỏi dashboard trả lời.}
-
-\begin{itemize}
-  \item GMV tập trung ở vùng / bang nào?
-  \item Phí vận chuyển chiếm bao nhiêu \% giá hàng theo vùng?
-  \item Seller và khách xa nhau bao nhiêu và điều đó ảnh hưởng freight và lead time ra sao?
-\end{itemize}
-
-\khunganh{[Ảnh chụp dashboard D4 sau khi dựng trên Power BI]}{Dashboard D4}
-
-\todo{Chèn ảnh chụp dashboard D4 (xuất PNG từ Power BI) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/D4.md mục 4--8).}
-
-\paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
-
-\begin{itemize}
-  \item \textbf{Sudeste 65,4\% GMV, Sul 14,4\%, Nordeste 11,4\%, Centro-Oeste 6,4\%, Norte 2,5\%.}
-  \item Phí vận chuyển nặng ở vùng xa: \textbf{Norte 22,7\% và Nordeste 21,7\% giá hàng so với 15,2\% ở Sudeste}.
-  \item Từ dưới 100 km lên trên 1.000 km, phí vận chuyển TB tăng 11,75 $\rightarrow$ 31,65 BRL và lead time 6,5 $\rightarrow$ 19,0 ngày (xem \code{handoff/geo-distance.md}).
-  \item Seller và khách \textbf{cùng bang ở 36,1\%} dòng hàng; khoảng cách TB 598 km (trung vị 433 km).
-  \item 555 dòng hàng (0,49\%) không tính được khoảng cách vì thiếu toạ độ; cần ghi chú trên trang.
-\end{itemize}
-\todo{Nhóm kiểm tra các nhận xét của D4 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
-
-\subsubsection*{D5 – Customer Experience}
+\subsubsection*{Trang 2 -- Trải nghiệm khách}
 
 Hiểu trải nghiệm khách hàng: điểm đánh giá, ảnh hưởng của giao trễ, cơ cấu thanh toán, khách quay lại.
 
@@ -126,9 +106,9 @@ Hiểu trải nghiệm khách hàng: điểm đánh giá, ảnh hưởng của g
   \item Bao nhiêu khách quay lại; phân khúc RFM và cohort?
 \end{itemize}
 
-\khunganh{[Ảnh chụp dashboard D5 sau khi dựng trên Power BI]}{Dashboard D5}
+\khunganh{[Ảnh chụp DB2 trang 2 sau khi dựng trên Power BI]}{DB2 trang 2}
 
-\todo{Chèn ảnh chụp dashboard D5 (xuất PNG từ Power BI) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/D5.md mục 4--8).}
+\todo{Chèn ảnh chụp DB2 trang 2 (xuất PNG từ Power BI, đặt tên 4\_DB2\_\ldots.png) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/DB2.md mục 3--6).}
 
 \paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
 
@@ -139,9 +119,56 @@ Hiểu trải nghiệm khách hàng: điểm đánh giá, ảnh hưởng của g
   \item Chỉ \textbf{3,12\% khách mua lại} (2.997/96.096); cohort cho thấy tỷ lệ quay lại sau 1 tháng chỉ \textasciitilde{}0,5\%.
   \item RFM: 94.983 khách; "Ngủ đông" 36.957 và "Khách mới" 36.752 chiếm gần hết; chỉ 129 khách Champions.
 \end{itemize}
-\todo{Nhóm kiểm tra các nhận xét của D5 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
+\todo{Nhóm kiểm tra các nhận xét của DB2 trang 2 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
 
-\subsubsection*{D6 – Seller Acquisition \& Performance (2 trang)}
+\subsubsection*{Trang 3 -- Yếu tố ảnh hưởng đến review tiêu cực (Key Influencers)}
+
+Trang này dùng visual \emph{Key influencers} của Power BI: biến cần giải thích là review tiêu cực (\code{fact\_review[Review type]} = Tiêu cực); các yếu tố giải thích gồm giao trễ, số ngày trễ, lead time, số ngày hứa giao, phí vận chuyển, giá trị đơn, số dòng hàng, có bình luận hay không, bang của khách và quý. Từ khám phá dữ liệu nhóm kỳ vọng giao trễ là yếu tố đứng đầu (Cramér's V giữa cờ giao trễ và nhóm review là 0,403; $\eta$ của điểm review theo cờ trễ là 0,392). Key Influencers là mô hình thống kê tự động: cho biết yếu tố nào đi kèm review tiêu cực, không chứng minh nhân quả.
+\khunganh{[Ảnh chụp DB2 trang 3 (Key Influencers) sau khi dựng trên Power BI]}{DB2 trang 3: Key Influencers}
+\todo{Người 2 dựng trang Key Influencers theo powerbi/model.md mục 8 (cột tính toán LOOKUPVALUE), ghi lại các yếu tố đứng đầu mà visual trả về và so với kỳ vọng ở trên.}
+
+
+\subsection{DB3 -- Địa lý và phí vận chuyển}\label{sec:db3}
+Loại: OLAP. Gồm trang tổng quan địa lý với drill-down vùng $\rightarrow$ bang $\rightarrow$ thành phố $\rightarrow$ mã bưu chính, trang drill-through \emph{Chi tiết bang} (chuột phải một bang để sang trang này) và tooltip \code{Tooltip\_Bang}.
+
+\subsubsection*{Trang 1 -- Địa lý và phí vận chuyển}
+
+Cho thấy doanh số và phí vận chuyển phân bố theo địa lý, và quan hệ giữa khoảng cách, phí vận chuyển và thời gian giao.
+
+\paragraph{Câu hỏi dashboard trả lời.}
+
+\begin{itemize}
+  \item GMV tập trung ở vùng / bang nào?
+  \item Phí vận chuyển chiếm bao nhiêu \% giá hàng theo vùng?
+  \item Seller và khách xa nhau bao nhiêu và điều đó ảnh hưởng freight và lead time ra sao?
+\end{itemize}
+
+\khunganh{[Ảnh chụp DB3 trang 1 sau khi dựng trên Power BI]}{DB3 trang 1}
+
+\todo{Chèn ảnh chụp DB3 trang 1 (xuất PNG từ Power BI, đặt tên 4\_DB3\_\ldots.png) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/DB3.md mục 3--6).}
+
+\paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
+
+\begin{itemize}
+  \item \textbf{Sudeste 65,4\% GMV, Sul 14,4\%, Nordeste 11,4\%, Centro-Oeste 6,4\%, Norte 2,5\%.}
+  \item Phí vận chuyển nặng ở vùng xa: \textbf{Norte 22,7\% và Nordeste 21,7\% giá hàng so với 15,2\% ở Sudeste}.
+  \item Từ dưới 100 km lên trên 1.000 km, phí vận chuyển TB tăng 11,75 $\rightarrow$ 31,65 BRL và lead time 6,5 $\rightarrow$ 19,0 ngày (xem \code{handoff/geo-distance.md}).
+  \item Seller và khách \textbf{cùng bang ở 36,1\%} dòng hàng; khoảng cách TB 598 km (trung vị 433 km).
+  \item 555 dòng hàng (0,49\%) không tính được khoảng cách vì thiếu toạ độ; cần ghi chú trên trang.
+\end{itemize}
+\todo{Nhóm kiểm tra các nhận xét của DB3 trang 1 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
+
+\subsubsection*{Trang 2 -- Chi tiết bang (drill-through)}
+
+Trang drill-through nhận trường \code{dim\_geography[state\_code]}: thẻ GMV, Orders, Freight ratio, Avg lead days, Late rate của bang; bảng theo thành phố của bang; cột GMV và đường lead time theo tháng của bang.
+\khunganh{[Ảnh chụp DB3 trang 2 (Chi tiết bang) sau khi dựng trên Power BI]}{DB3 trang 2: Chi tiết bang}
+\todo{Người 3 dựng trang drill-through và tooltip, chụp ảnh thao tác drill-down vùng đến thành phố.}
+
+
+\subsection{DB4 -- Thu hút và hiệu quả seller}\label{sec:db4}
+Loại: vận hành (funnel). Gồm hai trang (funnel theo kênh; seller từ funnel và hiệu suất) và trang drill-through \emph{Chi tiết seller} (chuột phải một seller); tooltip \code{Tooltip\_Kenh}.
+
+\subsubsection*{Trang 1--2 -- Funnel theo kênh, seller từ funnel và hiệu suất}
 
 Đo hiệu quả thu hút seller: kênh nào chuyển đổi tốt, chốt deal mất bao lâu, seller từ funnel có bán được không (luôn ghi cỡ mẫu).
 
@@ -154,9 +181,9 @@ Hiểu trải nghiệm khách hàng: điểm đánh giá, ảnh hưởng của g
   \item Seller nào GMV cao nhưng hay trễ?
 \end{itemize}
 
-\khunganh{[Ảnh chụp dashboard D6 sau khi dựng trên Power BI]}{Dashboard D6}
+\khunganh{[Ảnh chụp DB4 trang 1--2 sau khi dựng trên Power BI]}{DB4 trang 1--2}
 
-\todo{Chèn ảnh chụp dashboard D6 (xuất PNG từ Power BI) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/D6.md mục 4--8).}
+\todo{Chèn ảnh chụp DB4 trang 1--2 (xuất PNG từ Power BI, đặt tên 4\_DB4\_\ldots.png) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/DB4.md mục 3--6).}
 
 \paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
 
@@ -167,38 +194,32 @@ Hiểu trải nghiệm khách hàng: điểm đánh giá, ảnh hưởng của g
   \item Seller từ funnel chỉ tạo \textasciitilde{}5\% GMV: kênh Organic 153 seller có đơn (GMV 246.767), Unknown 85 (214.726), Paid 103 (153.720), Social 31, Email 6 (\textbf{mẫu nhỏ}), Other 2 (\textbf{mẫu nhỏ}).
   \item Seller Unknown có \textbf{GMV/seller cao nhất (2.526 BRL)} trong các nhóm funnel nhưng mẫu 85 seller; Organic chỉ 1.613 BRL/seller – cần nói rõ cỡ mẫu khi so sánh.
 \end{itemize}
-\todo{Nhóm kiểm tra các nhận xét của D6 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
+\todo{Nhóm kiểm tra các nhận xét của DB4 trang 1--2 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
 
-\subsubsection*{D7 – Data Quality \& ETL Monitor}
+\subsubsection*{Trang 3 -- Chi tiết seller (drill-through)}
 
-Giám sát pipeline: mỗi lô chạy bao lâu, nạp bao nhiêu dòng, bao nhiêu dòng bị loại và vì sao, kiểm thử có đạt không, funnel "lấp đầy dần" qua các đợt.
+Trang drill-through nhận trường \code{dim\_seller[seller\_id]}: thẻ kênh thu hút, bang, GMV và tỷ lệ trễ của seller; đường GMV theo tháng (thấy tháng seller ngừng bán nhờ snapshot dày đặc); cảnh báo mẫu nhỏ.
+\khunganh{[Ảnh chụp DB4 trang 3 (Chi tiết seller) sau khi dựng trên Power BI]}{DB4 trang 3: Chi tiết seller}
+\todo{Người 4 dựng trang drill-through chi tiết seller và chụp ảnh.}
 
-\paragraph{Câu hỏi dashboard trả lời.}
 
-\begin{itemize}
-  \item Pipeline chạy có ổn định và mất bao lâu mỗi đợt?
-  \item Bao nhiêu dòng bị loại, lý do?
-  \item Bao nhiêu phép kiểm thử đạt?
-  \item Số MQL, deal, seller có đơn thay đổi ra sao qua các đợt?
-\end{itemize}
+\subsection{Thống kê bộ dashboard}\label{sec:dash-thong-ke}
+Bảng \ref{tab:dash-thong-ke} thống kê bộ dashboard theo thiết kế (số trang, số biểu đồ, số slicer, số measure); số thật sau khi dựng sẽ thay vào.
+\input{tables/p8b_dashboard_stats}
+\todo{Nhóm cập nhật bảng thống kê bằng số thật sau khi dựng xong trên Power BI (số trang, số biểu đồ, số slicer, số measure) và liệt kê các loại biểu đồ đã dùng.}
 
-\khunganh{[Ảnh chụp dashboard D7 sau khi dựng trên Power BI]}{Dashboard D7}
-
-\todo{Chèn ảnh chụp dashboard D7 (xuất PNG từ Power BI) thay cho khung trống; mô tả bố cục, slicer, định dạng có điều kiện đã dùng (xem huong-dan/dashboards/D7.md mục 4--8).}
-
-\paragraph{Nhận xét (gợi ý từ số liệu kho; \textbf{nhóm xác nhận lại sau khi dựng và đối chiếu số}).}
-
-\begin{itemize}
-  \item 11 đợt tăng dần, mỗi đợt \textbf{\textasciitilde{}20–26 giây} (gồm kiểm thử \textasciitilde{}11–15 giây).
-  \item \textbf{Funnel lấp đầy dần}: MQL 2.002 $\rightarrow$ 8.000 (đủ từ đợt 5), deal chốt 3 $\rightarrow$ 842, seller của funnel có đơn 0 $\rightarrow$ 379 (đủ từ đợt 8).
-  \item Dòng bị loại: chỉ \textbf{42 điểm toạ độ ngoài Brazil}; không có dòng mồ côi; các khoảng thời gian âm được đặt trống và đếm ở \code{fact\_\allowbreak{}load\_\allowbreak{}issue} (1.359 \code{handling\_\allowbreak{}days}, 23 \code{transit\_\allowbreak{}days}, 1 \code{days\_\allowbreak{}to\_\allowbreak{}close}).
-  \item 136 phép kiểm thử đạt 100\% và 6/6 đối chiếu EDA khớp ở lô cuối.
-\end{itemize}
-\todo{Nhóm kiểm tra các nhận xét của D7 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
 
 \subsection{Yêu cầu chung của dashboard}\label{sec:dash-checklist}
-Ngoài nội dung riêng của từng dashboard, mọi trang tuân theo một checklist chung (\code{huong-dan/dashboards/README.md}): định dạng số rút gọn (nghìn K, triệu M, phần trăm một chữ số thập phân, có dấu phân cách); tiêu đề mỗi visual là một câu hỏi; màu đỏ chỉ dùng để cảnh báo (bảng màu dữ liệu của chủ đề không có đỏ); định dạng có điều kiện bằng DAX; slicer và biểu đồ theo phân cấp để roll-up, drill-down như thao tác OLAP; drill-through và tooltip để xem chi tiết; chuỗi thời gian có đường dự báo; và publish công khai kèm mã QR. Mục 12 của mỗi hướng dẫn \code{D1.md}--\code{D7.md} ghi dashboard đó đáp ứng từng mục thế nào: định dạng số, tiêu đề câu hỏi, định dạng có điều kiện và publish đều áp dụng cho cả bảy dashboard; slicer phân cấp áp dụng cho cả bảy; drill-through và tooltip có ở cả bảy; chuỗi thời gian có dự báo chỉ có ở D1, D3 và D5 vì bốn dashboard còn lại không phải chuỗi thời gian kinh doanh.
-\todo{Nhóm đánh dấu từng mục checklist (mục 11 của D*.md) sau khi dựng dashboard trên Power BI, chụp ảnh drill-through, tooltip và đường dự báo; chèn mã QR của link publish (figures/4\_qr\_dashboard.png).}
+Ngoài nội dung riêng của từng dashboard, cả bốn dashboard tuân theo một checklist chung (\code{huong-dan/dashboards/README.md}): định dạng số rút gọn (nghìn K, triệu M, phần trăm một chữ số thập phân, có dấu phân cách); tiêu đề mỗi visual là một câu hỏi; màu đỏ chỉ dùng để cảnh báo (bảng màu dữ liệu của chủ đề không có đỏ); định dạng có điều kiện bằng DAX; slicer và biểu đồ theo phân cấp để roll-up, drill-down như thao tác OLAP; drill-through; tooltip; chuỗi thời gian có đường dự báo; visual thống kê Key Influencers; và publish công khai kèm mã QR. Bảng \ref{tab:dash-checklist} là ma trận mục checklist theo dashboard: dự báo ở DB1, Key Influencers ở DB2, OLAP drill-down ở DB3, drill-through ở DB3 và DB4; định dạng số, tiêu đề câu hỏi, màu đỏ cảnh báo và định dạng có điều kiện áp dụng cho cả bốn.
+\input{tables/p8b_dashboard_matrix}
+\todo{Nhóm đánh dấu từng mục checklist (mục 10 của DB*.md) sau khi dựng dashboard trên Power BI, chụp ảnh drill-through, tooltip, Key Influencers và đường dự báo.}
+
+
+\subsection{Publish và mã QR}\label{sec:dash-publish}
+Báo cáo Power BI được publish công khai bằng \emph{Publish to web} (File $\rightarrow$ Embed report $\rightarrow$ Publish to web, không cần đăng nhập để xem); cả bốn dashboard nằm trong cùng một link, người xem chuyển trang ở dưới cùng. Mã QR của link được tạo bằng chức năng \emph{Create QR code for this page} của Microsoft Edge (hoặc công cụ tạo QR bất kỳ) và đặt ở slide cuối cùng. Vì Publish to web là công khai nên chỉ dùng dữ liệu công khai của Olist.
+\khunganh{[Mã QR và link của báo cáo đã publish]}{Mã QR của báo cáo Power BI}
+\todo{Nhóm publish báo cáo, dán link và đặt mã QR vào figures/4\_qr\_dashboard.png (cũng đặt vào slide cuối).}
+
 
 \subsection{Bài học}\label{sec:bai-hoc}
 Quá trình dựng và đối chiếu số liệu cho dashboard để lại hai nhóm bài học: về chỉ số và về quy trình.

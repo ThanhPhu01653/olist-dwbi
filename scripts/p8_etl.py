@@ -160,3 +160,67 @@ md += ["", fact_note, ""]
 print(stage_df[["Giai đoạn", "Kết quả (từ etl_log)"]].to_string(index=False))
 print(res_df[["Bảng", "Số dòng", "Đối chiếu với nguồn", "Test đạt"]].to_string(index=False))
 print(fact_note)
+
+
+# ------------------------------------------------------------------ (4) P8b: ETL monitoring tables (former dashboard D7), report section 3.3
+rs = q(dw, "SELECT * FROM etl_log.v_run_summary ORDER BY batch_id")
+dqs = q(dw, "SELECT * FROM etl_log.v_dq_summary ORDER BY batch_id")
+bm = q(dw, "SELECT * FROM etl_log.batch_metrics ORDER BY batch_id").set_index("batch_id")
+rej = q(dw, "SELECT job_name, source_table, reason, sum(row_count) AS n FROM etl_log.v_rejected_summary GROUP BY 1, 2, 3 ORDER BY n DESC")
+iss = q(dw, "SELECT fact_table, detail, CASE WHEN fact_table = 'fact_lead_funnel' THEN max(row_count) ELSE sum(row_count) END AS n FROM etl_log.fact_load_issue GROUP BY fact_table, detail ORDER BY n DESC")
+orph = q(dw, "SELECT count(*) AS c FROM etl_log.rejected_rows WHERE reason LIKE 'orphan%'").iloc[0, 0]
+
+# (a) rows through each layer, all batches
+src_rows = rs.loc[rs["mode"].isin(["load_source", "simulate_increment"]), "source_rows"].sum()
+tot_stg, tot_ods, tot_rej, tot_dwi, tot_dwu = (rs[c].sum() for c in ["staging_rows", "ods_inserted", "ods_rejected", "dw_inserted", "dw_updated"])
+layer_df = pd.DataFrame([
+    ("Nguồn (oltp, crm)", n(src_rows), "dòng đã nạp hoặc mô phỏng vào hai hệ thống nguồn qua mọi đợt"),
+    ("Staging", n(tot_stg), "dòng chép vào staging (extract); bằng số dòng nguồn"),
+    ("ODS", n(tot_ods), f"dòng vào ODS (không tính các bảng seed nạp lại mỗi lô; bảng toạ độ đã gom về mã bưu chính); {n(tot_rej)} dòng bị loại"),
+    ("Kho dw", n(tot_dwi), f"dòng chèn vào dimension và fact; {n(tot_dwu)} dòng cập nhật (snapshot tích luỹ, ngày bán đầu tiên của seller)"),
+], columns=["Lớp", "Số dòng", "Ghi chú"])
+
+# (b) rejected rows by reason
+rej_rows = [(r.job_name, r.source_table, r.reason, n(r.n)) for r in rej.itertuples()] or [("–", "–", "không có dòng bị loại", "0")]
+rej_df = pd.DataFrame(rej_rows, columns=["Job", "Bảng nguồn", "Lý do", "Số dòng"])
+iss_df = pd.DataFrame([(r.fact_table, r.detail, n(r.n)) for r in iss.itertuples()], columns=["Fact", "Vấn đề ghi nhận", "Số dòng"])
+
+# (c) batch table: full + incremental batches that carried data
+bt = rs[rs["mode"].isin(["full", "incremental"]) & (rs["staging_rows"] > 0)].copy()
+bt = bt.merge(dqs[["batch_id", "checks", "passed"]], on="batch_id", how="left")
+bt["tests"] = bt.apply(lambda r: f"{int(r.passed)}/{int(r.checks)}" if pd.notna(r.checks) else "–", axis=1)
+bt = bt.reset_index(drop=True)
+bt["stt"] = ["đầu" if m == "full" else str(i) for i, m in enumerate(bt["mode"], 0)]
+batch_df = pd.DataFrame({
+    "Đợt": bt["stt"], "Lô": bt["batch_id"].astype(int), "Dòng mới vào staging": bt["staging_rows"].map(n), "Dòng bị loại": bt["ods_rejected"].map(n),
+    "Dòng chèn vào kho": bt["dw_inserted"].map(n), "Thời gian (giây)": bt["duration_sec"].map(lambda x: f"{x:.1f}".replace(".", ",")), "Test đạt": bt["tests"],
+    "MQL": bt["batch_id"].map(lambda b: n(bm.loc[b, "mql"]) if b in bm.index else "–"), "Deal": bt["batch_id"].map(lambda b: n(bm.loc[b, "deals_won"]) if b in bm.index else "–"),
+    "Seller có đơn": bt["batch_id"].map(lambda b: n(bm.loc[b, "sellers_with_sale"]) if b in bm.index else "–"),
+})
+inc = bt[bt["mode"] == "incremental"]
+n_inc = len(inc)
+t_min, t_avg, t_max = inc["duration_sec"].min(), inc["duration_sec"].mean(), inc["duration_sec"].max()
+last = dqs.iloc[-1]
+
+
+def tex_simple(df, caption, label, widths, size="scriptsize"):
+    head = " & ".join("\\textbf{%s}" % esc(c) for c in df.columns) + "\\\\\\midrule"
+    body = "\n".join(" & ".join(esc(v) for v in r) + "\\\\" for r in df.itertuples(index=False))
+    return f"\\begin{{table}}[htbp]\\centering\\{size}\\caption{{{caption}}}\\label{{{label}}}\n\\begin{{tabular}}{{{fit(widths)}}}\\toprule\n{head}\n{body}\n\\bottomrule\\end{{tabular}}\\end{{table}}\n"
+
+
+(T / "p8b_etl_layers.tex").write_text(tex_simple(layer_df, "Số dòng đi qua từng lớp trong mọi đợt nạp (từ etl\\_log)", "tab:etl-layers", [3.0, 2.4, 10.0]), encoding="utf-8")
+(T / "p8b_etl_rejected.tex").write_text(tex_simple(rej_df, "Dòng bị loại theo lý do (etl\\_log.rejected\\_rows)", "tab:etl-rejected", [4.0, 4.0, 5.5, 1.8]) + "\n" +
+                                       tex_simple(iss_df, "Vấn đề ghi nhận khi nạp fact (etl\\_log.fact\\_load\\_issue; dòng không bị xoá)", "tab:etl-issues", [3.5, 8.8, 2.0]), encoding="utf-8")
+(T / "p8b_etl_batches.tex").write_text(tex_simple(batch_df, "Các đợt nạp: lô đầu (đến 31/12/2017) và %d đợt tăng dần hằng tháng" % n_inc, "tab:etl-batches", [0.9, 0.9, 1.6, 1.1, 1.5, 1.4, 1.2, 1.0, 0.9, 1.3], size="tiny"), encoding="utf-8")
+
+mon = {"layer": layer_df, "rej": rej_df, "iss": iss_df, "batch": batch_df}
+md2 = ["", "## Giám sát ETL (trước đây là dashboard D7; P8b chuyển thành bảng ở mục 3.3 của báo cáo)", "", "### Số dòng qua từng lớp", "", md_tbl := "\n".join(["| " + " | ".join(layer_df.columns) + " |", "| --- | ---: | --- |"] + ["| " + " | ".join(r) + " |" for r in layer_df.itertuples(index=False)]),
+       "", "### Dòng bị loại theo lý do", "", "\n".join(["| " + " | ".join(rej_df.columns) + " |", "| --- | --- | --- | ---: |"] + ["| " + " | ".join(r) + " |" for r in rej_df.itertuples(index=False)]),
+       "", f"Dòng mồ côi (`orphan:`) trong `rejected_rows`: {orph}.", "", "\n".join(["| " + " | ".join(iss_df.columns) + " |", "| --- | --- | ---: |"] + ["| " + " | ".join(r) + " |" for r in iss_df.itertuples(index=False)]),
+       "", "### Các đợt nạp", "", "\n".join(["| " + " | ".join(batch_df.columns) + " |", "| " + " | ".join("---" for _ in batch_df.columns) + " |"] + ["| " + " | ".join(map(str, r)) + " |" for r in batch_df.itertuples(index=False)]),
+       "", f"- {n_inc} đợt tăng dần: thời gian nhỏ nhất {t_min:.1f}, trung bình {t_avg:.1f}, lớn nhất {t_max:.1f} giây; lô kiểm thử cuối: {int(last.passed)}/{int(last.checks)} phép đạt ({last.pass_pct}%), đối chiếu EDA {int(last.eda_match)}/{int(last.eda_checks)}."]
+with open(ROOT / "handoff" / "2026-11-14-P8-etl.md", "a", encoding="utf-8") as fh:
+    fh.write("\n".join(md2) + "\n")
+print("monitor tables written;", n_inc, "incremental batches; time min/avg/max", round(t_min, 1), round(t_avg, 1), round(t_max, 1))
+print(layer_df.to_string(index=False)); print(rej_df.to_string(index=False)); print(iss_df.to_string(index=False)); print(batch_df.to_string(index=False))

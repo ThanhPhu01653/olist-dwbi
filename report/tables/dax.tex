@@ -56,16 +56,6 @@ Avg items per order = DIVIDE ( [Items], [Orders] )
 \end{lstlisting}
 Số dòng hàng trung bình mỗi đơn. Định dạng: 0.00.
 
-\subsection*{GMV by seller state (vai trò địa lý seller)}
-\begin{lstlisting}[language={}]
-GMV by seller state =
-CALCULATE (
-    [GMV],
-    USERELATIONSHIP ( fact_order_item[seller_geography_key], dim_geography[geography_key] )
-)
-\end{lstlisting}
-GMV nhưng gắn theo địa lý của seller thay vì của khách (dùng khi dim\_geography đặt ở bang của seller). Định dạng: \#,0.00.
-
 \subsection*{GMV by shipping limit date}
 \begin{lstlisting}[language={}]
 GMV by shipping limit date =
@@ -75,6 +65,43 @@ CALCULATE (
 )
 \end{lstlisting}
 GMV theo ngày hạn bàn giao cho vận chuyển (role-playing date). Định dạng: \#,0.00.
+
+\subsection*{GMV last month}
+\begin{lstlisting}[language={}]
+GMV last month = CALCULATE ( [GMV], DATEADD ( dim_date[full_date], -1, MONTH ) )
+\end{lstlisting}
+GMV của tháng liền trước. Định dạng: \#,0.00.
+
+\subsection*{GMV MoM \%}
+\begin{lstlisting}[language={}]
+GMV MoM % = DIVIDE ( [GMV] - [GMV last month], [GMV last month] )
+\end{lstlisting}
+Tăng trưởng so với tháng trước. Định dạng: +0.0\%;-0.0\%;0.0\%.
+
+\subsection*{GMV last year}
+\begin{lstlisting}[language={}]
+GMV last year = CALCULATE ( [GMV], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+\end{lstlisting}
+GMV cùng kỳ năm trước. Định dạng: \#,0.00.
+
+\subsection*{GMV YoY \%}
+\begin{lstlisting}[language={}]
+GMV YoY % = DIVIDE ( [GMV] - [GMV last year], [GMV last year] )
+\end{lstlisting}
+Tăng trưởng so với cùng kỳ năm trước. Định dạng: +0.0\%;-0.0\%;0.0\%.
+
+\subsection*{GMV YTD}
+\begin{lstlisting}[language={}]
+GMV YTD = TOTALYTD ( [GMV], dim_date[full_date] )
+\end{lstlisting}
+GMV luỹ kế từ đầu năm. Định dạng: \#,0.00.
+
+\subsection*{Orders MoM \%}
+\begin{lstlisting}[language={}]
+Orders MoM % =
+DIVIDE ( [Orders] - CALCULATE ( [Orders], DATEADD ( dim_date[full_date], -1, MONTH ) ), CALCULATE ( [Orders], DATEADD ( dim_date[full_date], -1, MONTH ) ) )
+\end{lstlisting}
+Tăng trưởng số đơn so với tháng trước. Định dạng: +0.0\%;-0.0\%;0.0\%.
 
 \subsection*{Orders placed}
 \begin{lstlisting}[language={}]
@@ -177,7 +204,7 @@ AVERAGEX (
     fact_order_fulfillment[promised_days] - fact_order_fulfillment[lead_days]
 )
 \end{lstlisting}
-KPI "ngày hứa giao so với ngày giao thực tế": trung bình (số ngày hứa − số ngày thực tế); dương = giao sớm hơn lời hứa. Dùng cho D3. Định dạng: 0.0.
+KPI "ngày hứa giao so với ngày giao thực tế": trung bình (số ngày hứa − số ngày thực tế); dương = giao sớm hơn lời hứa. Dùng cho DB2. Định dạng: 0.0.
 
 \subsection*{Early delivery rate}
 \begin{lstlisting}[language={}]
@@ -275,6 +302,16 @@ Repeat customer rate = DIVIDE ( [Repeat customers], [Customers] )
 \end{lstlisting}
 Tỷ lệ khách quay lại mua (≥ 2 đơn ÷ tổng khách). Định dạng: 0.00\%.
 
+\subsection*{GMV by seller state (vai trò địa lý seller)}
+\begin{lstlisting}[language={}]
+GMV by seller state =
+CALCULATE (
+    [GMV],
+    USERELATIONSHIP ( fact_order_item[seller_geography_key], dim_geography[geography_key] )
+)
+\end{lstlisting}
+GMV nhưng gắn theo địa lý của seller thay vì của khách (dùng khi dim\_geography đặt ở bang của seller). Định dạng: \#,0.00.
+
 \subsection*{MQLs}
 \begin{lstlisting}[language={}]
 MQLs = COUNTROWS ( fact_lead_funnel )
@@ -356,40 +393,3 @@ Small sample warning =
 IF ( [Active sellers] < 30, "⚠ Mẫu nhỏ (dưới 30 seller)", "" )
 \end{lstlisting}
 Hiện cảnh báo khi một nhóm (ví dụ kênh thu hút) có quá ít seller để kết luận. Định dạng: Text.
-
-\subsection*{GMV last month}
-\begin{lstlisting}[language={}]
-GMV last month = CALCULATE ( [GMV], DATEADD ( dim_date[full_date], -1, MONTH ) )
-\end{lstlisting}
-GMV của tháng liền trước. Định dạng: \#,0.00.
-
-\subsection*{GMV MoM \%}
-\begin{lstlisting}[language={}]
-GMV MoM % = DIVIDE ( [GMV] - [GMV last month], [GMV last month] )
-\end{lstlisting}
-Tăng trưởng so với tháng trước. Định dạng: +0.0\%;-0.0\%;0.0\%.
-
-\subsection*{GMV last year}
-\begin{lstlisting}[language={}]
-GMV last year = CALCULATE ( [GMV], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
-\end{lstlisting}
-GMV cùng kỳ năm trước. Định dạng: \#,0.00.
-
-\subsection*{GMV YoY \%}
-\begin{lstlisting}[language={}]
-GMV YoY % = DIVIDE ( [GMV] - [GMV last year], [GMV last year] )
-\end{lstlisting}
-Tăng trưởng so với cùng kỳ năm trước. Định dạng: +0.0\%;-0.0\%;0.0\%.
-
-\subsection*{GMV YTD}
-\begin{lstlisting}[language={}]
-GMV YTD = TOTALYTD ( [GMV], dim_date[full_date] )
-\end{lstlisting}
-GMV luỹ kế từ đầu năm. Định dạng: \#,0.00.
-
-\subsection*{Orders MoM \%}
-\begin{lstlisting}[language={}]
-Orders MoM % =
-DIVIDE ( [Orders] - CALCULATE ( [Orders], DATEADD ( dim_date[full_date], -1, MONTH ) ), CALCULATE ( [Orders], DATEADD ( dim_date[full_date], -1, MONTH ) ) )
-\end{lstlisting}
-Tăng trưởng số đơn so với tháng trước. Định dạng: +0.0\%;-0.0\%;0.0\%.

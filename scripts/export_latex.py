@@ -151,8 +151,9 @@ def main() -> None:
         for k in show:
             (v0, kind), (v1, _) = k0[k], k1[k]
             f = lambda v: "--" if v is None else (num(v, 2) if kind in ("money", "d1", "d2") else num(v, 0) if kind == "int" else num(100 * float(v), 1 if kind == "pct1" else 2) + "\\%")
-            rows.append([k, f(v0).replace("\\%", "%"), f(v1).replace("\\%", "%")])
-        table("kpi", "Các chỉ số KPI chính (tính bằng SQL trên kho; đối chiếu với Power BI)", "tab:kpi", ["KPI", "Toàn bộ dữ liệu", "Cửa sổ 2017-01 → 2018-08"], rows, "lrr",
+            dbs = ", ".join(t.split(" ")[0] for t, names in gp.DB_MEASURES.items() if k in names)
+            rows.append([k, dbs or "--", f(v0).replace("\\%", "%"), f(v1).replace("\\%", "%")])
+        table("kpi", "Các chỉ số KPI chính (tính bằng SQL trên kho; đối chiếu với Power BI)", "tab:kpi", ["KPI", "Dashboard", "Toàn bộ dữ liệu", "Cửa sổ 2017-01 → 2018-08"], rows, "llrr",
               note="GMV chỉ tính đơn không thuộc nhóm Failed (hủy / không khả dụng); tổng giá hàng mọi đơn là 13.591.643,70 BRL.")
 
         # 6. increments
@@ -232,7 +233,7 @@ def main() -> None:
     # 14. DAX library
     txt = (ROOT / "powerbi" / "measures.md").read_text(encoding="utf-8")
     out = []
-    for m in re.finditer(r"### (.+?)\n```dax\n(.*?)```\n(.*?)\n", txt, re.S):
+    for m in re.finditer(r"### ([^\n]+)\n```dax\n(.*?)```\n(.*?)\n", txt, re.S):
         title, code, desc = m.group(1).strip(), m.group(2).rstrip(), m.group(3).strip()
         out += [f"\\subsection*{{{esc(title)}}}", "\\begin{lstlisting}[language={}]", code, "\\end{lstlisting}", esc(re.sub(r"[`*]", "", desc)) if desc and not desc.startswith("```") else "", ""]
     (TAB / "dax.tex").write_text("\n".join(out), encoding="utf-8")
