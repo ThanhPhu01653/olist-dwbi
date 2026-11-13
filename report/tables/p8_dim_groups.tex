@@ -1,0 +1,17 @@
+\begin{table}[htbp]\centering\scriptsize\caption{Phân nhóm 10 bảng chiều (một chiều có thể thuộc nhiều nhóm)}\label{tab:dim-groups}
+\begin{tabular}{p{3.6cm}p{3.0cm}rrp{5.0cm}}\toprule
+\textbf{Nhóm} & \textbf{Chiều} & \textbf{Số dòng} & \textbf{Số fact} & \textbf{Ghi chú}\\\midrule
+Chiều dùng chung (conformed) & \code{dim\_date} & 1.828 & 6 & 11 view đóng vai; dùng bởi mọi fact\\
+Chiều dùng chung (conformed) & \code{dim\_geography} & 19.178 & 2 & zip → thành phố → bang → vùng; nối khách, seller\\
+Chiều dùng chung (conformed) & \code{dim\_seller} & 3.558 & 3 & nối quy trình bán hàng với thu hút seller (SCD1)\\
+Chiều dùng chung (conformed) & \code{dim\_customer} & 96.339 & 4 & SCD loại 2: giữ lịch sử mã bưu chính\\
+Chiều dùng chung (conformed) & \code{dim\_order\_status} & 9 & 2 & dùng bởi fact đơn hàng và fact xử lý đơn\\
+Chiều đóng vai (role-playing) & \code{dim\_date} & 1.828 & 6 & mua, duyệt, bàn giao, giao, dự kiến, liên hệ, chốt, đơn đầu tiên...\\
+Chiều đóng vai (role-playing) & \code{dim\_sales\_rep} & 55 & 1 & một bảng cho hai vai trò: SDR và SR\\
+Chiều SCD loại 2 & \code{dim\_customer} & 96.339 & 4 & đóng phiên bản cũ, mở phiên bản mới khi đổi mã bưu chính\\
+Chiều rác (junk) & \code{dim\_lead\_profile} & 503 & 1 & gom 7 thuộc tính nhỏ của deal thành một chiều\\
+Danh mục nhỏ (lookup) & \code{dim\_order\_status} & 9 & 2 & trạng thái đơn → nhóm trạng thái\\
+Danh mục nhỏ (lookup) & \code{dim\_payment\_type} & 6 & 1 & hình thức thanh toán → nhóm\\
+Danh mục nhỏ (lookup) & \code{dim\_lead\_origin} & 11 & 1 & origin → nhóm kênh\\
+Chiều của một quy trình (một fact) & \code{dim\_product} & 32.952 & 1 & sản phẩm → danh mục → nhóm ngành; chỉ fact\_order\_item dùng\\
+\bottomrule\end{tabular}\end{table}

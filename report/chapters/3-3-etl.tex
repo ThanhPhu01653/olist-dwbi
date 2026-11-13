@@ -30,3 +30,22 @@ Vì bộ dữ liệu Olist là ảnh chụp tĩnh, nhóm mô phỏng việc cậ
 \input{tables/increments}
 \paragraph{Thử lại dòng mồ côi.} Dòng con bị loại vì chưa có dòng cha (ví dụ deal đến trước MQL) được thử lại ở các đợt sau và biến mất khỏi danh sách loại khi đã nạp. \textbf{Lưu ý trung thực}: cơ chế này mới được chứng minh bằng kịch bản kiểm thử; trong 11 đợt thật không có dòng mồ côi nào xảy ra vì nguồn luôn nạp dòng cha trước.
 \todo{Thêm sơ đồ data pipeline hoặc ETL jobs (có logo công nghệ); ví dụ trước/sau cho thêm bảng nếu giảng viên yêu cầu; kết quả so sánh incremental với full: 16/16 bảng khớp (handoff/2026-11-05-P5.md).}
+
+\subsection{Tóm tắt các hoạt động ETL}\label{sec:etl-tom-tat}
+Bảng \ref{tab:etl-stages} tóm tắt các giai đoạn ETL theo thứ tự chạy của \code{python -m etl.run\_pipeline}: nội dung từng giai đoạn, công cụ và kết quả; số dòng lấy từ bảng nhật ký \code{etl\_log.job\_run} (lô đầu là lần nạp full đến 31/12/2017, tổng tính qua mọi lô gồm cả các đợt nạp tăng dần).
+\input{tables/p8_etl_stages}
+
+\subsection{Sơ đồ các job của pipeline}\label{sec:etl-jobs}
+Hình \ref{fig:etl-jobs} liệt kê các job theo thứ tự chạy: 11 job extract vào staging, 17 job seed và ODS, 11 job dimension, 6 job fact, làm mới mart và kiểm thử. Mỗi ô ghi tên job, bảng đích và số dòng chèn của lô full đầu tiên; sơ đồ được sinh từ chính \code{etl\_log.job\_run} nên khớp với những gì đã chạy. Job \code{dw.load\_dim\_seller\_first\_sale} chạy sau khi nạp \code{fact\_order\_item}, vì ngày bán đầu tiên của seller chỉ tính được từ bảng fact.
+\hinh{3-3_etl_jobs.png}{Các job của run\_pipeline theo thứ tự chạy, sinh từ etl\_log.job\_run (bản nháp)}{fig:etl-jobs}{1.0}
+
+\subsection{Ví dụ minh hoạ: một đơn hàng đi qua pipeline}\label{sec:etl-vi-du}
+Để dễ theo dõi, nhóm lần theo đơn \code{19c36691\ldots} (đã giao, ba dòng hàng của một seller, có thanh toán và review). Ở nguồn, đơn có năm mốc thời gian: mua 24/10/2017 14:33, duyệt 26/10 03:09, bàn giao vận chuyển 26/10 20:10, giao 08/11 16:18 và ngày dự kiến 14/11. Staging chép nguyên trạng và chỉ thêm mã lô nạp. Ở ODS, mã bưu chính \code{31930} được chuẩn hoá thành \code{char(5)} và cờ chất lượng \code{dq\_flags} rỗng vì các mốc thời gian đúng thứ tự. Ở kho, mã chữ dài 32 ký tự của seller và sản phẩm đổi thành khoá thay thế số nguyên; khách thật của đơn có hai phiên bản địa chỉ trong \code{dim\_customer} (SCD loại 2) và đơn trỏ tới phiên bản có hiệu lực ngày mua. Bảng \code{fact\_order\_fulfillment} gom cả đơn thành một dòng và tính sẵn thời gian từng chặng: duyệt 36,61 giờ, xử lý 0,71 ngày, vận chuyển 12,84 ngày, tổng lead time 15,07 ngày; ngày hứa giao là 21 ngày nên số ngày trễ là $-6$ (giao sớm 6 ngày) và đơn tính là đúng hạn. Cuối cùng view \code{v\_fulfillment\_order} gắn nhãn ``Giao sớm'' và \code{v\_shipping\_distance} tính khoảng cách seller đến khách là 553,3 km. Bản đầy đủ từng bảng ở mỗi lớp nằm trong \code{huong-dan/01-pipeline-bang-loi.md}.
+
+\subsection{Kết quả nạp kho dữ liệu}\label{sec:etl-ket-qua}
+Bảng \ref{tab:etl-results} cho kết quả nạp từng bảng của schema \code{dw}: loại bảng, số cột, số dòng, đối chiếu với nguồn và số phép kiểm thử đạt. Số dòng của mọi bảng fact bằng số dòng bảng nguồn tương ứng, mỗi dimension có thêm một dòng Unknown (khoá $-1$), và tổng \code{price} của \code{fact\_order\_item} là 13.591.643,70 BRL, khớp từng đồng với nguồn.
+\input{tables/p8_etl_results}
+
+\subsection{Dùng nhiều công cụ cho ETL: SQL, Python và Power Query}\label{sec:etl-nhieu-cong-cu}
+Pipeline chính dùng SQL (procedure PostgreSQL biến đổi và nạp) và Python (điều phối, nạp nguồn, xuất CSV). Để minh hoạ công cụ thứ ba, nhóm viết lại một quy tắc làm sạch bằng \textbf{Power Query (ngôn ngữ M)}: chuẩn hoá tên thành phố của bảng toạ độ (cắt khoảng trắng, chữ thường, bỏ dấu) và đưa mã bưu chính về đủ 5 ký tự. Cùng một quy tắc cho cùng kết quả ở ba công cụ: số tên thành phố giảm từ 8.011 xuống 5.968 và 73.440 dòng bị đổi tên (SQL \code{lower(unaccent(trim(city)))}; Python chuẩn hoá Unicode và cho 73.438 dòng, chênh 2 dòng do ký tự \code{º}; bản M dùng bảng thay thế đã thêm \code{º} nên khớp SQL). Mã M, hướng dẫn chụp ảnh before/after trong Power BI và đối chiếu chi tiết nằm ở \code{powerbi/power-query-vi-du.md}.
+\todo{Nhóm chạy mã M trong Power BI Desktop để xác nhận 5.968 thành phố và 73.440 dòng đổi, chụp ảnh before/after (cột \code{geolocation\_city}, Column distribution) theo powerbi/power-query-vi-du.md mục 4 và đặt vào figures/3-3\_power\_query\_before\_after.png.}

@@ -120,3 +120,5 @@ if __name__ == "__main__":
 
     drawio_p8.all_p8()
     drawio_p8.all_p8_erd()
+    drawio_p8.all_p8_arch()
+    drawio_p8.all_p8_model()

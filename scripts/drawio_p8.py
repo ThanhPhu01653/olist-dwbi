@@ -169,3 +169,210 @@ def erd_oltp() -> None:
 def all_p8_erd() -> None:
     stat = erd_oltp()
     print("used columns:", sum(s[2] for s in stat), "of", sum(s[1] for s in stat))
+
+
+# ----------------------------------------------------------------------------- E1: layered architecture (stacked blocks, NOT a flow)
+def _counts():
+    import sys
+
+    from diagram_kit import ROOT
+    from sqlalchemy import text
+
+    sys.path.insert(0, str(ROOT))
+    from etl import config
+    from etl.db import get_engine
+
+    eng = get_engine(config.DB_NAME)
+    out = {}
+    with eng.connect() as c:
+        for sch in ["oltp", "crm", "staging", "ods", "dw", "etl_log"]:
+            names = [r[0] for r in c.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema=:s AND table_type='BASE TABLE'"), {"s": sch})]
+            out[sch] = (len(names), sum(c.execute(text(f'SELECT count(*) FROM "{sch}"."{t}"')).scalar_one() for t in names))
+        marts = ["mart_sales", "mart_fulfillment", "mart_cx", "mart_acquisition"]
+        v = c.execute(text("SELECT count(*) FROM information_schema.views WHERE table_schema = ANY(:s)"), {"s": marts}).scalar_one()
+        m = c.execute(text("SELECT count(*) FROM pg_matviews WHERE schemaname = ANY(:s)"), {"s": marts}).scalar_one()
+        out["mart"] = (v + m, m)
+    return out
+
+
+TECH = {  # brand colour tiles (text tiles: official logos are not bundled)
+    "PostgreSQL": ("#336791", "#FFFFFF"), "Python": ("#3776AB", "#FFE873"), "Power BI": ("#F2C811", "#111111"), "GitHub": ("#24292F", "#FFFFFF"),
+}
+
+
+def architecture_layers() -> None:
+    cnt = _counts()
+    n = lambda x: f"{x:,}".replace(",", ".")
+    d = Diagram("Kiến trúc các lớp", 1700, 1010)
+    d.label(20, 8, 1650, 34, "Kiến trúc kho dữ liệu theo lớp: mỗi lớp liệt kê thành phần, công nghệ, số bảng và số dòng (trạng thái cuối)", font=17)
+    d.label(20, 46, 1650, 24, "Các khối xếp tầng từ lớp trình bày (trên) xuống lớp nguồn (dưới); dữ liệu đi từ dưới lên nhưng sơ đồ này mô tả cấu trúc, không vẽ luồng.", font=11, bold=False, color="#4B5563")
+    layers = [
+        ("TRÌNH BÀY / BI", PURPLE, "Power BI Desktop (Import, mô hình ngữ nghĩa, DAX)", ["D1 Executive", "D2 Sales và Product", "D3 Order Fulfillment", "D4 Geography và Freight", "D5 Customer Experience", "D6 Seller Acquisition", "D7 Data Quality và ETL"],
+         "7 dashboard · 37 file CSV · 32 quan hệ", ["Power BI", "Python"]),
+        ("DATA MART", ORANGE, "mart_sales · mart_fulfillment · mart_cx · mart_acquisition", ["mart_sales (6 view)", "mart_fulfillment (4 view)", "mart_cx (4 view)", "mart_acquisition (3 view)"],
+         f"{cnt['mart'][0]} view, trong đó {cnt['mart'][1]} materialized view", ["PostgreSQL"]),
+        ("KHO DỮ LIỆU (dw)", BLUE, "Lược đồ constellation: 10 dimension + 6 fact", ["dim_date", "dim_geography", "dim_customer (SCD2)", "dim_seller", "dim_product", "dim_order_status", "dim_payment_type", "dim_lead_origin", "dim_lead_profile", "dim_sales_rep",
+                                                                                          "fact_order_item", "fact_order_fulfillment", "fact_payment", "fact_review", "fact_lead_funnel", "fact_seller_monthly"],
+         f"{cnt['dw'][0]} bảng · {n(cnt['dw'][1])} dòng", ["PostgreSQL"]),
+        ("ODS (ods)", GREY, "Làm sạch, chuẩn hoá, gắn cờ chất lượng (dq_flags)", ["orders, customers, order_items", "order_payments, order_reviews", "products, sellers, category_translation", "geolocation_zip (gom 19.010 mã)", "mql, closed_deals", "ref_* (6 bảng seed)"],
+         f"{cnt['ods'][0]} bảng · {n(cnt['ods'][1])} dòng", ["PostgreSQL"]),
+        ("STAGING (staging)", GREY, "Bản sao thô của nguồn + mã lô nạp", ["stg_orders, stg_customers, stg_order_items", "stg_order_payments, stg_order_reviews", "stg_products, stg_sellers, stg_geolocation", "stg_product_category_name_translation", "stg_mql, stg_closed_deals"],
+         f"{cnt['staging'][0]} bảng · {n(cnt['staging'][1])} dòng", ["PostgreSQL", "Python"]),
+        ("NGUỒN (oltp, crm)", GREEN, "Hai hệ thống nguồn mô phỏng từ 11 file CSV Kaggle", ["oltp: orders, order_items, order_payments, order_reviews", "oltp: customers, sellers, products", "oltp: geolocation, product_category_name_translation", "crm: mql, closed_deals"],
+         f"{cnt['oltp'][0] + cnt['crm'][0]} bảng · {n(cnt['oltp'][1] + cnt['crm'][1])} dòng", ["PostgreSQL", "Python"]),
+    ]
+    y = 80
+    heights = [110, 100, 180, 100, 100, 100]
+    for (name, fill, sub, comps, stat, techs), h in zip(layers, heights):
+        d.frame(20, y, 1660, h, "", fill="#FFFFFF")
+        d.box(30, y + 10, 190, h - 20, name + "\n\n" + stat, fill=fill, bold=True, font=12)
+        d.label(235, y + 6, 900, 22, sub, font=12, bold=True)
+        # component chips in a grid
+        per_row = 5 if len(comps) > 8 else 4
+        cw, ch = (1010 - 10 * (per_row - 1)) / per_row, 26
+        for i, cmp_ in enumerate(comps):
+            r, c = divmod(i, per_row)
+            d.box(235 + c * (cw + 10), y + 34 + r * (ch + 6), cw, ch, cmp_, fill=fill if fill != GREY else "#F3F4F6", font=10)
+        # technology tiles
+        for j, t in enumerate(techs):
+            bg, fg = TECH[t]
+            d.box(1290 + j * 190, y + 20, 170, 46, t, fill=bg, bold=True, font=13, color=fg)
+        y += h + 12
+    # cross-cutting bars
+    d.box(20, y, 1100, 56, "GIÁM SÁT etl_log: job_run, rejected_rows, dq_check (136 phép kiểm thử), watermark, batch_metrics, fact_load_issue · " + f"{cnt['etl_log'][0]} bảng · {n(cnt['etl_log'][1])} dòng", fill=YELLOW, font=11, bold=True)
+    d.box(1130, y, 550, 56, "ĐIỀU PHỐI: python -m etl.run_pipeline (Python) · mã nguồn quản lý bằng Git trên GitHub", fill="#FFFFFF", font=11, bold=True)
+    for j, t in enumerate(["Python", "GitHub", "PostgreSQL"]):
+        bg, fg = TECH[t]
+        d.box(1130 + j * 183, y + 64, 170, 36, t, fill=bg, bold=True, font=12, color=fg)
+    d.save("kien-truc-cac-lop.drawio", "3-2_kien_truc_cac_lop.png")
+
+
+def all_p8_arch() -> None:
+    architecture_layers()
+
+
+# ----------------------------------------------------------------------------- E4: data model figures (logic, physical, data marts)
+def _fk_and_cols():
+    import sys
+
+    from diagram_kit import ROOT
+    from sqlalchemy import text
+
+    sys.path.insert(0, str(ROOT))
+    from etl import config
+    from etl.db import get_engine
+
+    eng = get_engine(config.DB_NAME)
+    with eng.connect() as c:
+        fks = c.execute(text("""SELECT tc.table_name AS fact, kcu.column_name AS col, ccu.table_name AS dim
+                                FROM information_schema.table_constraints tc
+                                JOIN information_schema.key_column_usage kcu USING (constraint_schema, constraint_name)
+                                JOIN information_schema.constraint_column_usage ccu USING (constraint_schema, constraint_name)
+                                WHERE tc.constraint_type='FOREIGN KEY' AND tc.table_schema='dw' AND tc.table_name LIKE 'fact\\_%' ORDER BY 1, 2""")).all()
+        cols = c.execute(text("""SELECT table_name, column_name, CASE WHEN data_type='numeric' THEN 'numeric(' || numeric_precision || ',' || numeric_scale || ')'
+                                      WHEN data_type='character' THEN 'char(' || character_maximum_length || ')' WHEN data_type='character varying' THEN 'varchar'
+                                      WHEN data_type='timestamp with time zone' THEN 'timestamptz' WHEN data_type='timestamp without time zone' THEN 'timestamp'
+                                      WHEN data_type='double precision' THEN 'double' ELSE data_type END AS ty
+                                 FROM information_schema.columns WHERE table_schema='dw' AND table_name IN (SELECT table_name FROM information_schema.tables WHERE table_schema='dw' AND table_type='BASE TABLE')
+                                 ORDER BY table_name, ordinal_position""")).all()
+        pks = c.execute(text("""SELECT kcu.table_name, kcu.column_name FROM information_schema.table_constraints tc JOIN information_schema.key_column_usage kcu USING (constraint_schema, constraint_name)
+                                WHERE tc.constraint_type='PRIMARY KEY' AND tc.table_schema='dw'""")).all()
+    return fks, cols, set(map(tuple, pks))
+
+
+DIM_LEVELS = {
+    "dim_date": "Năm → Quý → Tháng → Ngày", "dim_geography": "Vùng → Bang → Thành phố → Zip", "dim_customer": "Vùng → Bang → Thành phố → Zip → Khách → Phiên bản (SCD2)",
+    "dim_seller": "Vùng → Bang → Thành phố → Seller; Kênh → Origin → Seller", "dim_product": "Nhóm ngành → Danh mục → Sản phẩm", "dim_order_status": "Nhóm trạng thái → Trạng thái",
+    "dim_payment_type": "Nhóm → Hình thức", "dim_lead_origin": "Nhóm kênh → Origin", "dim_lead_profile": "(chiều rác) 7 thuộc tính của deal", "dim_sales_rep": "Vai trò (SDR, SR) → Nhân viên",
+}
+FACT_GRAIN = {
+    "fact_order_item": "Bán hàng · transaction\n1 dòng hàng của 1 đơn", "fact_order_fulfillment": "Xử lý đơn · snapshot tích luỹ\n1 đơn, 5 mốc thời gian", "fact_payment": "Thanh toán · transaction\n1 lần thanh toán",
+    "fact_review": "Đánh giá · transaction\n1 review của 1 đơn", "fact_lead_funnel": "Thu hút seller · snapshot tích luỹ\n1 khách tiềm năng (MQL)", "fact_seller_monthly": "Hiệu suất seller · snapshot định kỳ\n1 seller × 1 tháng",
+}
+MARTS = [
+    ("mart_sales", ["fact_order_item"], ["Doanh thu (GMV) theo tháng, danh mục, vùng thay đổi thế nào?", "Bao nhiêu danh mục tạo 80% GMV (quy luật 80/20)?", "Vùng nào đóng góp nhiều nhất, vùng nào tăng nhanh nhất?", "AOV và tăng trưởng MoM, YoY?"]),
+    ("mart_fulfillment", ["fact_order_fulfillment"], ["Chặng nào (duyệt, bàn giao, vận chuyển) mất lâu nhất?", "Bang nào giao trễ nhiều nhất?", "Ngày hứa giao so với giao thực tế chênh bao nhiêu?", "Khoảng cách seller đến khách ảnh hưởng lead time thế nào?"]),
+    ("mart_cx", ["fact_review", "fact_payment"], ["Giao trễ làm điểm review giảm bao nhiêu?", "Cơ cấu hình thức thanh toán và số kỳ trả góp?", "Bao nhiêu khách quay lại mua (RFM, cohort)?", "Tỷ lệ review tiêu cực theo tháng và vùng?"]),
+    ("mart_acquisition", ["fact_lead_funnel", "fact_seller_monthly"], ["Kênh marketing nào chuyển MQL thành seller tốt nhất?", "Mất bao nhiêu ngày từ liên hệ đến chốt deal và đến đơn đầu?", "Seller từ funnel bán được bao nhiêu GMV?", "Seller nào ngừng bán sau khi chốt?"]),
+]
+
+
+def data_model_logic(fks) -> None:
+    d = Diagram("Data model logic", 1750, 900)
+    d.label(20, 8, 1700, 34, "Data model logic: 6 quy trình (fact) nối với dimension và các cấp phân cấp (không ghi kiểu dữ liệu)", font=16)
+    facts = list(FACT_GRAIN)
+    dims = list(DIM_LEVELS)
+    fid = {f: d.box(20, 70 + i * 130, 330, 100, f + "\n" + FACT_GRAIN[f], fill=ORANGE, bold=True, font=11) for i, f in enumerate(facts)}
+    did = {m: d.box(900, 60 + i * 80, 820, 66, m + "\n" + DIM_LEVELS[m], fill=BLUE, bold=False, font=11) for i, m in enumerate(dims)}
+    seen = set()
+    for f, col, m in fks:
+        if (f, m) in seen:
+            continue
+        seen.add((f, m))
+        d.arrow(fid[f], did[m], "", color="#6B7280", width=1.0)
+    d.box(380, 800, 480, 70, "Mỗi fact trỏ tới dimension bằng khoá thay thế (…_key); dòng Unknown (−1) bảo đảm khoá ngoại không bao giờ rỗng. dim_date đóng vai nhiều lần (ngày mua, duyệt, bàn giao, giao…).", fill=WHITE, shape="rect", font=10, dashed=True)
+    d.save("data-model-logic.drawio", "3-5_data_model_logic.png")
+
+
+def data_model_physical(fks, cols, pks) -> None:
+    fk_of = {(f, c): m for f, c, m in fks}
+    tables = {}
+    for t, c, ty in cols:
+        tables.setdefault(t, []).append((c, ty))
+    layout = [
+        ["dim_date", "dim_order_status", "dim_payment_type", "dim_lead_origin"],
+        ["fact_order_item", "fact_payment", "fact_review"],
+        ["fact_order_fulfillment", "fact_seller_monthly", "fact_lead_funnel"],
+        ["dim_customer", "dim_seller", "dim_sales_rep", "dim_lead_profile"],
+        ["dim_geography", "dim_product"],
+    ]
+    d = Diagram("Data model vật lý", 1900, 1500)
+    d.label(20, 8, 1850, 34, "Data model vật lý của schema dw (sinh từ information_schema): fact màu cam, dimension màu xanh; PK đậm, FK ghi sang chiều tương ứng", font=15)
+    xs = [20, 400, 790, 1180, 1560]
+    for x, col in zip(xs, layout):
+        y = 60
+        for t in col:
+            rows = []
+            for c, ty in tables[t]:
+                if (t, c) in pks:
+                    rows.append((f"{c}  {ty}  PK", False, True))
+                elif (t, c) in fk_of:
+                    rows.append((f"{c}  {ty}  FK→{fk_of[(t, c)].replace('dim_', '')}", False, False))
+                else:
+                    rows.append((f"{c}  {ty}", False, False))
+            e = d.entity(x, y, 350, t, rows, fill=ORANGE if t.startswith("fact") else BLUE, font=9, header=ORANGE if t.startswith("fact") else BLUE)
+            y += d._box(e)["h"] + 16
+    d.save("data-model-vat-ly.drawio", "3-5_data_model_vat_ly.png")
+
+
+def data_model_marts(fks) -> None:
+    d = Diagram("Data model theo data mart", 1800, 1130)
+    d.label(20, 8, 1750, 34, "Data mart: mỗi mart gồm fact (cam), các dimension (xanh) và 3–4 câu hỏi phân tích", font=16)
+    dims_of = {}
+    for f, col, m in fks:
+        dims_of.setdefault(f, [])
+        if m not in dims_of[f]:
+            dims_of[f].append(m)
+    for k, (mart, facts, qs) in enumerate(MARTS):
+        x0, y0 = 20 + (k % 2) * 890, 60 + (k // 2) * 520
+        d.frame(x0, y0, 870, 500, mart)
+        fy = y0 + 40
+        dset = []
+        for f in facts:
+            for m in dims_of.get(f, []):
+                if m not in dset:
+                    dset.append(m)
+        fids = [d.box(x0 + 20, fy + i * 80, 300, 66, f + "\n" + FACT_GRAIN[f], fill=ORANGE, bold=True, font=11) for i, f in enumerate(facts)]
+        dids = {m: d.box(x0 + 450, y0 + 40 + j * 38, 400, 30, m, fill=BLUE, font=11) for j, m in enumerate(dset)}
+        for f, fid_ in zip(facts, fids):
+            for m in dims_of.get(f, []):
+                d.arrow(fid_, dids[m], "", color="#6B7280", width=1.0)
+        d.box(x0 + 20, y0 + 300, 830, 180, "Câu hỏi phân tích:\n" + "\n".join(f"{i + 1}. {q_}" for i, q_ in enumerate(qs)), fill=WHITE, shape="rect", font=11, align="left")
+    d.save("data-model-theo-mart.drawio", "3-5_data_mart.png")
+
+
+def all_p8_model() -> None:
+    fks, cols, pks = _fk_and_cols()
+    data_model_logic(fks)
+    data_model_physical(fks, cols, pks)
+    data_model_marts(fks)

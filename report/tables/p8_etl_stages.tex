@@ -1,0 +1,10 @@
+\begin{table}[htbp]\centering\scriptsize\caption{Tóm tắt các giai đoạn ETL và kết quả (số dòng lấy từ etl\_log)}\label{tab:etl-stages}
+\begin{tabular}{p{1.88cm}p{5.13cm}p{2.56cm}p{4.45cm}}\toprule
+\textbf{Giai đoạn} & \textbf{Nội dung} & \textbf{Công cụ} & \textbf{Kết quả (từ etl\_log)}\\\midrule
+Extract & Chép nguyên trạng 11 bảng nguồn vào staging, gắn mã lô và thời điểm nạp; full hoặc tăng dần (watermark theo ngày mua của đơn, các bảng khác theo khoá) & Python + SQL (SQLAlchemy) & lô đầu: 11 job, 1.273.620 dòng vào staging; tổng 13 lô: 1.559.764 dòng\\
+Seed và ODS & Nạp 6 bảng tham chiếu từ file seed; làm sạch, chuẩn hoá, gắn cờ lỗi; dòng không nạp được ghi rejected\_rows kèm lý do & SQL procedure (PL/pgSQL), Python đọc seed & lô đầu: 17 job, 292.593 dòng vào ODS, 42 dòng bị loại; tổng 13 lô: 580.249 dòng vào, 42 bị loại\\
+Dimension và fact & Nạp 10 dimension (khoá thay thế, SCD1 và SCD2) rồi 6 fact (tra khoá theo phiên bản hiệu lực, tính thời gian từng chặng) & SQL procedure (PL/pgSQL) & lô đầu: 17 job, 306.586 dòng chèn; tổng 13 lô: 614.213 dòng chèn, 4.814 dòng cập nhật\\
+Data mart & Làm mới các materialized view của bốn mart & SQL (REFRESH MATERIALIZED VIEW) & lô đầu: 45.213 dòng đọc, 0.9 giây\\
+Kiểm thử & Chạy các truy vấn kiểm thử số dòng, tổng tiền, grain, khoá ngoại, logic nghiệp vụ; ghi dq\_check & Python + SQL (sql/90\_tests) & lô đầu: 142/142 phép đạt; lô cuối: 142/142 đạt\\
+Xuất cho Power BI & Xuất bảng dw, mart và etl\_log ra 37 file CSV (UTF-8 có BOM) & Python (pandas) & 37 file CSV trong exports/powerbi/\\
+\bottomrule\end{tabular}\end{table}

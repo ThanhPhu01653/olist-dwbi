@@ -1,0 +1,98 @@
+\begin{table}[htbp]\centering\scriptsize\caption{Chiều thời gian: Năm → Quý → Tháng → Ngày}\label{tab:hier-dim-date}
+\begin{tabular}{llll}\toprule
+\textbf{Năm} & \textbf{Quý} & \textbf{Tháng} & \textbf{Ngày}\\\midrule
+2016 & 2016-Q4 & 2016-12 & 2016-12-25\\
+2017 & 2017-Q4 & 2017-11 & 2017-11-24\\
+2018 & 2018-Q1 & 2018-03 & 2018-03-15\\
+\midrule
+\textbf{5} & \textbf{20} & \textbf{60} & \textbf{1.827}\\
+\multicolumn{4}{l}{\footnotesize\emph{Dòng cuối: số giá trị phân biệt của từng cấp (không tính dòng Unknown).}}\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[htbp]\centering\scriptsize\caption{Chiều địa lý: Vùng → Bang → Thành phố → Mã bưu chính}\label{tab:hier-dim-geography}
+\begin{tabular}{llll}\toprule
+\textbf{Vùng} & \textbf{Bang} & \textbf{Thành phố (kèm bang)} & \textbf{Mã bưu chính}\\\midrule
+Nordeste & BA & salvador & 40010\\
+Sul & RS & porto alegre & 90001\\
+Sudeste & SP & sao paulo & 01001\\
+\midrule
+\textbf{5} & \textbf{27} & \textbf{6.190} & \textbf{19.177}\\
+\multicolumn{4}{l}{\footnotesize\emph{Dòng cuối: số giá trị phân biệt của từng cấp (không tính dòng Unknown).}}\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[htbp]\centering\scriptsize\caption{Chiều sản phẩm: Nhóm ngành → Danh mục → Sản phẩm}\label{tab:hier-dim-product}
+\begin{tabular}{lll}\toprule
+\textbf{Nhóm ngành hàng} & \textbf{Danh mục (tiếng Anh)} & \textbf{Sản phẩm (product\_id)}\\\midrule
+Electronics \& Computers & computers\_accessories & 0021a87d\\
+Health \& Beauty & health\_beauty & 00210e41\\
+Home \& Furniture & bed\_bath\_table & 0009406f\\
+\midrule
+\textbf{13} & \textbf{74} & \textbf{32.951}\\
+\multicolumn{3}{l}{\footnotesize\emph{Dòng cuối: số giá trị phân biệt của từng cấp (không tính dòng Unknown).}}\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[htbp]\centering\scriptsize\caption{Chiều seller: Vùng → Bang → Thành phố → Seller}\label{tab:hier-dim-seller}
+\begin{tabular}{llll}\toprule
+\textbf{Vùng} & \textbf{Bang} & \textbf{Thành phố (kèm bang)} & \textbf{Seller}\\\midrule
+Sudeste & MG & belo horizonte & 00d8b143\\
+Sul & PR & curitiba & 01266d4c\\
+Sudeste & SP & sao paulo & 00ab3eff\\
+\midrule
+\textbf{6} & \textbf{23} & \textbf{636} & \textbf{3.557}\\
+\multicolumn{4}{l}{\footnotesize\emph{Dòng cuối: số giá trị phân biệt của từng cấp (không tính dòng Unknown).}}\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[htbp]\centering\scriptsize\caption{Chiều khách hàng (SCD loại 2): Vùng → Bang → Thành phố → Mã bưu chính → Khách → Phiên bản}\label{tab:hier-dim-customer}
+\begin{tabular}{llllll}\toprule
+\textbf{Vùng} & \textbf{Bang} & \textbf{Thành phố (kèm bang)} & \textbf{Mã bưu chính} & \textbf{Khách thật} & \textbf{Phiên bản (dòng)}\\\midrule
+Sudeste & MG & belo horizonte & 31555 & 000c8bdb & 1\\
+Sudeste & RJ & rio de janeiro & 21380 & 00293787 & 1\\
+Sudeste & SP & sao paulo & 03071 & 001a2bf0 & 1\\
+\midrule
+\textbf{5} & \textbf{27} & \textbf{4.310} & \textbf{14.994} & \textbf{96.096} & \textbf{96.338}\\
+\multicolumn{6}{l}{\footnotesize\emph{Dòng cuối: số giá trị phân biệt của từng cấp (không tính dòng Unknown).}}\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[htbp]\centering\scriptsize\caption{Chiều kênh thu hút: Nhóm kênh → Origin}\label{tab:hier-dim-lead-origin}
+\begin{tabular}{ll}\toprule
+\textbf{Nhóm kênh} & \textbf{Origin}\\\midrule
+Email & email\\
+Organic & direct\_traffic\\
+Other & other\\
+\midrule
+\textbf{6} & \textbf{10}\\
+\multicolumn{2}{l}{\footnotesize\emph{Dòng cuối: số giá trị phân biệt của từng cấp (không tính dòng Unknown).}}\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[htbp]\centering\scriptsize\caption{Chiều trạng thái đơn: Nhóm trạng thái → Trạng thái}\label{tab:hier-dim-order-status}
+\begin{tabular}{ll}\toprule
+\textbf{Nhóm trạng thái} & \textbf{Trạng thái đơn}\\\midrule
+Completed & delivered\\
+Failed & canceled\\
+In progress & approved\\
+\midrule
+\textbf{3} & \textbf{8}\\
+\multicolumn{2}{l}{\footnotesize\emph{Dòng cuối: số giá trị phân biệt của từng cấp (không tính dòng Unknown).}}\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[htbp]\centering\scriptsize\caption{Chiều hình thức thanh toán: Nhóm → Hình thức}\label{tab:hier-dim-payment-type}
+\begin{tabular}{ll}\toprule
+\textbf{Nhóm thanh toán} & \textbf{Hình thức}\\\midrule
+Bank slip & boleto\\
+Card & credit\_card\\
+Unknown & not\_defined\\
+Voucher & voucher\\
+\midrule
+\textbf{4} & \textbf{5}\\
+\multicolumn{2}{l}{\footnotesize\emph{Dòng cuối: số giá trị phân biệt của từng cấp (không tính dòng Unknown).}}\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[htbp]\centering\scriptsize\caption{Chiều nhân viên sales: Vai trò → Nhân viên}\label{tab:hier-dim-sales-rep}
+\begin{tabular}{ll}\toprule
+\textbf{Vai trò} & \textbf{Nhân viên}\\\midrule
+SDR & 068066e2\\
+SR & 060c0a26\\
+\midrule
+\textbf{2} & \textbf{54}\\
+\multicolumn{2}{l}{\footnotesize\emph{Dòng cuối: số giá trị phân biệt của từng cấp (không tính dòng Unknown).}}\\
+\bottomrule\end{tabular}\end{table}
