@@ -1,0 +1,135 @@
+/// Chiều thời gian (1 dòng / ngày 2016–2020 + Unknown -1)
+table dim_date
+	dataCategory: Time
+
+	column date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: date_key
+
+	column full_date
+		dataType: dateTime
+		isKey
+		formatString: yyyy-MM-dd
+		sourceColumn: full_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column day_of_month
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: day_of_month
+
+	column day_of_week
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: day_of_week
+
+	column day_name
+		dataType: string
+		sortByColumn: day_of_week
+		sourceColumn: day_name
+
+	column week_of_year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: week_of_year
+
+	column month
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: month
+
+	column month_name
+		dataType: string
+		sortByColumn: month
+		sourceColumn: month_name
+
+	column quarter
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: quarter
+
+	column year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column year_month
+		dataType: string
+		sourceColumn: year_month
+
+	column year_quarter
+		dataType: string
+		sourceColumn: year_quarter
+
+	column is_weekend
+		dataType: boolean
+		sourceColumn: is_weekend
+
+	column is_holiday_br
+		dataType: boolean
+		sourceColumn: is_holiday_br
+
+	column holiday_name
+		dataType: string
+		sourceColumn: holiday_name
+
+	column is_black_friday
+		dataType: boolean
+		sourceColumn: is_black_friday
+
+	/// TRUE cho ngày trong giai đoạn 2017-01 đến 2018-08; dùng làm bộ lọc trang của DB1-DB4
+	column InWindow
+		dataType: boolean
+		sourceColumn: InWindow
+
+	hierarchy Date
+		level year
+			column: year
+			ordinal: 0
+		level year_quarter
+			column: year_quarter
+			ordinal: 1
+		level year_month
+			column: year_month
+			ordinal: 2
+		level full_date
+			column: full_date
+			ordinal: 3
+
+	hierarchy Week
+		level year
+			column: year
+			ordinal: 0
+		level week_of_year
+			column: week_of_year
+			ordinal: 1
+		level full_date
+			column: full_date
+			ordinal: 2
+
+	partition dim_date = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("dim_date.csv", {
+				            {"date_key", Int64.Type}, {"full_date", type date}, {"day_of_month", Int64.Type}, {"day_of_week", Int64.Type},
+				            {"day_name", type text}, {"week_of_year", Int64.Type}, {"month", Int64.Type}, {"month_name", type text},
+				            {"quarter", Int64.Type}, {"year", Int64.Type}, {"year_month", type text}, {"year_quarter", type text},
+				            {"is_weekend", type logical}, {"is_holiday_br", type logical}, {"holiday_name", type text}, {"is_black_friday", type logical}
+				        }),
+				    NoUnknown = Table.SelectRows(Source, each [date_key] <> -1),
+				    Window = Table.AddColumn(NoUnknown, "InWindow", each [year_month] >= "2017-01" and [year_month] <= "2018-08", type logical)
+				in
+				    Window
+
+	annotation PBI_ResultType = Table

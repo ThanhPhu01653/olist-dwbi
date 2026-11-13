@@ -1,0 +1,37 @@
+/// Chiều kênh thu hút MQL
+table dim_lead_origin
+
+	column lead_origin_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: lead_origin_key
+
+	column origin
+		dataType: string
+		sourceColumn: origin
+
+	column channel_group
+		dataType: string
+		sourceColumn: channel_group
+
+	hierarchy 'Lead origin'
+		level channel_group
+			column: channel_group
+			ordinal: 0
+		level origin
+			column: origin
+			ordinal: 1
+
+	partition dim_lead_origin = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("dim_lead_origin.csv", {
+				            {"lead_origin_key", Int64.Type}, {"origin", type text}, {"channel_group", type text}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

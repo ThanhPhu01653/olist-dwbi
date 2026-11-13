@@ -1,0 +1,144 @@
+/// Fact giao dịch: 1 review
+table fact_review
+
+	column review_id
+		dataType: string
+		sourceColumn: review_id
+
+	column order_id
+		dataType: string
+		summarizeBy: none
+		sourceColumn: order_id
+
+	column review_creation_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: review_creation_date_key
+
+	column review_answer_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: review_answer_date_key
+
+	column customer_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: customer_key
+
+	column review_score
+		dataType: int64
+		formatString: 0
+		sourceColumn: review_score
+
+	column is_negative
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_negative
+
+	column has_comment_title
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: has_comment_title
+
+	column has_comment_message
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: has_comment_message
+
+	column comment_length
+		dataType: int64
+		formatString: #,0
+		sourceColumn: comment_length
+
+	column response_hours
+		dataType: double
+		sourceColumn: response_hours
+
+	column delivered_late
+		dataType: int64
+		formatString: #,0
+		sourceColumn: delivered_late
+
+	column is_delivered
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_delivered
+
+	column etl_batch_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: etl_batch_id
+
+	column 'Review type' =
+			IF ( fact_review[is_negative] = 1, "Tiêu cực", "Không tiêu cực" )
+		dataType: string
+		isDataTypeInferred
+		summarizeBy: none
+
+	column 'Delay days (order)' =
+			LOOKUPVALUE ( fact_order_fulfillment[delay_days], fact_order_fulfillment[order_id], fact_review[order_id] )
+		dataType: int64
+		isDataTypeInferred
+		formatString: 0
+		summarizeBy: none
+
+	column 'Lead days (order)' =
+			LOOKUPVALUE ( fact_order_fulfillment[lead_days], fact_order_fulfillment[order_id], fact_review[order_id] )
+		dataType: double
+		isDataTypeInferred
+		summarizeBy: none
+
+	column 'Promised days (order)' =
+			LOOKUPVALUE ( fact_order_fulfillment[promised_days], fact_order_fulfillment[order_id], fact_review[order_id] )
+		dataType: int64
+		isDataTypeInferred
+		formatString: 0
+		summarizeBy: none
+
+	column 'Freight (order)' =
+			LOOKUPVALUE ( fact_order_fulfillment[freight_total], fact_order_fulfillment[order_id], fact_review[order_id] )
+		dataType: decimal
+		isDataTypeInferred
+		formatString: "#,0.00"
+		summarizeBy: none
+
+	column 'Order value (order)' =
+			LOOKUPVALUE ( fact_order_fulfillment[order_value], fact_order_fulfillment[order_id], fact_review[order_id] )
+		dataType: decimal
+		isDataTypeInferred
+		formatString: "#,0.00"
+		summarizeBy: none
+
+	column 'Item count (order)' =
+			LOOKUPVALUE ( fact_order_fulfillment[item_count], fact_order_fulfillment[order_id], fact_review[order_id] )
+		dataType: int64
+		isDataTypeInferred
+		formatString: 0
+		summarizeBy: none
+
+	partition fact_review = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("fact_review.csv", {
+				            {"review_id", type text}, {"order_id", type text}, {"review_creation_date_key", Int64.Type}, {"review_answer_date_key", Int64.Type},
+				            {"customer_key", Int64.Type}, {"review_score", Int64.Type}, {"is_negative", Int64.Type}, {"has_comment_title", Int64.Type},
+				            {"has_comment_message", Int64.Type}, {"comment_length", Int64.Type}, {"response_hours", type number}, {"delivered_late", Int64.Type},
+				            {"is_delivered", Int64.Type}, {"etl_batch_id", Int64.Type}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

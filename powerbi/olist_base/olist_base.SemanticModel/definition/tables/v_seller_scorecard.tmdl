@@ -1,0 +1,151 @@
+/// Mart: scorecard từng seller có đơn (Pareto, cờ mẫu nhỏ)
+table v_seller_scorecard
+
+	column seller_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: seller_key
+
+	column seller_id
+		dataType: string
+		sourceColumn: seller_id
+
+	column city
+		dataType: string
+		sourceColumn: city
+
+	column state_code
+		dataType: string
+		sourceColumn: state_code
+
+	column region
+		dataType: string
+		sourceColumn: region
+
+	column is_from_funnel
+		dataType: boolean
+		sourceColumn: is_from_funnel
+
+	column acquisition_channel
+		dataType: string
+		sourceColumn: acquisition_channel
+
+	column acquisition_origin
+		dataType: string
+		sourceColumn: acquisition_origin
+
+	column business_segment
+		dataType: string
+		sourceColumn: business_segment
+
+	column first_sale_date
+		dataType: dateTime
+		formatString: yyyy-MM-dd
+		sourceColumn: first_sale_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column last_active_month
+		dataType: dateTime
+		formatString: yyyy-MM-dd
+		sourceColumn: last_active_month
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column active_months
+		dataType: int64
+		formatString: #,0
+		sourceColumn: active_months
+
+	column orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: orders
+
+	column items
+		dataType: int64
+		formatString: #,0
+		sourceColumn: items
+
+	column gmv
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: gmv
+
+	column freight
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: freight
+
+	column delivered_orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: delivered_orders
+
+	column late_orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: late_orders
+
+	column late_rate_pct
+		dataType: double
+		sourceColumn: late_rate_pct
+
+	column canceled_orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: canceled_orders
+
+	column reviews
+		dataType: int64
+		formatString: #,0
+		sourceColumn: reviews
+
+	column avg_review_score
+		dataType: double
+		sourceColumn: avg_review_score
+
+	column pct_negative
+		dataType: double
+		sourceColumn: pct_negative
+
+	column gmv_rank
+		dataType: int64
+		formatString: 0
+		sourceColumn: gmv_rank
+
+	column gmv_share_pct
+		dataType: double
+		sourceColumn: gmv_share_pct
+
+	column cum_share_pct
+		dataType: double
+		sourceColumn: cum_share_pct
+
+	column abc_class
+		dataType: string
+		sourceColumn: abc_class
+
+	column small_sample
+		dataType: boolean
+		sourceColumn: small_sample
+
+	partition v_seller_scorecard = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_seller_scorecard.csv", {
+				            {"seller_key", Int64.Type}, {"seller_id", type text}, {"city", type text}, {"state_code", type text},
+				            {"region", type text}, {"is_from_funnel", type logical}, {"acquisition_channel", type text}, {"acquisition_origin", type text},
+				            {"business_segment", type text}, {"first_sale_date", type date}, {"last_active_month", type date}, {"active_months", Int64.Type},
+				            {"orders", Int64.Type}, {"items", Int64.Type}, {"gmv", Currency.Type}, {"freight", Currency.Type},
+				            {"delivered_orders", Int64.Type}, {"late_orders", Int64.Type}, {"late_rate_pct", type number}, {"canceled_orders", Int64.Type},
+				            {"reviews", Int64.Type}, {"avg_review_score", type number}, {"pct_negative", type number}, {"gmv_rank", Int64.Type},
+				            {"gmv_share_pct", type number}, {"cum_share_pct", type number}, {"abc_class", type text}, {"small_sample", type logical}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

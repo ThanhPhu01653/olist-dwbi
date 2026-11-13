@@ -1,0 +1,41 @@
+/// Chiều trạng thái đơn
+table dim_order_status
+
+	column order_status_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: order_status_key
+
+	column order_status
+		dataType: string
+		sourceColumn: order_status
+
+	column status_group
+		dataType: string
+		sourceColumn: status_group
+
+	column is_final
+		dataType: boolean
+		sourceColumn: is_final
+
+	hierarchy Status
+		level status_group
+			column: status_group
+			ordinal: 0
+		level order_status
+			column: order_status
+			ordinal: 1
+
+	partition dim_order_status = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("dim_order_status.csv", {
+				            {"order_status_key", Int64.Type}, {"order_status", type text}, {"status_group", type text}, {"is_final", type logical}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

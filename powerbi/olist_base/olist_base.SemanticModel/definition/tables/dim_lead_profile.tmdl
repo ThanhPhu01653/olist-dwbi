@@ -1,0 +1,50 @@
+/// Chiều hồ sơ deal (junk dimension)
+table dim_lead_profile
+
+	column lead_profile_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: lead_profile_key
+
+	column business_segment
+		dataType: string
+		sourceColumn: business_segment
+
+	column lead_type
+		dataType: string
+		sourceColumn: lead_type
+
+	column lead_behaviour_profile
+		dataType: string
+		sourceColumn: lead_behaviour_profile
+
+	column business_type
+		dataType: string
+		sourceColumn: business_type
+
+	column has_company
+		dataType: string
+		sourceColumn: has_company
+
+	column has_gtin
+		dataType: string
+		sourceColumn: has_gtin
+
+	column average_stock
+		dataType: string
+		sourceColumn: average_stock
+
+	partition dim_lead_profile = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("dim_lead_profile.csv", {
+				            {"lead_profile_key", Int64.Type}, {"business_segment", type text}, {"lead_type", type text}, {"lead_behaviour_profile", type text},
+				            {"business_type", type text}, {"has_company", type text}, {"has_gtin", type text}, {"average_stock", type text}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

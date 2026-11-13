@@ -1,0 +1,61 @@
+/// Mart: điểm review theo nhóm trễ giao x tháng
+table v_review_vs_delay
+
+	column year_month
+		dataType: string
+		sourceColumn: year_month
+
+	column in_window
+		dataType: boolean
+		sourceColumn: in_window
+
+	column delay_bucket_no
+		dataType: int64
+		formatString: 0
+		sourceColumn: delay_bucket_no
+
+	column delay_bucket
+		dataType: string
+		sortByColumn: delay_bucket_no
+		sourceColumn: delay_bucket
+
+	column reviews
+		dataType: int64
+		formatString: #,0
+		sourceColumn: reviews
+
+	column score_sum
+		dataType: int64
+		formatString: #,0
+		sourceColumn: score_sum
+
+	column negative_reviews
+		dataType: int64
+		formatString: #,0
+		sourceColumn: negative_reviews
+
+	column avg_score
+		dataType: double
+		sourceColumn: avg_score
+
+	column pct_negative
+		dataType: double
+		sourceColumn: pct_negative
+
+	column avg_response_hours
+		dataType: double
+		sourceColumn: avg_response_hours
+
+	partition v_review_vs_delay = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_review_vs_delay.csv", {
+				            {"year_month", type text}, {"in_window", type logical}, {"delay_bucket_no", Int64.Type}, {"delay_bucket", type text},
+				            {"reviews", Int64.Type}, {"score_sum", Int64.Type}, {"negative_reviews", Int64.Type}, {"avg_score", type number},
+				            {"pct_negative", type number}, {"avg_response_hours", type number}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

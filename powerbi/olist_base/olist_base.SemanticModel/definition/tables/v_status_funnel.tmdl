@@ -1,0 +1,42 @@
+/// Mart: số đơn đi qua từng chặng theo tháng (dạng dài)
+table v_status_funnel
+
+	column year_month
+		dataType: string
+		sourceColumn: year_month
+
+	column in_window
+		dataType: boolean
+		sourceColumn: in_window
+
+	column stage_no
+		dataType: int64
+		formatString: 0
+		sourceColumn: stage_no
+
+	column stage
+		dataType: string
+		sortByColumn: stage_no
+		sourceColumn: stage
+
+	column orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: orders
+
+	column pct_of_placed
+		dataType: double
+		sourceColumn: pct_of_placed
+
+	partition v_status_funnel = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_status_funnel.csv", {
+				            {"year_month", type text}, {"in_window", type logical}, {"stage_no", Int64.Type}, {"stage", type text},
+				            {"orders", Int64.Type}, {"pct_of_placed", type number}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

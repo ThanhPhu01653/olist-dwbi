@@ -1,0 +1,42 @@
+/// Mart: cohort khách quay lại theo tháng mua đầu
+table v_customer_cohort
+
+	column cohort_month
+		dataType: string
+		sourceColumn: cohort_month
+
+	column in_window
+		dataType: boolean
+		sourceColumn: in_window
+
+	column months_since
+		dataType: int64
+		formatString: #,0
+		sourceColumn: months_since
+
+	column cohort_size
+		dataType: int64
+		formatString: #,0
+		sourceColumn: cohort_size
+
+	column customers_active
+		dataType: int64
+		formatString: #,0
+		sourceColumn: customers_active
+
+	column retention_pct
+		dataType: double
+		sourceColumn: retention_pct
+
+	partition v_customer_cohort = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_customer_cohort.csv", {
+				            {"cohort_month", type text}, {"in_window", type logical}, {"months_since", Int64.Type}, {"cohort_size", Int64.Type},
+				            {"customers_active", Int64.Type}, {"retention_pct", type number}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

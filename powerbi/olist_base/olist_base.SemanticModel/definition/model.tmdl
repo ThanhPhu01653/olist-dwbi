@@ -1,0 +1,50 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["DataFolder", "fnCsv", "dim_date", "dim_geography", "dim_customer", "dim_seller", "dim_product", "dim_order_status", "dim_payment_type", "dim_lead_origin", "dim_lead_profile", "dim_sales_rep", "fact_order_item", "fact_order_fulfillment", "fact_payment", "fact_review", "fact_lead_funnel", "fact_seller_monthly", "v_sales_daily", "v_sales_category_month", "v_sales_state_month", "v_geo_state", "v_geo_zip", "v_category_pareto", "v_fulfillment_state_month", "v_status_funnel", "v_review_vs_delay", "v_payment_mix_month", "v_customer_rfm", "v_customer_cohort", "v_funnel_by_origin_month", "v_seller_scorecard", "v_seller_by_channel", "job_run", "v_run_summary", "v_dq_summary", "v_rejected_summary", "batch_metrics", "fact_load_issue", "_Measures"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref table dim_date
+ref table dim_geography
+ref table dim_customer
+ref table dim_seller
+ref table dim_product
+ref table dim_order_status
+ref table dim_payment_type
+ref table dim_lead_origin
+ref table dim_lead_profile
+ref table dim_sales_rep
+ref table fact_order_item
+ref table fact_order_fulfillment
+ref table fact_payment
+ref table fact_review
+ref table fact_lead_funnel
+ref table fact_seller_monthly
+ref table v_sales_daily
+ref table v_sales_category_month
+ref table v_sales_state_month
+ref table v_geo_state
+ref table v_geo_zip
+ref table v_category_pareto
+ref table v_fulfillment_state_month
+ref table v_status_funnel
+ref table v_review_vs_delay
+ref table v_payment_mix_month
+ref table v_customer_rfm
+ref table v_customer_cohort
+ref table v_funnel_by_origin_month
+ref table v_seller_scorecard
+ref table v_seller_by_channel
+ref table job_run
+ref table v_run_summary
+ref table v_dq_summary
+ref table v_rejected_summary
+ref table batch_metrics
+ref table fact_load_issue
+ref table _Measures

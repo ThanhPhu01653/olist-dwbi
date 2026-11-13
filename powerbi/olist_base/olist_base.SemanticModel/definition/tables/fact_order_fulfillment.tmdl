@@ -1,0 +1,221 @@
+/// Fact accumulating snapshot: 1 đơn
+table fact_order_fulfillment
+
+	column order_id
+		dataType: string
+		summarizeBy: none
+		sourceColumn: order_id
+
+	column customer_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: customer_key
+
+	column customer_geography_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: customer_geography_key
+
+	column order_status_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: order_status_key
+
+	column purchase_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: purchase_date_key
+
+	column approved_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: approved_date_key
+
+	column carrier_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: carrier_date_key
+
+	column delivered_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: delivered_date_key
+
+	column estimated_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: estimated_date_key
+
+	column purchase_ts
+		dataType: dateTime
+		formatString: yyyy-MM-dd HH:mm:ss
+		sourceColumn: purchase_ts
+
+	column approved_ts
+		dataType: dateTime
+		formatString: yyyy-MM-dd HH:mm:ss
+		sourceColumn: approved_ts
+
+	column carrier_ts
+		dataType: dateTime
+		formatString: yyyy-MM-dd HH:mm:ss
+		sourceColumn: carrier_ts
+
+	column delivered_ts
+		dataType: dateTime
+		formatString: yyyy-MM-dd HH:mm:ss
+		sourceColumn: delivered_ts
+
+	column estimated_ts
+		dataType: dateTime
+		formatString: yyyy-MM-dd HH:mm:ss
+		sourceColumn: estimated_ts
+
+	column approval_hours
+		dataType: double
+		sourceColumn: approval_hours
+
+	column handling_days
+		dataType: double
+		sourceColumn: handling_days
+
+	column transit_days
+		dataType: double
+		sourceColumn: transit_days
+
+	column lead_days
+		dataType: double
+		sourceColumn: lead_days
+
+	column delay_days
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: delay_days
+
+	column promised_days
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: promised_days
+
+	column is_delivered
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_delivered
+
+	column is_late
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_late
+
+	column is_canceled
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_canceled
+
+	column item_count
+		dataType: int64
+		formatString: #,0
+		sourceColumn: item_count
+
+	column seller_count
+		dataType: int64
+		formatString: #,0
+		sourceColumn: seller_count
+
+	column order_value
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: order_value
+
+	column freight_total
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: freight_total
+
+	column payment_total
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: payment_total
+
+	column dq_flag_count
+		dataType: int64
+		formatString: #,0
+		sourceColumn: dq_flag_count
+
+	column etl_batch_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: etl_batch_id
+
+	column 'Delay bucket' =
+			SWITCH (
+			    TRUE (),
+			    fact_order_fulfillment[is_delivered] = 0, "Chưa giao",
+			    fact_order_fulfillment[delay_days] < 0, "Giao sớm",
+			    fact_order_fulfillment[delay_days] = 0, "Đúng ngày dự kiến",
+			    fact_order_fulfillment[delay_days] <= 3, "Trễ 1-3 ngày",
+			    fact_order_fulfillment[delay_days] <= 7, "Trễ 4-7 ngày",
+			    "Trễ trên 7 ngày"
+			)
+		dataType: string
+		isDataTypeInferred
+		sortByColumn: 'Delay bucket order'
+		summarizeBy: none
+
+	column 'Delay bucket order' =
+			SWITCH (
+			    TRUE (),
+			    fact_order_fulfillment[is_delivered] = 0, 0,
+			    fact_order_fulfillment[delay_days] < 0, 1,
+			    fact_order_fulfillment[delay_days] = 0, 2,
+			    fact_order_fulfillment[delay_days] <= 3, 3,
+			    fact_order_fulfillment[delay_days] <= 7, 4,
+			    5
+			)
+		dataType: int64
+		isDataTypeInferred
+		isHidden
+		formatString: 0
+		summarizeBy: none
+
+	partition fact_order_fulfillment = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("fact_order_fulfillment.csv", {
+				            {"order_id", type text}, {"customer_key", Int64.Type}, {"customer_geography_key", Int64.Type}, {"order_status_key", Int64.Type},
+				            {"purchase_date_key", Int64.Type}, {"approved_date_key", Int64.Type}, {"carrier_date_key", Int64.Type}, {"delivered_date_key", Int64.Type},
+				            {"estimated_date_key", Int64.Type}, {"purchase_ts", type datetime}, {"approved_ts", type datetime}, {"carrier_ts", type datetime},
+				            {"delivered_ts", type datetime}, {"estimated_ts", type datetime}, {"approval_hours", type number}, {"handling_days", type number},
+				            {"transit_days", type number}, {"lead_days", type number}, {"delay_days", Int64.Type}, {"promised_days", Int64.Type},
+				            {"is_delivered", Int64.Type}, {"is_late", Int64.Type}, {"is_canceled", Int64.Type}, {"item_count", Int64.Type},
+				            {"seller_count", Int64.Type}, {"order_value", Currency.Type}, {"freight_total", Currency.Type}, {"payment_total", Currency.Type},
+				            {"dq_flag_count", Int64.Type}, {"etl_batch_id", Int64.Type}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

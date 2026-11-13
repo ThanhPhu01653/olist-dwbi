@@ -1,0 +1,169 @@
+/// fact_order_item.purchase_date_key -> dim_date.date_key
+relationship 343eb2c9-0c9d-5b7a-94e2-627401f16b47
+	fromColumn: fact_order_item.purchase_date_key
+	toColumn: dim_date.date_key
+
+/// fact_order_item.shipping_limit_date_key -> dim_date.date_key (inactive: bật bằng USERELATIONSHIP)
+relationship fe222ff4-2246-5c44-ba47-0d2a543f5ea9
+	isActive: false
+	fromColumn: fact_order_item.shipping_limit_date_key
+	toColumn: dim_date.date_key
+
+/// fact_order_item.customer_key -> dim_customer.customer_key
+relationship 65c04c05-dae3-52ad-bc0e-b23b43610ce6
+	fromColumn: fact_order_item.customer_key
+	toColumn: dim_customer.customer_key
+
+/// fact_order_item.customer_geography_key -> dim_geography.geography_key
+relationship 00ea0c9f-5c4f-546d-b7d8-985a1c3ee11e
+	fromColumn: fact_order_item.customer_geography_key
+	toColumn: dim_geography.geography_key
+
+/// fact_order_item.seller_geography_key -> dim_geography.geography_key (inactive: bật bằng USERELATIONSHIP)
+relationship 3322d9fa-c2fd-5013-b311-bf6d5c7d6f05
+	isActive: false
+	fromColumn: fact_order_item.seller_geography_key
+	toColumn: dim_geography.geography_key
+
+/// fact_order_item.seller_key -> dim_seller.seller_key
+relationship b7aad4bd-23c5-5267-936e-11bc9de144bb
+	fromColumn: fact_order_item.seller_key
+	toColumn: dim_seller.seller_key
+
+/// fact_order_item.product_key -> dim_product.product_key
+relationship 77d1dbc3-b52f-562f-bd1e-0a9125ce4034
+	fromColumn: fact_order_item.product_key
+	toColumn: dim_product.product_key
+
+/// fact_order_item.order_status_key -> dim_order_status.order_status_key
+relationship b71cf530-b9a2-5bf0-8d53-997cfa7b2ab2
+	fromColumn: fact_order_item.order_status_key
+	toColumn: dim_order_status.order_status_key
+
+/// fact_order_fulfillment.purchase_date_key -> dim_date.date_key
+relationship 70de5d16-5b43-53ba-80d6-dbb24bbfe8e3
+	fromColumn: fact_order_fulfillment.purchase_date_key
+	toColumn: dim_date.date_key
+
+/// fact_order_fulfillment.approved_date_key -> dim_date.date_key (inactive: bật bằng USERELATIONSHIP)
+relationship 8af401c7-4d0d-5c33-81a4-4980b3d6dc07
+	isActive: false
+	fromColumn: fact_order_fulfillment.approved_date_key
+	toColumn: dim_date.date_key
+
+/// fact_order_fulfillment.carrier_date_key -> dim_date.date_key (inactive: bật bằng USERELATIONSHIP)
+relationship 406c5c26-09cd-5c13-8c82-8474a15fc920
+	isActive: false
+	fromColumn: fact_order_fulfillment.carrier_date_key
+	toColumn: dim_date.date_key
+
+/// fact_order_fulfillment.delivered_date_key -> dim_date.date_key (inactive: bật bằng USERELATIONSHIP)
+relationship 0f48fda6-d045-5665-a98e-947440b3a9ce
+	isActive: false
+	fromColumn: fact_order_fulfillment.delivered_date_key
+	toColumn: dim_date.date_key
+
+/// fact_order_fulfillment.estimated_date_key -> dim_date.date_key (inactive: bật bằng USERELATIONSHIP)
+relationship 2e98fe09-104a-5ca3-ad43-375fd91b047e
+	isActive: false
+	fromColumn: fact_order_fulfillment.estimated_date_key
+	toColumn: dim_date.date_key
+
+/// fact_order_fulfillment.customer_key -> dim_customer.customer_key
+relationship 838328fe-67e9-531a-a18e-749b964ee176
+	fromColumn: fact_order_fulfillment.customer_key
+	toColumn: dim_customer.customer_key
+
+/// fact_order_fulfillment.customer_geography_key -> dim_geography.geography_key
+relationship cc50af58-418f-54e1-a1da-d3d962769a8e
+	fromColumn: fact_order_fulfillment.customer_geography_key
+	toColumn: dim_geography.geography_key
+
+/// fact_order_fulfillment.order_status_key -> dim_order_status.order_status_key
+relationship d96f3063-8e39-53d5-b307-f4c9dd88c74f
+	fromColumn: fact_order_fulfillment.order_status_key
+	toColumn: dim_order_status.order_status_key
+
+/// fact_payment.purchase_date_key -> dim_date.date_key
+relationship 93e2ab0f-3b53-543b-b764-6776622a763b
+	fromColumn: fact_payment.purchase_date_key
+	toColumn: dim_date.date_key
+
+/// fact_payment.customer_key -> dim_customer.customer_key
+relationship a051be35-6a87-5c65-b936-86713d1f358c
+	fromColumn: fact_payment.customer_key
+	toColumn: dim_customer.customer_key
+
+/// fact_payment.payment_type_key -> dim_payment_type.payment_type_key
+relationship 38fb85ba-1d76-5f3e-a46c-1f7067c2cd73
+	fromColumn: fact_payment.payment_type_key
+	toColumn: dim_payment_type.payment_type_key
+
+/// fact_review.review_creation_date_key -> dim_date.date_key
+relationship 0101cfd5-6099-5f9a-973d-dcda896a9967
+	fromColumn: fact_review.review_creation_date_key
+	toColumn: dim_date.date_key
+
+/// fact_review.review_answer_date_key -> dim_date.date_key (inactive: bật bằng USERELATIONSHIP)
+relationship f9e88d26-4162-57ab-8528-7c7fcba43e06
+	isActive: false
+	fromColumn: fact_review.review_answer_date_key
+	toColumn: dim_date.date_key
+
+/// fact_review.customer_key -> dim_customer.customer_key
+relationship 136db8f9-6629-5e44-87ab-4b78f2d52065
+	fromColumn: fact_review.customer_key
+	toColumn: dim_customer.customer_key
+
+/// fact_lead_funnel.first_contact_date_key -> dim_date.date_key
+relationship c6b59e5b-bd5b-5b06-b4a7-8a4dee183069
+	fromColumn: fact_lead_funnel.first_contact_date_key
+	toColumn: dim_date.date_key
+
+/// fact_lead_funnel.won_date_key -> dim_date.date_key (inactive: bật bằng USERELATIONSHIP)
+relationship c067ef8b-316c-5b61-8221-217bdef959d8
+	isActive: false
+	fromColumn: fact_lead_funnel.won_date_key
+	toColumn: dim_date.date_key
+
+/// fact_lead_funnel.first_sale_date_key -> dim_date.date_key (inactive: bật bằng USERELATIONSHIP)
+relationship 41c5a74f-bbd6-5bae-9f36-322aea4c437c
+	isActive: false
+	fromColumn: fact_lead_funnel.first_sale_date_key
+	toColumn: dim_date.date_key
+
+/// fact_lead_funnel.lead_origin_key -> dim_lead_origin.lead_origin_key
+relationship 3b4140bb-b126-55a7-9290-b2990e2f6fe2
+	fromColumn: fact_lead_funnel.lead_origin_key
+	toColumn: dim_lead_origin.lead_origin_key
+
+/// fact_lead_funnel.lead_profile_key -> dim_lead_profile.lead_profile_key
+relationship c17bbe5d-4cfd-5cf4-af98-45d4c3f03bb4
+	fromColumn: fact_lead_funnel.lead_profile_key
+	toColumn: dim_lead_profile.lead_profile_key
+
+/// fact_lead_funnel.seller_key -> dim_seller.seller_key
+relationship 258397d9-025b-523a-8553-609d4c4c8916
+	fromColumn: fact_lead_funnel.seller_key
+	toColumn: dim_seller.seller_key
+
+/// fact_lead_funnel.sdr_key -> dim_sales_rep.sales_rep_key
+relationship 2bbf2013-43f3-5ffc-8e03-1ddc09235f22
+	fromColumn: fact_lead_funnel.sdr_key
+	toColumn: dim_sales_rep.sales_rep_key
+
+/// fact_lead_funnel.sr_key -> dim_sales_rep.sales_rep_key (inactive: bật bằng USERELATIONSHIP)
+relationship c9c353a6-95d5-5fab-92a2-395badb967a8
+	isActive: false
+	fromColumn: fact_lead_funnel.sr_key
+	toColumn: dim_sales_rep.sales_rep_key
+
+/// fact_seller_monthly.month_date_key -> dim_date.date_key
+relationship 82120754-d6f4-56f3-86b1-ff58de17bf59
+	fromColumn: fact_seller_monthly.month_date_key
+	toColumn: dim_date.date_key
+
+/// fact_seller_monthly.seller_key -> dim_seller.seller_key
+relationship ef43b440-0c81-50e5-ae3d-c00263e3f832
+	fromColumn: fact_seller_monthly.seller_key
+	toColumn: dim_seller.seller_key

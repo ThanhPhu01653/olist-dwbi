@@ -1,0 +1,69 @@
+/// Mart: GMV theo tháng x nhóm ngành x danh mục
+table v_sales_category_month
+
+	column year_month
+		dataType: string
+		sourceColumn: year_month
+
+	column year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column quarter
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: quarter
+
+	column in_window
+		dataType: boolean
+		sourceColumn: in_window
+
+	column category_group
+		dataType: string
+		sourceColumn: category_group
+
+	column category_name_en
+		dataType: string
+		sourceColumn: category_name_en
+
+	column orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: orders
+
+	column items
+		dataType: int64
+		formatString: #,0
+		sourceColumn: items
+
+	column gmv
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: gmv
+
+	column freight
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: freight
+
+	column avg_item_price
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: avg_item_price
+
+	partition v_sales_category_month = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_sales_category_month.csv", {
+				            {"year_month", type text}, {"year", Int64.Type}, {"quarter", Int64.Type}, {"in_window", type logical},
+				            {"category_group", type text}, {"category_name_en", type text}, {"orders", Int64.Type}, {"items", Int64.Type},
+				            {"gmv", Currency.Type}, {"freight", Currency.Type}, {"avg_item_price", Currency.Type}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

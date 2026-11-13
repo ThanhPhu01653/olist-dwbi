@@ -1,0 +1,56 @@
+/// Mart: Pareto 80/20 GMV theo danh mục (hạng A/B/C)
+table v_category_pareto
+
+	column gmv_rank
+		dataType: int64
+		formatString: 0
+		sourceColumn: gmv_rank
+
+	column category_group
+		dataType: string
+		sourceColumn: category_group
+
+	column category_name_en
+		dataType: string
+		sourceColumn: category_name_en
+
+	column orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: orders
+
+	column items
+		dataType: int64
+		formatString: #,0
+		sourceColumn: items
+
+	column gmv
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: gmv
+
+	column share_pct
+		dataType: double
+		sourceColumn: share_pct
+
+	column cum_share_pct
+		dataType: double
+		sourceColumn: cum_share_pct
+
+	column abc_class
+		dataType: string
+		sourceColumn: abc_class
+
+	partition v_category_pareto = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_category_pareto.csv", {
+				            {"gmv_rank", Int64.Type}, {"category_group", type text}, {"category_name_en", type text}, {"orders", Int64.Type},
+				            {"items", Int64.Type}, {"gmv", Currency.Type}, {"share_pct", type number}, {"cum_share_pct", type number},
+				            {"abc_class", type text}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

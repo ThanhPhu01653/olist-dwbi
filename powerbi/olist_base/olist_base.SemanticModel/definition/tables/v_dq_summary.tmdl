@@ -1,0 +1,55 @@
+/// Kết quả kiểm thử chất lượng theo lô (mục 3.3 ETL)
+table v_dq_summary
+
+	column batch_id
+		dataType: int64
+		formatString: #,0
+		sourceColumn: batch_id
+
+	column checks
+		dataType: int64
+		formatString: #,0
+		sourceColumn: checks
+
+	column passed
+		dataType: int64
+		formatString: #,0
+		sourceColumn: passed
+
+	column failed
+		dataType: int64
+		formatString: #,0
+		sourceColumn: failed
+
+	column pass_pct
+		dataType: double
+		sourceColumn: pass_pct
+
+	column eda_checks
+		dataType: int64
+		formatString: #,0
+		sourceColumn: eda_checks
+
+	column eda_match
+		dataType: int64
+		formatString: #,0
+		sourceColumn: eda_match
+
+	column checked_at
+		dataType: dateTime
+		formatString: yyyy-MM-dd HH:mm:ss
+		sourceColumn: checked_at
+
+	partition v_dq_summary = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_dq_summary.csv", {
+				            {"batch_id", Int64.Type}, {"checks", Int64.Type}, {"passed", Int64.Type}, {"failed", Int64.Type},
+				            {"pass_pct", type number}, {"eda_checks", Int64.Type}, {"eda_match", Int64.Type}, {"checked_at", type text}
+				        }),
+				    Fixed = Table.TransformColumns(Source, {{"checked_at", each try DateTime.FromText(Text.Start(_, 19)) otherwise null, type nullable datetime}})
+				in
+				    Fixed
+
+	annotation PBI_ResultType = Table

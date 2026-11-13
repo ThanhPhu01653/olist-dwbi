@@ -54,3 +54,8 @@ slides/hust-theme/*.pptx
 
 # Reference material from other sources (local only)
 attach/
+
+# Power BI project (PBIP): local data cache, per-user settings and binary .pbix are not committed (share olist_base.pbix through Google Drive)
+*.pbix
+**/.pbi/cache.abf
+**/.pbi/localSettings.json

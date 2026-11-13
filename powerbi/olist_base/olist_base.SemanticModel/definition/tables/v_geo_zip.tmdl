@@ -1,0 +1,57 @@
+/// Mart địa lý: dữ liệu bản đồ theo zip có toạ độ (đơn, GMV, seller)
+table v_geo_zip
+
+	column zip_code_prefix
+		dataType: string
+		sourceColumn: zip_code_prefix
+
+	column city
+		dataType: string
+		sourceColumn: city
+
+	column state_code
+		dataType: string
+		sourceColumn: state_code
+
+	column region
+		dataType: string
+		sourceColumn: region
+
+	column latitude
+		dataType: double
+		summarizeBy: none
+		sourceColumn: latitude
+
+	column longitude
+		dataType: double
+		summarizeBy: none
+		sourceColumn: longitude
+
+	column customer_orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: customer_orders
+
+	column customer_gmv
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: customer_gmv
+
+	column sellers
+		dataType: int64
+		formatString: #,0
+		sourceColumn: sellers
+
+	partition v_geo_zip = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_geo_zip.csv", {
+				            {"zip_code_prefix", type text}, {"city", type text}, {"state_code", type text}, {"region", type text},
+				            {"latitude", type number}, {"longitude", type number}, {"customer_orders", Int64.Type}, {"customer_gmv", Currency.Type},
+				            {"sellers", Int64.Type}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

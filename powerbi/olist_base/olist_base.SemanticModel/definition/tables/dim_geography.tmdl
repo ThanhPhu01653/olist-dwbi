@@ -1,0 +1,77 @@
+/// Chiều địa lý (1 dòng / zip)
+table dim_geography
+
+	column geography_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: geography_key
+
+	column zip_code_prefix
+		dataType: string
+		dataCategory: PostalCode
+		sourceColumn: zip_code_prefix
+
+	column city
+		dataType: string
+		dataCategory: City
+		sourceColumn: city
+
+	column state_code
+		dataType: string
+		dataCategory: StateOrProvince
+		sourceColumn: state_code
+
+	column state_name
+		dataType: string
+		sourceColumn: state_name
+
+	column region
+		dataType: string
+		sourceColumn: region
+
+	column country
+		dataType: string
+		dataCategory: Country
+		sourceColumn: country
+
+	column latitude
+		dataType: double
+		dataCategory: Latitude
+		summarizeBy: none
+		sourceColumn: latitude
+
+	column longitude
+		dataType: double
+		dataCategory: Longitude
+		summarizeBy: none
+		sourceColumn: longitude
+
+	hierarchy Geography
+		level region
+			column: region
+			ordinal: 0
+		level state_code
+			column: state_code
+			ordinal: 1
+		level city
+			column: city
+			ordinal: 2
+		level zip_code_prefix
+			column: zip_code_prefix
+			ordinal: 3
+
+	partition dim_geography = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("dim_geography.csv", {
+				            {"geography_key", Int64.Type}, {"zip_code_prefix", type text}, {"city", type text}, {"state_code", type text},
+				            {"state_name", type text}, {"region", type text}, {"country", type text}, {"latitude", type number},
+				            {"longitude", type number}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

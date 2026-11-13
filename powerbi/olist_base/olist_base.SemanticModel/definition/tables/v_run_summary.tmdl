@@ -1,0 +1,90 @@
+/// Tóm tắt mỗi lô ETL: chế độ, thời gian, số dòng từng tầng (mục 3.3 ETL)
+table v_run_summary
+
+	column batch_id
+		dataType: int64
+		formatString: #,0
+		sourceColumn: batch_id
+
+	column mode
+		dataType: string
+		sourceColumn: mode
+
+	column started_at
+		dataType: dateTime
+		formatString: yyyy-MM-dd HH:mm:ss
+		sourceColumn: started_at
+
+	column finished_at
+		dataType: dateTime
+		formatString: yyyy-MM-dd HH:mm:ss
+		sourceColumn: finished_at
+
+	column duration_sec
+		dataType: double
+		sourceColumn: duration_sec
+
+	column status
+		dataType: string
+		sourceColumn: status
+
+	column source_rows
+		dataType: double
+		sourceColumn: source_rows
+
+	column staging_rows
+		dataType: double
+		sourceColumn: staging_rows
+
+	column ods_inserted
+		dataType: double
+		sourceColumn: ods_inserted
+
+	column ods_rejected
+		dataType: double
+		sourceColumn: ods_rejected
+
+	column dw_inserted
+		dataType: double
+		sourceColumn: dw_inserted
+
+	column dw_updated
+		dataType: double
+		sourceColumn: dw_updated
+
+	column staging_sec
+		dataType: double
+		sourceColumn: staging_sec
+
+	column ods_sec
+		dataType: double
+		sourceColumn: ods_sec
+
+	column dw_sec
+		dataType: double
+		sourceColumn: dw_sec
+
+	column test_sec
+		dataType: double
+		sourceColumn: test_sec
+
+	column mart_sec
+		dataType: double
+		sourceColumn: mart_sec
+
+	partition v_run_summary = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_run_summary.csv", {
+				            {"batch_id", Int64.Type}, {"mode", type text}, {"started_at", type text}, {"finished_at", type text},
+				            {"duration_sec", type number}, {"status", type text}, {"source_rows", type number}, {"staging_rows", type number},
+				            {"ods_inserted", type number}, {"ods_rejected", type number}, {"dw_inserted", type number}, {"dw_updated", type number},
+				            {"staging_sec", type number}, {"ods_sec", type number}, {"dw_sec", type number}, {"test_sec", type number},
+				            {"mart_sec", type number}
+				        }),
+				    Fixed = Table.TransformColumns(Source, {{"started_at", each try DateTime.FromText(Text.Start(_, 19)) otherwise null, type nullable datetime}, {"finished_at", each try DateTime.FromText(Text.Start(_, 19)) otherwise null, type nullable datetime}})
+				in
+				    Fixed
+
+	annotation PBI_ResultType = Table

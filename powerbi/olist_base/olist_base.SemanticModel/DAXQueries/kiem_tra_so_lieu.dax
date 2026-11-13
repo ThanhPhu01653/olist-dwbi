@@ -1,0 +1,37 @@
+// Kiểm tra số liệu sau Refresh: so với bảng trong README.md (và measures.md mục 7). Chạy từng khối EVALUATE.
+// Khối 1: toàn bộ dữ liệu (không lọc ngày)
+EVALUATE
+ROW (
+    "GMV", [GMV],
+    "Orders", [Orders],
+    "AOV", [AOV],
+    "Freight ratio", [Freight ratio],
+    "Cancel rate", [Cancel rate],
+    "On-time rate", [On-time rate],
+    "Avg review", [Avg review],
+    "Late rate", [Late rate],
+    "% negative", [% negative],
+    "MQLs", [MQLs],
+    "Won deals", [Won deals],
+    "Seller GMV (monthly)", [Seller GMV (monthly)]
+)
+
+// Khối 2: cửa sổ 2017-01 đến 2018-08 (dim_date[InWindow] = TRUE)
+EVALUATE
+CALCULATETABLE (
+    ROW (
+        "GMV", [GMV],
+        "Orders", [Orders],
+        "AOV", [AOV],
+        "Freight ratio", [Freight ratio],
+        "Cancel rate", [Cancel rate],
+        "On-time rate", [On-time rate],
+        "Avg review", [Avg review],
+        "Late rate", [Late rate],
+        "% negative", [% negative],
+        "MQLs", [MQLs],
+        "Won deals", [Won deals],
+        "Seller GMV (monthly)", [Seller GMV (monthly)]
+    ),
+    dim_date[InWindow] = TRUE ()
+)
