@@ -1,0 +1,16 @@
+expression DataFolder = "C:\Olist\01_pBI_data" meta [IsParameterQuery=true, IsParameterQueryRequired=true, Type="Text"]
+	lineageTag: 193b2e29-cea6-5458-8de6-9bf9856ab92a
+
+	annotation PBI_ResultType = Text
+
+expression fnCsv =
+		(fileName as text, types as list) as table =>
+		let
+		    Source   = Csv.Document(File.Contents(DataFolder & "\" & fileName), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+		    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+		    Typed    = Table.TransformColumnTypes(Promoted, types, "en-US")
+		in
+		    Typed
+	lineageTag: 87df99c3-c1aa-591e-8ee9-83f9d8dc8833
+
+	annotation PBI_ResultType = Function

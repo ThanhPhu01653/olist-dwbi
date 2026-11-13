@@ -1,0 +1,64 @@
+/// Fact giao dịch: 1 lần thanh toán
+table fact_payment
+
+	column order_id
+		dataType: string
+		summarizeBy: none
+		sourceColumn: order_id
+
+	column payment_sequential
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: payment_sequential
+
+	column purchase_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: purchase_date_key
+
+	column customer_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: customer_key
+
+	column payment_type_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: payment_type_key
+
+	column payment_installments
+		dataType: int64
+		formatString: #,0
+		sourceColumn: payment_installments
+
+	column payment_value
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: payment_value
+
+	column etl_batch_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: etl_batch_id
+
+	partition fact_payment = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("fact_payment.csv", {
+				            {"order_id", type text}, {"payment_sequential", Int64.Type}, {"purchase_date_key", Int64.Type}, {"customer_key", Int64.Type},
+				            {"payment_type_key", Int64.Type}, {"payment_installments", Int64.Type}, {"payment_value", Currency.Type}, {"etl_batch_id", Int64.Type}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,59 @@
+/// Mart: cơ cấu thanh toán theo tháng x hình thức
+table v_payment_mix_month
+
+	column year_month
+		dataType: string
+		sourceColumn: year_month
+
+	column in_window
+		dataType: boolean
+		sourceColumn: in_window
+
+	column payment_type
+		dataType: string
+		sourceColumn: payment_type
+
+	column payment_group
+		dataType: string
+		sourceColumn: payment_group
+
+	column display_name
+		dataType: string
+		sourceColumn: display_name
+
+	column payments
+		dataType: int64
+		formatString: #,0
+		sourceColumn: payments
+
+	column orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: orders
+
+	column payment_value
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: payment_value
+
+	column avg_installments
+		dataType: double
+		sourceColumn: avg_installments
+
+	column value_share_pct
+		dataType: double
+		sourceColumn: value_share_pct
+
+	partition v_payment_mix_month = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_payment_mix_month.csv", {
+				            {"year_month", type text}, {"in_window", type logical}, {"payment_type", type text}, {"payment_group", type text},
+				            {"display_name", type text}, {"payments", Int64.Type}, {"orders", Int64.Type}, {"payment_value", Currency.Type},
+				            {"avg_installments", type number}, {"value_share_pct", type number}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

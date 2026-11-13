@@ -1,0 +1,111 @@
+/// Chiều seller, dùng chung bán hàng và funnel
+table dim_seller
+
+	column seller_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: seller_key
+
+	column seller_id
+		dataType: string
+		sourceColumn: seller_id
+
+	column zip_code_prefix
+		dataType: string
+		sourceColumn: zip_code_prefix
+
+	column city
+		dataType: string
+		sourceColumn: city
+
+	column state_code
+		dataType: string
+		sourceColumn: state_code
+
+	column geography_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: geography_key
+
+	column is_from_funnel
+		dataType: boolean
+		sourceColumn: is_from_funnel
+
+	column mql_id
+		dataType: string
+		sourceColumn: mql_id
+
+	column acquisition_origin
+		dataType: string
+		sourceColumn: acquisition_origin
+
+	column acquisition_channel
+		dataType: string
+		sourceColumn: acquisition_channel
+
+	column business_segment
+		dataType: string
+		sourceColumn: business_segment
+
+	column lead_type
+		dataType: string
+		sourceColumn: lead_type
+
+	column business_type
+		dataType: string
+		sourceColumn: business_type
+
+	column won_date
+		dataType: dateTime
+		formatString: yyyy-MM-dd
+		sourceColumn: won_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column first_sale_date
+		dataType: dateTime
+		formatString: yyyy-MM-dd
+		sourceColumn: first_sale_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	hierarchy 'Seller location'
+		level state_code
+			column: state_code
+			ordinal: 0
+		level city
+			column: city
+			ordinal: 1
+		level seller_id
+			column: seller_id
+			ordinal: 2
+
+	hierarchy Acquisition
+		level acquisition_channel
+			column: acquisition_channel
+			ordinal: 0
+		level acquisition_origin
+			column: acquisition_origin
+			ordinal: 1
+		level seller_id
+			column: seller_id
+			ordinal: 2
+
+	partition dim_seller = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("dim_seller.csv", {
+				            {"seller_key", Int64.Type}, {"seller_id", type text}, {"zip_code_prefix", type text}, {"city", type text},
+				            {"state_code", type text}, {"geography_key", Int64.Type}, {"is_from_funnel", type logical}, {"mql_id", type text},
+				            {"acquisition_origin", type text}, {"acquisition_channel", type text}, {"business_segment", type text}, {"lead_type", type text},
+				            {"business_type", type text}, {"won_date", type date}, {"first_sale_date", type date}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

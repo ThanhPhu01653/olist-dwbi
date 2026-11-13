@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.0.0/schema.json",
+  "pageOrder": [
+    "db1_tong_quan",
+    "db2_giao_hang",
+    "db3_dia_ly",
+    "db3_chi_tiet_bang",
+    "db4_thu_hut_seller",
+    "db4_chi_tiet_seller"
+  ],
+  "activePageName": "db1_tong_quan"
+}

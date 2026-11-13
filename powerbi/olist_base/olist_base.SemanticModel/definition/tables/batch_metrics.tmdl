@@ -1,0 +1,76 @@
+/// Chỉ số chính của kho sau mỗi lô: đơn, GMV, MQL, deal… (mục 3.3 ETL, minh hoạ funnel lấp đầy dần)
+table batch_metrics
+
+	column batch_id
+		dataType: int64
+		formatString: #,0
+		sourceColumn: batch_id
+
+	column taken_at
+		dataType: dateTime
+		formatString: yyyy-MM-dd HH:mm:ss
+		sourceColumn: taken_at
+
+	column mode
+		dataType: string
+		sourceColumn: mode
+
+	column orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: orders
+
+	column order_items
+		dataType: int64
+		formatString: #,0
+		sourceColumn: order_items
+
+	column gmv
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: gmv
+
+	column mql
+		dataType: int64
+		formatString: #,0
+		sourceColumn: mql
+
+	column deals_won
+		dataType: int64
+		formatString: #,0
+		sourceColumn: deals_won
+
+	column sellers_with_sale
+		dataType: int64
+		formatString: #,0
+		sourceColumn: sellers_with_sale
+
+	column customers
+		dataType: int64
+		formatString: #,0
+		sourceColumn: customers
+
+	column customer_versions
+		dataType: int64
+		formatString: #,0
+		sourceColumn: customer_versions
+
+	column sellers
+		dataType: int64
+		formatString: #,0
+		sourceColumn: sellers
+
+	partition batch_metrics = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("batch_metrics.csv", {
+				            {"batch_id", Int64.Type}, {"taken_at", type text}, {"mode", type text}, {"orders", Int64.Type},
+				            {"order_items", Int64.Type}, {"gmv", Currency.Type}, {"mql", Int64.Type}, {"deals_won", Int64.Type},
+				            {"sellers_with_sale", Int64.Type}, {"customers", Int64.Type}, {"customer_versions", Int64.Type}, {"sellers", Int64.Type}
+				        }),
+				    Fixed = Table.TransformColumns(Source, {{"taken_at", each try DateTime.FromText(Text.Start(_, 19)) otherwise null, type nullable datetime}})
+				in
+				    Fixed
+
+	annotation PBI_ResultType = Table

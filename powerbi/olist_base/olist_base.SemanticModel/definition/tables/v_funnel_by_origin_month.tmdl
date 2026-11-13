@@ -1,0 +1,64 @@
+/// Mart: funnel MQL -> won -> có đơn theo tháng liên hệ x origin
+table v_funnel_by_origin_month
+
+	column first_contact_month
+		dataType: string
+		sourceColumn: first_contact_month
+
+	column origin
+		dataType: string
+		sourceColumn: origin
+
+	column channel_group
+		dataType: string
+		sourceColumn: channel_group
+
+	column mqls
+		dataType: int64
+		formatString: #,0
+		sourceColumn: mqls
+
+	column won
+		dataType: int64
+		formatString: #,0
+		sourceColumn: won
+
+	column won_with_sale
+		dataType: int64
+		formatString: #,0
+		sourceColumn: won_with_sale
+
+	column win_rate_pct
+		dataType: double
+		sourceColumn: win_rate_pct
+
+	column won_to_sale_rate_pct
+		dataType: double
+		sourceColumn: won_to_sale_rate_pct
+
+	column avg_days_to_close
+		dataType: double
+		sourceColumn: avg_days_to_close
+
+	column avg_days_won_to_first_sale
+		dataType: double
+		sourceColumn: avg_days_won_to_first_sale
+
+	column seller_gmv_first_90d
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: seller_gmv_first_90d
+
+	partition v_funnel_by_origin_month = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_funnel_by_origin_month.csv", {
+				            {"first_contact_month", type text}, {"origin", type text}, {"channel_group", type text}, {"mqls", Int64.Type},
+				            {"won", Int64.Type}, {"won_with_sale", Int64.Type}, {"win_rate_pct", type number}, {"won_to_sale_rate_pct", type number},
+				            {"avg_days_to_close", type number}, {"avg_days_won_to_first_sale", type number}, {"seller_gmv_first_90d", Currency.Type}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

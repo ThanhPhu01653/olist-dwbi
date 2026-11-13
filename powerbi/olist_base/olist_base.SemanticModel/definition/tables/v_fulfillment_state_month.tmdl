@@ -1,0 +1,81 @@
+/// Mart: tỷ lệ đúng hạn / hủy, thời gian từng chặng theo tháng x bang
+table v_fulfillment_state_month
+
+	column year_month
+		dataType: string
+		sourceColumn: year_month
+
+	column in_window
+		dataType: boolean
+		sourceColumn: in_window
+
+	column region
+		dataType: string
+		sourceColumn: region
+
+	column state_code
+		dataType: string
+		sourceColumn: state_code
+
+	column orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: orders
+
+	column delivered_orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: delivered_orders
+
+	column late_orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: late_orders
+
+	column canceled_orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: canceled_orders
+
+	column on_time_rate_pct
+		dataType: double
+		sourceColumn: on_time_rate_pct
+
+	column cancel_rate_pct
+		dataType: double
+		sourceColumn: cancel_rate_pct
+
+	column avg_lead_days
+		dataType: double
+		sourceColumn: avg_lead_days
+
+	column avg_approval_hours
+		dataType: double
+		sourceColumn: avg_approval_hours
+
+	column avg_handling_days
+		dataType: double
+		sourceColumn: avg_handling_days
+
+	column avg_transit_days
+		dataType: double
+		sourceColumn: avg_transit_days
+
+	column avg_promised_days
+		dataType: double
+		sourceColumn: avg_promised_days
+
+	partition v_fulfillment_state_month = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_fulfillment_state_month.csv", {
+				            {"year_month", type text}, {"in_window", type logical}, {"region", type text}, {"state_code", type text},
+				            {"orders", Int64.Type}, {"delivered_orders", Int64.Type}, {"late_orders", Int64.Type}, {"canceled_orders", Int64.Type},
+				            {"on_time_rate_pct", type number}, {"cancel_rate_pct", type number}, {"avg_lead_days", type number}, {"avg_approval_hours", type number},
+				            {"avg_handling_days", type number}, {"avg_transit_days", type number}, {"avg_promised_days", type number}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

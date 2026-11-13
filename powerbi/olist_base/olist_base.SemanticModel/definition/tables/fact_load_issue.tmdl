@@ -1,0 +1,43 @@
+/// Khoá rơi về Unknown và khoảng thời gian âm khi nạp fact (mục 3.3 ETL)
+table fact_load_issue
+
+	column batch_id
+		dataType: int64
+		formatString: #,0
+		sourceColumn: batch_id
+
+	column fact_table
+		dataType: string
+		sourceColumn: fact_table
+
+	column issue_type
+		dataType: string
+		sourceColumn: issue_type
+
+	column detail
+		dataType: string
+		sourceColumn: detail
+
+	column row_count
+		dataType: int64
+		formatString: #,0
+		sourceColumn: row_count
+
+	column logged_at
+		dataType: dateTime
+		formatString: yyyy-MM-dd HH:mm:ss
+		sourceColumn: logged_at
+
+	partition fact_load_issue = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("fact_load_issue.csv", {
+				            {"batch_id", Int64.Type}, {"fact_table", type text}, {"issue_type", type text}, {"detail", type text},
+				            {"row_count", Int64.Type}, {"logged_at", type text}
+				        }),
+				    Fixed = Table.TransformColumns(Source, {{"logged_at", each try DateTime.FromText(Text.Start(_, 19)) otherwise null, type nullable datetime}})
+				in
+				    Fixed
+
+	annotation PBI_ResultType = Table

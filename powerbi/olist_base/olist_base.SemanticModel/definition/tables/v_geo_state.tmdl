@@ -1,0 +1,76 @@
+/// Mart địa lý: dữ liệu bản đồ theo bang (toạ độ tâm, khách, GMV, lead time, trễ)
+table v_geo_state
+
+	column state_code
+		dataType: string
+		sourceColumn: state_code
+
+	column state_name
+		dataType: string
+		sourceColumn: state_name
+
+	column region
+		dataType: string
+		sourceColumn: region
+
+	column latitude
+		dataType: double
+		summarizeBy: none
+		sourceColumn: latitude
+
+	column longitude
+		dataType: double
+		summarizeBy: none
+		sourceColumn: longitude
+
+	column zips_with_coordinates
+		dataType: int64
+		formatString: #,0
+		sourceColumn: zips_with_coordinates
+
+	column customers
+		dataType: int64
+		formatString: #,0
+		sourceColumn: customers
+
+	column orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: orders
+
+	column gmv
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: gmv
+
+	column freight_ratio
+		dataType: double
+		sourceColumn: freight_ratio
+
+	column sellers
+		dataType: int64
+		formatString: #,0
+		sourceColumn: sellers
+
+	column avg_lead_days
+		dataType: double
+		sourceColumn: avg_lead_days
+
+	column late_rate_pct
+		dataType: double
+		sourceColumn: late_rate_pct
+
+	partition v_geo_state = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_geo_state.csv", {
+				            {"state_code", type text}, {"state_name", type text}, {"region", type text}, {"latitude", type number},
+				            {"longitude", type number}, {"zips_with_coordinates", Int64.Type}, {"customers", Int64.Type}, {"orders", Int64.Type},
+				            {"gmv", Currency.Type}, {"freight_ratio", type number}, {"sellers", Int64.Type}, {"avg_lead_days", type number},
+				            {"late_rate_pct", type number}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

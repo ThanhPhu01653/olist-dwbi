@@ -1,0 +1,92 @@
+/// Fact periodic snapshot: 1 seller × 1 tháng
+table fact_seller_monthly
+
+	column month_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: month_date_key
+
+	column seller_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: seller_key
+
+	column orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: orders
+
+	column items
+		dataType: int64
+		formatString: #,0
+		sourceColumn: items
+
+	column gmv
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: gmv
+
+	column freight
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: freight
+
+	column delivered_orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: delivered_orders
+
+	column late_orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: late_orders
+
+	column late_rate
+		dataType: double
+		sourceColumn: late_rate
+
+	column canceled_orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: canceled_orders
+
+	column avg_review_score
+		dataType: double
+		sourceColumn: avg_review_score
+
+	column is_active
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_active
+
+	column months_since_first_sale
+		dataType: int64
+		formatString: #,0
+		sourceColumn: months_since_first_sale
+
+	column etl_batch_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: etl_batch_id
+
+	partition fact_seller_monthly = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("fact_seller_monthly.csv", {
+				            {"month_date_key", Int64.Type}, {"seller_key", Int64.Type}, {"orders", Int64.Type}, {"items", Int64.Type},
+				            {"gmv", Currency.Type}, {"freight", Currency.Type}, {"delivered_orders", Int64.Type}, {"late_orders", Int64.Type},
+				            {"late_rate", type number}, {"canceled_orders", Int64.Type}, {"avg_review_score", type number}, {"is_active", Int64.Type},
+				            {"months_since_first_sale", Int64.Type}, {"etl_batch_id", Int64.Type}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

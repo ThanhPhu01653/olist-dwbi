@@ -1,0 +1,103 @@
+/// Chiều sản phẩm
+table dim_product
+
+	column product_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: product_key
+
+	column product_id
+		dataType: string
+		sourceColumn: product_id
+
+	column category_name_pt
+		dataType: string
+		sourceColumn: category_name_pt
+
+	column category_name_en
+		dataType: string
+		sourceColumn: category_name_en
+
+	column category_group
+		dataType: string
+		sourceColumn: category_group
+
+	column weight_g
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: weight_g
+
+	column length_cm
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: length_cm
+
+	column height_cm
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: height_cm
+
+	column width_cm
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: width_cm
+
+	column volume_cm3
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: volume_cm3
+
+	column size_class
+		dataType: string
+		sourceColumn: size_class
+
+	column photos_qty
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: photos_qty
+
+	column name_length
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: name_length
+
+	column description_length
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: description_length
+
+	hierarchy Product
+		level category_group
+			column: category_group
+			ordinal: 0
+		level category_name_en
+			column: category_name_en
+			ordinal: 1
+		level product_id
+			column: product_id
+			ordinal: 2
+
+	partition dim_product = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("dim_product.csv", {
+				            {"product_key", Int64.Type}, {"product_id", type text}, {"category_name_pt", type text}, {"category_name_en", type text},
+				            {"category_group", type text}, {"weight_g", Int64.Type}, {"length_cm", Int64.Type}, {"height_cm", Int64.Type},
+				            {"width_cm", Int64.Type}, {"volume_cm3", Int64.Type}, {"size_class", type text}, {"photos_qty", Int64.Type},
+				            {"name_length", Int64.Type}, {"description_length", Int64.Type}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

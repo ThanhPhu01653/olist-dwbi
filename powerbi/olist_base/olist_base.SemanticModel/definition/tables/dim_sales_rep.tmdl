@@ -1,0 +1,29 @@
+/// Chiều nhân viên sales (SDR / SR)
+table dim_sales_rep
+
+	column sales_rep_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: sales_rep_key
+
+	column rep_id
+		dataType: string
+		sourceColumn: rep_id
+
+	column rep_role
+		dataType: string
+		sourceColumn: rep_role
+
+	partition dim_sales_rep = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("dim_sales_rep.csv", {
+				            {"sales_rep_key", Int64.Type}, {"rep_id", type text}, {"rep_role", type text}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

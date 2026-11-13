@@ -1,0 +1,76 @@
+/// Mart: RFM từng khách thật và phân khúc
+table v_customer_rfm
+
+	column customer_unique_id
+		dataType: string
+		sourceColumn: customer_unique_id
+
+	column region
+		dataType: string
+		sourceColumn: region
+
+	column state_code
+		dataType: string
+		sourceColumn: state_code
+
+	column first_purchase
+		dataType: dateTime
+		formatString: yyyy-MM-dd
+		sourceColumn: first_purchase
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column last_purchase
+		dataType: dateTime
+		formatString: yyyy-MM-dd
+		sourceColumn: last_purchase
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column recency_days
+		dataType: int64
+		formatString: #,0
+		sourceColumn: recency_days
+
+	column frequency
+		dataType: int64
+		formatString: #,0
+		sourceColumn: frequency
+
+	column monetary
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: monetary
+
+	column r_score
+		dataType: int64
+		formatString: 0
+		sourceColumn: r_score
+
+	column f_score
+		dataType: int64
+		formatString: 0
+		sourceColumn: f_score
+
+	column m_score
+		dataType: int64
+		formatString: 0
+		sourceColumn: m_score
+
+	column segment
+		dataType: string
+		sourceColumn: segment
+
+	partition v_customer_rfm = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_customer_rfm.csv", {
+				            {"customer_unique_id", type text}, {"region", type text}, {"state_code", type text}, {"first_purchase", type date},
+				            {"last_purchase", type date}, {"recency_days", Int64.Type}, {"frequency", Int64.Type}, {"monetary", Currency.Type},
+				            {"r_score", Int64.Type}, {"f_score", Int64.Type}, {"m_score", Int64.Type}, {"segment", type text}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

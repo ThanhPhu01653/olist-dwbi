@@ -1,0 +1,48 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.0.0/schema.json",
+  "name": "db4_chi_tiet_seller",
+  "displayName": "DB4 Chi tiết seller",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "type": "Drillthrough",
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "f_db4_chi_tiet_seller",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_seller"
+              }
+            },
+            "Property": "seller_id"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "Drillthrough"
+      }
+    ]
+  },
+  "pageBinding": {
+    "name": "29469f07-ebe5-59fb-b5c4-0888dc28633a",
+    "type": "Drillthrough",
+    "parameters": [
+      {
+        "name": "p_db4_chi_tiet_seller",
+        "boundFilter": "f_db4_chi_tiet_seller",
+        "fieldExpr": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_seller"
+              }
+            },
+            "Property": "seller_id"
+          }
+        }
+      }
+    ]
+  }
+}

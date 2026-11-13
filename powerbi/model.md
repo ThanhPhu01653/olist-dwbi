@@ -1,6 +1,7 @@
 # Dựng mô hình và dashboard Power BI – hướng dẫn từng bước
 
 Hướng dẫn từng bước dựng mô hình và dashboard; làm tuần tự từ mục 1 (không cần truy cập database). Cả nhóm dùng **một file `.pbix` chung** (dựng xong gửi nhau qua Drive); các dashboard chia nhau làm (phân công làm sau).
+**Đã có dự án dựng sẵn:** `powerbi/olist_base/` (định dạng PBIP) chứa mục 2–6 và toàn bộ measure; chỉ cần mở bằng Power BI Desktop, đổi `DataFolder`, Refresh và lưu thành `olist_base.pbix` (xem `powerbi/olist_base/README.md`). Các mục dưới đây là cách dựng tay và dùng làm dự phòng khi dự án PBIP không mở được.
 Tài liệu đi kèm: `powerbi/measures.md` (code DAX và giá trị kỳ vọng để đối chiếu), `powerbi/theme.json` (màu và font), `exports/powerbi/README.md` (danh sách file CSV và cột).
 
 ## 1. Chuẩn bị

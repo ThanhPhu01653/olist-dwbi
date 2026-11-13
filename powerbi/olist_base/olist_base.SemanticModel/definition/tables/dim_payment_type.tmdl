@@ -1,0 +1,41 @@
+/// Chiều hình thức thanh toán
+table dim_payment_type
+
+	column payment_type_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: payment_type_key
+
+	column payment_type
+		dataType: string
+		sourceColumn: payment_type
+
+	column payment_group
+		dataType: string
+		sourceColumn: payment_group
+
+	column display_name
+		dataType: string
+		sourceColumn: display_name
+
+	hierarchy Payment
+		level payment_group
+			column: payment_group
+			ordinal: 0
+		level display_name
+			column: display_name
+			ordinal: 1
+
+	partition dim_payment_type = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("dim_payment_type.csv", {
+				            {"payment_type_key", Int64.Type}, {"payment_type", type text}, {"payment_group", type text}, {"display_name", type text}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

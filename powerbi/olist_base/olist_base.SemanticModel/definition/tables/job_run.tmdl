@@ -1,0 +1,78 @@
+/// Nhật ký chạy ETL từng job (số liệu cho mục 3.3 ETL)
+table job_run
+
+	column run_id
+		dataType: int64
+		formatString: #,0
+		sourceColumn: run_id
+
+	column batch_id
+		dataType: int64
+		formatString: #,0
+		sourceColumn: batch_id
+
+	column job_name
+		dataType: string
+		sourceColumn: job_name
+
+	column layer
+		dataType: string
+		sourceColumn: layer
+
+	column target_table
+		dataType: string
+		sourceColumn: target_table
+
+	column started_at
+		dataType: dateTime
+		formatString: yyyy-MM-dd HH:mm:ss
+		sourceColumn: started_at
+
+	column finished_at
+		dataType: dateTime
+		formatString: yyyy-MM-dd HH:mm:ss
+		sourceColumn: finished_at
+
+	column status
+		dataType: string
+		sourceColumn: status
+
+	column rows_read
+		dataType: int64
+		formatString: #,0
+		sourceColumn: rows_read
+
+	column rows_inserted
+		dataType: int64
+		formatString: #,0
+		sourceColumn: rows_inserted
+
+	column rows_updated
+		dataType: int64
+		formatString: #,0
+		sourceColumn: rows_updated
+
+	column rows_rejected
+		dataType: int64
+		formatString: #,0
+		sourceColumn: rows_rejected
+
+	column message
+		dataType: string
+		sourceColumn: message
+
+	partition job_run = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("job_run.csv", {
+				            {"run_id", Int64.Type}, {"batch_id", Int64.Type}, {"job_name", type text}, {"layer", type text},
+				            {"target_table", type text}, {"started_at", type text}, {"finished_at", type text}, {"status", type text},
+				            {"rows_read", Int64.Type}, {"rows_inserted", Int64.Type}, {"rows_updated", Int64.Type}, {"rows_rejected", Int64.Type},
+				            {"message", type text}
+				        }),
+				    Fixed = Table.TransformColumns(Source, {{"started_at", each try DateTime.FromText(Text.Start(_, 19)) otherwise null, type nullable datetime}, {"finished_at", each try DateTime.FromText(Text.Start(_, 19)) otherwise null, type nullable datetime}})
+				in
+				    Fixed
+
+	annotation PBI_ResultType = Table

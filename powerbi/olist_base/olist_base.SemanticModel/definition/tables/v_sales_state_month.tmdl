@@ -1,0 +1,72 @@
+/// Mart: GMV, freight ratio theo tháng x bang của khách
+table v_sales_state_month
+
+	column year_month
+		dataType: string
+		sourceColumn: year_month
+
+	column year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column quarter
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: quarter
+
+	column in_window
+		dataType: boolean
+		sourceColumn: in_window
+
+	column region
+		dataType: string
+		sourceColumn: region
+
+	column state_code
+		dataType: string
+		sourceColumn: state_code
+
+	column state_name
+		dataType: string
+		sourceColumn: state_name
+
+	column orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: orders
+
+	column items
+		dataType: int64
+		formatString: #,0
+		sourceColumn: items
+
+	column gmv
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: gmv
+
+	column freight
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: freight
+
+	column freight_ratio
+		dataType: double
+		sourceColumn: freight_ratio
+
+	partition v_sales_state_month = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_sales_state_month.csv", {
+				            {"year_month", type text}, {"year", Int64.Type}, {"quarter", Int64.Type}, {"in_window", type logical},
+				            {"region", type text}, {"state_code", type text}, {"state_name", type text}, {"orders", Int64.Type},
+				            {"items", Int64.Type}, {"gmv", Currency.Type}, {"freight", Currency.Type}, {"freight_ratio", type number}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

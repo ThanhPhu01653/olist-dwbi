@@ -1,0 +1,125 @@
+/// Fact accumulating snapshot: 1 MQL
+table fact_lead_funnel
+
+	column mql_id
+		dataType: string
+		sourceColumn: mql_id
+
+	column landing_page_id
+		dataType: string
+		sourceColumn: landing_page_id
+
+	column first_contact_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: first_contact_date_key
+
+	column won_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: won_date_key
+
+	column first_sale_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: first_sale_date_key
+
+	column lead_origin_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: lead_origin_key
+
+	column lead_profile_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: lead_profile_key
+
+	column seller_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: seller_key
+
+	column sdr_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: sdr_key
+
+	column sr_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: sr_key
+
+	column is_won
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_won
+
+	column has_first_sale
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: has_first_sale
+
+	column days_to_close
+		dataType: int64
+		formatString: #,0
+		sourceColumn: days_to_close
+
+	column days_won_to_first_sale
+		dataType: int64
+		formatString: #,0
+		sourceColumn: days_won_to_first_sale
+
+	column declared_product_catalog_size
+		dataType: double
+		sourceColumn: declared_product_catalog_size
+
+	column declared_monthly_revenue
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: declared_monthly_revenue
+
+	column seller_gmv_first_90d
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: seller_gmv_first_90d
+
+	column etl_batch_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: etl_batch_id
+
+	partition fact_lead_funnel = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("fact_lead_funnel.csv", {
+				            {"mql_id", type text}, {"landing_page_id", type text}, {"first_contact_date_key", Int64.Type}, {"won_date_key", Int64.Type},
+				            {"first_sale_date_key", Int64.Type}, {"lead_origin_key", Int64.Type}, {"lead_profile_key", Int64.Type}, {"seller_key", Int64.Type},
+				            {"sdr_key", Int64.Type}, {"sr_key", Int64.Type}, {"is_won", Int64.Type}, {"has_first_sale", Int64.Type},
+				            {"days_to_close", Int64.Type}, {"days_won_to_first_sale", Int64.Type}, {"declared_product_catalog_size", type number}, {"declared_monthly_revenue", Currency.Type},
+				            {"seller_gmv_first_90d", Currency.Type}, {"etl_batch_id", Int64.Type}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

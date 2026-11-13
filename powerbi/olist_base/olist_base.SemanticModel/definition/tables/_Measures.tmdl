@@ -1,0 +1,389 @@
+/// Bảng chứa các measure (không có dữ liệu); measure sắp theo thư mục DB1-DB4
+table _Measures
+	column Column1
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Column1
+
+	/// Tổng giá hàng của các đơn không bị hủy / không khả dụng.
+	measure GMV =
+			CALCULATE (
+			    SUM ( fact_order_item[price] ),
+			    KEEPFILTERS ( dim_order_status[status_group] <> "Failed" )
+			)
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0.00"
+		displayFolder: "DB1 Tổng quan và doanh thu\Bán hàng"
+
+	/// Số đơn có doanh thu (đếm mã đơn khác nhau).
+	measure Orders =
+			CALCULATE (
+			    DISTINCTCOUNT ( fact_order_item[order_id] ),
+			    KEEPFILTERS ( dim_order_status[status_group] <> "Failed" )
+			)
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0"
+		displayFolder: "DB1 Tổng quan và doanh thu\Bán hàng"
+
+	/// Số dòng sản phẩm đã bán.
+	measure Items =
+			CALCULATE (
+			    COUNTROWS ( fact_order_item ),
+			    KEEPFILTERS ( dim_order_status[status_group] <> "Failed" )
+			)
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0"
+		displayFolder: "DB1 Tổng quan và doanh thu\Bán hàng"
+
+	/// Giá trị trung bình mỗi đơn (GMV chia số đơn).
+	measure AOV = DIVIDE ( [GMV], [Orders] )
+		formatString: "#,0.00"
+		displayFolder: "DB1 Tổng quan và doanh thu\Bán hàng"
+
+	/// Tổng phí vận chuyển của các đơn có doanh thu.
+	measure Freight =
+			CALCULATE (
+			    SUM ( fact_order_item[freight_value] ),
+			    KEEPFILTERS ( dim_order_status[status_group] <> "Failed" )
+			)
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0.00"
+		displayFolder: "DB1 Tổng quan và doanh thu\Bán hàng"
+
+	/// Phí vận chuyển trên giá hàng (Σ freight ÷ Σ price).
+	measure 'Freight ratio' = DIVIDE ( [Freight], [GMV] )
+		formatString: "0.0%"
+		displayFolder: "DB1 Tổng quan và doanh thu\Bán hàng"
+
+	/// Số dòng hàng trung bình mỗi đơn.
+	measure 'Avg items per order' = DIVIDE ( [Items], [Orders] )
+		formatString: "0.00"
+		displayFolder: "DB1 Tổng quan và doanh thu\Bán hàng"
+
+	/// GMV theo ngày hạn bàn giao cho vận chuyển (role-playing date).
+	measure 'GMV by shipping limit date' =
+			CALCULATE (
+			    [GMV],
+			    USERELATIONSHIP ( fact_order_item[shipping_limit_date_key], dim_date[date_key] )
+			)
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0.00"
+		displayFolder: "DB1 Tổng quan và doanh thu\Bán hàng"
+
+	/// GMV của tháng liền trước.
+	measure 'GMV last month' = CALCULATE ( [GMV], DATEADD ( dim_date[full_date], -1, MONTH ) )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0.00"
+		displayFolder: "DB1 Tổng quan và doanh thu\So sánh theo thời gian"
+
+	/// Tăng trưởng so với tháng trước.
+	measure 'GMV MoM %' = DIVIDE ( [GMV] - [GMV last month], [GMV last month] )
+		formatString: "+0.0%;-0.0%;0.0%"
+		displayFolder: "DB1 Tổng quan và doanh thu\So sánh theo thời gian"
+
+	/// GMV cùng kỳ năm trước.
+	measure 'GMV last year' = CALCULATE ( [GMV], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0.00"
+		displayFolder: "DB1 Tổng quan và doanh thu\So sánh theo thời gian"
+
+	/// Tăng trưởng so với cùng kỳ năm trước.
+	measure 'GMV YoY %' = DIVIDE ( [GMV] - [GMV last year], [GMV last year] )
+		formatString: "+0.0%;-0.0%;0.0%"
+		displayFolder: "DB1 Tổng quan và doanh thu\So sánh theo thời gian"
+
+	/// GMV luỹ kế từ đầu năm.
+	measure 'GMV YTD' = TOTALYTD ( [GMV], dim_date[full_date] )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0.00"
+		displayFolder: "DB1 Tổng quan và doanh thu\So sánh theo thời gian"
+
+	/// Tăng trưởng số đơn so với tháng trước.
+	measure 'Orders MoM %' = DIVIDE ( [Orders] - CALCULATE ( [Orders], DATEADD ( dim_date[full_date], -1, MONTH ) ), CALCULATE ( [Orders], DATEADD ( dim_date[full_date], -1, MONTH ) ) )
+		formatString: "+0.0%;-0.0%;0.0%"
+		displayFolder: "DB1 Tổng quan và doanh thu\So sánh theo thời gian"
+
+	/// Tổng số đơn đã đặt, mọi trạng thái.
+	measure 'Orders placed' = COUNTROWS ( fact_order_fulfillment )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Số đơn thuộc nhóm Failed (canceled + unavailable).
+	measure 'Failed orders' =
+			CALCULATE (
+			    COUNTROWS ( fact_order_fulfillment ),
+			    KEEPFILTERS ( dim_order_status[status_group] = "Failed" )
+			)
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Tỷ lệ đơn hủy / không khả dụng trên tổng đơn.
+	measure 'Cancel rate' = DIVIDE ( [Failed orders], [Orders placed] )
+		formatString: "0.00%"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Số đơn đã giao (trạng thái delivered và có ngày giao).
+	measure 'Delivered orders' = SUM ( fact_order_fulfillment[is_delivered] )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Số đơn giao trễ so với ngày dự kiến.
+	measure 'Late orders' = SUM ( fact_order_fulfillment[is_late] )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Tỷ lệ đơn đã giao đúng hoặc sớm hơn ngày dự kiến (`delay_days ≤ 0`).
+	measure 'On-time rate' = DIVIDE ( [Delivered orders] - [Late orders], [Delivered orders] )
+		formatString: "0.0%"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Tỷ lệ đơn giao trễ = đơn giao trễ ÷ đơn đã giao (`is_late = 1` trên `is_delivered = 1`).
+	measure 'Late rate' = DIVIDE ( [Late orders], [Delivered orders] )
+		formatString: "0.0%"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Số ngày trung bình từ mua đến giao khách (đơn đã giao).
+	measure 'Avg lead days' = CALCULATE ( AVERAGE ( fact_order_fulfillment[lead_days] ), fact_order_fulfillment[is_delivered] = 1 )
+		formatString: "0.0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Số giờ trung bình từ mua đến duyệt thanh toán.
+	measure 'Avg approval hours' = CALCULATE ( AVERAGE ( fact_order_fulfillment[approval_hours] ), fact_order_fulfillment[is_delivered] = 1 )
+		formatString: "0.0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Số ngày trung bình từ duyệt đến bàn giao cho vận chuyển (seller xử lý).
+	measure 'Avg handling days' = CALCULATE ( AVERAGE ( fact_order_fulfillment[handling_days] ), fact_order_fulfillment[is_delivered] = 1 )
+		formatString: "0.0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Số ngày trung bình vận chuyển đến khách.
+	measure 'Avg transit days' = CALCULATE ( AVERAGE ( fact_order_fulfillment[transit_days] ), fact_order_fulfillment[is_delivered] = 1 )
+		formatString: "0.0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Số ngày Olist hứa giao trung bình (ngày dự kiến trừ ngày mua) của các đơn đã giao.
+	measure 'Avg promised days' = CALCULATE ( AVERAGE ( fact_order_fulfillment[promised_days] ), fact_order_fulfillment[is_delivered] = 1 )
+		formatString: "0.0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Chênh lệch ngày giao thực tế so với dự kiến (âm = giao sớm).
+	measure 'Avg delay days' = CALCULATE ( AVERAGE ( fact_order_fulfillment[delay_days] ), fact_order_fulfillment[is_delivered] = 1 )
+		formatString: "0.0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// KPI "ngày hứa giao so với ngày giao thực tế": trung bình (số ngày hứa − số ngày thực tế); **dương = giao sớm hơn lời hứa**. Dùng cho DB2.
+	measure 'Promised vs actual (days)' =
+			AVERAGEX (
+			    FILTER (
+			        fact_order_fulfillment,
+			        fact_order_fulfillment[is_delivered] = 1
+			            && NOT ISBLANK ( fact_order_fulfillment[lead_days] )
+			            && NOT ISBLANK ( fact_order_fulfillment[promised_days] )
+			    ),
+			    fact_order_fulfillment[promised_days] - fact_order_fulfillment[lead_days]
+			)
+		formatString: "0.0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Tỷ lệ đơn giao sớm hơn ngày dự kiến.
+	measure 'Early delivery rate' =
+			DIVIDE (
+			    CALCULATE ( COUNTROWS ( fact_order_fulfillment ), fact_order_fulfillment[is_delivered] = 1, fact_order_fulfillment[delay_days] < 0 ),
+			    [Delivered orders]
+			)
+		formatString: "0.0%"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Số đơn tính theo **ngày giao** thay vì ngày mua (role-playing date).
+	measure 'Delivered orders by delivery date' = CALCULATE ( [Delivered orders], USERELATIONSHIP ( fact_order_fulfillment[delivered_date_key], dim_date[date_key] ) )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Xử lý đơn"
+
+	/// Tổng giá trị thanh toán (BRL).
+	measure 'Payment value' = SUM ( fact_payment[payment_value] )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0.00"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Thanh toán"
+
+	/// Số lần thanh toán.
+	measure Payments = COUNTROWS ( fact_payment )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Thanh toán"
+
+	/// Số kỳ trả góp trung bình.
+	measure 'Avg installments' = AVERAGE ( fact_payment[payment_installments] )
+		formatString: "0.00"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Thanh toán"
+
+	/// Tỷ trọng giá trị của một hình thức thanh toán trong tổng (đặt `dim_payment_type[display_name]` lên trục).
+	measure 'Payment share' = DIVIDE ( [Payment value], CALCULATE ( [Payment value], ALL ( dim_payment_type ) ) )
+		formatString: "0.0%"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Thanh toán"
+
+	/// Số review.
+	measure Reviews = COUNTROWS ( fact_review )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Review và khách hàng"
+
+	/// Điểm review trung bình (1–5).
+	measure 'Avg review' = AVERAGE ( fact_review[review_score] )
+		formatString: "0.00"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Review và khách hàng"
+
+	/// Tỷ lệ review tiêu cực (điểm ≤ 2).
+	measure '% negative' = DIVIDE ( SUM ( fact_review[is_negative] ), [Reviews] )
+		formatString: "0.0%"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Review và khách hàng"
+
+	/// Điểm trung bình của các đơn đã giao và giao trễ.
+	measure 'Avg review - late delivery' = CALCULATE ( [Avg review], fact_review[is_delivered] = 1, fact_review[delivered_late] = 1 )
+		formatString: "0.00"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Review và khách hàng"
+
+	/// Điểm trung bình của các đơn **đã giao** đúng hạn hoặc sớm. Phải có `is_delivered = 1`: đơn chưa giao cũng có `delivered_late = 0` nhưng chưa thể gọi là đúng hạn.
+	measure 'Avg review - on time' = CALCULATE ( [Avg review], fact_review[is_delivered] = 1, fact_review[delivered_late] = 0 )
+		formatString: "0.00"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Review và khách hàng"
+
+	/// Số khách thật (theo `customer_unique_id`, không đếm các phiên bản địa chỉ SCD2) có ít nhất một đơn. Chạy vài giây vì duyệt gần 100 nghìn khách.
+	measure Customers =
+			COUNTROWS (
+			    FILTER ( VALUES ( dim_customer[customer_unique_id] ), CALCULATE ( COUNTROWS ( fact_order_fulfillment ) ) > 0 )
+			)
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Review và khách hàng"
+
+	/// Số khách có từ 2 đơn trở lên (mọi trạng thái).
+	measure 'Repeat customers' =
+			COUNTROWS (
+			    FILTER ( VALUES ( dim_customer[customer_unique_id] ), CALCULATE ( COUNTROWS ( fact_order_fulfillment ) ) >= 2 )
+			)
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Review và khách hàng"
+
+	/// Tỷ lệ khách quay lại mua (≥ 2 đơn ÷ tổng khách).
+	measure 'Repeat customer rate' = DIVIDE ( [Repeat customers], [Customers] )
+		formatString: "0.00%"
+		displayFolder: "DB2 Giao hàng và trải nghiệm khách\Review và khách hàng"
+
+	/// GMV nhưng gắn theo địa lý của **seller** thay vì của khách (dùng khi dim_geography đặt ở bang của seller).
+	measure 'GMV by seller state' =
+			CALCULATE (
+			    [GMV],
+			    USERELATIONSHIP ( fact_order_item[seller_geography_key], dim_geography[geography_key] )
+			)
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0.00"
+		displayFolder: "DB3 Địa lý và phí vận chuyển"
+
+	/// Số khách tiềm năng (MQL).
+	measure MQLs = COUNTROWS ( fact_lead_funnel )
+		formatString: "#,0"
+		displayFolder: "DB4 Thu hút và hiệu quả seller\Thu hút seller"
+
+	/// Số MQL đã được chốt thành seller.
+	measure 'Won deals' = SUM ( fact_lead_funnel[is_won] )
+		formatString: "#,0"
+		displayFolder: "DB4 Thu hút và hiệu quả seller\Thu hút seller"
+
+	/// Tỷ lệ chuyển đổi MQL → seller (đã chốt).
+	measure 'MQL to won rate' = DIVIDE ( [Won deals], [MQLs] )
+		formatString: "0.0%"
+		displayFolder: "DB4 Thu hút và hiệu quả seller\Thu hút seller"
+
+	/// Số ngày trung bình từ liên hệ đầu đến chốt deal (chỉ các deal đã chốt).
+	measure 'Avg days to close' = AVERAGE ( fact_lead_funnel[days_to_close] )
+		formatString: "0.0"
+		displayFolder: "DB4 Thu hút và hiệu quả seller\Thu hút seller"
+
+	/// Số seller đã chốt và đã có đơn hàng.
+	measure 'Sellers with first sale' = SUM ( fact_lead_funnel[has_first_sale] )
+		formatString: "#,0"
+		displayFolder: "DB4 Thu hút và hiệu quả seller\Thu hút seller"
+
+	/// Tỷ lệ seller đã chốt mà có đơn đầu tiên.
+	measure 'Won to first sale rate' = DIVIDE ( [Sellers with first sale], [Won deals] )
+		formatString: "0.0%"
+		displayFolder: "DB4 Thu hút và hiệu quả seller\Thu hút seller"
+
+	/// Số ngày trung bình từ chốt deal đến đơn đầu tiên.
+	measure 'Avg days won to first sale' = AVERAGE ( fact_lead_funnel[days_won_to_first_sale] )
+		formatString: "0.0"
+		displayFolder: "DB4 Thu hút và hiệu quả seller\Thu hút seller"
+
+	/// GMV của các seller từ funnel trong 90 ngày đầu kể từ đơn đầu tiên.
+	measure 'Seller GMV first 90d' = SUM ( fact_lead_funnel[seller_gmv_first_90d] )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0.00"
+		displayFolder: "DB4 Thu hút và hiệu quả seller\Thu hút seller"
+
+	/// Số deal tính theo **ngày chốt** (role-playing date) – dùng để xem deal chốt mỗi tháng.
+	measure 'Won deals by won date' = CALCULATE ( [Won deals], USERELATIONSHIP ( fact_lead_funnel[won_date_key], dim_date[date_key] ) )
+		formatString: "#,0"
+		displayFolder: "DB4 Thu hút và hiệu quả seller\Thu hút seller"
+
+	/// Số seller có ít nhất một đơn trong kỳ đang chọn.
+	measure 'Active sellers' = CALCULATE ( DISTINCTCOUNT ( fact_seller_monthly[seller_key] ), fact_seller_monthly[is_active] = 1 )
+		formatString: "#,0"
+		displayFolder: "DB4 Thu hút và hiệu quả seller\Hiệu suất seller"
+
+	/// Tổng GMV từ bảng seller-tháng (bằng `GMV` khi cùng phạm vi thời gian).
+	measure 'Seller GMV (monthly)' = SUM ( fact_seller_monthly[gmv] )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0.00"
+		displayFolder: "DB4 Thu hút và hiệu quả seller\Hiệu suất seller"
+
+	/// Tỷ lệ giao trễ tính trên bảng seller-tháng.
+	measure 'Seller late rate' = DIVIDE ( SUM ( fact_seller_monthly[late_orders] ), SUM ( fact_seller_monthly[delivered_orders] ) )
+		formatString: "0.0%"
+		displayFolder: "DB4 Thu hút và hiệu quả seller\Hiệu suất seller"
+
+	/// Hiện cảnh báo khi một nhóm (ví dụ kênh thu hút) có quá ít seller để kết luận.
+	measure 'Small sample warning' = IF ( [Active sellers] < 30, "⚠ Mẫu nhỏ (dưới 30 seller)", "" )
+		displayFolder: "DB4 Thu hút và hiệu quả seller\Hiệu suất seller"
+
+	/// On-time rate dưới 90% → đỏ; dưới 95% → vàng; còn lại xanh.
+	measure 'Color On-time rate' = SWITCH ( TRUE (), ISBLANK ( [On-time rate] ), "#8A94A6", [On-time rate] < 0.90, "#D64545", [On-time rate] < 0.95, "#E0A100", "#2E9E6B" )
+		displayFolder: "Cảnh báo màu"
+
+	/// Điểm review dưới 3,8 → đỏ; dưới 4,2 → vàng.
+	measure 'Color Avg review' = SWITCH ( TRUE (), ISBLANK ( [Avg review] ), "#8A94A6", [Avg review] < 3.8, "#D64545", [Avg review] < 4.2, "#E0A100", "#2E9E6B" )
+		displayFolder: "Cảnh báo màu"
+
+	/// Tỷ lệ review tiêu cực trên 20% → đỏ; trên 12% → vàng.
+	measure 'Color % negative' = SWITCH ( TRUE (), ISBLANK ( [% negative] ), "#8A94A6", [% negative] > 0.20, "#D64545", [% negative] > 0.12, "#E0A100", "#2E9E6B" )
+		displayFolder: "Cảnh báo màu"
+
+	/// Tỷ lệ hủy trên 2% → đỏ; trên 1% → vàng.
+	measure 'Color Cancel rate' = SWITCH ( TRUE (), ISBLANK ( [Cancel rate] ), "#8A94A6", [Cancel rate] > 0.02, "#D64545", [Cancel rate] > 0.01, "#E0A100", "#2E9E6B" )
+		displayFolder: "Cảnh báo màu"
+
+	/// Phí vận chuyển trên giá hàng trên 25% → đỏ; trên 18% → vàng.
+	measure 'Color Freight ratio' = SWITCH ( TRUE (), ISBLANK ( [Freight ratio] ), "#8A94A6", [Freight ratio] > 0.25, "#D64545", [Freight ratio] > 0.18, "#E0A100", "#2E9E6B" )
+		displayFolder: "Cảnh báo màu"
+
+	/// Tăng trưởng GMV so với tháng trước: âm → đỏ, dương → xanh.
+	measure 'Color growth' =
+			VAR g = [GMV MoM %]
+			RETURN SWITCH ( TRUE (), ISBLANK ( g ), "#8A94A6", g < 0, "#D64545", "#2E9E6B" )
+		displayFolder: "Cảnh báo màu"
+
+	/// Giao thực tế chậm hơn lời hứa → đỏ; sớm dưới 5 ngày → vàng; sớm từ 5 ngày → xanh.
+	measure 'Color promised vs actual' =
+			VAR d = [Promised vs actual (days)]
+			RETURN SWITCH ( TRUE (), ISBLANK ( d ), "#8A94A6", d < 0, "#D64545", d < 5, "#E0A100", "#2E9E6B" )
+		displayFolder: "Cảnh báo màu"
+
+	/// Gom các cảnh báo chính thành một dòng chữ.
+	measure 'Alert text' =
+			VAR msgs =
+			    IF ( [On-time rate] < 0.90, "On-time rate dưới 90%. ", "" )
+			        & IF ( [Avg review] < 3.8, "Điểm review dưới 3,8. ", "" )
+			        & IF ( [Cancel rate] > 0.02, "Tỷ lệ hủy trên 2%. ", "" )
+			RETURN IF ( msgs = "", "Các chỉ số chính trong ngưỡng", "⚠ " & msgs )
+		displayFolder: "Cảnh báo màu"
+
+	/// Tỷ lệ phép kiểm thử đạt của lô mới nhất.
+	measure 'Latest pass pct' = CALCULATE ( MAX ( v_dq_summary[pass_pct] ), FILTER ( ALL ( v_dq_summary ), v_dq_summary[batch_id] = MAX ( v_dq_summary[batch_id] ) ) )
+		formatString: "0.0"
+		displayFolder: "Giám sát ETL"
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = #table(type table [Column1 = text], {})
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

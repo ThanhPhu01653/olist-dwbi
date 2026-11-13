@@ -1,0 +1,81 @@
+/// Chiều khách hàng, SCD2 (1 dòng / phiên bản địa chỉ)
+table dim_customer
+
+	column customer_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: customer_key
+
+	column customer_unique_id
+		dataType: string
+		sourceColumn: customer_unique_id
+
+	column zip_code_prefix
+		dataType: string
+		sourceColumn: zip_code_prefix
+
+	column city
+		dataType: string
+		sourceColumn: city
+
+	column state_code
+		dataType: string
+		sourceColumn: state_code
+
+	column geography_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: geography_key
+
+	column effective_from
+		dataType: dateTime
+		formatString: yyyy-MM-dd
+		sourceColumn: effective_from
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column effective_to
+		dataType: dateTime
+		formatString: yyyy-MM-dd
+		sourceColumn: effective_to
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column is_current
+		dataType: boolean
+		sourceColumn: is_current
+
+	column version_no
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: version_no
+
+	hierarchy 'Customer location'
+		level state_code
+			column: state_code
+			ordinal: 0
+		level city
+			column: city
+			ordinal: 1
+		level customer_unique_id
+			column: customer_unique_id
+			ordinal: 2
+
+	partition dim_customer = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("dim_customer.csv", {
+				            {"customer_key", Int64.Type}, {"customer_unique_id", type text}, {"zip_code_prefix", type text}, {"city", type text},
+				            {"state_code", type text}, {"geography_key", Int64.Type}, {"effective_from", type date}, {"effective_to", type date},
+				            {"is_current", type logical}, {"version_no", Int64.Type}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
