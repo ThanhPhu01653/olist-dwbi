@@ -9,7 +9,7 @@ Mỗi câu có số liệu, các phương án và khuyến nghị. GMV = tổng 
 | Câu | Câu hỏi | Số chính | Khuyến nghị |
 | --- | --- | --- | --- |
 | a | Khách có hơn 1 zip → SCD2 hay SCD1 | 250 / 96.096 khách đổi zip (0,26%); +256 phiên bản | Giữ SCD2 |
-| b | Seller từ funnel có đơn / GMV → độ sâu D6 | 380 / 842 seller có đơn; GMV 674.005 BRL (4,99% GMV sàn) | D6 vừa phải (2 trang), gộp kênh, hiển thị cỡ mẫu |
+| b | Seller từ funnel có đơn / GMV → độ sâu DB4 | 380 / 842 seller có đơn; GMV 674.005 BRL (4,99% GMV sàn) | DB4 vừa phải (2 trang), gộp kênh, hiển thị cỡ mẫu |
 | c | `fact_seller_monthly` dày đặc hay thưa | dày đặc 36.583 dòng, thưa 16.441 dòng | Dày đặc |
 | d | Danh mục sản phẩm → bảng nhóm ngành hàng | 73 danh mục → 12 nhóm; 2 thiếu bản dịch | 12 nhóm đề xuất, nhóm duyệt các mục tranh luận |
 | e | Zip thiếu trong geolocation → xây `dim_geography` | 157 zip khách + 7 zip seller thiếu; 0,28% đơn bị ảnh hưởng | Toạ độ NULL (phương án 1) |
@@ -42,7 +42,7 @@ Mỗi câu có số liệu, các phương án và khuyến nghị. GMV = tổng 
 
 **Khuyến nghị:** giữ **SCD2** (như DW_DESIGN §6.3). Số khách đổi zip rất ít, nên SCD2 chỉ làm dim lớn thêm 0,27% nhưng cho ví dụ SCD thật cùng dữ liệu thật để trình bày (cột `effective_from/to`, `is_current`). Lý do nên nói rõ trong báo cáo: địa lý lịch sử vẫn đúng nhờ `customer_geography_key` ở fact; SCD2 bảo đảm thuộc tính khách cũng đúng theo thời điểm.
 
-## b) Bao nhiêu seller từ funnel có đơn hàng, và tổng GMV của họ? (độ sâu dashboard D6)
+## b) Bao nhiêu seller từ funnel có đơn hàng, và tổng GMV của họ? (độ sâu dashboard DB4)
 
 **Số liệu**
 
@@ -60,9 +60,9 @@ Mỗi câu có số liệu, các phương án và khuyến nghị. GMV = tổng 
 
 **Phương án**
 
-1. **D6 đầy đủ** (funnel + hiệu suất seller + GMV theo kênh): đủ dữ liệu cho phần funnel (8.000 MQL, 842 deal) nhưng phần hiệu suất / GMV chỉ dựa trên 380 seller, và theo nhóm kênh có chỗ chỉ vài chục seller.
-2. **D6 vừa phải**: trang 1 funnel MQL → chốt → có đơn đầu tiên theo kênh và tháng; trang 2 seller từ funnel (GMV, tỷ lệ trễ, điểm review, số ngày từ chốt đến đơn đầu) với cảnh báo cỡ mẫu.
-3. **D6 chỉ funnel**: bỏ phần hiệu suất. Mất câu hỏi xuyên quy trình mà đề tài muốn trả lời.
+1. **DB4 đầy đủ** (funnel + hiệu suất seller + GMV theo kênh): đủ dữ liệu cho phần funnel (8.000 MQL, 842 deal) nhưng phần hiệu suất / GMV chỉ dựa trên 380 seller, và theo nhóm kênh có chỗ chỉ vài chục seller.
+2. **DB4 vừa phải**: trang 1 funnel MQL → chốt → có đơn đầu tiên theo kênh và tháng; trang 2 seller từ funnel (GMV, tỷ lệ trễ, điểm review, số ngày từ chốt đến đơn đầu) với cảnh báo cỡ mẫu.
+3. **DB4 chỉ funnel**: bỏ phần hiệu suất. Mất câu hỏi xuyên quy trình mà đề tài muốn trả lời.
 
 **Khuyến nghị:** phương án 2. 45,1% deal liên kết được với đơn hàng là đủ để minh hoạ tích hợp hai nguồn qua `dim_seller`, nhưng GMV của nhóm này chỉ 4,99% GMV toàn sàn nên không nên kết luận mạnh về hiệu suất theo kênh; nên gộp kênh theo `dim_lead_origin.channel_group` (5 nhóm) và luôn hiển thị số seller. Phần 54,9% deal không có đơn nên được thể hiện rõ như một kết quả ("deal chốt nhưng chưa bán / không nằm trong sàn"), không phải lỗi dữ liệu.
 

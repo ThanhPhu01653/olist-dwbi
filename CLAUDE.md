@@ -4,7 +4,7 @@ File hướng dẫn cho Claude Code; thành viên nhóm không cần đọc.
 
 ## Dự án là gì
 Xây kho dữ liệu chủ đề **Order Management** trên bộ Olist Brazilian E-Commerce, tích hợp thêm bộ **Olist Marketing Funnel**
-(nối qua `seller_id`). Sản phẩm cuối: PostgreSQL DW chạy được end-to-end, 7 dashboard Power BI, báo cáo LaTeX > 100 trang
+(nối qua `seller_id`). Sản phẩm cuối: PostgreSQL DW chạy được end-to-end, 4 dashboard Power BI, báo cáo LaTeX > 100 trang
 và slide > 100 trang. Bản nháp đủ (báo cáo, slide, dashboard) trước **29/11**; báo cáo trước lớp vào **tuần 12 (30/11–6/12/2026)**;
 phần code phải xong trước **21/11**, dữ liệu xuất cho Power BI phải có bản đầu tiên trước **18/11**.
 
@@ -53,7 +53,7 @@ scripts/                        # report_stats.py, export_samples.py, export_pow
 powerbi/                        # measures.md (DAX), model.md (quan hệ, phân cấp), theme.json – nhóm dùng để dựng trong Power BI
 exports/powerbi/                # CSV xuất từ dw/mart/etl_log cho Power BI
 handoff/                        # bàn giao cho cả nhóm (markdown)
-huong-dan/                      # hướng dẫn dùng chung: lộ trình đọc, pipeline bằng lời, thuật ngữ, từ điển dữ liệu, hỏi đáp, D1-D7
+huong-dan/                      # hướng dẫn dùng chung: lộ trình đọc, pipeline bằng lời, thuật ngữ, từ điển dữ liệu, hỏi đáp, DB1-DB4
 report/                         # báo cáo LaTeX (XeLaTeX): chapters/ viết tay, tables/ sinh từ database (scripts/export_latex.py)
 slides/                         # slide Beamer theme HUST (LuaLaTeX): sections/ xếp theo barem (sửa tay từ P8; không chạy lại gen_beamer.py), hust-theme/
 figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
@@ -119,4 +119,4 @@ figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 - `python scripts/eda/run_all.py` – chạy toàn bộ EDA (P1) trên `olist_full`: sinh `handoff/{profiling,data-quality,distributions,correlations,funnel,design-questions,excel-toolpak-guide}.md`, `figures/3-3-1_*.png`, `exports/eda_sample.xlsx`
 - `python scripts/eda/run_all.py` (từ P8 còn chạy thêm) – `source_profile.py` (tần suất, taxonomy), `p8_outliers.py` (IQR, iForest), `p8_association.py` (Cramér's V, η), `p8_seasonality.py` (STL), `p8_describe.py` (thống kê đặc trưng + sheet `python_doi_chieu` của `exports/eda_sample.xlsx`), `p8_dictionary.py` (từ điển nguồn) → `handoff/2026-11-14-P8-eda.md`, `figures/3-1_*.png`, `2-4_*.png`
 - `python scripts/gen_drawio.py` – sinh `docs/diagrams/*.drawio` và PNG nháp (BẢN NHÁP) cho data flow, ERD tô màu, kiến trúc theo lớp, data model logic / vật lý / mart (dùng `scripts/diagram_kit.py`, `scripts/drawio_p8.py`)
-- `python scripts/p8_layers.py | p8_business.py | p8_mapping_summary.py | p8_dimensions.py | p8_etl.py` – bảng và số liệu P8 từ database → `report/tables/p8_*.tex`, `handoff/2026-11-14-P8-*.md`; `python scripts/p8_dashboard_checklist.py` – checklist dashboard (chạy sau `gen_dashboard_docs.py`); `python scripts/sync_figures.py` – chép `figures/` sang `report/figures`, `slides/figures`
+- `python scripts/p8_layers.py | p8_business.py | p8_mapping_summary.py | p8_dimensions.py | p8_etl.py` – bảng và số liệu P8 từ database → `report/tables/p8_*.tex`, `handoff/2026-11-14-P8-*.md`; `python scripts/gen_dashboard_docs.py` – (chạy sau `gen_powerbi_docs.py`) sinh `huong-dan/dashboards/DB1-DB4.md` và `README.md` (ma trận checklist); `python scripts/p8b_dashboard_tables.py` – bảng thống kê và ma trận cho chương 4; `python scripts/sync_figures.py` – chép `figures/` sang `report/figures`, `slides/figures`

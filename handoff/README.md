@@ -16,6 +16,7 @@ Thư mục này ghi lại từng phase của dự án (đã làm gì, số liệ
 | [`2026-11-05-P7-perf.md`](2026-11-05-P7-perf.md) | P7-A: hiệu năng (benchmark gọn) |
 | [`2026-11-05-P7-geo.md`](2026-11-05-P7-geo.md) | P7-B: khoảng cách địa lý bằng haversine SQL (không PostGIS) |
 | [`2026-11-14-P8.md`](2026-11-14-P8.md) | P8: sắp lại báo cáo và slide theo barem; bổ sung khảo sát, EDA, kiến trúc, ETL, chiều khái niệm, data model, dashboard |
+| [`2026-11-14-P8b.md`](2026-11-14-P8b.md) | P8b: gộp bộ dashboard từ 7 xuống 4 (DB1–DB4); giám sát ETL thành bảng ở mục 3.3 |
 | [`2026-11-14-P8-eda.md`](2026-11-14-P8-eda.md) | P8-D: ngoại lai, Cramér's V và η, STL, thống kê đặc trưng, từ điển nguồn (số liệu và nhận xét từng hình) |
 | [`2026-11-14-P8-source.md`](2026-11-14-P8-source.md), [`-layers`](2026-11-14-P8-layers.md), [`-mapping-summary`](2026-11-14-P8-mapping-summary.md), [`-dimensions`](2026-11-14-P8-dimensions.md), [`-etl`](2026-11-14-P8-etl.md) | P8-C, E: tần suất và taxonomy dữ liệu nguồn, các lớp kiến trúc, tổng hợp mapping, hệ thống chiều khái niệm, ETL |
 
@@ -38,7 +39,7 @@ Do script sinh từ database; không sửa tay (chạy lại script để cập 
 | [`rebuild-report.md`](rebuild-report.md) | Kết quả dựng lại toàn bộ từ đầu bằng một lệnh | `scripts/rebuild_all.py` |
 
 ## 3. Khác
-- [`../huong-dan/`](../huong-dan/) – hướng dẫn chung, từ điển dữ liệu, hỏi đáp, hướng dẫn D1–D7.
+- [`../huong-dan/`](../huong-dan/) – hướng dẫn chung, từ điển dữ liệu, hỏi đáp, hướng dẫn DB1–DB4.
 - [`../powerbi/`](../powerbi/) – mô hình Power BI và DAX.
 - [`../docs/DW_DESIGN.md`](../docs/DW_DESIGN.md) – đặc tả schema và nhật ký quyết định.
 

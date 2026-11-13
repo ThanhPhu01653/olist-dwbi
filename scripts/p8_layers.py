@@ -49,9 +49,9 @@ ROWS = [
     ("Staging", "stg\\_* (bản sao thô)", "PostgreSQL; extract bằng Python + SQL", str(stg[0]), n(stg[1]), "mỗi lần chạy pipeline (full hoặc incremental)", "thêm mã lô nạp và thời điểm nạp để truy vết"),
     ("ODS", "ods.* (dữ liệu sạch, cờ chất lượng)", "PostgreSQL procedure (PL/pgSQL)", str(ods[0]), n(ods[1]), "mỗi lần chạy pipeline", "dòng lỗi ghi \\code{rejected\\_rows}, không xoá âm thầm"),
     ("Kho dữ liệu", "dw: 10 dimension + 6 fact", "PostgreSQL procedure; khoá thay thế, SCD1/SCD2", str(dw[0]), n(dw[1]), "mỗi lần chạy pipeline; nạp tăng dần theo watermark", f"{dwviews} view đóng vai cho \\code{{dim\\_date}}"),
-    ("Data mart", "mart\\_sales, mart\\_fulfillment, mart\\_cx, mart\\_acquisition", "PostgreSQL view và materialized view", f"{nviews} view ({nmat} materialized)", "--", "làm mới materialized view mỗi lần chạy", "tổng hợp sẵn cho dashboard D1--D6"),
-    ("Giám sát", "etl\\_log: job\\_run, rejected\\_rows, dq\\_check...", "PostgreSQL; Python ghi log", str(log[0]), n(log[1]), "ghi ở mọi bước", "nguồn cho dashboard D7"),
-    ("BI", "37 file CSV, mô hình ngữ nghĩa, 7 dashboard", "Python xuất CSV; Power BI Desktop (Import, DAX)", "--", "--", "làm mới sau mỗi lần xuất CSV", "Publish to web"),
+    ("Data mart", "mart\\_sales, mart\\_fulfillment, mart\\_cx, mart\\_acquisition", "PostgreSQL view và materialized view", f"{nviews} view ({nmat} materialized)", "--", "làm mới materialized view mỗi lần chạy", "tổng hợp sẵn cho dashboard DB1--DB4"),
+    ("Giám sát", "etl\\_log: job\\_run, rejected\\_rows, dq\\_check...", "PostgreSQL; Python ghi log", str(log[0]), n(log[1]), "ghi ở mọi bước", "nguồn cho bảng giám sát ở mục 3.3"),
+    ("BI", "37 file CSV, mô hình ngữ nghĩa, 4 dashboard", "Python xuất CSV; Power BI Desktop (Import, DAX)", "--", "--", "làm mới sau mỗi lần xuất CSV", "Publish to web"),
 ]
 df = pd.DataFrame(ROWS, columns=["Lớp", "Thành phần", "Công nghệ", "Số bảng", "Số dòng", "Tần suất", "Ghi chú"])
 

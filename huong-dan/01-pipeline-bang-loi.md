@@ -14,9 +14,9 @@ Dữ liệu đi một chiều qua 6 lớp. Mỗi lớp có **một việc** và 
 | **ODS** `ods` | Làm sạch và chuẩn hoá: zip thành `char(5)`, tên thành phố bỏ dấu + chữ thường, `NULL` thành `unknown`, khử trùng review, gắn cờ lỗi `dq_flags`. Dòng không dùng được ghi vào `etl_log.rejected_rows` kèm lý do. | Một nơi duy nhất để làm sạch; không xoá âm thầm. Staging = ODS + dòng bị loại (đối soát được). |
 | **Kho** `dw` | 10 bảng chiều + 6 bảng fact theo lược đồ hình sao: khoá thay thế số nguyên, SCD2 cho khách, các khoảng thời gian đã tính sẵn. | Dạng dễ phân tích nhất: truy vấn ngắn, nhất quán, một định nghĩa cho mỗi KPI. |
 | **Data mart** `mart_sales`, `mart_fulfillment`, `mart_cx`, `mart_acquisition` | View (4 cái là materialized view) tổng hợp sẵn cho từng chủ đề dashboard. | Nhanh (dưới 1 ms thay vì 150–750 ms) và gọn khi dựng dashboard. |
-| **Power BI** | 37 file CSV xuất từ kho → mô hình quan hệ + measure DAX → 7 dashboard. | Lớp ngữ nghĩa và tương tác kéo thả cho người dùng cuối. |
+| **Power BI** | 37 file CSV xuất từ kho → mô hình quan hệ + measure DAX → 4 dashboard. | Lớp ngữ nghĩa và tương tác kéo thả cho người dùng cuối. |
 
-Song song có **`etl_log`**: ghi mỗi lần chạy (thời gian, số dòng đọc/chèn/cập nhật/loại), dòng bị loại, kết quả kiểm thử (136 phép), khoá rơi về Unknown. Đây là nguồn của dashboard D7.
+Song song có **`etl_log`**: ghi mỗi lần chạy (thời gian, số dòng đọc/chèn/cập nhật/loại), dòng bị loại, kết quả kiểm thử (136 phép), khoá rơi về Unknown. Đây là nguồn của bảng giám sát ở mục 3.3 của báo cáo.
 
 **Hai cách nạp**: `full` (xoá và dựng lại toàn bộ) và `incremental` (chỉ lấy dòng mới). Dự án nạp ban đầu đến 31/12/2017 (45.430 đơn) rồi **11 đợt hằng tháng** để mô phỏng cập nhật; kết quả cuối giống hệt một lần nạp full.
 
@@ -508,7 +508,7 @@ MQL được theo dõi: `mql_id = 08fdf1038af7dd3070bdcd18922e23b2`; sau khi ch�
 3. **Chiều nhỏ**: tổ hợp thuộc tính deal (`business_segment`, `lead_behaviour_profile`, `has_company`, …) được gom vào **một dòng của `dim_lead_profile`** (junk dimension, khoá 171) thay vì rải 7 cột vào fact; nhân viên sales tách thành hai dòng `dim_sales_rep` với vai trò SDR và SR.
 4. **Fact snapshot**: `fact_lead_funnel` là **accumulating snapshot**: 1 dòng cho MQL, ban đầu chỉ có mốc liên hệ (06/02/2018), khi chốt thì điền mốc 08/02/2018 (`days_to_close = 2`), khi seller có đơn thì điền mốc 07/03/2018 (`days_won_to_first_sale = 27`) và `seller_gmv_first_90d = 2.325`. `fact_seller_monthly` là **periodic snapshot**: mỗi tháng một dòng của seller (tháng đầu 03/2018: 12 đơn, GMV 952, 4 đơn trễ).
 5. **Mart**: `v_seller_scorecard` tổng hợp seller này (32 đơn, GMV 2.648, trễ 17,24%, review 3,44, hạng ABC = B, `small_sample = False` vì ≥ 10 đơn); `v_funnel_by_origin_month` cho thấy nhóm cùng tháng liên hệ và cùng origin: 212 MQL, 43 chốt (20,3%), 26 có đơn (60,5% trong số đã chốt).
-6. **Power BI**: funnel D6 (MQLs → Won deals → Sellers with first sale) cộng dồn các dòng `fact_lead_funnel`; seller này xuất hiện ở bảng scorecard của D6 trang 2.
+6. **Power BI**: funnel DB4 (MQLs → Won deals → Sellers with first sale) cộng dồn các dòng `fact_lead_funnel`; seller này xuất hiện ở bảng scorecard của D6 trang 2.
 
 ## 4. Vì sao thiết kế như vậy (tóm tắt)
 - **Staging riêng**: nếu ODS lỗi, không phải lấy lại dữ liệu từ nguồn; đối soát số dòng từng lớp.

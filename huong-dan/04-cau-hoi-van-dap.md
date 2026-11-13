@@ -75,7 +75,7 @@ Có 789 `review_id` xuất hiện ở nhiều đơn nên không dùng làm khoá
 GMV = Σ `price` của đơn **không** thuộc nhóm Failed (canceled, unavailable) = 13.494.400,74; tổng giá hàng mọi đơn = 13.591.643,70; chênh 97.242,96 là hàng của 1.234 đơn Failed. Dùng GMV làm KPI vì đơn hủy không tạo doanh thu.
 
 **24. Vì sao 462 deal đã chốt lại không có đơn?**
-Trong 842 deal, chỉ 380 seller (45,1%) có đơn trong hệ thống bán hàng (mọi trạng thái đơn); nếu chỉ tính đơn không thuộc nhóm Failed (huỷ / không có sẵn) thì còn 379 seller (45,0%) có đơn bán được, là số `Sellers with first sale` trên dashboard. Đây là một **kết quả phân tích**, không phải lỗi: các seller này vẫn có dòng trong `dim_seller` (địa chỉ Unknown, `is_from_funnel = true`) và dashboard D6 hiển thị như một kết quả.
+Trong 842 deal, chỉ 380 seller (45,1%) có đơn trong hệ thống bán hàng (mọi trạng thái đơn); nếu chỉ tính đơn không thuộc nhóm Failed (huỷ / không có sẵn) thì còn 379 seller (45,0%) có đơn bán được, là số `Sellers with first sale` trên dashboard. Đây là một **kết quả phân tích**, không phải lỗi: các seller này vẫn có dòng trong `dim_seller` (địa chỉ Unknown, `is_from_funnel = true`) và dashboard DB4 hiển thị như một kết quả.
 
 ## D. OLAP và mô hình phân tích (5 câu)
 **25. Vì sao chọn ROLAP mà không dùng MOLAP?**
@@ -108,10 +108,10 @@ Cả hai đều phải đếm distinct đơn và join review ở mức dòng hà
 Trễ chỉ chiếm 6,8% đơn nhưng tác động rất mạnh: điểm review 4,29 (giao sớm) → 3,29 (trễ 1–3 ngày) → 2,10 (4–7 ngày) → 1,70 (trên 7 ngày) (số ở kho tính trên từng review: 1.756 review ở nhóm 4–7 ngày; bản EDA `handoff/correlations.md` tính mỗi đơn một lần, 1.748 đơn, nên ra 2,11; nhóm giao sớm 4,29 và nhóm trễ trên 7 ngày 1,70 giống nhau ở cả hai cách tính); 79,2% review tiêu cực ở nhóm trễ trên 7 ngày. Các đơn trễ chiếm 6,5% số review nhưng tạo ra 27,4% số review tiêu cực (4.000/14.575). Trung bình toàn sàn che mất nhóm nhỏ nhưng "đau".
 
 **34. Ngày hứa giao so với thực tế cho thấy điều gì?**
-Olist hứa trung bình 24,4 ngày nhưng giao thực tế 12,6 ngày: giao sớm hơn lời hứa 11,8 ngày; 91,9% đơn giao sớm hơn dự kiến. Ngày dự kiến quá rộng nên "đúng hạn" dễ đạt; vì vậy dashboard D3 thêm KPI so sánh số ngày hứa với số ngày thực tế.
+Olist hứa trung bình 24,4 ngày nhưng giao thực tế 12,6 ngày: giao sớm hơn lời hứa 11,8 ngày; 91,9% đơn giao sớm hơn dự kiến. Ngày dự kiến quá rộng nên "đúng hạn" dễ đạt; vì vậy dashboard DB2 thêm KPI so sánh số ngày hứa với số ngày thực tế.
 
 **35. Vì sao chọn cửa sổ thời gian 2017-01 → 2018-08?**
-Dữ liệu 2016 chỉ 329 đơn và 09–10/2018 chỉ 20 đơn nên xu hướng và MoM/YoY bị méo; cửa sổ này chứa 99,6% số đơn. Cột `InWindow` trong `dim_date` làm bộ lọc trang cho D1–D6.
+Dữ liệu 2016 chỉ 329 đơn và 09–10/2018 chỉ 20 đơn nên xu hướng và MoM/YoY bị méo; cửa sổ này chứa 99,6% số đơn. Cột `InWindow` trong `dim_date` làm bộ lọc trang cho DB1–DB4.
 
 **36. Role-playing date trong Power BI làm thế nào?**
 Mỗi fact có một quan hệ ngày Active (ví dụ ngày mua) và các quan hệ Inactive; muốn tính theo ngày giao, dùng `CALCULATE([Delivered orders], USERELATIONSHIP(fact_order_fulfillment[delivered_date_key], dim_date[date_key]))`. Tránh ambiguous path và vẫn dùng một bảng ngày.

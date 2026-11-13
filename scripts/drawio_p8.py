@@ -44,12 +44,12 @@ def dataflow_proposed() -> None:
     d = Diagram("Data flow đề xuất", 1500, 600)
     d.label(20, 8, 1450, 34, "Luồng dữ liệu đề xuất: nguồn → staging → ODS → kho dữ liệu → data mart → BI", font=17)
     xs = [20, 270, 520, 770, 1020, 1270]
-    names = [("Nguồn\noltp + crm", GREEN), ("Staging\nstg_*", GREY), ("ODS\nlàm sạch", GREY), ("Kho dữ liệu dw\n10 dim + 6 fact", BLUE), ("Data mart\nmart_* (17 view)", ORANGE), ("BI\nPower BI, 7 dashboard", PURPLE)]
+    names = [("Nguồn\noltp + crm", GREEN), ("Staging\nstg_*", GREY), ("ODS\nlàm sạch", GREY), ("Kho dữ liệu dw\n10 dim + 6 fact", BLUE), ("Data mart\nmart_* (17 view)", ORANGE), ("BI\nPower BI, 4 dashboard", PURPLE)]
     ids = [d.box(x, 120, 200, 120, t, fill=f, bold=True, font=13) for x, (t, f) in zip(xs, names)]
     labs = ["bản sao thô + mã lô nạp", "dữ liệu sạch + cờ chất lượng, dòng lỗi có lý do", "dim (SCD1/SCD2) + fact (khoá thay thế)", "view tổng hợp theo chủ đề", "CSV / mô hình ngữ nghĩa, số đã tính sẵn"]
     for a, b, lb in zip(ids, ids[1:], labs):
         d.arrow(a, b, lb)
-    log = d.box(270, 340, 950, 70, "Giám sát etl_log: job_run, rejected_rows, dq_check, watermark, batch_metrics (thông tin chạy: số dòng, thời gian, lỗi) → dashboard D7", fill=YELLOW)
+    log = d.box(270, 340, 950, 70, "Giám sát etl_log: job_run, rejected_rows, dq_check, watermark, batch_metrics (thông tin chạy: số dòng, thời gian, lỗi) → bảng giám sát (mục 3.3)", fill=YELLOW)
     for t in ids[1:4]:
         d.arrow(t, log, "", dashed=True)
     d.arrow(log, ids[5], "tình trạng ETL", dashed=True)
@@ -207,8 +207,8 @@ def architecture_layers() -> None:
     d.label(20, 8, 1650, 34, "Kiến trúc kho dữ liệu theo lớp: mỗi lớp liệt kê thành phần, công nghệ, số bảng và số dòng (trạng thái cuối)", font=17)
     d.label(20, 46, 1650, 24, "Các khối xếp tầng từ lớp trình bày (trên) xuống lớp nguồn (dưới); dữ liệu đi từ dưới lên nhưng sơ đồ này mô tả cấu trúc, không vẽ luồng.", font=11, bold=False, color="#4B5563")
     layers = [
-        ("TRÌNH BÀY / BI", PURPLE, "Power BI Desktop (Import, mô hình ngữ nghĩa, DAX)", ["D1 Executive", "D2 Sales và Product", "D3 Order Fulfillment", "D4 Geography và Freight", "D5 Customer Experience", "D6 Seller Acquisition", "D7 Data Quality và ETL"],
-         "7 dashboard · 37 file CSV · 32 quan hệ", ["Power BI", "Python"]),
+        ("TRÌNH BÀY / BI", PURPLE, "Power BI Desktop (Import, mô hình ngữ nghĩa, DAX)", ["DB1 Tổng quan và doanh thu", "DB2 Giao hàng và trải nghiệm khách", "DB3 Địa lý và phí vận chuyển", "DB4 Thu hút và hiệu quả seller"],
+         "4 dashboard · 37 file CSV · 32 quan hệ", ["Power BI", "Python"]),
         ("DATA MART", ORANGE, "mart_sales · mart_fulfillment · mart_cx · mart_acquisition", ["mart_sales (6 view)", "mart_fulfillment (4 view)", "mart_cx (4 view)", "mart_acquisition (3 view)"],
          f"{cnt['mart'][0]} view, trong đó {cnt['mart'][1]} materialized view", ["PostgreSQL"]),
         ("KHO DỮ LIỆU (dw)", BLUE, "Lược đồ constellation: 10 dimension + 6 fact", ["dim_date", "dim_geography", "dim_customer (SCD2)", "dim_seller", "dim_product", "dim_order_status", "dim_payment_type", "dim_lead_origin", "dim_lead_profile", "dim_sales_rep",

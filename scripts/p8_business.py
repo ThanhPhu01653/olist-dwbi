@@ -51,7 +51,7 @@ GAP = [
     ("Dữ liệu có nhiều lỗi (45 loại bất thường, 58 phép kiểm tra)", "Tầng ODS gắn cờ lỗi và ghi dòng bị loại kèm lý do, không xoá âm thầm", "3.3"),
     ("Mỗi báo cáo có thể định nghĩa KPI khác nhau (GMV, Orders)", "Định nghĩa mỗi KPI một lần bằng DAX và đối chiếu với SQL", "2.3"),
     ("Ngày dự kiến giao quá rộng (trung bình 24,4 ngày so với thực tế 12,6 ngày) nên chỉ số đúng hạn không phản ánh trải nghiệm", "KPI ngày hứa giao so với ngày giao thực tế, phân tích theo mức trễ", "2.3, 3.1"),
-    ("Không có công cụ giám sát chất lượng nạp dữ liệu", "Nhật ký etl_log và dashboard D7", "3.3, 4"),
+    ("Không có công cụ giám sát chất lượng nạp dữ liệu", "Nhật ký etl_log và bảng giám sát ở mục 3.3", "3.3"),
 ]
 GAP_COLS = ["Hiện trạng", "Yêu cầu cải tiến", "Mục báo cáo"]
 
@@ -82,11 +82,30 @@ LIMITS = [
     ("GMV có hai cách đo", "GMV (chỉ đơn không thuộc nhóm Failed) là 13.494.400,74 BRL; tổng giá hàng của mọi đơn là 13.591.643,70 BRL (chênh 97.242,96 BRL)", "Dashboard dùng GMV loại đơn Failed; ghi rõ định nghĩa cạnh con số"),
     ("Orders khác Orders placed", "Orders (đơn có doanh thu) là 98.199; Orders placed (mọi đơn đã đặt) là 99.441; chênh 1.242 đơn gồm 1.234 đơn hủy hoặc không khả dụng và 8 đơn không có dòng hàng", "AOV = GMV chia Orders; Cancel rate chia Orders placed"),
     ("380 so với 379 seller có đơn", "380 deal đã chốt có đơn ở mọi trạng thái; chỉ 379 seller có đơn không thuộc nhóm Failed (first_sale_date)", "KPI Sellers with first sale dùng 379; con số 380 chỉ xuất hiện ở khám phá dữ liệu"),
-    ("Năm 2016 thưa, tháng 2018-09 bị cắt", "2016 chỉ có 329 đơn; 2018-09 có 16 đơn và 2018-10 có 4 đơn (nguồn dừng giữa tháng)", "Dashboard D1 đến D6 lọc cửa sổ 2017-01 đến 2018-08 (cột InWindow); xu hướng ngoài cửa sổ không diễn giải"),
+    ("Năm 2016 thưa, tháng 2018-09 bị cắt", "2016 chỉ có 329 đơn; 2018-09 có 16 đơn và 2018-10 có 4 đơn (nguồn dừng giữa tháng)", "Dashboard DB1 đến DB4 lọc cửa sổ 2017-01 đến 2018-08 (cột InWindow); xu hướng ngoài cửa sổ không diễn giải"),
     ("Đơn có nhiều review", "547 trong 98.673 đơn có review có từ 2 đến 3 review (tổng 99.224 review); điểm trung bình tính theo review là 4,0864, theo đơn là 4,0868", "Avg review tính theo review; chênh lệch nhỏ nên không đổi kết luận"),
     ("Điểm review nhóm đúng hạn", "Trước 07/11 đơn chưa giao bị tính vào nhóm đúng hạn nên điểm là 4,21; sau khi thêm is_delivered vào fact_review điểm đúng là 4,29", "Sửa ở tầng kho (cột is_delivered), không sửa ở Power BI"),
 ]
 LIMITS_COLS = ["Giới hạn", "Số liệu", "Cách xử lý trong KPI"]
+
+
+
+# P8b: dashboards were merged from seven (D1-D7) to four (DB1-DB4); D7 became a monitoring table in report section 3.3
+_DBM = {"D1": "DB1", "D2": "DB1", "D3": "DB2", "D4": "DB3", "D5": "DB2", "D6": "DB4", "D7": "mục 3.3 (bảng giám sát ETL)"}
+
+
+def _db(cell: str) -> str:
+    out = []
+    for part in [x.strip() for x in cell.split(",")]:
+        m = _DBM.get(part, part)
+        if m not in out:
+            out.append(m)
+    return ", ".join(out)
+
+
+ANALYSIS = [(a, b, _db(c), d, e) for a, b, c, d, e in ANALYSIS]
+BMC = [(a, b, c, _db(d)) for a, b, c, d in BMC]
+AUDIENCE = [(a, b, _db(c), d) for a, b, c, d in AUDIENCE]
 
 
 def esc(s: str) -> str:

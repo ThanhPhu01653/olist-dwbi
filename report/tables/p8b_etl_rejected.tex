@@ -1,0 +1,13 @@
+\begin{table}[htbp]\centering\scriptsize\caption{Dòng bị loại theo lý do (etl\_log.rejected\_rows)}\label{tab:etl-rejected}
+\begin{tabular}{p{3.67cm}p{3.67cm}p{5.04cm}p{1.65cm}}\toprule
+\textbf{Job} & \textbf{Bảng nguồn} & \textbf{Lý do} & \textbf{Số dòng}\\\midrule
+ods.load\_geolocation\_zip & staging.stg\_geolocation & coordinates outside Brazil bounding box & 42\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[htbp]\centering\scriptsize\caption{Vấn đề ghi nhận khi nạp fact (etl\_log.fact\_load\_issue; dòng không bị xoá)}\label{tab:etl-issues}
+\begin{tabular}{p{3.53cm}p{8.89cm}p{2.02cm}}\toprule
+\textbf{Fact} & \textbf{Vấn đề ghi nhận} & \textbf{Số dòng}\\\midrule
+fact\_order\_fulfillment & handling\_days & 1.359\\
+fact\_order\_fulfillment & transit\_days & 23\\
+fact\_lead\_funnel & days\_to\_close (won before first contact) & 1\\
+\bottomrule\end{tabular}\end{table}

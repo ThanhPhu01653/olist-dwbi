@@ -49,8 +49,8 @@ def layers() -> None:
     ods = d.box(520, 120, 170, 250, "ODS\n18 bảng, 678.183 dòng\nlàm sạch, chuẩn hoá, dq_flags\ndòng lỗi → rejected_rows", fill=GREY)
     dw = d.box(740, 120, 190, 250, "KHO dw\n10 dimension + 6 fact\n614.223 dòng\nhình sao, SCD2, khoá thay thế, dòng Unknown −1", fill=BLUE, bold=True)
     mart = d.box(980, 120, 170, 250, "DATA MART\nmart_sales, mart_fulfillment, mart_cx, mart_acquisition\n17 view (4 materialized)", fill=ORANGE)
-    bi = d.box(1200, 120, 170, 250, "POWER BI\n37 file CSV (Import)\nmô hình quan hệ + DAX\n7 dashboard\nPublish to web", fill=PURPLE, bold=True)
-    log = d.box(300, 440, 850, 70, "etl_log: job_run, rejected_rows, watermark, dq_check (136 test), fact_load_issue, batch_metrics, v_run_summary… → dashboard D7", fill=YELLOW)
+    bi = d.box(1200, 120, 170, 250, "POWER BI\n37 file CSV (Import)\nmô hình quan hệ + DAX\n4 dashboard\nPublish to web", fill=PURPLE, bold=True)
+    log = d.box(300, 440, 850, 70, "etl_log: job_run, rejected_rows, watermark, dq_check (136 test), fact_load_issue, batch_metrics, v_run_summary… → bảng giám sát (mục 3.3)", fill=YELLOW)
     for s, t, lab in [(a, stg, "extract"), (b, stg, ""), (stg, ods, "SQL procedure"), (ods, dw, "dim + fact"), (dw, mart, "view"), (mart, bi, "export CSV")]:
         d.arrow(s, t, lab)
     d.arrow(dw, bi, "export CSV (dim, fact)", dashed=True)
@@ -101,7 +101,7 @@ def pipeline() -> None:
     tst = d.box(1060, 240, 120, 70, "6. tests\n136 phép + đối chiếu EDA", fill=YELLOW)
     snap = d.box(880, 240, 140, 70, "7. snapshot\nbatch_metrics", fill=YELLOW)
     exp = d.box(720, 240, 120, 70, "8. export_powerbi\nCSV", fill=PURPLE)
-    pbi = d.box(540, 240, 140, 70, "Power BI\nImport + DAX\n7 dashboard", fill=PURPLE)
+    pbi = d.box(540, 240, 140, 70, "Power BI\nImport + DAX\n4 dashboard", fill=PURPLE)
     log = d.box(540, 380, 820, 60, "etl_log.job_run · rejected_rows · dq_check · fact_load_issue · watermark · batch_metrics (ghi ở mọi bước; lỗi → dừng, status failed)", fill=YELLOW)
     for s, t in [(csv, ld), (ld, src), (src, ext), (ext, stg), (stg, ods), (ods, dim), (dim, fact), (fact, mart), (mart, tst), (tst, snap), (snap, exp), (exp, pbi)]:
         d.arrow(s, t)

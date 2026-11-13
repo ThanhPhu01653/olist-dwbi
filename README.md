@@ -75,7 +75,7 @@ Dòng bị loại luôn được ghi vào `etl_log.rejected_rows` kèm lý do; k
 
 ### 4.3 Cấu trúc thư mục
 ```
-huong-dan/      hướng dẫn cho cả nhóm: lộ trình đọc, pipeline bằng lời, thuật ngữ, từ điển dữ liệu, 47 câu hỏi đáp, nghiệp vụ (nháp), D1-D7
+huong-dan/      hướng dẫn cho cả nhóm: lộ trình đọc, pipeline bằng lời, thuật ngữ, từ điển dữ liệu, 47 câu hỏi đáp, nghiệp vụ (nháp), DB1-DB4
 handoff/        nhật ký kỹ thuật theo phase (xem handoff/README.md): 00-TONG-QUAN.md (số liệu và phát hiện), một file cho mỗi phase P0-P7, các bảng số liệu sinh tự động
 docs/           DW_DESIGN.md (đặc tả + nhật ký quyết định), sơ đồ Mermaid (*.mmd), diagrams/*.drawio (mở bằng draw.io), mapping nguồn -> đích (xem docs/README.md)
 figures/        hình cho báo cáo (png)

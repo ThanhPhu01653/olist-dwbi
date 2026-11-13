@@ -37,9 +37,9 @@ Mở `main.tex`, sửa khối **THÔNG TIN CẦN SỬA** ở đầu file:
 Các giá trị này xuất hiện ở bìa, chân trang và slide cảm ơn. Cần thêm thành viên thứ năm: thêm `\newcommand{\ThanhVienE}{...}` và thêm `\ThanhVienE` vào dòng `\author{...}` bên dưới. Tên môn và đề tài nằm ở `\title{...}`.
 
 ## 4. Thay ảnh chụp dashboard
-Các slide cần ảnh dashboard hiện là **khung đỏ trống ghi "CHÈN ẢNH CHỤP D1 … D7"** (slide S93–S105 và vài slide khác). Cách thay:
+Các slide cần ảnh dashboard hiện là **khung đỏ trống ghi "CHÈN ẢNH CHỤP DB1 … DB4"** (slide S93–S104, S145–S147 và vài slide khác). Cách thay:
 1. Xuất ảnh từ Power BI (File → Export → hoặc chụp màn hình trang dashboard, nên PNG 16:9) và đặt vào `slides/figures/`, ví dụ `dashboard_D1.png`.
-2. Mở file phần tương ứng trong `sections/` (ví dụ `03-dashboard.tex`), tìm đoạn `\khungchen{CHÈN ẢNH CHỤP D1}` và thay bằng:
+2. Mở file phần tương ứng trong `sections/` (ví dụ `03-dashboard.tex`), tìm đoạn `\khungchen{CHÈN ẢNH CHỤP DB1 trang 1}` và thay bằng:
    ```latex
    \begin{center}\anh[0.74\textheight]{dashboard_D1.png}\end{center}
    ```

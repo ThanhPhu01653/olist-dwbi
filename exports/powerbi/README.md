@@ -26,12 +26,12 @@
 | fact_review.csv | Fact giao dịch: 1 review | 99,224 | 10.69 MB | 14 |
 | fact_lead_funnel.csv | Fact accumulating snapshot: 1 MQL | 8,000 | 0.83 MB | 18 |
 | fact_seller_monthly.csv | Fact periodic snapshot: 1 seller × 1 tháng | 36,583 | 1.70 MB | 14 |
-| job_run.csv | Nhật ký chạy ETL từng job (cho dashboard D7) | 712 | 0.09 MB | 13 |
-| v_run_summary.csv | Tóm tắt mỗi lô ETL: chế độ, thời gian, số dòng từng tầng (D7) | 25 | 0.00 MB | 17 |
-| v_dq_summary.csv | Kết quả kiểm thử chất lượng theo lô (D7) | 13 | 0.00 MB | 8 |
-| v_rejected_summary.csv | Số dòng bị loại theo lô, job, lý do (D7) | 1 | 0.00 MB | 6 |
-| batch_metrics.csv | Chỉ số chính của kho sau mỗi lô: đơn, GMV, MQL, deal… (D7, minh hoạ funnel lấp đầy dần) | 13 | 0.00 MB | 12 |
-| fact_load_issue.csv | Khoá rơi về Unknown và khoảng thời gian âm khi nạp fact (D7) | 20 | 0.00 MB | 6 |
+| job_run.csv | Nhật ký chạy ETL từng job (số liệu cho mục 3.3 ETL) | 712 | 0.09 MB | 13 |
+| v_run_summary.csv | Tóm tắt mỗi lô ETL: chế độ, thời gian, số dòng từng tầng (mục 3.3 ETL) | 25 | 0.00 MB | 17 |
+| v_dq_summary.csv | Kết quả kiểm thử chất lượng theo lô (mục 3.3 ETL) | 13 | 0.00 MB | 8 |
+| v_rejected_summary.csv | Số dòng bị loại theo lô, job, lý do (mục 3.3 ETL) | 1 | 0.00 MB | 6 |
+| batch_metrics.csv | Chỉ số chính của kho sau mỗi lô: đơn, GMV, MQL, deal… (mục 3.3 ETL, minh hoạ funnel lấp đầy dần) | 13 | 0.00 MB | 12 |
+| fact_load_issue.csv | Khoá rơi về Unknown và khoảng thời gian âm khi nạp fact (mục 3.3 ETL) | 20 | 0.00 MB | 6 |
 | v_sales_daily.csv | Mart: GMV, đơn, AOV theo ngày (chỉ đơn không Failed) | 614 | 0.05 MB | 14 |
 | v_sales_category_month.csv | Mart: GMV theo tháng x nhóm ngành x danh mục | 1,282 | 0.10 MB | 11 |
 | v_sales_state_month.csv | Mart: GMV, freight ratio theo tháng x bang của khách | 558 | 0.04 MB | 12 |

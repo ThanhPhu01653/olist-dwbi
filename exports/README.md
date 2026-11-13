@@ -34,7 +34,7 @@ Bản xuất P6 gồm **35 file CSV**. 22 file cũ (10 `dim_*`, 6 `fact_*`, `job
 Chỉ cần tải 13 file này lên cùng thư mục `powerbi` trên Drive (hoặc tải lại cả thư mục). Cách nạp chúng vào Power BI: `powerbi/model.md`, mục 3 và Phụ lục.
 
 ## File mới ở P7 (cần tải bổ sung lên Drive)
-Bản xuất hiện có **37 file CSV**. Ngoài 35 file ở P6 (tên và cột không đổi), có **2 file mới** cho bản đồ của dashboard D4:
+Bản xuất hiện có **37 file CSV**. Ngoài 35 file ở P6 (tên và cột không đổi), có **2 file mới** cho bản đồ của dashboard DB3:
 
 | File mới | Số dòng | Dung lượng |
 | --- | ---: | ---: |
