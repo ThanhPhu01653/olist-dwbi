@@ -1,6 +1,6 @@
 # Tổng quan dự án Olist – Kho dữ liệu & BI (cập nhật 05/11/2026, sau P7)
 
-> 📘 **Bộ hướng dẫn cho cả nhóm: [`huong-dan/00-BAT-DAU-TU-DAY.md`](../huong-dan/00-BAT-DAU-TU-DAY.md)** – lộ trình đọc theo việc (dựng dashboard / viết báo cáo / làm slide), pipeline bằng lời, thuật ngữ, từ điển dữ liệu, 40 câu hỏi đáp, nghiệp vụ (nháp) và hướng dẫn từng dashboard D1–D7.
+> 📘 **Bộ hướng dẫn cho cả nhóm: [`huong-dan/00-BAT-DAU-TU-DAY.md`](../huong-dan/00-BAT-DAU-TU-DAY.md)** – lộ trình đọc theo việc (dựng dashboard / viết báo cáo / làm slide), pipeline bằng lời, thuật ngữ, từ điển dữ liệu, 47 câu hỏi đáp, nghiệp vụ (nháp) và hướng dẫn từng dashboard D1–D7.
 > 📝 **Báo cáo LaTeX (khung 88 trang PDF, đã biên dịch được): [`report/README.md`](../report/README.md)** · **Slide Beamer (theme HUST, 114 slide nội dung + 10 slide dự phòng, 133 trang PDF): [`slides/README.md`](../slides/README.md)** · dàn bài: [`slides/slide-script.md`](../slides/slide-script.md).
 
 *Đây là trang tổng quan số liệu và phát hiện. Điểm vào của tài liệu là [`huong-dan/00-BAT-DAU-TU-DAY.md`](../huong-dan/00-BAT-DAU-TU-DAY.md) (bản đồ tài liệu và lộ trình đọc theo công việc). Mọi số liệu lấy từ truy vấn thật trên trạng thái cuối của kho; chi tiết và cách truy ngược nằm ở các file `handoff/2026-11-05-P0.md` … `P7-*.md`. Hình hiển thị ngay trong trang này khi mở trên GitHub.*

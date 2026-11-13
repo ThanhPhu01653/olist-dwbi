@@ -14,7 +14,7 @@ Mọi thư mục và nhóm file của repo, theo thứ tự nên mở. Cột cu�
 
 | Ở đâu | Là gì | Dùng khi nào | Cách đọc |
 | --- | --- | --- | --- |
-| [`huong-dan/`](.) | Bộ hướng dẫn chung: lộ trình (file này), pipeline bằng ví dụ thật, thuật ngữ, từ điển dữ liệu, 40 câu hỏi đáp, nghiệp vụ (nháp), hướng dẫn D1–D7 | Bắt đầu mọi việc; dựng dashboard, viết báo cáo, làm slide | Đọc kỹ `01`, `02`; tra cứu `03`, `04`, `dashboards/` |
+| [`huong-dan/`](.) | Bộ hướng dẫn chung: lộ trình (file này), pipeline bằng ví dụ thật, thuật ngữ, từ điển dữ liệu, 47 câu hỏi đáp, nghiệp vụ (nháp), hướng dẫn D1–D7 | Bắt đầu mọi việc; dựng dashboard, viết báo cáo, làm slide | Đọc kỹ `01`, `02`; tra cứu `03`, `04`, `dashboards/` |
 | [`handoff/00-TONG-QUAN.md`](../handoff/00-TONG-QUAN.md) | Trang tổng quan số liệu và phát hiện: các bảng, KPI, 7 phát hiện, bảng "mục báo cáo → file nguồn → hình" | Cần toàn cảnh hoặc tìm file nguồn cho một mục báo cáo | Đọc kỹ |
 | [`handoff/2026-11-05-P*.md`](../handoff/README.md) | Nhật ký kỹ thuật từng phase P0–P7: đã làm gì, số liệu, đoạn nháp báo cáo, gợi ý slide, SQL tiêu biểu | Viết một mục báo cáo hoặc làm slide của phase tương ứng | Tra cứu (đọc kỹ file của phase mình viết) |
 | Bảng số liệu sinh tự động trong `handoff/`: [`profiling`](../handoff/profiling.md), [`data-quality`](../handoff/data-quality.md), [`distributions`](../handoff/distributions.md), [`correlations`](../handoff/correlations.md), [`funnel`](../handoff/funnel.md), [`design-questions`](../handoff/design-questions.md), [`stats`](../handoff/stats.md), [`benchmark`](../handoff/benchmark.md), [`olap-examples`](../handoff/olap-examples.md), [`geo-distance`](../handoff/geo-distance.md), [`before-after-samples`](../handoff/before-after-samples.md), [`rebuild-report`](../handoff/rebuild-report.md), [`excel-toolpak-guide`](../handoff/excel-toolpak-guide.md) | Bảng và số liệu thô do script sinh từ database | Lấy con số, bảng cho báo cáo hoặc slide; đối chiếu số | Tra cứu |
@@ -55,7 +55,7 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | 4 | [`05-nghiep-vu-nhap.md`](05-nghiep-vu-nhap.md) | viết mục 2.1–2.3 (nghiệp vụ, BPMN, canvas, yêu cầu, KPI) – **bản nháp cần sửa** | 20 phút |
 | 5 | Các file `handoff/2026-11-05-P*.md` theo bảng mục báo cáo: mỗi file có **đoạn nháp tiếng Việt** sẵn | viết từng mục | 10–15 phút mỗi file |
 | 6 | [`dashboards/D1.md` … `D7.md`](dashboards/) mục "Insight gợi ý" | viết mục phân tích dashboard | 5 phút mỗi file |
-| 7 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | kiểm tra bài viết đã trả lời được 40 câu | 30 phút |
+| 7 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | kiểm tra bài viết đã trả lời được 47 câu | 30 phút |
 | 8 | [`03-tu-dien-du-lieu.md`](03-tu-dien-du-lieu.md) | bảng mô tả cột cho phụ lục | tra cứu |
 
 ### C. Làm slide
@@ -74,7 +74,7 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | 2 | [`02-thuat-ngu.md`](02-thuat-ngu.md) | thuật ngữ (grain, SCD, role-playing, materialized view…) kèm ví dụ trong dự án | 20 phút |
 | 3 | [`handoff/2026-11-05-P2.md`](../handoff/2026-11-05-P2.md) đến [`P5.md`](../handoff/2026-11-05-P5.md) | làm sạch ODS, dimension, fact, nạp tăng dần | 10–15 phút mỗi file |
 | 4 | [`03-tu-dien-du-lieu.md`](03-tu-dien-du-lieu.md) | tra từng bảng và cột của kho | tra cứu |
-| 5 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | kiểm tra mức hiểu bằng 40 câu hỏi đáp | 30 phút |
+| 5 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | kiểm tra mức hiểu bằng 47 câu hỏi đáp | 30 phút |
 
 ## 3. Các file trong `huong-dan/`
 | File | Nội dung |
@@ -83,8 +83,11 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | [`01-pipeline-bang-loi.md`](01-pipeline-bang-loi.md) | giải thích các lớp; đi theo **một đơn hàng thật** và **một MQL thật** qua từng bảng |
 | [`02-thuat-ngu.md`](02-thuat-ngu.md) | thuật ngữ DW/BI, mỗi thuật ngữ có ví dụ ngay trong dự án |
 | [`03-tu-dien-du-lieu.md`](03-tu-dien-du-lieu.md) | từ điển mọi bảng `dw` và `mart_*` (sinh tự động): grain, số dòng, từng cột |
-| [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | 40 câu giảng viên có thể hỏi + trả lời có số liệu |
+| [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | 47 câu giảng viên có thể hỏi + trả lời có số liệu |
 | [`05-nghiep-vu-nhap.md`](05-nghiep-vu-nhap.md) | **bản nháp** BPMN, Business Model Canvas, cây nghiệp vụ / yêu cầu / phân tích |
+| [`06-tu-dien-du-lieu-nguon.md`](06-tu-dien-du-lieu-nguon.md) | từ điển 11 bảng nguồn (oltp, crm): kiểu, miền giá trị, % rỗng, vai trò trong kho (P8, sinh tự động) |
+| [`dashboards/README.md`](dashboards/README.md) | checklist chung của dashboard (định dạng số, tiêu đề câu hỏi, drill-through, tooltip, dự báo, QR) và ma trận đáp ứng D1–D7 (P8) |
+| [`../powerbi/power-query-vi-du.md`](../powerbi/power-query-vi-du.md) | ví dụ Power Query (M): cùng một quy tắc làm sạch với SQL và Python, hướng dẫn chụp before/after (P8) |
 | [`dashboards/D1.md` … `D7.md`](dashboards/) | hướng dẫn dựng từng dashboard: mục tiêu, bố cục lưới, slicer, DAX, số kỳ vọng, insight, checklist giảng viên |
 
 ## 3b. Báo cáo LaTeX và kịch bản slide

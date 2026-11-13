@@ -195,3 +195,26 @@ Giám sát pipeline: mỗi lô chạy bao lâu, nạp bao nhiêu dòng, bao nhi�
   \item 136 phép kiểm thử đạt 100\% và 6/6 đối chiếu EDA khớp ở lô cuối.
 \end{itemize}
 \todo{Nhóm kiểm tra các nhận xét của D7 trên dashboard thực tế rồi viết lại bằng lời của nhóm.}
+
+\subsection{Yêu cầu chung của dashboard}\label{sec:dash-checklist}
+Ngoài nội dung riêng của từng dashboard, mọi trang tuân theo một checklist chung (\code{huong-dan/dashboards/README.md}): định dạng số rút gọn (nghìn K, triệu M, phần trăm một chữ số thập phân, có dấu phân cách); tiêu đề mỗi visual là một câu hỏi; màu đỏ chỉ dùng để cảnh báo (bảng màu dữ liệu của chủ đề không có đỏ); định dạng có điều kiện bằng DAX; slicer và biểu đồ theo phân cấp để roll-up, drill-down như thao tác OLAP; drill-through và tooltip để xem chi tiết; chuỗi thời gian có đường dự báo; và publish công khai kèm mã QR. Mục 12 của mỗi hướng dẫn \code{D1.md}--\code{D7.md} ghi dashboard đó đáp ứng từng mục thế nào: định dạng số, tiêu đề câu hỏi, định dạng có điều kiện và publish đều áp dụng cho cả bảy dashboard; slicer phân cấp áp dụng cho cả bảy; drill-through và tooltip có ở cả bảy; chuỗi thời gian có dự báo chỉ có ở D1, D3 và D5 vì bốn dashboard còn lại không phải chuỗi thời gian kinh doanh.
+\todo{Nhóm đánh dấu từng mục checklist (mục 11 của D*.md) sau khi dựng dashboard trên Power BI, chụp ảnh drill-through, tooltip và đường dự báo; chèn mã QR của link publish (figures/4\_qr\_dashboard.png).}
+
+\subsection{Bài học}\label{sec:bai-hoc}
+Quá trình dựng và đối chiếu số liệu cho dashboard để lại hai nhóm bài học: về chỉ số và về quy trình.
+
+\paragraph{Về chỉ số: cùng một khái niệm có thể cho hai con số.}
+\begin{itemize}
+  \item \textbf{GMV}: tính chỉ đơn không thuộc nhóm Failed là 13.494.400,74 BRL (13,49 triệu), còn tổng giá hàng của mọi đơn là 13.591.643,70 BRL (13,59 triệu); chênh 97.242,96 BRL là giá hàng của các đơn bị hủy hoặc không khả dụng. Dashboard dùng định nghĩa thứ nhất và ghi rõ cạnh con số.
+  \item \textbf{Orders và Orders placed}: Orders (đơn có doanh thu) là 98.199, Orders placed (mọi đơn đã đặt) là 99.441; AOV chia theo Orders, tỷ lệ hủy chia theo Orders placed. Dùng nhầm mẫu số làm AOV hoặc tỷ lệ hủy lệch.
+  \item \textbf{Điểm review nhóm đúng hạn}: ban đầu 4,21 vì 2.871 review của đơn chưa giao bị tính vào nhóm đúng hạn; sau khi thêm cột \code{is\_delivered} vào \code{fact\_review} điểm đúng là 4,29.
+  \item \textbf{380 so với 379 seller có đơn}: 380 deal đã chốt có đơn ở mọi trạng thái, nhưng chỉ 379 seller có đơn không thuộc nhóm Failed; KPI dùng 379, con số 380 chỉ thuộc khám phá dữ liệu.
+\end{itemize}
+
+\paragraph{Về quy trình.}
+\begin{itemize}
+  \item \textbf{Khoá thay thế từng không cố định giữa các lần dựng}: khi chèn dimension không có \code{ORDER BY}, giá trị khoá phụ thuộc kế hoạch truy vấn nên \code{dim\_sales\_rep} đổi khoá giữa hai lần dựng; nhóm sửa bằng cách mọi procedure nạp dimension chèn theo thứ tự khoá tự nhiên và so sánh hai lần dựng bằng \code{compare\_databases.py --keys}.
+  \item \textbf{Sửa ở ETL, không sửa ở BI}: lỗi điểm review đúng hạn được sửa ở bảng fact chứ không bù bằng DAX trong Power BI, để mọi dashboard và mọi công cụ dùng chung một con số.
+  \item \textbf{Số liệu trong tài liệu sinh từ cơ sở dữ liệu}: bảng và hình trong báo cáo, bảng giá trị kỳ vọng của dashboard đều sinh bằng script từ kho, nên khi dữ liệu đổi chỉ cần chạy lại script thay vì sửa tay từng con số.
+\end{itemize}
+\todo{Nhóm bổ sung bài học về làm việc nhóm, công cụ (Git, Power BI) và khó khăn thực tế khi dựng dashboard; viết lại các ý trên bằng lời của nhóm.}
