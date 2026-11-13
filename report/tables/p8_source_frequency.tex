@@ -1,0 +1,15 @@
+\begin{table}[htbp]\centering\scriptsize\caption{Tần suất cập nhật và công nghệ xử lý đề xuất cho từng bảng nguồn (cửa sổ 01/2017--08/2018)}\label{tab:tan-suat}
+\begin{tabular}{p{2.9cm}p{1.5cm}p{2.2cm}p{3.6cm}p{4.6cm}}\toprule
+\textbf{Bảng nguồn} & \textbf{Trung bình / ngày} & \textbf{Đỉnh một ngày} & \textbf{Tần suất cập nhật} & \textbf{Công nghệ xử lý đề xuất}\\\midrule
+\code{oltp.orders} & 163,0 & 1.176 (24/11/2017) & liên tục: mỗi đơn đổi trạng thái 4–5 lần (mua, duyệt, bàn giao, giao) & lô hằng ngày bằng procedure PostgreSQL; nếu cần gần thời gian thực: CDC + Kafka (chương 5)\\
+\code{oltp.order\_items} & 184,7 & 1.366 (24/11/2017) & cùng lúc với đơn (ghi một lần khi đặt) & lô hằng ngày, nạp theo khoá (order\_id, order\_item\_id)\\
+\code{oltp.order\_payments} & 170,3 & 1.214 (24/11/2017) & cùng lúc với đơn & lô hằng ngày; có thể gộp chung job với đơn\\
+\code{oltp.order\_reviews} & 162,7 & 463 (19/12/2017) & sau khi giao hàng (trễ vài ngày đến hai tuần) & lô hằng ngày; thử lại dòng mồ côi khi đơn chưa về\\
+\code{oltp.customers} & 157,5 & 1.143 (24/11/2017) & khi khách mới đặt đơn đầu tiên & lô hằng ngày; SCD2 khi đổi mã bưu chính\\
+\code{oltp.sellers} & 4,9 & 24 (26/01/2017) & khi seller bán đơn đầu tiên & lô hằng ngày\\
+\code{oltp.products} & 53,7 & 374 (24/11/2017) & khi sản phẩm bán lần đầu & lô hằng ngày\\
+\code{crm.mql} & 13,2 & 93 (02/05/2018) & hằng ngày (khách tiềm năng để lại thông tin) & lô hằng ngày; luồng sự kiện nếu cần phản hồi nhanh cho đội sales\\
+\code{crm.closed\_deals} & 1,3 & 22 (30/04/2018) & vài ngày một lần (khi chốt hợp đồng) & lô hằng ngày\\
+\code{oltp.geolocation} & 0 & 0 & tĩnh (bảng tham chiếu, đổi khi có bản đồ mới) & nạp lại toàn phần theo quý; gom về một điểm cho mỗi mã bưu chính\\
+\code{oltp.product\_category\_name\_translation} & 0 & 0 & tĩnh (71 dòng) & bảng seed, nạp lại khi có danh mục mới\\
+\bottomrule\end{tabular}\end{table}

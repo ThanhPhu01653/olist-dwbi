@@ -1,0 +1,15 @@
+\begin{table}[htbp]\centering\scriptsize\caption{Phân loại 11 bảng nguồn theo kiểu dữ liệu, độ nhạy cảm và tính biến động}\label{tab:taxonomy}
+\begin{tabular}{p{2.8cm}p{2.3cm}p{3.3cm}p{3.9cm}p{2.5cm}}\toprule
+\textbf{Bảng} & \textbf{Nhóm} & \textbf{Kiểu dữ liệu} & \textbf{Độ nhạy cảm} & \textbf{Tính biến động}\\\midrule
+\code{customers} & Dữ liệu chủ (master) & định danh (khách, vị trí thành phố/bang) & nhạy cảm vừa: mã khách đã ẩn danh, có vị trí & thấp (đổi khi khách đổi địa chỉ)\\
+\code{sellers} & Dữ liệu chủ (master) & định danh (seller, vị trí) & nhạy cảm vừa: mã seller ẩn danh, có vị trí & thấp\\
+\code{products} & Dữ liệu chủ (master) & thuộc tính (danh mục, kích thước) & không nhạy cảm & thấp\\
+\code{orders} & Dữ liệu giao dịch & thời gian và trạng thái & nhạy cảm thấp: gắn với khách qua customer\_id & cao (trạng thái đổi theo từng mốc)\\
+\code{order\_items} & Dữ liệu giao dịch & số tiền và khoá & thông tin thương mại (giá, phí) & thấp (ghi một lần)\\
+\code{order\_payments} & Dữ liệu giao dịch & số tiền, hình thức & thông tin thanh toán (đã tổng hợp, không có số thẻ) & thấp\\
+\code{order\_reviews} & Dữ liệu tương tác & điểm số và văn bản tự do & nhạy cảm vừa: văn bản có thể nêu thông tin cá nhân & thấp (hiếm khi sửa)\\
+\code{mql} & Dữ liệu tương tác & ngày, kênh (phân loại) & thông tin kinh doanh nội bộ & thấp\\
+\code{closed\_deals} & Dữ liệu tương tác & phân loại và số liệu doanh nghiệp seller & thông tin kinh doanh nội bộ & thấp\\
+\code{geolocation} & Dữ liệu tham chiếu & vị trí (vĩ độ, kinh độ) & vị trí: chỉ ở mức mã bưu chính & rất thấp (tĩnh)\\
+\code{category\_translation} & Dữ liệu tham chiếu & văn bản tra cứu & không nhạy cảm & rất thấp (tĩnh)\\
+\bottomrule\end{tabular}\end{table}

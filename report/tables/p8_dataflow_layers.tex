@@ -1,0 +1,11 @@
+\begin{table}[htbp]\centering\scriptsize\caption{Luồng dữ liệu đề xuất: lớp, thành phần, công nghệ, tần suất và ghi chú}\label{tab:p8-dataflow}
+\begin{tabular}{p{1.6cm}p{3.6cm}p{3.6cm}p{3.2cm}p{3.2cm}}\toprule
+\textbf{Lớp} & \textbf{Thành phần} & \textbf{Công nghệ} & \textbf{Tần suất} & \textbf{Ghi chú}\\\midrule
+Nguồn & oltp (9 bảng), crm (2 bảng) & PostgreSQL 18; nạp từ 11 file CSV bằng Python (COPY) & mô phỏng cập nhật theo tháng (ban đầu đến 31/12/2017, rồi 11 đợt) & hai hệ thống độc lập, chỉ gặp nhau qua seller\_id\\
+Staging & stg\_* (bản sao thô) & PostgreSQL; extract bằng Python + SQL & mỗi lần chạy pipeline (full hoặc incremental) & thêm mã lô nạp và thời điểm nạp để truy vết\\
+ODS & ods.* (dữ liệu sạch, cờ chất lượng) & PostgreSQL procedure (PL/pgSQL) & mỗi lần chạy pipeline & dòng lỗi ghi \code{rejected\_rows}, không xoá âm thầm\\
+Kho dữ liệu & dw: 10 dimension + 6 fact & PostgreSQL procedure; khoá thay thế, SCD1/SCD2 & mỗi lần chạy pipeline; nạp tăng dần theo watermark & 11 view đóng vai cho \code{dim\_date}\\
+Data mart & mart\_sales, mart\_fulfillment, mart\_cx, mart\_acquisition & PostgreSQL view và materialized view & làm mới materialized view mỗi lần chạy & tổng hợp sẵn cho dashboard D1--D6\\
+Giám sát & etl\_log: job\_run, rejected\_rows, dq\_check... & PostgreSQL; Python ghi log & ghi ở mọi bước & nguồn cho dashboard D7\\
+BI & 37 file CSV, mô hình ngữ nghĩa, 7 dashboard & Python xuất CSV; Power BI Desktop (Import, DAX) & làm mới sau mỗi lần xuất CSV & Publish to web\\
+\bottomrule\end{tabular}\end{table}
