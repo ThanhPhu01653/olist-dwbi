@@ -589,6 +589,35 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 - Nói: Nhóm sẵn sàng trả lời; các slide dự phòng B01–B10 dùng khi cần.
 
 ---
+## BỔ SUNG P8 – slide cho nội dung mới (S122–S144)
+*Các slide này đã có trong các file `sections/` (xem cột file); tiêu đề là câu kết luận có số, hình lấy từ `figures/` (bản nháp, nhóm vẽ lại cùng tên). Khung chương 5 là S115–S121.*
+
+| Slide | Mục barem | Tiêu đề | File |
+| --- | --- | --- | --- |
+| S122 | 2.1 · Nghiệp vụ | Mười một điểm phân tích A1--A11 gắn mỗi bước của quy trình với dashboard và KPI | `01-khao-sat.tex` |
+| S123 | 2.1 · Nghiệp vụ | Mỗi khối Business Model Canvas dẫn tới một câu hỏi quản trị, một chỉ số và một dashboard | `01-khao-sat.tex` |
+| S124 | 2.2 · Yêu cầu phân tích | Tám điểm hiện trạng của hệ thống nguồn dẫn tới tám yêu cầu cải tiến cho kho dữ liệu | `01-khao-sat.tex` |
+| S125 | 2.2 · Yêu cầu phân tích | Sáu nhóm người dùng, mỗi nhóm có câu hỏi, dashboard và tần suất xem riêng | `01-khao-sat.tex` |
+| S126 | 2.3 · KPI | Năm giới hạn của dữ liệu làm một KPI có hai con số: GMV 13,49 so với 13,59 triệu BRL | `01-khao-sat.tex` |
+| S127 | 2.4 · Dữ liệu nguồn | Trung bình 163 đơn mỗi ngày, đỉnh 1.176 đơn ngày Black Friday: lô hằng ngày là đủ | `01-khao-sat.tex` |
+| S128 | 2.4 · Dữ liệu nguồn | Cây phân loại dữ liệu chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu | `01-khao-sat.tex` |
+| S129 | 2.4 · Dữ liệu nguồn | Data flow hiện trạng: mũi tên ghi thông tin được truyền, hai hệ thống nguồn tách rời | `01-khao-sat.tex` |
+| S130 | 2.4 · Dữ liệu nguồn | Data flow đề xuất: nguồn, staging, ODS, kho, mart và BI, có nhật ký ETL giám sát | `01-khao-sat.tex` |
+| S131 | 2.5 · ERD OLTP | ERD tô màu theo nhóm dữ liệu: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP | `01-khao-sat.tex` |
+| S132 | 2.5 · ERD OLTP | Luồng OLTP sang OLAP cho thấy bảng nguồn nào nuôi dimension nào và fact nào | `01-khao-sat.tex` |
+| S133 | 3.1 · Khám phá dữ liệu | Hai phương pháp cùng đánh dấu 24.213 ngoại lai; nhóm giữ vì đó là ngoại lai hợp lệ | `02-phan-tich-thiet-ke.tex` |
+| S134 | 3.1 · Khám phá dữ liệu | Cramér's V lớn nhất 0,403 (giao trễ và nhóm review); tỉ số tương quan review theo cờ trễ 0,392 | `02-phan-tich-thiet-ke.tex` |
+| S135 | 3.1 · Khám phá dữ liệu | STL: xu hướng mạnh 0,73, mùa vụ tuần 0,22; dưới 2 năm nên không kết luận mùa vụ theo năm | `02-phan-tich-thiet-ke.tex` |
+| S136 | 3.2 · Kiến trúc | Kiến trúc theo lớp: sáu tầng từ nguồn đến BI, mỗi tầng có thành phần, công nghệ, số dòng | `02-phan-tich-thiet-ke.tex` |
+| S137 | 3.3 · ETL | Sáu giai đoạn ETL: lô đầu nạp 1.273.620 dòng vào staging, 42 dòng loại, 142 test đạt | `02-phan-tich-thiet-ke.tex` |
+| S138 | 3.3 · ETL | SQL, Python và Power Query cho cùng kết quả làm sạch: 8.011 thành 5.968 thành phố | `02-phan-tich-thiet-ke.tex` |
+| S139 | 3.4 · Chiều khái niệm | Phân cấp đúng khi tháng kèm năm, thành phố kèm bang: 303 tên thành phố trùng giữa các bang | `02-phan-tich-thiet-ke.tex` |
+| S140 | 3.5 · Data model OLAP | Data model logic: sáu quy trình nối với mười dimension và các cấp phân cấp | `02-phan-tich-thiet-ke.tex` |
+| S141 | 3.5 · Data model OLAP | Data model vật lý sinh từ cơ sở dữ liệu: mọi bảng dw với cột, kiểu, PK và FK | `02-phan-tich-thiet-ke.tex` |
+| S142 | 3.5 · Data model OLAP | Bốn data mart, mỗi mart gồm fact, dimension và 3--4 câu hỏi phân tích | `02-phan-tich-thiet-ke.tex` |
+| S143 | 4 · Dashboard và BI | Bảy dashboard theo cùng checklist: số rút gọn, tiêu đề câu hỏi, drill-through, dự báo | `03-dashboard.tex` |
+| S144 | 4 · Dashboard và BI | Bài học chỉ số: GMV 13,49 so với 13,59 triệu, review đúng hạn 4,21 sửa thành 4,29 | `03-dashboard.tex` |
+---
 ## PHỤ LỤC – slide lý thuyết rút khỏi bài trình bày chính
 - S06–S12 (Kimball và Inmon, mô hình chiều, ba loại fact và SCD, ETL, năm thao tác OLAP, MOLAP/ROLAP/HOLAP, BI): giữ làm slide dự phòng khi được hỏi lý thuyết.
 

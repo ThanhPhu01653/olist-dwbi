@@ -159,6 +159,28 @@ Ngày hứa giao & \texttt{promised\_days} & 24,4 ngày \\
 \note{[S24] Kho chủ yếu phục vụ nhóm quản lý đơn hàng và thu hút seller.}
 \end{frame}
 
+\begin{frame}{Mười một điểm phân tích A1--A11 gắn mỗi bước của quy trình với dashboard và KPI}
+\muc{2.1 · Nghiệp vụ}
+\begin{itemize}
+  \item A1--A6 trên quy trình đơn: đặt hàng và thanh toán, duyệt, bàn giao, giao hàng, đánh giá, hủy
+  \item A7--A10 trên quy trình seller: MQL, SDR và SR, chốt deal, đơn đầu tiên; A11: giám sát nạp dữ liệu
+  \item Ví dụ A4 (giao hàng) $\rightarrow$ D3, D4 $\rightarrow$ Avg lead days, On-time rate, Promised vs actual $\rightarrow$ bang, vùng, khoảng cách
+\end{itemize}
+
+\note{[S122] Mỗi điểm phân tích truy ngược được từ dashboard về một bước nghiệp vụ cụ thể (bảng trong báo cáo mục 2.1).}
+\end{frame}
+
+\begin{frame}{Mỗi khối Business Model Canvas dẫn tới một câu hỏi quản trị, một chỉ số và một dashboard}
+\muc{2.1 · Nghiệp vụ}
+\begin{itemize}
+  \item Giá trị đề xuất $\rightarrow$ giao đúng hạn và đủ rẻ? $\rightarrow$ On-time rate, Freight ratio 16,6\% $\rightarrow$ D3, D4
+  \item Kênh $\rightarrow$ kênh nào đưa về seller chốt được? $\rightarrow$ MQL to won rate $\rightarrow$ D6
+  \item Dòng doanh thu và cấu trúc chi phí: dữ liệu chỉ có giá hàng và phí vận chuyển nên dùng GMV và tỷ lệ phí làm chỉ số thay thế
+\end{itemize}
+
+\note{[S123] Chín khối Canvas, mỗi khối một câu hỏi; hai khối thiếu dữ liệu được nêu rõ.}
+\end{frame}
+
 \subsection{2.2 Yêu cầu phân tích}
 
 \begin{frame}{Cây yêu cầu phân tích đi từ sáu chủ điểm đến các câu hỏi cụ thể}
@@ -220,6 +242,29 @@ Ngày hứa giao & \texttt{promised\_days} & 24,4 ngày \\
 \note{[S29] Luôn nêu cỡ mẫu vì nhiều kênh chỉ có vài chục seller.}
 \end{frame}
 
+\begin{frame}{Tám điểm hiện trạng của hệ thống nguồn dẫn tới tám yêu cầu cải tiến cho kho dữ liệu}
+\muc{2.2 · Yêu cầu phân tích}
+\begin{itemize}
+  \item Hai hệ thống rời nhau, chỉ gặp qua seller\_id $\rightarrow$ chiều dùng chung dim\_seller
+  \item Trạng thái đơn không có lịch sử mốc $\rightarrow$ snapshot tích luỹ 5 mốc
+  \item 45 loại lỗi dữ liệu $\rightarrow$ ODS gắn cờ, ghi dòng bị loại kèm lý do
+  \item Ngày dự kiến giao trung bình 24,4 ngày so với thực tế 12,6 ngày $\rightarrow$ KPI ngày hứa so với thực tế
+\end{itemize}
+
+\note{[S124] Bảng hiện trạng và yêu cầu cải tiến ở báo cáo mục 2.2.}
+\end{frame}
+
+\begin{frame}{Sáu nhóm người dùng, mỗi nhóm có câu hỏi, dashboard và tần suất xem riêng}
+\muc{2.2 · Yêu cầu phân tích}
+\begin{itemize}
+  \item Ban điều hành $\rightarrow$ D1 (hằng tuần, hằng tháng); quản lý kinh doanh $\rightarrow$ D2
+  \item Vận hành và logistics $\rightarrow$ D3, D4 (hằng ngày đến hằng tuần); chăm sóc khách hàng $\rightarrow$ D5
+  \item Quản lý seller và đội sales $\rightarrow$ D6; quản trị dữ liệu $\rightarrow$ D7 (mỗi lần chạy ETL)
+\end{itemize}
+
+\note{[S125] Đối tượng sử dụng, câu hỏi, dashboard và tần suất xem.}
+\end{frame}
+
 \subsection{2.3 KPI và dashboard}
 
 \begin{frame}{Bảng KPI chính gồm 19 chỉ số, mỗi chỉ số có một định nghĩa DAX duy nhất}
@@ -261,6 +306,18 @@ Won to first sale rate & 45,0\% & 45,0\% \\
 \begin{columns}[c]\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D1.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D2.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D3.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D4.png}\end{column}\end{columns}\vspace{0.3em}\begin{columns}[c]\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D5.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D6.png}\end{column}\begin{column}{0.24\textwidth}\includegraphics[width=\linewidth,height=0.3\textheight,keepaspectratio]{3-2-7_cay_phan_tich_D7.png}\end{column}\end{columns}
 
 \note{[S31] Ví dụ D3: mục tiêu giám sát giao hàng, chỉ số on-time, promised vs actual, chiều vùng và nhóm trễ.}
+\end{frame}
+
+\begin{frame}{Năm giới hạn của dữ liệu làm một KPI có hai con số: GMV 13,49 so với 13,59 triệu BRL}
+\muc{2.3 · KPI}
+\begin{itemize}
+  \item GMV loại đơn Failed 13.494.400,74; tổng giá hàng mọi đơn 13.591.643,70 BRL
+  \item Orders 98.199 so với Orders placed 99.441 (chênh 1.242 đơn); 380 so với 379 seller có đơn
+  \item 2016 chỉ 329 đơn, 2018-09 chỉ 16 đơn; 547 đơn có từ 2 review; điểm đúng hạn từng là 4,21 rồi sửa thành 4,29
+  \item Xử lý: chọn một định nghĩa, ghi cạnh con số, sửa ở ETL
+\end{itemize}
+
+\note{[S126] Bảng giới hạn dữ liệu ảnh hưởng tới KPI ở báo cáo mục 2.3.}
 \end{frame}
 
 \subsection{2.4 Dữ liệu nguồn}
@@ -328,6 +385,62 @@ Tổng (11 bảng) &  & 1.559.764 &  & 121,18 \\
 \note{[S37] Dữ liệu Kaggle là ảnh tĩnh nên nhóm mô phỏng cập nhật.}
 \end{frame}
 
+\begin{frame}{Trung bình 163 đơn mỗi ngày, đỉnh 1.176 đơn ngày Black Friday: lô hằng ngày là đủ}
+\muc{2.4 · Dữ liệu nguồn}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Cửa sổ 01/2017--08/2018: 163 đơn, 185 dòng hàng, 13 MQL, 1,3 deal mỗi ngày
+  \item Bảng tần suất đề xuất công nghệ: lô hằng ngày bằng procedure PostgreSQL; gần thời gian thực thì CDC + Kafka (chương 5)
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{2-4_tan_suat_cap_nhat.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S127] Biểu đồ tần suất cập nhật theo thời gian và bảng công nghệ xử lý đề xuất.}
+\end{frame}
+
+\begin{frame}{Cây phân loại dữ liệu chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu}
+\muc{2.4 · Dữ liệu nguồn}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Mỗi bảng kèm hai cột tiêu biểu và giá trị thật
+  \item Phân loại thêm theo kiểu dữ liệu, độ nhạy cảm (định danh, vị trí) và tính biến động
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{2-4_data_taxonomy.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S128] Data taxonomy của 11 bảng nguồn.}
+\end{frame}
+
+\begin{frame}{Data flow hiện trạng: mũi tên ghi thông tin được truyền, hai hệ thống nguồn tách rời}
+\muc{2.4 · Dữ liệu nguồn}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Thông tin đơn, trạng thái giao, thanh toán, điểm đánh giá, lead
+  \item Marketing funnel (SDR, SR) tách khỏi hệ thống bán hàng
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{2-4_data_flow_hien_trang.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S129] Hiện trạng: luồng thông tin giữa các hệ thống CNTT (bản nháp, nhóm vẽ lại).}
+\end{frame}
+
+\begin{frame}{Data flow đề xuất: nguồn, staging, ODS, kho, mart và BI, có nhật ký ETL giám sát}
+\muc{2.4 · Dữ liệu nguồn}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Bảng lớp, thành phần, công nghệ, tần suất, ghi chú ở báo cáo
+  \item Điều phối bằng một lệnh Python, biến đổi bằng PL/pgSQL
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{2-4_data_flow_de_xuat.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S130] Đề xuất: luồng nguồn đến BI.}
+\end{frame}
+
 \subsection{2.5 ERD OLTP}
 
 \begin{frame}{ERD hệ thống bán hàng: chín bảng nối quanh đơn hàng}
@@ -352,3 +465,32 @@ Tổng (11 bảng) &  & 1.559.764 &  & 121,18 \\
 
 \note{[S36] Bảng mapping đầy đủ 108 dòng ODS $\rightarrow$ kho nằm ở phụ lục.}
 \end{frame}
+
+\begin{frame}{ERD tô màu theo nhóm dữ liệu: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP}
+\muc{2.5 · ERD OLTP}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Gạch chân suy ra từ bảng mapping nguồn $\rightarrow$ ODS $\rightarrow$ kho
+  \item 6 cột không dùng: geolocation.id, 3 thuộc tính sản phẩm, 2 thuộc tính khai báo của deal
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{2-5_erd_oltp_gach_chan.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S131] ERD nháp tô màu và gạch chân cột dùng sang OLAP.}
+\end{frame}
+
+\begin{frame}{Luồng OLTP sang OLAP cho thấy bảng nguồn nào nuôi dimension nào và fact nào}
+\muc{2.5 · ERD OLTP}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Bảng tổng hợp mapping theo bảng nguồn ở báo cáo mục 2.5
+  \item Mapping đầy đủ từng cột ở Phụ lục C
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{2-5_data_flow_oltp_olap.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S132] Sơ đồ luồng dữ liệu OLTP sang OLAP.}
+\end{frame}
+

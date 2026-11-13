@@ -181,6 +181,51 @@ Câu f & mốc nạp đầu 2017-12-31 & 45.430 đơn, 11 đợt sau \\
 \note{[S109] Nhóm không cài PostGIS nên chọn giải pháp thuần SQL.}
 \end{frame}
 
+\begin{frame}{Hai phương pháp cùng đánh dấu 24.213 ngoại lai; nhóm giữ vì đó là ngoại lai hợp lệ}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item IQR đánh dấu 45.568, Isolation Forest (contamination 0,05, random\_state 42) 26.212
+  \item Phí cao đi với hàng nặng (trung vị 5.700 g so với 700 g); 76,9\% đơn lead time ngoại lai là đơn trễ
+  \item Chỉ 8 dòng cân nặng 0 g là lỗi dữ liệu
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-1_outliers_boxplot.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S133] Ngoại lai bằng IQR và iForest trên 5 biến.}
+\end{frame}
+
+\begin{frame}{Cramér's V lớn nhất 0,403 (giao trễ và nhóm review); tỉ số tương quan review theo cờ trễ 0,392}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item V hiệu chỉnh Bergsma cho cặp biến phân loại; $\eta$ cho biến phân loại và biến số
+  \item Vùng khách -- vùng seller V = 0,072: gần như độc lập
+  \item Spearman ngày trễ -- review chỉ $-0{,}18$: ảnh hưởng mang tính ngưỡng
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-1_cramer_v_heatmap.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S134] Công thức V, hiệu chỉnh Bergsma, tỉ số tương quan và thang đọc ở báo cáo mục 3.1.}
+\end{frame}
+
+\begin{frame}{STL: xu hướng mạnh 0,73, mùa vụ tuần 0,22; dưới 2 năm nên không kết luận mùa vụ theo năm}
+\muc{3.1 · Khám phá dữ liệu}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item $F = \max(0, 1 - \mathrm{Var}(R)/\mathrm{Var}(S+R))$
+  \item Black Friday 24/11/2017: 1.176 đơn, gấp 6,6 lần trung bình tháng 11
+  \item Chu kỳ 12 tháng trên 20 điểm: $F_S = 0{,}80$ nhưng không đủ cơ sở
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-1_stl_daily.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S135] Phân rã STL số đơn theo ngày.}
+\end{frame}
+
 \subsection{3.2 Kiến trúc}
 
 \begin{frame}{Kiến trúc sáu lớp từ hai hệ thống nguồn đến bảy dashboard}
@@ -214,6 +259,20 @@ Câu f & mốc nạp đầu 2017-12-31 & 45.430 đơn, 11 đợt sau \\
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: logo công nghệ (chèn)}
 
 \note{[S51] Chạy được trên laptop sinh viên 8 GB.}
+\end{frame}
+
+\begin{frame}{Kiến trúc theo lớp: sáu tầng từ nguồn đến BI, mỗi tầng có thành phần, công nghệ, số dòng}
+\muc{3.2 · Kiến trúc}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item PostgreSQL, Python, Power BI, GitHub; số bảng và số dòng từng lớp
+  \item Giám sát etl\_log 6 bảng; điều phối bằng một lệnh Python
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-2_kien_truc_cac_lop.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S136] Kiến trúc theo lớp (không vẽ luồng); luồng ở data flow và sơ đồ job.}
 \end{frame}
 
 \subsection{3.3 ETL}
@@ -496,6 +555,31 @@ run\_pipeline --mode incremental (tests + export\_powerbi) & 30.5 & tests: 136/1
 \note{[S110] Khả năng tái lập là bằng chứng độ tin cậy của pipeline.}
 \end{frame}
 
+\begin{frame}{Sáu giai đoạn ETL: lô đầu nạp 1.273.620 dòng vào staging, 42 dòng loại, 142 test đạt}
+\muc{3.3 · ETL}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+\begin{itemize}
+  \item Extract, seed và ODS, dimension và fact, mart, kiểm thử, xuất CSV
+  \item Số dòng lấy từ etl\_log.job\_run (lô đầu và tổng các lô)
+\end{itemize}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{center}\anh[0.74\textheight]{3-3_etl_jobs.png}\end{center}
+\end{column}\end{columns}
+
+\note{[S137] Sơ đồ các job của run_pipeline sinh từ etl_log.}
+\end{frame}
+
+\begin{frame}{SQL, Python và Power Query cho cùng kết quả làm sạch: 8.011 thành 5.968 thành phố}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item Chữ thường, bỏ dấu, zip đủ 5 ký tự; 73.440 dòng đổi
+  \item Python chênh 2 dòng do ký tự ordinal; mã M thêm bảng thay thế để khớp SQL
+  \item Mã M và hướng dẫn chụp before/after: powerbi/power-query-vi-du.md
+\end{itemize}
+
+\note{[S138] Nhóm cần chạy mã M trong Power BI và chụp ảnh before/after.}
+\end{frame}
+
 \subsection{3.4 Chiều khái niệm}
 
 \begin{frame}{Mười bảng chiều với số dòng từ 6 đến 96.339}
@@ -575,6 +659,17 @@ dim\_sales\_rep & 1 nhân viên và vai trò (SDR/SR) & 55 & -- \\
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng \texttt{dim\_\allowbreak{}seller} dòng -1}
 
 \note{[S66] Nhờ đó ETL không làm rơi dòng khi chiều thiếu.}
+\end{frame}
+
+\begin{frame}{Phân cấp đúng khi tháng kèm năm, thành phố kèm bang: 303 tên thành phố trùng giữa các bang}
+\muc{3.4 · Chiều khái niệm}
+\begin{itemize}
+  \item 12 số tháng nhưng 60 cặp (năm, tháng); 5.814 tên thành phố nhưng 6.190 cặp (bang, thành phố)
+  \item Mỗi danh mục một nhóm ngành, mỗi origin một nhóm kênh (0 vi phạm)
+  \item Mười chiều chia nhóm: dùng chung, đóng vai, SCD2, rác, danh mục nhỏ
+\end{itemize}
+
+\note{[S139] Bảng phân cấp từng chiều với giá trị ví dụ và số giá trị phân biệt ở báo cáo mục 3.4.}
 \end{frame}
 
 \subsection{3.5 Data model OLAP}
@@ -781,3 +876,34 @@ Norte & 1.200 & 168.018 & 164.596 & 333.814 \\
 
 \note{[S88] Không phóng đại: giá trị chính của mô hình chiều là truy vấn đơn giản và số liệu nhất quán.}
 \end{frame}
+
+\begin{frame}{Data model logic: sáu quy trình nối với mười dimension và các cấp phân cấp}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item Fact cam, dimension xanh; không ghi kiểu dữ liệu
+\end{itemize}
+\begin{center}\anh[0.62\textheight]{3-5_data_model_logic.png}\end{center}
+
+\note{[S140] Mô hình logic.}
+\end{frame}
+
+\begin{frame}{Data model vật lý sinh từ cơ sở dữ liệu: mọi bảng dw với cột, kiểu, PK và FK}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item 16 bảng, fact và dimension khác màu
+\end{itemize}
+\begin{center}\anh[0.62\textheight]{3-5_data_model_vat_ly.png}\end{center}
+
+\note{[S141] Mô hình vật lý tổng thể.}
+\end{frame}
+
+\begin{frame}{Bốn data mart, mỗi mart gồm fact, dimension và 3--4 câu hỏi phân tích}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item mart\_sales, mart\_fulfillment, mart\_cx, mart\_acquisition
+\end{itemize}
+\begin{center}\anh[0.62\textheight]{3-5_data_mart.png}\end{center}
+
+\note{[S142] Data mart.}
+\end{frame}
+
