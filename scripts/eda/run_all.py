@@ -7,7 +7,8 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-SCRIPTS = ["profile.py", "data_quality.py", "distributions.py", "correlations.py", "funnel.py", "design_questions.py", "excel_export.py"]
+SCRIPTS = ["profile.py", "data_quality.py", "distributions.py", "correlations.py", "funnel.py", "design_questions.py", "excel_export.py",
+           "source_profile.py", "p8_outliers.py", "p8_association.py", "p8_seasonality.py", "p8_describe.py", "p8_dictionary.py"]
 
 for name in SCRIPTS:
     t0 = time.perf_counter()

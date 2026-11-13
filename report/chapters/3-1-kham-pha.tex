@@ -35,3 +35,62 @@ Phép toán & khoảng cách điểm--điểm & đa giác, giao cắt, diện t�
 Chi phí & không cần cài thêm & cần cài extension\\\bottomrule
 \end{tabular}\end{table}
 \todo{Nhóm bổ sung phần lý thuyết cơ sở dữ liệu địa lý (mô hình vector/raster, kiểu dữ liệu không gian, chỉ mục không gian) từ tài liệu PostGIS \cite{postgis_docs} và công thức haversine \cite{sinnott1984}; thêm bản đồ bong bóng từ dashboard D4 khi dựng xong. Hàm dw.haversine\_km: Phụ lục B.}
+
+\subsection{Phát hiện ngoại lai}\label{sec:ngoai-lai}
+Nhóm dùng hai phương pháp độc lập. \emph{IQR}: một giá trị là ngoại lai nếu nằm ngoài khoảng $[Q_1 - 1{,}5\,\mathrm{IQR},\; Q_3 + 1{,}5\,\mathrm{IQR}]$. \emph{Isolation Forest} (scikit-learn, 200 cây, \code{contamination} $= 0{,}05$, \code{random\_state} $= 42$, mô hình một chiều cho từng biến) cô lập các điểm hiếm bằng phân chia ngẫu nhiên. Năm biến được xét là giá, phí vận chuyển, cân nặng sản phẩm (trên 112.650 dòng hàng), lead time và số ngày trễ so với dự kiến (trên 96.476 đơn đã giao). Bảng \ref{tab:outliers} cho số ngoại lai theo từng phương pháp và phần giao nhau; cộng cả năm biến, IQR đánh dấu 45.568 giá trị, iForest 26.212 và 24.213 giá trị bị cả hai phương pháp đánh dấu. Ví dụ điển hình: đơn \code{0812eb90} có giá 6.735 BRL (danh mục \code{utilidades\_domesticas}); đơn \code{a77e1550} có phí vận chuyển 409,68 BRL cho kiện nặng 14.675 g giao tới bang PI; lead time lớn nhất là 210 ngày (các ví dụ chi tiết ở \code{handoff/2026-11-14-P8-eda.md}).
+\input{tables/p8_outliers}
+\hinh{3-1_outliers_boxplot.png}{Boxplot năm biến số (thang symlog cho tiền và cân nặng) kèm số ngoại lai theo hai phương pháp}{fig:out-box}{1.0}
+\emph{Nhận xét.} Giá, phí vận chuyển và cân nặng có đuôi phải rất dài nên phải vẽ bằng thang symlog; ở ba biến này IQR đánh dấu nhiều hơn iForest (ví dụ phí vận chuyển: 12.134 so với 5.591), còn ở lead time và số ngày trễ hai phương pháp gần nhau (4.899 so với 4.816; 4.301 so với 4.655).
+\hinh{3-1_outliers_hexbin.png}{Giá và phí vận chuyển (hexbin, thang log); đường cam là ngưỡng IQR}{fig:out-hex}{0.72}
+\emph{Nhận xét.} Tương quan Spearman giữa giá và phí vận chuyển là 0,43; 2.995 dòng vượt cả hai ngưỡng, bằng 35,5\% số dòng có giá ngoại lai, nên ngoại lai về giá và về phí phần lớn là hai nhóm khác nhau.
+\hinh{3-1_outliers_hist_lead.png}{Phân bố lead time và ngưỡng ngoại lai IQR}{fig:out-lead}{0.72}
+\emph{Nhận xét.} Lead time có trung vị 10,2 ngày, P95 là 29,3 ngày và đuôi kéo dài đến 210 ngày; ngưỡng IQR là 29,2 ngày, tức 5,1\% số đơn đã giao.
+\paragraph{Giữ hay loại?} Nhóm \textbf{giữ} toàn bộ ngoại lai về giá, phí vận chuyển, lead time và số ngày trễ vì đó là ngoại lai hợp lệ: giá cao tập trung ở các danh mục như \code{beleza\_saude} và \code{relogios\_presentes}, 12.134 dòng có phí cao có cân nặng trung vị 5.700 g so với 700 g của toàn bộ, và 76,9\% đơn có lead time ngoại lai đều trễ so với ngày dự kiến, tức chậm thật chứ không phải nhập sai. Chính các giá trị này là đối tượng phân tích (giao trễ, chi phí vận chuyển); loại chúng sẽ làm sai GMV và che mất vấn đề giao hàng. Ngoại lệ duy nhất là 8 dòng hàng có cân nặng bằng 0 g, vô lý về vật lý nên là lỗi dữ liệu nguồn: dòng hàng vẫn được giữ vì có doanh thu, chỉ không dùng cân nặng khi phân tích phí vận chuyển theo cân nặng. Vì phân phối lệch, báo cáo mô tả giá, phí và thời gian bằng trung vị bên cạnh trung bình.
+
+\subsection{Tương quan giữa các biến rời rạc}\label{sec:tuong-quan-roi-rac}
+Ma trận tương quan Spearman ở trên chỉ áp dụng cho biến số. Để đo liên hệ giữa các biến phân loại (hình thức thanh toán, nhóm ngành hàng, vùng khách, vùng seller, trạng thái đơn, cờ giao trễ, nhóm review) nhóm dùng \textbf{hệ số Cramér's V} có hiệu chỉnh Bergsma. Với bảng chéo $r \times k$ của hai biến, $n$ quan sát và thống kê $\chi^2$, đặt $\varphi^2 = \chi^2 / n$:
+\[ V = \sqrt{\frac{\varphi^2}{\min(r-1,\; k-1)}}, \qquad
+\tilde{\varphi}^2 = \max\Bigl(0,\; \varphi^2 - \frac{(k-1)(r-1)}{n-1}\Bigr), \quad
+\tilde{r} = r - \frac{(r-1)^2}{n-1}, \quad \tilde{k} = k - \frac{(k-1)^2}{n-1}, \quad
+\tilde{V} = \sqrt{\frac{\tilde{\varphi}^2}{\min(\tilde{k}-1,\; \tilde{r}-1)}}. \]
+Hiệu chỉnh Bergsma loại bỏ độ chệch dương của $V$ khi bảng chéo có nhiều ô. Với liên hệ giữa biến phân loại $c$ (nhóm $g$ có $n_g$ quan sát, trung bình $\bar{x}_g$) và biến số $x$ (trung bình chung $\bar{x}$) nhóm dùng \textbf{tỉ số tương quan}
+\[ \eta = \sqrt{\frac{\sum_g n_g\,(\bar{x}_g - \bar{x})^2}{\sum_i (x_i - \bar{x})^2}} \in [0, 1], \]
+trong đó $\eta^2$ là tỉ lệ phương sai của $x$ do các nhóm giải thích. Cả hai hệ số nhận giá trị từ 0 đến 1 và không có dấu. \textbf{Thang đọc} (quy ước như hệ số tương quan): dưới 0,1 không đáng kể; 0,1--0,3 yếu; 0,3--0,5 vừa; trên 0,5 mạnh. Bảng \ref{tab:chon-he-so} tóm tắt dùng hệ số nào khi nào.
+\begin{table}[htbp]\centering\scriptsize\caption{Chọn hệ số theo loại hai biến}\label{tab:chon-he-so}
+\begin{tabular}{p{3.6cm}p{3.6cm}p{7.2cm}}\toprule
+\textbf{Cặp biến} & \textbf{Hệ số} & \textbf{Điều kiện và ghi chú}\\\midrule
+số -- số, quan hệ tuyến tính & Pearson & nhạy với ngoại lai; dữ liệu này lệch phải mạnh nên ít dùng\\
+số -- số (hoặc thứ bậc), đơn điệu & Spearman & dựa trên hạng nên bền với ngoại lai; dùng ở ma trận tương quan\\
+phân loại -- phân loại & Cramér's V (hiệu chỉnh Bergsma) & từ 0 đến 1, không dấu; hiệu chỉnh để không phóng đại khi bảng chéo nhiều ô\\
+phân loại -- số & tỉ số tương quan $\eta$ & từ 0 đến 1; $\eta^2$ là tỉ lệ phương sai giải thích\\\bottomrule
+\end{tabular}\end{table}
+\hinh{3-1_cramer_v_heatmap.png}{Cramér's V (hiệu chỉnh Bergsma) giữa bảy biến phân loại}{fig:cramer}{0.78}
+\input{tables/p8_association_v}
+\emph{Nhận xét.} Cặp liên hệ mạnh nhất là cờ giao trễ và nhóm review với $V = 0{,}403$ (mức vừa): đơn trễ có xác suất bị review tiêu cực cao hơn rõ rệt. Trạng thái đơn và nhóm review có $V = 0{,}221$ (yếu): tỷ lệ review tiêu cực là 12,8\% ở đơn đã giao so với 76,7\% ở đơn hủy và 69,4\% ở đơn đang vận chuyển. Các cặp còn lại (ví dụ vùng khách và vùng seller $V = 0{,}072$; hình thức thanh toán và trạng thái đơn $V = 0{,}048$) liên hệ yếu hoặc không đáng kể, nên có thể dùng làm chiều phân tích riêng rẽ.
+\hinh{3-1_eta_heatmap.png}{Tỉ số tương quan $\eta$ giữa biến phân loại (cột) và biến số (hàng)}{fig:eta}{0.85}
+\input{tables/p8_association_eta}
+\emph{Nhận xét.} Điểm review theo cờ giao trễ có $\eta = 0{,}392$ ($\eta^2 = 0{,}154$): khoảng 15,4\% phương sai điểm review gắn với việc đơn có giao trễ hay không; ngày trễ theo vùng khách chỉ có $\eta = 0{,}075$ và điểm review theo nhóm ngành $\eta = 0{,}054$. Cặp (ngày trễ, cờ giao trễ) bị bỏ khỏi bảng xếp hạng vì cờ trễ được định nghĩa từ chính ngày trễ. \textbf{Đối chiếu với Spearman}: Spearman giữa ngày trễ và điểm review là $-0{,}176$ và giữa lead time và điểm review là $-0{,}235$, cùng hướng kết luận nhưng yếu hơn nhiều so với $\eta = 0{,}392$ theo cờ trễ; điều đó cho thấy ảnh hưởng của giao trễ lên review mang tính ngưỡng (đơn trễ mới tụt điểm mạnh) hơn là tuyến tính theo số ngày, và $V$ cùng $\eta$ mở rộng việc đo liên hệ sang biến phân loại mà Spearman không đo được.
+
+\subsection{Khuynh hướng và mùa vụ}\label{sec:mua-vu}
+Phân tích giới hạn ở đoạn đủ dữ liệu 01/2017--08/2018 (608 ngày). Hình \ref{fig:series} cho thấy số đơn và GMV tăng gần như liên tục từ đầu 2017, đạt đỉnh ở tuần chứa Black Friday rồi giữ mặt bằng mới cao hơn trước đó; GMV tháng 11/2017 cao hơn tháng 10/2017 52,1\%.
+\hinh{3-1_seasonality_series.png}{Số đơn và GMV theo tuần và theo tháng, 2017-01 đến 2018-08}{fig:series}{1.0}
+Nhóm phân rã chuỗi bằng STL (\emph{Seasonal-Trend decomposition using Loess}, thư viện statsmodels, \code{robust=True} để đỉnh Black Friday không làm lệch kết quả): $y_t = T_t + S_t + R_t$ gồm xu hướng, mùa vụ và phần dư. Độ mạnh của xu hướng và của mùa vụ lấy theo công thức
+\[ F_T = \max\Bigl(0,\; 1 - \frac{\mathrm{Var}(R_t)}{\mathrm{Var}(T_t + R_t)}\Bigr), \qquad F_S = \max\Bigl(0,\; 1 - \frac{\mathrm{Var}(R_t)}{\mathrm{Var}(S_t + R_t)}\Bigr), \]
+gần 1 nghĩa là thành phần đó chi phối chuỗi, gần 0 nghĩa là gần như không có.
+\hinh{3-1_stl_daily.png}{Phân rã STL số đơn theo ngày (chu kỳ 7 ngày)}{fig:stl-day}{0.95}
+\input{tables/p8_stl}
+\emph{Nhận xét.} Số đơn theo ngày có xu hướng mạnh ($F_T = 0{,}734$) và mùa vụ theo tuần vừa phải ($F_S = 0{,}223$): thứ Hai có nhiều đơn nhất và thứ Bảy ít nhất, chênh khoảng 63 đơn giữa ngày cao nhất và thấp nhất của thành phần mùa vụ.
+\hinh{3-1_stl_monthly.png}{Phân rã STL số đơn theo tháng (chu kỳ 12 tháng, chỉ 20 điểm)}{fig:stl-month}{0.8}
+\textbf{Giới hạn.} Với chu kỳ 12 tháng STL cho $F_T = 0{,}948$ và $F_S = 0{,}800$ trên chỉ 20 tháng. Dữ liệu dưới hai năm, mỗi tháng của năm chỉ xuất hiện một hoặc hai lần, nên STL không tách được mùa vụ theo năm khỏi xu hướng tăng; vì vậy nhóm \textbf{không} kết luận có mùa vụ theo năm, chỉ ghi nhận Black Friday 2017 là một cú tăng đột biến.
+\hinh{3-1_heatmap_dow_hour.png}{Số đơn theo thứ trong tuần và giờ mua hàng}{fig:heat-dow}{1.0}
+\emph{Nhận xét.} Giờ cao điểm là 16 giờ; chỉ 4,8\% số đơn được đặt từ 0 giờ đến 5 giờ sáng, và thứ Hai có nhiều đơn nhất.
+\hinh{3-1_black_friday.png}{Số đơn mỗi ngày quanh Black Friday 24/11/2017}{fig:bf}{0.8}
+\emph{Nhận xét.} Black Friday 24/11/2017 có 1.176 đơn, gấp 6,6 lần mức trung bình 23 ngày đầu tháng 11 (178 đơn/ngày) với GMV 152.653,74 BRL; sau đó số đơn trung bình 292 đơn/ngày, cao hơn trước ngày này.
+
+\subsection{Thống kê đặc trưng}\label{sec:thong-ke}
+Bảng \ref{tab:describe} cho trung bình, trung vị, độ lệch chuẩn, skewness, kurtosis, giá trị nhỏ nhất và lớn nhất của các biến số chính trên toàn bộ dữ liệu. Giá lệch phải mạnh (trung bình 120,65 so với trung vị 74,99, skewness 7,92, kurtosis 120,83), phí vận chuyển cũng vậy; điểm review lệch trái (skewness $-1{,}36$) và số ngày trễ có trung vị âm: phần lớn đơn giao sớm hơn dự kiến. Để đối chiếu với công cụ Excel Data Analysis ToolPak, nhóm xuất mẫu 5.000 đơn (\code{exports/eda\_sample.xlsx}) kèm sheet \code{python\_doi\_chieu} chứa các số tương ứng tính bằng Python (hướng dẫn: \code{handoff/excel-toolpak-guide.md}).
+\input{tables/p8_describe}
+\todo{Nhóm chạy Data Analysis ToolPak trên exports/eda\_sample.xlsx (Descriptive Statistics, Correlation, Histogram), chụp ảnh kết quả và so với sheet python\_doi\_chieu trước khi đưa vào báo cáo.}
+
+\subsection{Từ điển dữ liệu nguồn}\label{sec:tu-dien-nguon}
+Từ điển 11 bảng nguồn (71 cột) ghi kiểu dữ liệu, miền giá trị, tỷ lệ rỗng và vai trò của từng cột trong kho; bản đầy đủ ở \code{huong-dan/06-tu-dien-du-lieu-nguon.md}. Có 22 trong 71 cột chứa giá trị rỗng và 7 cột rỗng trên 5\%: ba thuộc tính khai báo của deal (\code{has\_company} 92,5\%, \code{has\_gtin} 92,4\%, \code{average\_stock} 92,2\%), \code{declared\_product\_catalog\_size} (91,8\%), tiêu đề và nội dung review (88,3\% và 58,7\%) và \code{lead\_behaviour\_profile} (21,0\%).

@@ -87,3 +87,22 @@ Lưu ý: Excel dùng hệ số **Pearson**, còn hình `figures/3-3-1_correlatio
 
 - Chụp ảnh bảng Descriptive Statistics, ma trận Correlation (có tô màu) và biểu đồ Histogram; đặt tên `figures/3-3-1_excel_<tên>.png`.
 - Nói rõ đây là **mẫu 5.000 đơn**, số liệu toàn bộ nằm ở `handoff/distributions.md` và `handoff/correlations.md`.
+
+<!-- p8:start -->
+## Đối chiếu với số tính bằng Python (P8)
+
+Sheet **python_doi_chieu** trong `exports/eda_sample.xlsx` (thêm ở P8, sinh bởi `scripts/eda/p8_describe.py`) chứa số đã tính sẵn bằng Python trên đúng 5.000 dòng của sheet `du_lieu`. Sau khi chạy **Descriptive Statistics** ở Bước 1, đối chiếu từng biến:
+
+| Excel ToolPak | Cột trong python_doi_chieu | Ghi chú |
+| --- | --- | --- |
+| Mean | Mean | khớp đến chữ số thập phân hiển thị |
+| Median | Median | |
+| Standard Deviation | Std (n-1) | ToolPak dùng độ lệch chuẩn mẫu (n − 1) |
+| Skewness | Skewness | cùng định nghĩa với hàm SKEW của Excel |
+| Kurtosis | Kurtosis (excess) | cùng định nghĩa với hàm KURT; bằng 0 với phân phối chuẩn |
+| Minimum / Maximum | Min / Max | |
+
+Số khớp với bảng đối chiếu ở Bước 1 (ví dụ price_total: trung bình 138,22, độ lệch chuẩn 204,06).
+
+Bảng thống kê đặc trưng trên **toàn bộ dữ liệu** (không chỉ mẫu) nằm ở `handoff/2026-11-14-P8-eda.md`, mục D4.
+<!-- p8:end -->

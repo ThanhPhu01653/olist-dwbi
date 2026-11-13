@@ -117,11 +117,18 @@ def used_oltp_columns():
                     used.add(ods_to_src[(t, c)])
     # join keys used only to look up a surrogate key (mapping.csv lists the dw lookup table, not the source column)
     used |= {("oltp.order_items", "product_id"), ("oltp.product_category_name_translation", "product_category_name")}
+    # mapping.csv row "business_segment ... average_stock (7 columns)": the junk dimension dim_lead_profile takes these 7 closed_deals attributes
+    used |= {("crm.closed_deals", c) for c in ["business_segment", "lead_type", "lead_behaviour_profile", "has_company", "has_gtin", "average_stock", "business_type"]}
     return used, a
 
 
 def erd_oltp() -> None:
+    import sys
+
+    from diagram_kit import ROOT
     from sqlalchemy import text
+
+    sys.path.insert(0, str(ROOT))
     from etl import config
     from etl.db import get_engine
 

@@ -13,8 +13,8 @@
 | oltp.product_category_name_translation | 2 | 2 | dim_product | giữ nguyên giá trị |
 | oltp.products | 9 | 6 | dim_product | product_category_name → product_category_name: trim; rỗng/NULL → 'unknown' |
 | oltp.sellers | 4 | 4 | dim_geography, dim_seller | seller_zip_code_prefix → zip_code_prefix: Chuẩn hoá char(5): bỏ ký tự không phải số, lpad(…,5,'0') |
-| crm.closed_deals | 14 | 8 | dim_lead_profile, dim_sales_rep, dim_seller, fact_lead_funnel | business_segment → business_segment: trim; NULL/rỗng → 'unknown' |
+| crm.closed_deals | 14 | 12 | dim_lead_profile, dim_sales_rep, dim_seller, fact_lead_funnel | business_segment → business_segment: trim; NULL/rỗng → 'unknown' |
 | crm.mql | 4 | 4 | dim_seller, fact_lead_funnel | origin → origin: lower(trim()); NULL/rỗng → 'unknown' |
-| **Tổng** | 71 | 61 | | |
+| **Tổng** | 71 | 65 | | |
 
-Cột dùng sang OLAP: 61 / 71 cột nguồn (85.9%). Các cột không dùng sang OLAP: crm.closed_deals.average_stock, crm.closed_deals.declared_monthly_revenue, crm.closed_deals.declared_product_catalog_size, crm.closed_deals.has_company, crm.closed_deals.has_gtin, crm.closed_deals.lead_behaviour_profile, oltp.geolocation.id, oltp.products.product_description_lenght, oltp.products.product_name_lenght, oltp.products.product_photos_qty.
+Cột dùng sang OLAP: 65 / 71 cột nguồn (91.5%). Các cột không dùng sang OLAP: crm.closed_deals.declared_monthly_revenue, crm.closed_deals.declared_product_catalog_size, oltp.geolocation.id, oltp.products.product_description_lenght, oltp.products.product_name_lenght, oltp.products.product_photos_qty.

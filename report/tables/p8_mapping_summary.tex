@@ -10,8 +10,8 @@ oltp.orders & 8 & 8 & dim\_customer, fact\_order\_fulfillment, fact\_order\_item
 oltp.product\_category\_name\_translation & 2 & 2 & dim\_product & giữ nguyên giá trị\\
 oltp.products & 9 & 6 & dim\_product & product\_category\_name $\rightarrow$ product\_category\_name: trim; rỗng/NULL $\rightarrow$ 'unknown'\\
 oltp.sellers & 4 & 4 & dim\_geography, dim\_seller & seller\_zip\_code\_prefix $\rightarrow$ zip\_code\_prefix: Chuẩn hoá char(5): bỏ ký tự không phải số, lpad(…,5,'0')\\
-crm.closed\_deals & 14 & 8 & dim\_lead\_profile, dim\_sales\_rep, dim\_seller, fact\_lead\_funnel & business\_segment $\rightarrow$ business\_segment: trim; NULL/rỗng $\rightarrow$ 'unknown'\\
+crm.closed\_deals & 14 & 12 & dim\_lead\_profile, dim\_sales\_rep, dim\_seller, fact\_lead\_funnel & business\_segment $\rightarrow$ business\_segment: trim; NULL/rỗng $\rightarrow$ 'unknown'\\
 crm.mql & 4 & 4 & dim\_seller, fact\_lead\_funnel & origin $\rightarrow$ origin: lower(trim()); NULL/rỗng $\rightarrow$ 'unknown'\\
 \midrule
-\textbf{Tổng} & 71 & 61 & & \\
+\textbf{Tổng} & 71 & 65 & & \\
 \bottomrule\end{tabular}\end{table}
