@@ -2,7 +2,8 @@
 
     python scripts/gen_powerbi_docs.py
 
-  powerbi/measures.md  between  <!-- EXPECTED:START --> ... <!-- EXPECTED:END -->  : expected KPI values (SQL on the final state of olist_dw)
+  powerbi/measures.md  between  <!-- EXPECTED:START --> ... <!-- EXPECTED:END -->  : expected KPI values per dashboard DB1-DB4 (SQL on the final state of olist_dw)
+  powerbi/measures.md  between  <!-- ETL:START --> ... <!-- ETL:END -->  : ETL monitoring numbers (appendix; used by report section 3.3)
   powerbi/model.md     between  <!-- APPENDIX:START --> ... <!-- APPENDIX:END -->  : one Power Query (M) snippet per CSV table with the data type of every column
 Nothing is typed by hand: columns and types come from the database, tables and file names from scripts/export_powerbi.py.
 """
@@ -63,7 +64,7 @@ def kpis(conn, a, b) -> dict:
     return {
         "GMV": (gmv, "money"), "Orders": (orders, "int"), "Items": (items, "int"), "AOV": (d(gmv, orders), "money"), "Freight": (freight, "money"),
         "Freight ratio": (d(freight, gmv), "pct1"), "Orders placed": (placed, "int"), "Failed orders": (failed, "int"), "Cancel rate": (d(failed, placed), "pct2"),
-        "Delivered orders": (delivered, "int"), "Late orders": (late, "int"), "On-time rate": (d((delivered or 0) - (late or 0), delivered), "pct1"),
+        "Delivered orders": (delivered, "int"), "Late orders": (late, "int"), "Late rate": (d(late, delivered), "pct1"), "On-time rate": (d((delivered or 0) - (late or 0), delivered), "pct1"),
         "Early delivery rate": (d(early, delivered), "pct1"),
         "Avg lead days": (lead, "d1"), "Avg approval hours": (appr, "d1"), "Avg handling days": (hand, "d1"), "Avg transit days": (trans, "d1"),
         "Avg promised days": (prom, "d1"), "Avg delay days": (delay, "d1"), "Promised vs actual (days)": (pva, "d1"),
@@ -90,20 +91,50 @@ def gmv_month(conn, ym: str) -> float:
                                    "JOIN dw.dim_order_status s ON s.order_status_key = f.order_status_key AND s.status_group <> 'Failed' WHERE d.year_month = :m"), {"m": ym}).scalar_one())
 
 
+DB_MEASURES = {
+    "DB1 – Tổng quan và doanh thu": ["GMV", "Orders", "Items", "AOV", "Freight", "Freight ratio", "Orders placed", "Cancel rate", "On-time rate", "Avg review"],
+    "DB2 – Giao hàng và trải nghiệm khách": ["Orders placed", "Failed orders", "Cancel rate", "Delivered orders", "Late orders", "Late rate", "On-time rate", "Early delivery rate", "Avg lead days",
+                                           "Avg approval hours", "Avg handling days", "Avg transit days", "Avg promised days", "Avg delay days", "Promised vs actual (days)",
+                                           "Reviews", "Avg review", "% negative", "Avg review - late delivery", "Avg review - on time", "Payment value", "Payments", "Avg installments",
+                                           "Customers", "Repeat customers", "Repeat customer rate"],
+    "DB3 – Địa lý và phí vận chuyển": ["GMV", "Orders", "Freight", "Freight ratio", "Avg lead days", "Late rate"],
+    "DB4 – Thu hút và hiệu quả seller": ["MQLs (theo tháng liên hệ đầu)", "Won deals", "MQL to won rate", "Avg days to close", "Sellers with first sale", "Won to first sale rate",
+                                       "Avg days won to first sale", "Seller GMV first 90d", "Active sellers (fact_seller_monthly)", "Seller GMV (monthly)", "Seller late rate"],
+}
+
+
 def expected_block(conn) -> str:
     res = [kpis(conn, a, b) for _, a, b in SCOPES]
-    lines = ["| Measure | " + " | ".join(s[0] for s in SCOPES) + " |", "| --- | " + " | ".join("---:" for _ in SCOPES) + " |"]
-    for name in res[0]:
-        lines.append(f"| {name} | " + " | ".join(fmt(r[name][0], r[name][1]) for r in res) + " |")
-    lines += ["", "Ghi chú: dòng *Tháng 2017-11* và các cột có lọc thời gian áp dụng cho ngày mua (đơn, thanh toán), ngày tạo review (review), tháng liên hệ đầu (funnel), tháng (seller-tháng). "
-              "Bộ lọc tương ứng trên Power BI: slicer `dim_date[year_month]` hoặc bộ lọc trang `InWindow = TRUE`.", "",
-              "**So sánh theo thời gian (GMV)**", "", "| Tháng đang chọn | GMV | GMV last month | GMV MoM % | GMV last year | GMV YoY % |", "| --- | ---: | ---: | ---: | ---: | ---: |"]
-    for ym, lm, ly in [("2017-11", "2017-10", "2016-11"), ("2018-05", "2018-04", "2017-05"), ("2018-08", "2018-07", "2017-08")]:
-        g, m, y = gmv_month(conn, ym), gmv_month(conn, lm), gmv_month(conn, ly)
-        mom = f"{100 * (g - m) / m:+.1f}%" if m else "(trống)"
-        yoy = f"{100 * (g - y) / y:+.1f}%" if y else "(trống)"
-        lines.append(f"| {ym} | {g:,.2f} | {m:,.2f} | {mom} | {y:,.2f} | {yoy} |")
-    return "\n".join(lines)
+    out = []
+    for db, names in DB_MEASURES.items():
+        lines = [f"### {db}", "", "| Measure | " + " | ".join(s[0] for s in SCOPES) + " |", "| --- | " + " | ".join("---:" for _ in SCOPES) + " |"]
+        for name in names:
+            lines.append(f"| {name} | " + " | ".join(fmt(r[name][0], r[name][1]) for r in res) + " |")
+        if db.startswith("DB1"):
+            lines += ["", "**So sánh theo thời gian (GMV)**", "", "| Tháng đang chọn | GMV | GMV last month | GMV MoM % | GMV last year | GMV YoY % |", "| --- | ---: | ---: | ---: | ---: | ---: |"]
+            for ym, lm, ly in [("2017-11", "2017-10", "2016-11"), ("2018-05", "2018-04", "2017-05"), ("2018-08", "2018-07", "2017-08")]:
+                g, m, y = gmv_month(conn, ym), gmv_month(conn, lm), gmv_month(conn, ly)
+                mom = f"{100 * (g - m) / m:+.1f}%" if m else "(trống)"
+                yoy = f"{100 * (g - y) / y:+.1f}%" if y else "(trống)"
+                lines.append(f"| {ym} | {g:,.2f} | {m:,.2f} | {mom} | {y:,.2f} | {yoy} |")
+        out += lines + [""]
+    out += ["Ghi chú: dòng *Tháng 2017-11* và các cột có lọc thời gian áp dụng cho ngày mua (đơn, thanh toán), ngày tạo review (review), tháng liên hệ đầu (funnel) và tháng của snapshot (seller theo tháng). "
+            "Bộ lọc tương ứng trên Power BI: slicer `dim_date[year_month]` hoặc bộ lọc trang `InWindow = TRUE`. Measure dùng ở nhiều dashboard (ví dụ GMV ở DB1 và DB3) có cùng giá trị."]
+    return "\n".join(out)
+
+
+def etl_block(conn) -> str:
+    q = conn.execute(text("SELECT checks, passed, failed, pass_pct, eda_checks, eda_match FROM etl_log.v_dq_summary ORDER BY batch_id DESC LIMIT 1")).one()
+    runs = conn.execute(text("SELECT count(*), min(duration_sec), round(avg(duration_sec), 1), max(duration_sec) FROM etl_log.v_run_summary WHERE mode = 'incremental' AND staging_rows > 0")).one()
+    rej = conn.execute(text("SELECT coalesce(sum(row_count), 0) FROM etl_log.v_rejected_summary")).scalar_one()
+    bm = conn.execute(text("SELECT min(mql), max(mql), min(deals_won), max(deals_won), min(sellers_with_sale), max(sellers_with_sale), max(gmv) FROM etl_log.batch_metrics")).one()
+    iss = conn.execute(text("SELECT detail, CASE WHEN fact_table = 'fact_lead_funnel' THEN max(row_count) ELSE sum(row_count) END AS n FROM etl_log.fact_load_issue GROUP BY fact_table, detail ORDER BY 2 DESC")).fetchall()
+    rows = [("Số phép kiểm thử ở lô mới nhất (checks / đạt / lỗi)", f"{q[0]} / {q[1]} / {q[2]}"), ("`pass_pct` lô mới nhất", f"{q[3]}"), ("Đối chiếu EDA (khớp / tổng)", f"{q[5]} / {q[4]}"),
+            ("Số lô tăng dần (`mode = incremental`, có dữ liệu mới)", f"{runs[0]}"), ("Thời gian mỗi lô: nhỏ nhất / TB / lớn nhất (giây)", f"{runs[1]} / {runs[2]} / {runs[3]}"),
+            ("Tổng `row_count` ở `v_rejected_summary`", f"{int(rej):,}"), ("`batch_metrics`: MQL nhỏ nhất → lớn nhất", f"{bm[0]:,} → {bm[1]:,}"),
+            ("`batch_metrics`: deal chốt nhỏ nhất → lớn nhất", f"{bm[2]:,} → {bm[3]:,}"), ("`batch_metrics`: seller có đơn nhỏ nhất → lớn nhất", f"{bm[4]:,} → {bm[5]:,}"),
+            ("`batch_metrics`: GMV lớn nhất (BRL)", f"{float(bm[6]):,.2f}")] + [(f"`fact_load_issue`: {d}", f"{n:,}") for d, n in iss]
+    return "| Chỉ số | Giá trị |\n| --- | ---: |\n" + "\n".join(f"| {a} | {b} |" for a, b in rows) + "\n\n*Số theo lần chạy cuối; số lô và thời gian có thể thay đổi nếu chạy pipeline thêm lần nữa.*"
 
 
 M_TYPE = {"int2": "Int64.Type", "int4": "Int64.Type", "int8": "Int64.Type", "numeric": "type number", "float8": "type number", "float4": "type number",
@@ -139,7 +170,8 @@ def main() -> None:
     engine = get_engine(config.DB_NAME)
     with engine.connect() as conn:
         inject(ROOT / "powerbi" / "measures.md", "<!-- EXPECTED:START -->", "<!-- EXPECTED:END -->", expected_block(conn))
-        print("measures.md: expected values written")
+        inject(ROOT / "powerbi" / "measures.md", "<!-- ETL:START -->", "<!-- ETL:END -->", etl_block(conn))
+        print("measures.md: expected values per dashboard and ETL appendix written")
         model = ROOT / "powerbi" / "model.md"
         if model.exists():
             inject(model, "<!-- APPENDIX:START -->", "<!-- APPENDIX:END -->", appendix_block(conn))

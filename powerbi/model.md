@@ -39,7 +39,7 @@ Giải thích: `Encoding = 65001` là UTF-8; `"en-US"` để dấu thập phân 
 | Chiều (10) | `dim_date`, `dim_geography`, `dim_customer`, `dim_seller`, `dim_product`, `dim_order_status`, `dim_payment_type`, `dim_lead_origin`, `dim_lead_profile`, `dim_sales_rep` | mọi dashboard |
 | Fact (6) | `fact_order_item`, `fact_order_fulfillment`, `fact_payment`, `fact_review`, `fact_lead_funnel`, `fact_seller_monthly` | mọi dashboard |
 | Mart (15, *bảng rời, không tạo quan hệ*) | `v_sales_daily`, `v_sales_category_month`, `v_sales_state_month`, `v_category_pareto`, `v_fulfillment_state_month`, `v_status_funnel`, `v_review_vs_delay`, `v_payment_mix_month`, `v_customer_rfm`, `v_customer_cohort`, `v_funnel_by_origin_month`, `v_seller_scorecard`, `v_seller_by_channel`, `v_geo_state`, `v_geo_zip` | các visual đặc biệt (Pareto, cohort, RFM, funnel, scorecard, bản đồ) – mục 8 |
-| Giám sát ETL (6, *bảng rời*) | `job_run`, `v_run_summary`, `v_dq_summary`, `v_rejected_summary`, `batch_metrics`, `fact_load_issue` | chỉ D7 |
+| Giám sát ETL (6, *bảng rời*) | `job_run`, `v_run_summary`, `v_dq_summary`, `v_rejected_summary`, `batch_metrics`, `fact_load_issue` | không có dashboard (số liệu cho mục 3.3 ETL của báo cáo); nạp nếu muốn xem trong Power BI |
 
 ### 3.2 Cách nạp một bảng
 1. Trong Power Query Editor: **Home → New Source → Blank Query** → **Advanced Editor**.
@@ -161,16 +161,17 @@ Cách tạo: trong khung **Data**, chuột phải cột cấp cao nhất → **A
 Dùng phân cấp trên visual để **drill-down** (mũi tên xuống) và **roll-up** (mũi tên lên) – đây chính là thao tác OLAP ở phía Power BI (xem `handoff/olap-examples.md` cho phía SQL).
 
 ## 7. Bộ lọc thời gian và quy ước chung
-- **Dashboard D1–D6**: ở khung *Filters on this page* kéo `dim_date[InWindow]` vào, chọn **TRUE** (2017-01 → 2018-08). Với các bảng mart (đã có cột `in_window`) kéo `in_window` = TRUE. Nếu muốn chỉ định khoảng khác, dùng slicer `dim_date[year_month]` dạng *Between*.
-- **D7** (giám sát ETL) **không lọc thời gian**.
-- Ghi **cỡ mẫu** trên mọi visual so sánh nhóm nhỏ (đặc biệt D6): đặt thêm `Active sellers`/`MQLs` cạnh tỷ lệ, dùng measure `Small sample warning`.
+- **Dashboard DB1–DB4**: ở khung *Filters on this page* kéo `dim_date[InWindow]` vào, chọn **TRUE** (2017-01 → 2018-08). Với các bảng mart (đã có cột `in_window`) kéo `in_window` = TRUE. Nếu muốn chỉ định khoảng khác, dùng slicer `dim_date[year_month]` dạng *Between*.
+- Các bảng giám sát ETL (`etl_log`) không có cột ngày bán nên **không lọc thời gian**; chúng không thuộc dashboard nào (số liệu dùng ở mục 3.3 của báo cáo).
+- Ghi **cỡ mẫu** trên mọi visual so sánh nhóm nhỏ (đặc biệt DB4): đặt thêm `Active sellers`/`MQLs` cạnh tỷ lệ, dùng measure `Small sample warning`.
 - Dòng *Unknown* của các chiều hiện là `unknown` / `n/a` / `Unknown`: giữ để thấy dữ liệu thiếu, hoặc lọc bỏ có chủ đích.
-- Mọi số tiền là BRL. GMV không gồm đơn Failed – ghi chú này ở chân trang D1.
+- Mọi số tiền là BRL. GMV không gồm đơn Failed – ghi chú này ở chân trang DB1.
 
-## 8. Gợi ý từng dashboard
-Cỡ trang 16:9; mỗi trang có tiêu đề, dòng chú thích nguồn ("Nguồn: kho dữ liệu Olist, GMV không gồm đơn hủy") và bộ lọc thời gian. Measure viết **đậm** là trong `measures.md`.
+## 8. Gợi ý từng dashboard (DB1–DB4)
+Bộ dashboard gồm **4** dashboard (gộp từ 7 dashboard ở bản trước; xem `huong-dan/dashboards/README.md`). Cỡ trang 16:9; mỗi trang có tiêu đề dạng câu hỏi, dòng chú thích nguồn ("Nguồn: kho dữ liệu Olist, GMV không gồm đơn hủy") và bộ lọc thời gian. Measure viết **đậm** là trong `measures.md`. Hướng dẫn đầy đủ từng dashboard (người dùng, bố cục, drill-down, drill-through, tooltip, giá trị kỳ vọng) ở `huong-dan/dashboards/DB1.md` … `DB4.md`.
 
-### D1 – Executive Overview
+### DB1 – Tổng quan và doanh thu (2 trang + 1 trang tooltip)
+**Trang 1 – Tổng quan**
 | Thành phần | Gợi ý |
 | --- | --- |
 | Thẻ KPI (card) | **GMV**, **Orders**, **AOV**, **On-time rate**, **Avg review**, **Cancel rate** (tô màu bằng measure `Color …`) |
@@ -179,8 +180,9 @@ Cỡ trang 16:9; mỗi trang có tiêu đề, dòng chú thích nguồn ("Nguồ
 | Cột ngang | **GMV** theo `dim_geography[region]` |
 | Thanh ngang top 10 | **GMV** theo `dim_product[category_group]` |
 | Slicer | `dim_date[year]`, `dim_geography[region]`, `dim_order_status[status_group]` |
+| Đường dự báo | trên đường **GMV** theo tháng: ngăn *Analytics* → *Forecast* (3 điểm, tin cậy 95%) |
 
-### D2 – Sales & Product
+**Trang 2 – Doanh thu theo sản phẩm**
 | Thành phần | Gợi ý |
 | --- | --- |
 | Treemap | `dim_product[category_group]` → **GMV** |
@@ -189,7 +191,10 @@ Cỡ trang 16:9; mỗi trang có tiêu đề, dòng chú thích nguồn ("Nguồ
 | Scatter | trục x **AOV**, trục y **Freight ratio**, chi tiết `category_group` |
 | Slicer | `dim_date[year_quarter]`, `dim_product[category_group]`, `dim_product[size_class]`, `dim_geography[state_code]` |
 
-### D3 – Order Fulfillment
+**Trang tooltip `Tooltip_Thang`**: *Page size = Tooltip*, *Allow use as tooltip = On*; thẻ **GMV**, **Orders**, **AOV**, **On-time rate** (theo tháng đang trỏ). Gán vào đường GMV và cột tăng trưởng ở trang 1.
+
+### DB2 – Giao hàng và trải nghiệm khách (3 trang)
+**Trang 1 – Giao hàng**
 | Thành phần | Gợi ý |
 | --- | --- |
 | Thẻ KPI | **On-time rate**, **Avg lead days**, **Avg promised days**, **Promised vs actual (days)** (màu theo **Color promised vs actual**), **Cancel rate** |
@@ -200,16 +205,7 @@ Cỡ trang 16:9; mỗi trang có tiêu đề, dòng chú thích nguồn ("Nguồ
 | Cột | số đơn theo `fact_order_fulfillment[Delay bucket]` |
 | Slicer | `dim_date[year_month]`, `dim_geography[region]`, `dim_order_status[order_status]` |
 
-### D4 – Geography & Freight
-| Thành phần | Gợi ý |
-| --- | --- |
-| Bản đồ bong bóng | vị trí = `dim_geography[latitude]`/`[longitude]` (hoặc bảng rời `v_geo_state` theo bang, `v_geo_zip` theo zip: đã có sẵn toạ độ, số đơn, GMV), kích thước **GMV**, màu **Freight ratio** (zip chưa có toạ độ sẽ không hiện) |
-| Ma trận | phân cấp **Geography**, giá trị **GMV**, **Freight**, **Freight ratio**, **Avg lead days** |
-| Cột | **Freight ratio** theo `state_code` (màu theo **Color Freight ratio**) |
-| So sánh vai trò | **GMV** (địa lý khách) cạnh **GMV by seller state** (địa lý seller) theo `region` |
-| Slicer | `dim_date[year]`, `dim_product[category_group]`, `dim_product[size_class]` |
-
-### D5 – Customer Experience
+**Trang 2 – Trải nghiệm khách**
 | Thành phần | Gợi ý |
 | --- | --- |
 | Thẻ KPI | **Avg review** (màu theo **Color Avg review**), **% negative**, **Repeat customer rate**, **Avg installments** |
@@ -220,7 +216,48 @@ Cỡ trang 16:9; mỗi trang có tiêu đề, dòng chú thích nguồn ("Nguồ
 | Ma trận nhiệt (cohort) | `v_customer_cohort`: hàng `cohort_month`, cột `months_since`, giá trị `retention_pct` (Conditional formatting → *Color scale*) |
 | Slicer | `dim_date[year_month]`, `dim_geography[region]` |
 
-### D6 – Seller Acquisition & Performance (2 trang)
+**Trang 3 – Yếu tố ảnh hưởng đến review tiêu cực (Key Influencers)**
+Thêm cột tính toán vào `fact_review` để có dữ liệu cấp review (mỗi review một dòng):
+```dax
+Review type = IF ( fact_review[is_negative] = 1, "Tiêu cực", "Không tiêu cực" )
+Delay days (order) = LOOKUPVALUE ( fact_order_fulfillment[delay_days], fact_order_fulfillment[order_id], fact_review[order_id] )
+Lead days (order) = LOOKUPVALUE ( fact_order_fulfillment[lead_days], fact_order_fulfillment[order_id], fact_review[order_id] )
+Promised days (order) = LOOKUPVALUE ( fact_order_fulfillment[promised_days], fact_order_fulfillment[order_id], fact_review[order_id] )
+Freight (order) = LOOKUPVALUE ( fact_order_fulfillment[freight_total], fact_order_fulfillment[order_id], fact_review[order_id] )
+Order value (order) = LOOKUPVALUE ( fact_order_fulfillment[order_value], fact_order_fulfillment[order_id], fact_review[order_id] )
+Item count (order) = LOOKUPVALUE ( fact_order_fulfillment[item_count], fact_order_fulfillment[order_id], fact_review[order_id] )
+```
+| Thành phần | Gợi ý |
+| --- | --- |
+| Key influencers (visual AI) | *Analyze* = `fact_review[Review type]`, *What influences Review type to be* = **Tiêu cực**; *Explain by* = `fact_review[delivered_late]`, `Delay days (order)`, `Lead days (order)`, `Promised days (order)`, `Freight (order)`, `Order value (order)`, `Item count (order)`, `fact_review[has_comment_message]`, `dim_customer[state_code]`, `dim_date[year_quarter]` |
+| Thẻ | **% negative**, **Avg review - late delivery**, **Avg review - on time** (ngữ cảnh cho kết quả) |
+| Ghi chú trên trang | "Key Influencers là mô hình thống kê tự động: cho biết yếu tố nào đi kèm review tiêu cực, không chứng minh nhân quả" |
+Kỳ vọng từ khám phá dữ liệu (`handoff/2026-11-14-P8-eda.md`): giao trễ là yếu tố liên hệ mạnh nhất với review tiêu cực (Cramér's V 0,403; η của điểm review theo cờ trễ 0,392). Sau khi dựng, ghi lại các yếu tố đứng đầu mà visual trả về vào báo cáo.
+
+**Trang tooltip `Tooltip_Muc_tre`**: số review, điểm TB và % tiêu cực theo nhóm trễ (gán vào cột `v_review_vs_delay`).
+
+### DB3 – Địa lý và phí vận chuyển (2 trang + 1 trang tooltip)
+**Trang 1 – Địa lý và phí vận chuyển** (OLAP drill-down **Vùng → Bang → Thành phố → Zip**)
+| Thành phần | Gợi ý |
+| --- | --- |
+| Bản đồ bong bóng | vị trí = `dim_geography[latitude]`/`[longitude]` (hoặc bảng rời `v_geo_state` theo bang, `v_geo_zip` theo zip: đã có sẵn toạ độ, số đơn, GMV), kích thước **GMV**, màu **Freight ratio** (zip chưa có toạ độ sẽ không hiện) |
+| Ma trận | phân cấp **Geography**, giá trị **GMV**, **Freight**, **Freight ratio**, **Avg lead days** |
+| Cột | **Freight ratio** theo `state_code` (màu theo **Color Freight ratio**) |
+| So sánh vai trò | **GMV** (địa lý khách) cạnh **GMV by seller state** (địa lý seller) theo `region` |
+| Slicer | `dim_date[year]`, `dim_product[category_group]`, `dim_product[size_class]` |
+
+**Trang 2 – Chi tiết bang (trang drill-through)**: *Drill through → Add drill-through fields here* = `dim_geography[state_code]` (giữ *Keep all filters*). Người xem chuột phải một bang ở bản đồ, thanh hoặc ma trận → *Drill through* → *Chi tiết bang*.
+| Thành phần | Gợi ý |
+| --- | --- |
+| Thẻ KPI | **GMV**, **Orders**, **Freight ratio**, **Avg lead days**, **Late rate** của bang đang chọn |
+| Bảng | `dim_geography[city]` → **GMV**, **Freight ratio**, **Avg lead days** (thành phố của bang) |
+| Cột | **GMV** theo `dim_date[year_month]` của bang |
+| Đường | **Avg lead days** theo `dim_date[year_month]` của bang |
+| Nút quay lại | *Insert → Buttons → Back* |
+
+**Trang tooltip `Tooltip_Bang`**: thẻ **GMV**, **Freight ratio**, **Avg lead days**, **Late rate** theo bang đang trỏ (gán vào bản đồ và thanh bang).
+
+### DB4 – Thu hút và hiệu quả seller (3 trang)
 **Trang 1 – Funnel theo kênh**
 | Thành phần | Gợi ý |
 | --- | --- |
@@ -240,18 +277,19 @@ Cỡ trang 16:9; mỗi trang có tiêu đề, dòng chú thích nguồn ("Nguồ
 | Thẻ | Số deal chốt nhưng chưa có đơn = **Won deals** − **Sellers with first sale** (ghi rõ đây là một kết quả, không phải lỗi) |
 | Slicer | `v_seller_scorecard[acquisition_channel]`, `[state_code]` |
 Lưu ý: trang 2 dùng bảng mart (không chịu bộ lọc ngày); nhớ ghi "toàn bộ giai đoạn" trên tiêu đề.
+| Bảng để drill-through | `dim_seller[seller_id]`, `dim_seller[acquisition_channel]`, **Seller GMV (monthly)**, **Seller late rate** (bảng này có quan hệ với `fact_seller_monthly`, nên drill-through lọc đúng; `v_seller_scorecard` là bảng rời, chỉ để hiển thị điểm review) |
 
-### D7 – Data Quality & ETL Monitor (không lọc thời gian)
+**Trang 3 – Chi tiết seller (trang drill-through)**: *Drill through* = `dim_seller[seller_id]`.
 | Thành phần | Gợi ý |
 | --- | --- |
-| Bảng | `v_run_summary`: `batch_id`, `mode`, `started_at`, `duration_sec`, `status`, `staging_rows`, `ods_inserted`, `ods_rejected`, `dw_inserted`, `dw_updated` (lọc `mode` = full/incremental) |
-| Cột | `duration_sec` theo `batch_id` của các lô `incremental` |
-| Đường | `batch_metrics`: `mql`, `deals_won`, `sellers_with_sale` theo `batch_id` (funnel lấp đầy dần) và `gmv` |
-| Thẻ | tỷ lệ test đạt = `pass_pct` của lô mới nhất (`v_dq_summary`); số dòng bị loại (`v_rejected_summary`) |
-| Thanh | `v_rejected_summary`: `reason` → `row_count` |
-| Bảng | `fact_load_issue` (khoá rơi về Unknown, khoảng thời gian âm) |
-| Slicer | `v_run_summary[mode]` |
-Các bảng này nối với nhau bằng `batch_id` nhưng **đừng tạo quan hệ**; mỗi visual dùng một bảng.
+| Thẻ | `dim_seller[seller_id]`, `[acquisition_channel]`, `[state_code]`; **Seller GMV (monthly)**, **Seller late rate** |
+| Đường | **Seller GMV (monthly)** theo `dim_date[year_month]` (thấy tháng seller ngừng bán nhờ snapshot dày đặc) |
+| Bảng | tháng, số đơn, số đơn trễ của seller (`fact_seller_monthly`) |
+| Cảnh báo | **Small sample warning** |
+| Nút quay lại | *Insert → Buttons → Back* |
+
+### Giám sát ETL (không có dashboard)
+Các bảng `etl_log` (`v_run_summary`, `v_dq_summary`, `v_rejected_summary`, `batch_metrics`, `fact_load_issue`, `job_run`) vẫn xuất CSV nhưng không có dashboard: số liệu được trình bày thành bảng kết quả nạp và giám sát ở mục 3.3 của báo cáo (`handoff/2026-11-14-P8b.md`).
 
 ## 9. Publish to web
 1. Hoàn thiện báo cáo, **File → Save**. Kiểm tra mọi trang không còn cảnh báo lỗi và giá trị khớp `measures.md`.
@@ -510,7 +548,7 @@ in
     Source
 ```
 
-**job_run** – Nhật ký chạy ETL từng job (cho dashboard D7)
+**job_run** – Nhật ký chạy ETL từng job (số liệu cho mục 3.3 ETL)
 
 ```m
 let
@@ -524,7 +562,7 @@ in
     Source
 ```
 
-**v_run_summary** – Tóm tắt mỗi lô ETL: chế độ, thời gian, số dòng từng tầng (D7)
+**v_run_summary** – Tóm tắt mỗi lô ETL: chế độ, thời gian, số dòng từng tầng (mục 3.3 ETL)
 
 ```m
 let
@@ -540,7 +578,7 @@ in
     Source
 ```
 
-**v_dq_summary** – Kết quả kiểm thử chất lượng theo lô (D7)
+**v_dq_summary** – Kết quả kiểm thử chất lượng theo lô (mục 3.3 ETL)
 
 ```m
 let
@@ -553,7 +591,7 @@ in
     Source
 ```
 
-**v_rejected_summary** – Số dòng bị loại theo lô, job, lý do (D7)
+**v_rejected_summary** – Số dòng bị loại theo lô, job, lý do (mục 3.3 ETL)
 
 ```m
 let
@@ -565,7 +603,7 @@ in
     Source
 ```
 
-**batch_metrics** – Chỉ số chính của kho sau mỗi lô: đơn, GMV, MQL, deal… (D7, minh hoạ funnel lấp đầy dần)
+**batch_metrics** – Chỉ số chính của kho sau mỗi lô: đơn, GMV, MQL, deal… (mục 3.3 ETL, minh hoạ funnel lấp đầy dần)
 
 ```m
 let
@@ -579,7 +617,7 @@ in
     Source
 ```
 
-**fact_load_issue** – Khoá rơi về Unknown và khoảng thời gian âm khi nạp fact (D7)
+**fact_load_issue** – Khoá rơi về Unknown và khoảng thời gian âm khi nạp fact (mục 3.3 ETL)
 
 ```m
 let

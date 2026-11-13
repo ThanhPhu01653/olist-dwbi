@@ -12,9 +12,24 @@ Quy ước:
 - **GMV** chỉ tính đơn **không** thuộc nhóm trạng thái `Failed` (đơn `canceled` và `unavailable`), vì vậy nhỏ hơn tổng `price` của mọi đơn (13,49 triệu so với 13,59 triệu BRL ở toàn bộ dữ liệu). `Orders` và `AOV` dùng cùng phạm vi với GMV.
 - `KEEPFILTERS(...)` giữ nguyên lựa chọn của người dùng trên bộ lọc trạng thái (nếu không có nó, điều kiện "khác Failed" sẽ ghi đè slicer).
 - Ngày dùng quan hệ đang hoạt động của từng fact (ngày mua cho đơn hàng và thanh toán, ngày tạo cho review, ngày liên hệ đầu cho funnel). Muốn tính theo mốc khác, bọc bằng `USERELATIONSHIP` (mục 8).
-- Bộ lọc thời gian của dashboard D1–D6: `dim_date[InWindow] = TRUE` (2017-01 → 2018-08) – xem `model.md`. Các bảng giá trị kỳ vọng cuối tài liệu cho cả hai trường hợp có và không có bộ lọc đó.
+- Bộ lọc thời gian của DB1–DB4: `dim_date[InWindow] = TRUE` (2017-01 → 2018-08) – xem `model.md`. Các bảng giá trị kỳ vọng cuối tài liệu cho cả hai trường hợp có và không có bộ lọc đó.
 
-## 1. Bán hàng (nguồn: `fact_order_item`)
+## Measure theo dashboard
+
+Bộ dashboard có **4** dashboard Power BI (gộp từ 7 dashboard ở bản trước, xem `huong-dan/dashboards/README.md`). Mỗi mục dưới đây là các measure mà dashboard đó dùng; measure dùng chung chỉ định nghĩa một lần.
+
+| Dashboard | Measure định nghĩa trong mục | Dùng lại từ mục khác |
+| --- | --- | --- |
+| **DB1 – Tổng quan và doanh thu** | mục 1: bán hàng (GMV, Orders, Items, AOV, Freight, Freight ratio, …) và so sánh theo thời gian (MoM, YoY, YTD) | Orders placed, Cancel rate, On-time rate, Avg review (mục 2) |
+| **DB2 – Giao hàng và trải nghiệm khách** | mục 2: xử lý đơn, thanh toán, review và khách hàng | – |
+| **DB3 – Địa lý và phí vận chuyển** | mục 3: GMV by seller state | GMV, Orders, Freight, Freight ratio (mục 1); Avg lead days, Late rate (mục 2) |
+| **DB4 – Thu hút và hiệu quả seller** | mục 4: thu hút seller (fact_lead_funnel) và hiệu suất seller (fact_seller_monthly) | – |
+
+Mục 5 (role-playing date), mục 6 (measure cảnh báo cho conditional formatting) và mục 7 (bảng giá trị kỳ vọng theo từng dashboard) dùng chung. Phụ lục: measure giám sát ETL (không thuộc dashboard nào; dùng ở mục 3.3 của báo cáo).
+
+## 1. DB1 – Tổng quan và doanh thu
+
+**Bán hàng** (nguồn: `fact_order_item`). GMV, Orders, Freight và Freight ratio cũng được DB3 dùng.
 
 ### GMV
 ```dax
@@ -74,16 +89,6 @@ Avg items per order = DIVIDE ( [Items], [Orders] )
 ```
 Số dòng hàng trung bình mỗi đơn. Định dạng: `0.00`.
 
-### GMV by seller state (vai trò địa lý seller)
-```dax
-GMV by seller state =
-CALCULATE (
-    [GMV],
-    USERELATIONSHIP ( fact_order_item[seller_geography_key], dim_geography[geography_key] )
-)
-```
-GMV nhưng gắn theo địa lý của **seller** thay vì của khách (dùng khi dim_geography đặt ở bang của seller). Định dạng: `#,0.00`.
-
 ### GMV by shipping limit date
 ```dax
 GMV by shipping limit date =
@@ -94,7 +99,50 @@ CALCULATE (
 ```
 GMV theo ngày hạn bàn giao cho vận chuyển (role-playing date). Định dạng: `#,0.00`.
 
-## 2. Xử lý đơn (nguồn: `fact_order_fulfillment`)
+**So sánh theo thời gian** (cần `dim_date` đã *Mark as date table*). Dùng cho đường GMV cùng kỳ, cột tăng trưởng và đường dự báo.
+
+### GMV last month
+```dax
+GMV last month = CALCULATE ( [GMV], DATEADD ( dim_date[full_date], -1, MONTH ) )
+```
+GMV của tháng liền trước. Định dạng: `#,0.00`.
+
+### GMV MoM %
+```dax
+GMV MoM % = DIVIDE ( [GMV] - [GMV last month], [GMV last month] )
+```
+Tăng trưởng so với tháng trước. Định dạng: `+0.0%;-0.0%;0.0%`.
+
+### GMV last year
+```dax
+GMV last year = CALCULATE ( [GMV], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+```
+GMV cùng kỳ năm trước. Định dạng: `#,0.00`.
+
+### GMV YoY %
+```dax
+GMV YoY % = DIVIDE ( [GMV] - [GMV last year], [GMV last year] )
+```
+Tăng trưởng so với cùng kỳ năm trước. Định dạng: `+0.0%;-0.0%;0.0%`.
+
+### GMV YTD
+```dax
+GMV YTD = TOTALYTD ( [GMV], dim_date[full_date] )
+```
+GMV luỹ kế từ đầu năm. Định dạng: `#,0.00`.
+
+### Orders MoM %
+```dax
+Orders MoM % =
+DIVIDE ( [Orders] - CALCULATE ( [Orders], DATEADD ( dim_date[full_date], -1, MONTH ) ), CALCULATE ( [Orders], DATEADD ( dim_date[full_date], -1, MONTH ) ) )
+```
+Tăng trưởng số đơn so với tháng trước. Định dạng: `+0.0%;-0.0%;0.0%`.
+
+Lưu ý: dữ liệu bắt đầu thưa từ 2016, nên MoM của 01/2017 và YoY của 2017 không có ý nghĩa (kỳ so sánh gần như trống); dashboard chỉ nên so sánh trong cửa sổ 2017-01 → 2018-08.
+
+## 2. DB2 – Giao hàng và trải nghiệm khách
+
+**Xử lý đơn** (nguồn: `fact_order_fulfillment`). Orders placed, Cancel rate, On-time rate, Avg lead days và Late rate cũng được DB1 và DB3 dùng.
 
 ### Orders placed
 ```dax
@@ -197,7 +245,7 @@ AVERAGEX (
     fact_order_fulfillment[promised_days] - fact_order_fulfillment[lead_days]
 )
 ```
-KPI "ngày hứa giao so với ngày giao thực tế": trung bình (số ngày hứa − số ngày thực tế); **dương = giao sớm hơn lời hứa**. Dùng cho D3. Định dạng: `0.0`.
+KPI "ngày hứa giao so với ngày giao thực tế": trung bình (số ngày hứa − số ngày thực tế); **dương = giao sớm hơn lời hứa**. Dùng cho DB2. Định dạng: `0.0`.
 
 ### Early delivery rate
 ```dax
@@ -216,7 +264,7 @@ CALCULATE ( [Delivered orders], USERELATIONSHIP ( fact_order_fulfillment[deliver
 ```
 Số đơn tính theo **ngày giao** thay vì ngày mua (role-playing date). Định dạng: `#,0`.
 
-## 3. Thanh toán (nguồn: `fact_payment`)
+**Thanh toán** (nguồn: `fact_payment`)
 
 ### Payment value
 ```dax
@@ -243,7 +291,7 @@ DIVIDE ( [Payment value], CALCULATE ( [Payment value], ALL ( dim_payment_type ) 
 ```
 Tỷ trọng giá trị của một hình thức thanh toán trong tổng (đặt `dim_payment_type[display_name]` lên trục). Định dạng: `0.0%`.
 
-## 4. Review và khách hàng (nguồn: `fact_review`, `fact_order_fulfillment`)
+**Review và khách hàng** (nguồn: `fact_review`, `fact_order_fulfillment`). Avg review cũng được DB1 dùng.
 
 ### Reviews
 ```dax
@@ -299,8 +347,23 @@ Repeat customer rate = DIVIDE ( [Repeat customers], [Customers] )
 ```
 Tỷ lệ khách quay lại mua (≥ 2 đơn ÷ tổng khách). Định dạng: `0.00%`.
 
-## 5. Thu hút seller (nguồn: `fact_lead_funnel`)
-Trục thời gian của nhóm này là **tháng liên hệ đầu** của MQL (quan hệ đang hoạt động), nên các tỷ lệ là tỷ lệ của "nhóm MQL liên hệ trong tháng đó".
+## 3. DB3 – Địa lý và phí vận chuyển
+
+DB3 dùng lại GMV, Orders, Freight, Freight ratio (mục 1) và Avg lead days, Late rate (mục 2); chỉ thêm measure địa lý seller dưới đây.
+
+### GMV by seller state (vai trò địa lý seller)
+```dax
+GMV by seller state =
+CALCULATE (
+    [GMV],
+    USERELATIONSHIP ( fact_order_item[seller_geography_key], dim_geography[geography_key] )
+)
+```
+GMV nhưng gắn theo địa lý của **seller** thay vì của khách (dùng khi dim_geography đặt ở bang của seller). Định dạng: `#,0.00`.
+
+## 4. DB4 – Thu hút và hiệu quả seller
+
+**Thu hút seller** (nguồn: `fact_lead_funnel`). Trục thời gian của nhóm này là **tháng liên hệ đầu** của MQL (quan hệ đang hoạt động), nên các tỷ lệ là tỷ lệ của "nhóm MQL liên hệ trong tháng đó".
 
 ### MQLs
 ```dax
@@ -357,7 +420,7 @@ CALCULATE ( [Won deals], USERELATIONSHIP ( fact_lead_funnel[won_date_key], dim_d
 ```
 Số deal tính theo **ngày chốt** (role-playing date) – dùng để xem deal chốt mỗi tháng. Định dạng: `#,0`.
 
-## 6. Hiệu suất seller (nguồn: `fact_seller_monthly`)
+**Hiệu suất seller** (nguồn: `fact_seller_monthly`)
 
 ### Active sellers
 ```dax
@@ -386,51 +449,10 @@ IF ( [Active sellers] < 30, "⚠ Mẫu nhỏ (dưới 30 seller)", "" )
 ```
 Hiện cảnh báo khi một nhóm (ví dụ kênh thu hút) có quá ít seller để kết luận. Định dạng: Text.
 
-## 7. So sánh theo thời gian (cần `dim_date` đã Mark as date table)
-
-### GMV last month
-```dax
-GMV last month = CALCULATE ( [GMV], DATEADD ( dim_date[full_date], -1, MONTH ) )
-```
-GMV của tháng liền trước. Định dạng: `#,0.00`.
-
-### GMV MoM %
-```dax
-GMV MoM % = DIVIDE ( [GMV] - [GMV last month], [GMV last month] )
-```
-Tăng trưởng so với tháng trước. Định dạng: `+0.0%;-0.0%;0.0%`.
-
-### GMV last year
-```dax
-GMV last year = CALCULATE ( [GMV], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
-```
-GMV cùng kỳ năm trước. Định dạng: `#,0.00`.
-
-### GMV YoY %
-```dax
-GMV YoY % = DIVIDE ( [GMV] - [GMV last year], [GMV last year] )
-```
-Tăng trưởng so với cùng kỳ năm trước. Định dạng: `+0.0%;-0.0%;0.0%`.
-
-### GMV YTD
-```dax
-GMV YTD = TOTALYTD ( [GMV], dim_date[full_date] )
-```
-GMV luỹ kế từ đầu năm. Định dạng: `#,0.00`.
-
-### Orders MoM %
-```dax
-Orders MoM % =
-DIVIDE ( [Orders] - CALCULATE ( [Orders], DATEADD ( dim_date[full_date], -1, MONTH ) ), CALCULATE ( [Orders], DATEADD ( dim_date[full_date], -1, MONTH ) ) )
-```
-Tăng trưởng số đơn so với tháng trước. Định dạng: `+0.0%;-0.0%;0.0%`.
-
-Lưu ý: dữ liệu bắt đầu thưa từ 2016, nên MoM của 01/2017 và YoY của 2017 không có ý nghĩa (kỳ so sánh gần như trống); dashboard chỉ nên so sánh trong cửa sổ 2017-01 → 2018-08.
-
-## 8. Role-playing date: khi nào dùng `USERELATIONSHIP`
+## 5. Role-playing date: khi nào dùng `USERELATIONSHIP`
 Mỗi fact có một quan hệ ngày **đang hoạt động** (ngày mua / ngày tạo review / ngày liên hệ đầu); các quan hệ ngày còn lại là **không hoạt động** (nét đứt trong Model view). Muốn một measure tính theo mốc khác, bọc nó trong `CALCULATE ( <measure>, USERELATIONSHIP ( <cột khoá ngày của fact>, dim_date[date_key] ) )` như các measure *by shipping limit date*, *by delivery date*, *by won date* ở trên. Các cột khoá: `fact_order_fulfillment` có `approved_date_key`, `carrier_date_key`, `delivered_date_key`, `estimated_date_key`; `fact_review` có `review_answer_date_key`; `fact_lead_funnel` có `won_date_key`, `first_sale_date_key`.
 
-## 9. Measure cảnh báo cho conditional formatting
+## 6. Measure cảnh báo cho conditional formatting
 Cách dùng: chọn visual → **Format → Cell elements** (bảng / ma trận) hoặc **Data colors / Callout value** (thẻ, cột) → nút **fx** → *Format style* = **Field value** → chọn measure màu tương ứng. Màu lấy từ `powerbi/theme.json` (xanh = tốt, vàng = cần chú ý, đỏ = xấu). Ngưỡng là đề xuất; sửa ngưỡng ngay trong code nếu nhóm quyết định khác.
 
 ```dax
@@ -490,10 +512,12 @@ Gom các cảnh báo chính thành một dòng chữ. Định dạng: Text.
 
 ---
 
-## 10. Bảng giá trị kỳ vọng (tính bằng SQL trên trạng thái cuối của `olist_dw`)
-Dùng để đối chiếu số trên Power BI: đặt các slicer/bộ lọc giống cột bên dưới rồi so với giá trị của measure. Cột **Toàn bộ dữ liệu** = không đặt bộ lọc thời gian nào (trên Power BI: bỏ lọc `InWindow`). Số được sinh bằng `python scripts/gen_powerbi_docs.py` từ database nên luôn đúng với dữ liệu hiện tại; nếu sau này nạp lại dữ liệu, chạy lại script để cập nhật.
+## 7. Bảng giá trị kỳ vọng theo dashboard (tính bằng SQL trên trạng thái cuối của `olist_dw`)
+Dùng để đối chiếu số trên Power BI: đặt các slicer/bộ lọc giống cột bên dưới rồi so với giá trị của measure. Cột **Toàn bộ dữ liệu** = không đặt bộ lọc thời gian nào (trên Power BI: bỏ lọc `InWindow`). Số được sinh bằng `python scripts/gen_powerbi_docs.py`; mỗi dashboard một bảng.
 
 <!-- EXPECTED:START -->
+### DB1 – Tổng quan và doanh thu
+
 | Measure | Toàn bộ dữ liệu | Cửa sổ 2017-01 → 2018-08 | Năm 2017 | Tháng 2017-11 |
 | --- | ---: | ---: | ---: | ---: |
 | GMV | 13,494,400.74 | 13,449,529.68 | 6,108,492.27 | 1,003,862.14 |
@@ -503,10 +527,28 @@ Dùng để đối chiếu số trên Power BI: đặt các slicer/bộ lọc gi
 | Freight | 2,241,126.29 | 2,234,177.06 | 982,076.97 | 168,329.54 |
 | Freight ratio | 16.6% | 16.6% | 16.1% | 16.8% |
 | Orders placed | 99,441 | 99,092 | 45,101 | 7,544 |
+| Cancel rate | 1.24% | 1.19% | 1.60% | 1.60% |
+| On-time rate | 93.2% | 93.2% | 94.4% | 87.6% |
+| Avg review | 4.09 | 4.09 | 4.11 | 4.11 |
+
+**So sánh theo thời gian (GMV)**
+
+| Tháng đang chọn | GMV | GMV last month | GMV MoM % | GMV last year | GMV YoY % |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 2017-11 | 1,003,862.14 | 660,179.62 | +52.1% | 0.00 | (trống) |
+| 2018-05 | 992,871.75 | 993,592.98 | -0.1% | 503,159.19 | +97.3% |
+| 2018-08 | 848,860.10 | 878,044.27 | -3.3% | 568,245.79 | +49.4% |
+
+### DB2 – Giao hàng và trải nghiệm khách
+
+| Measure | Toàn bộ dữ liệu | Cửa sổ 2017-01 → 2018-08 | Năm 2017 | Tháng 2017-11 |
+| --- | ---: | ---: | ---: | ---: |
+| Orders placed | 99,441 | 99,092 | 45,101 | 7,544 |
 | Failed orders | 1,234 | 1,182 | 722 | 121 |
 | Cancel rate | 1.24% | 1.19% | 1.60% | 1.60% |
 | Delivered orders | 96,470 | 96,203 | 43,426 | 7,288 |
 | Late orders | 6,534 | 6,531 | 2,453 | 904 |
+| Late rate | 6.8% | 6.8% | 5.6% | 12.4% |
 | On-time rate | 93.2% | 93.2% | 94.4% | 87.6% |
 | Early delivery rate | 91.9% | 91.9% | 93.4% | 85.7% |
 | Avg lead days | 12.6 | 12.5 | 13.0 | 15.2 |
@@ -516,17 +558,33 @@ Dùng để đối chiếu số trên Power BI: đặt các slicer/bộ lọc gi
 | Avg promised days | 24.4 | 24.3 | 25.3 | 23.2 |
 | Avg delay days | -11.9 | -11.8 | -12.3 | -8.1 |
 | Promised vs actual (days) | 11.8 | 11.7 | 12.3 | 8.0 |
-| Payment value | 16,008,872.12 | 15,944,480.57 | 7,249,746.73 | 1,194,882.80 |
-| Payments | 103,886 | 103,520 | 47,525 | 7,863 |
-| Avg installments | 2.85 | 2.85 | 3.00 | 3.02 |
 | Reviews | 99,224 | 98,899 | 42,735 | 4,786 |
 | Avg review | 4.09 | 4.09 | 4.11 | 4.11 |
 | % negative | 14.7% | 14.6% | 13.9% | 13.4% |
 | Avg review - late delivery | 2.27 | 2.27 | 2.35 | 2.63 |
 | Avg review - on time | 4.29 | 4.29 | 4.29 | 4.27 |
+| Payment value | 16,008,872.12 | 15,944,480.57 | 7,249,746.73 | 1,194,882.80 |
+| Payments | 103,886 | 103,520 | 47,525 | 7,863 |
+| Avg installments | 2.85 | 2.85 | 3.00 | 3.02 |
 | Customers | 96,096 | 95,774 | 43,713 | 7,430 |
 | Repeat customers | 2,997 | 2,975 | 1,256 | 109 |
 | Repeat customer rate | 3.12% | 3.11% | 2.87% | 1.47% |
+
+### DB3 – Địa lý và phí vận chuyển
+
+| Measure | Toàn bộ dữ liệu | Cửa sổ 2017-01 → 2018-08 | Năm 2017 | Tháng 2017-11 |
+| --- | ---: | ---: | ---: | ---: |
+| GMV | 13,494,400.74 | 13,449,529.68 | 6,108,492.27 | 1,003,862.14 |
+| Orders | 98,199 | 97,905 | 44,375 | 7,421 |
+| Freight | 2,241,126.29 | 2,234,177.06 | 982,076.97 | 168,329.54 |
+| Freight ratio | 16.6% | 16.6% | 16.1% | 16.8% |
+| Avg lead days | 12.6 | 12.5 | 13.0 | 15.2 |
+| Late rate | 6.8% | 6.8% | 5.6% | 12.4% |
+
+### DB4 – Thu hút và hiệu quả seller
+
+| Measure | Toàn bộ dữ liệu | Cửa sổ 2017-01 → 2018-08 | Năm 2017 | Tháng 2017-11 |
+| --- | ---: | ---: | ---: | ---: |
 | MQLs (theo tháng liên hệ đầu) | 8,000 | 8,000 | 2,002 | 445 |
 | Won deals | 842 | 842 | 61 | 18 |
 | MQL to won rate | 10.5% | 10.5% | 3.0% | 4.0% |
@@ -539,13 +597,33 @@ Dùng để đối chiếu số trên Power BI: đặt các slicer/bộ lọc gi
 | Seller GMV (monthly) | 13,494,400.74 | 13,449,529.68 | 6,108,492.27 | 1,003,862.14 |
 | Seller late rate | 6.7% | 6.7% | 5.6% | 12.3% |
 
-Ghi chú: dòng *Tháng 2017-11* và các cột có lọc thời gian áp dụng cho ngày mua (đơn, thanh toán), ngày tạo review (review), tháng liên hệ đầu (funnel), tháng (seller-tháng). Bộ lọc tương ứng trên Power BI: slicer `dim_date[year_month]` hoặc bộ lọc trang `InWindow = TRUE`.
-
-**So sánh theo thời gian (GMV)**
-
-| Tháng đang chọn | GMV | GMV last month | GMV MoM % | GMV last year | GMV YoY % |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| 2017-11 | 1,003,862.14 | 660,179.62 | +52.1% | 0.00 | (trống) |
-| 2018-05 | 992,871.75 | 993,592.98 | -0.1% | 503,159.19 | +97.3% |
-| 2018-08 | 848,860.10 | 878,044.27 | -3.3% | 568,245.79 | +49.4% |
+Ghi chú: dòng *Tháng 2017-11* và các cột có lọc thời gian áp dụng cho ngày mua (đơn, thanh toán), ngày tạo review (review), tháng liên hệ đầu (funnel) và tháng của snapshot (seller theo tháng). Bộ lọc tương ứng trên Power BI: slicer `dim_date[year_month]` hoặc bộ lọc trang `InWindow = TRUE`. Measure dùng ở nhiều dashboard (ví dụ GMV ở DB1 và DB3) có cùng giá trị.
 <!-- EXPECTED:END -->
+
+## Phụ lục: Giám sát ETL (dùng ở mục 3.3)
+Không có dashboard giám sát ETL. Các bảng `etl_log` vẫn được xuất CSV (`job_run`, `v_run_summary`, `v_dq_summary`, `v_rejected_summary`, `batch_metrics`, `fact_load_issue`) để dùng làm số liệu cho mục 3.3 của báo cáo (bảng kết quả nạp và giám sát). Nếu muốn xem trong Power BI, measure dưới đây tính tỷ lệ test đạt của lô mới nhất.
+
+```dax
+Latest pass pct = CALCULATE ( MAX ( v_dq_summary[pass_pct] ), FILTER ( ALL ( v_dq_summary ), v_dq_summary[batch_id] = MAX ( v_dq_summary[batch_id] ) ) )
+```
+Tỷ lệ phép kiểm thử đạt của lô mới nhất. Định dạng: `0.0`.
+
+<!-- ETL:START -->
+| Chỉ số | Giá trị |
+| --- | ---: |
+| Số phép kiểm thử ở lô mới nhất (checks / đạt / lỗi) | 136 / 136 / 0 |
+| `pass_pct` lô mới nhất | 100.0 |
+| Đối chiếu EDA (khớp / tổng) | 6 / 6 |
+| Số lô tăng dần (`mode = incremental`, có dữ liệu mới) | 11 |
+| Thời gian mỗi lô: nhỏ nhất / TB / lớn nhất (giây) | 21.3 / 23.8 / 27.6 |
+| Tổng `row_count` ở `v_rejected_summary` | 42 |
+| `batch_metrics`: MQL nhỏ nhất → lớn nhất | 2,002 → 8,000 |
+| `batch_metrics`: deal chốt nhỏ nhất → lớn nhất | 3 → 842 |
+| `batch_metrics`: seller có đơn nhỏ nhất → lớn nhất | 0 → 379 |
+| `batch_metrics`: GMV lớn nhất (BRL) | 13,494,400.74 |
+| `fact_load_issue`: handling_days | 1,359 |
+| `fact_load_issue`: transit_days | 23 |
+| `fact_load_issue`: days_to_close (won before first contact) | 1 |
+
+*Số theo lần chạy cuối; số lô và thời gian có thể thay đổi nếu chạy pipeline thêm lần nữa.*
+<!-- ETL:END -->
