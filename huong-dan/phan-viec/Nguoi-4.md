@@ -1,6 +1,6 @@
 # Người 4 – Chương Dashboard, bài học tổng kết và dashboard DB4
 
-Chung cho cả nhóm (Drive, Power BI, Overleaf, draw.io, cách hỏi Phú): [`README.md`](README.md). File này chỉ nói phần của Người 4. Người 4 vừa dựng DB4, vừa là người **tổng hợp** phần dashboard của cả nhóm: nhận ảnh và nhận xét của DB1–DB3, nhận bài học của mọi người.
+Chung cho cả nhóm (Drive, Power BI, Overleaf, draw.io): [`README.md`](README.md). File này chỉ nói phần của Người 4. Người 4 vừa dựng DB4, vừa là người **tổng hợp** phần dashboard của cả nhóm: nhận ảnh và nhận xét của DB1–DB3, nhận bài học của mọi người.
 
 ## 1. Phần của bạn
 
@@ -11,10 +11,10 @@ Chung cho cả nhóm (Drive, Power BI, Overleaf, draw.io, cách hỏi Phú): [`R
 | Sơ đồ draw.io | **bản đồ bộ dashboard** (vẽ mới; đề xuất tên `4_ban_do_bo_dashboard.png`) |
 | Dashboard | **DB4 Thu hút và hiệu quả seller** (funnel; drill-through sang chi tiết seller) |
 | Việc riêng | gom bài học của cả nhóm; kiểm tra checklist của cả 4 dashboard |
-| Thuyết trình | dashboard và bài học tổng kết; giả định **khoảng 9 phút, 7 slide nói** (thời lượng chính thức chưa có, xem `README.md` mục 2) |
+| Thuyết trình | dashboard và bài học tổng kết; khoảng **7 slide nói** (điều chỉnh theo thời lượng chung của nhóm) |
 | Báo cáo (giai đoạn 2) | `4-dashboard.tex` (20 `\todo`, nhiều nhất trong báo cáo) |
 
-Slide DB1–DB3 trong `03-dashboard.tex` do bạn viết, từ **ảnh chụp và 3–5 câu nhận xét** mà Người 1, 2, 3 gửi (hạn 25/11).
+Slide DB1–DB3 trong `03-dashboard.tex` do bạn viết, từ **ảnh chụp và 3–5 câu nhận xét** mà Người 1, 2, 3 gửi.
 
 ## 2. Barem chấm gì ở phần này
 
@@ -47,7 +47,7 @@ Không được chép câu chữ, số liệu hay hình của nhóm 6.
 
 ## 3. Kiến thức cần nắm
 
-**Bốn dashboard và vì sao chia như vậy.** Bộ dashboard gộp từ 7 dashboard ở bản trước (quyết định 13/11); mỗi dashboard thuộc một loại mà môn học yêu cầu:
+**Bốn dashboard và vì sao chia như vậy.** Bộ dashboard gộp từ 7 dashboard ở bản trước để mỗi người phụ trách một dashboard; mỗi dashboard thuộc một loại mà môn học yêu cầu:
 
 | Dashboard | Loại | Điểm checklist nổi bật |
 | --- | --- | --- |
@@ -74,7 +74,7 @@ Giám sát chất lượng dữ liệu và ETL **không còn là dashboard**: l�
 - *Chỉ số:* **GMV có hai cách đo** (13,49 so với 13,59 triệu BRL) → định nghĩa mỗi KPI một lần bằng DAX và đối chiếu với SQL. **Review đúng hạn 4,21 sửa thành 4,29**: đơn chưa giao cũng có `delivered_late = 0` nên phải thêm điều kiện `is_delivered = 1`.
 - *Dữ liệu:* ngày dự kiến giao quá rộng (hứa 24,4 ngày, thực tế 12,6) nên đúng hạn 93,2% không phản ánh trải nghiệm → thêm KPI hứa so với thực tế. 380 so với 379 seller: khác phạm vi đơn (có hay không tính đơn *Failed*).
 - *Quy trình:* không xoá âm thầm (42 dòng toạ độ ngoài Brazil bị loại có ghi lý do); chọn grain trước khi vẽ bảng fact; dựng lại toàn bộ bằng một lệnh trong 443 giây cho kết quả giống hệt.
-- *Công cụ và làm việc nhóm:* nhóm bổ sung (hạn 26/11, mục 8).
+- *Công cụ và làm việc nhóm:* nhóm bổ sung (mục 8).
 
 ## 4. Số liệu và hình có sẵn
 
@@ -89,7 +89,7 @@ Giám sát chất lượng dữ liệu và ETL **không còn là dashboard**: l�
 | Giới hạn dữ liệu | GMV hai cách đo; 380/379 | `huong-dan/05-nghiep-vu-nhap.md` mục 13 | S144 |
 | Bài học nháp | S112, S144 | `slides/slide-script.md`; `report/chapters/06-ket-luan.tex` | slide bài học |
 
-Hình: ảnh chụp dashboard `4_DBx_<mô-tả>.png` (nhóm chụp), `figures/2-3_cay_phan_tich_DB1…DB4.png` (cây phân tích), `figures/4_qr_dashboard.png` (sau khi publish; Phú tạo).
+Hình: ảnh chụp dashboard `4_DBx_<mô-tả>.png` (nhóm chụp), `figures/2-3_cay_phan_tich_DB1…DB4.png` (cây phân tích), `figures/4_qr_dashboard.png` (tạo sau khi publish).
 
 ## 5. Danh sách slide đề xuất
 
@@ -136,7 +136,7 @@ Hình: ảnh chụp dashboard `4_DBx_<mô-tả>.png` (nhóm chụp), `figures/2-
 | D5 | Tình huống DB4: 8.000 MQL chỉ ra 379 seller bán được, kênh nào đáng đầu tư? | như trên | – | `DB4.md` mục 2, 8 | cần làm |
 | D6 | Trang kỹ thuật dùng: mô hình 38 bảng, 32 quan hệ, 65 measure (sửa S90 "16 bảng") | số liệu mô hình hiện tại | – | `powerbi/olist_base/README.md` | sửa slide có sẵn |
 | D7 | Bài học về quy trình, kiến thức, công cụ của cả nhóm (mỗi bài học: vấn đề → con số → xử lý) | 3 slide tổng kết sau khi gom bài học | bảng | mục 8 của file này | cần làm (sau 26/11) |
-| D8 | Mã QR: quét để xem 4 dashboard công khai (S106) | link public và QR | `figures/4_qr_dashboard.png` | Phú publish | cần ảnh QR |
+| D8 | Mã QR: quét để xem 4 dashboard công khai (S106) | link public và QR | `figures/4_qr_dashboard.png` | sau khi publish | cần ảnh QR |
 
 Khối lượng: 23 slide đang có + 8 slide thêm (D1–D8) = **khoảng 31 slide** trong file của bạn. Các slide DB1–DB4 theo từng dashboard (khoảng 3–5 slide mỗi dashboard) là slide chi tiết; khi trình bày thực tế chủ yếu **demo trên Power BI** (hoặc qua QR). **Chọn 7 slide để nói** (khoảng 9 phút):
 
@@ -152,16 +152,16 @@ Khối lượng: 23 slide đang có + 8 slide thêm (D1–D8) = **khoảng 31 sl
 
 ## 6. Sơ đồ draw.io: bản đồ bộ dashboard
 
-Quy ước chung (màu, font, xuất PNG): `README.md` mục 6.
+Quy ước chung (màu, font, xuất PNG): `README.md` mục 5.
 
 - **Phải thể hiện:** bốn khối DB1–DB4; mỗi khối ghi **loại** (dòng thời gian, thống kê, OLAP, vận hành), **câu hỏi chính**, **KPI chính** (ví dụ DB1: GMV 13,49 triệu BRL; DB2: On-time rate 93,2%; DB3: Freight ratio 16,6%; DB4: MQL to won rate 10,5%), người dùng và số trang; các **liên kết giữa dashboard** (drill-through DB3 → trang Chi tiết bang, DB4 → trang Chi tiết seller; dùng chung một mô hình 38 bảng, 65 measure) và **điểm checklist** của từng dashboard (dự báo ở DB1, Key Influencers ở DB2, drill-down ở DB3…). Dạng sơ đồ cấu trúc (khối và liên kết), không vẽ thành luồng dữ liệu.
 - **Bản nháp:** chưa có; vẽ mới. Tài liệu nguồn: `huong-dan/dashboards/README.md` (bảng loại và ma trận), `DB1.md` … `DB4.md` (câu hỏi, KPI).
-- **Màu:** dùng bảng màu chung ở `README.md` mục 6; mỗi dashboard một màu phụ (xanh dương, cam, xanh lá, tím) và nhắc lại đúng quy ước **đỏ chỉ để cảnh báo** (không dùng đỏ cho khối).
+- **Màu:** dùng bảng màu chung ở `README.md` mục 5; mỗi dashboard một màu phụ (xanh dương, cam, xanh lá, tím) và nhắc lại đúng quy ước **đỏ chỉ để cảnh báo** (không dùng đỏ cho khối).
 - **Lỗi thầy hay bắt:** không có menu/điều hướng, không thấy mối liên hệ giữa các dashboard; không nêu loại phân tích (dòng thời gian, OLAP…).
 
 ## 7. Dashboard DB4 – Thu hút và hiệu quả seller
 
-Hướng dẫn đầy đủ: [`../dashboards/DB4.md`](../dashboards/DB4.md). Cách mở file, lưu, Refresh, đối chiếu số, chụp ảnh: `README.md` mục 4.
+Hướng dẫn đầy đủ: [`../dashboards/DB4.md`](../dashboards/DB4.md). Cách mở file, lưu, Refresh, đối chiếu số, chụp ảnh: `README.md` mục 3.
 
 **Câu hỏi trả lời:** bao nhiêu % MQL được chốt, theo kênh; chốt deal và có đơn đầu tiên mất bao lâu; seller từ funnel đóng góp GMV bao nhiêu, giao trễ và review ra sao; seller nào GMV cao nhưng hay trễ. **Luôn ghi cỡ mẫu.**
 
@@ -169,7 +169,7 @@ Hướng dẫn đầy đủ: [`../dashboards/DB4.md`](../dashboards/DB4.md). Cá
 
 **Measure chính** (thư mục `DB4 Thu hút và hiệu quả seller`, thư mục con *Thu hút seller* và *Hiệu suất seller*): MQLs, Won deals, MQL to won rate, Avg days to close, Sellers with first sale, Won to first sale rate, Avg days won to first sale, Seller GMV first 90d, Active sellers, Seller GMV (monthly), Seller late rate, Small sample warning.
 
-**Checklist phải đạt:** ≥ 4 loại biểu đồ (bar, card, column, funnel, line, scatter, table); định dạng số; tiêu đề dạng câu hỏi; màu đỏ chỉ để cảnh báo (`late_rate_pct` > 10%, cảnh báo mẫu nhỏ); định dạng có điều kiện (`late_rate_pct`, `small_sample`, `avg_review_score`); slicer phân cấp Nhóm kênh → Origin; drill (Origin → Nhóm kênh; bảng seller theo bang); **drill-through trang Chi tiết seller**; tooltip `Tooltip_Kenh`; publish và QR (Phú).
+**Checklist phải đạt:** ≥ 4 loại biểu đồ (bar, card, column, funnel, line, scatter, table); định dạng số; tiêu đề dạng câu hỏi; màu đỏ chỉ để cảnh báo (`late_rate_pct` > 10%, cảnh báo mẫu nhỏ); định dạng có điều kiện (`late_rate_pct`, `small_sample`, `avg_review_score`); slicer phân cấp Nhóm kênh → Origin; drill (Origin → Nhóm kênh; bảng seller theo bang); **drill-through trang Chi tiết seller**; tooltip `Tooltip_Kenh`; publish và QR (làm khi ghép bộ chung).
 
 **Các bước dựng:**
 1. Mở `olist_base.pbix`, *Save as* `DB4_thu-hut-seller.pbix`; Refresh.
@@ -192,12 +192,12 @@ Hướng dẫn đầy đủ: [`../dashboards/DB4.md`](../dashboards/DB4.md). Cá
 
 ## 8. Việc riêng
 
-### 8.1. Gom bài học của cả nhóm (hạn 26/11)
-1. **Yêu cầu từng người** (Người 1, 2, 3, Phú) gửi 3–5 câu bài học trước 26/11 theo đúng khuôn: *vấn đề* (chuyện gì đã xảy ra) → *con số* (đo được bao nhiêu) → *cách xử lý* (đã làm gì, lần sau làm gì).
+### 8.1. Gom bài học của cả nhóm
+1. **Nhắc từng người** (Người 1, 2, 3, Phú) gửi 3–5 câu bài học theo đúng khuôn: *vấn đề* (chuyện gì đã xảy ra) → *con số* (đo được bao nhiêu) → *cách xử lý* (đã làm gì, lần sau làm gì).
 2. **Gom** vào một bảng, xếp ba nhóm: *chỉ số* (cách đo sai, định nghĩa), *dữ liệu và quy trình* (làm sạch, ETL, thiết kế), *công cụ và làm việc nhóm* (Git, Power BI, Overleaf, phân công).
-3. **Bỏ trùng** (hai người cùng nêu "định nghĩa KPI một lần" thì gộp một dòng); **kiểm tra từng con số** với `handoff/` hoặc kỳ vọng ở `DBx.md`; con số không có nguồn thì bỏ hoặc hỏi Phú.
+3. **Bỏ trùng** (hai người cùng nêu "định nghĩa KPI một lần" thì gộp một dòng); **kiểm tra từng con số** với `handoff/` hoặc kỳ vọng ở `DBx.md`; con số không có nguồn thì bỏ hoặc hỏi lại người viết.
 4. **Chọn 6–8 bài học** cho slide (nhóm 6 có 3 slide bài học về chỉ số và quy trình cộng tổng kết ba mặt: quy trình, kiến thức, công cụ). Mỗi slide: tiêu đề là câu kết luận ("Một KPI phải có đúng một định nghĩa: GMV hai cách đo lệch 0,1 triệu BRL"), bên dưới vấn đề → con số → xử lý.
-5. Đưa kết quả cho Phú để dùng ở chương kết luận (`06-ket-luan.tex` mục *Bài học kinh nghiệm*) và phần `Bài học` trong `4-dashboard.tex` (có `\todo` yêu cầu bổ sung bài học về làm việc nhóm).
+5. Kết quả dùng cho chương kết luận (`06-ket-luan.tex` mục *Bài học kinh nghiệm*) và phần `Bài học` trong `4-dashboard.tex` (có `\todo` yêu cầu bổ sung bài học về làm việc nhóm).
 
 ### 8.2. Kiểm tra checklist của cả 4 dashboard
 1. Mở `huong-dan/dashboards/README.md` (ma trận mục checklist × DB1–DB4) và mục 10 của từng `DBx.md`.
@@ -219,7 +219,7 @@ Hướng dẫn đầy đủ: [`../dashboards/DB4.md`](../dashboards/DB4.md). Cá
 | Publish web và mã QR | ☐ | ☐ | ☐ | ☐ | |
 | Số liệu khớp bảng kỳ vọng (mục 9) | ☐ | ☐ | ☐ | ☐ | |
 
-4. Mục chưa đạt: báo ngay cho chủ dashboard sửa, hạn 27/11. Cập nhật bảng "Thống kê bộ dashboard" ở báo cáo 4.1.5 bằng số thật (số trang, visual, slicer, measure đếm trong từng file `.pbix`).
+4. Mục chưa đạt: báo người dựng dashboard đó để sửa. Cập nhật bảng "Thống kê bộ dashboard" ở báo cáo 4.1.5 bằng số thật (số trang, visual, slicer, measure đếm trong từng file `.pbix`).
 
 ## 9. Câu hỏi có thể bị hỏi
 
@@ -278,15 +278,15 @@ Các `\todo` hiện có (đếm từ mã nguồn; phần lớn là chèn ảnh c
 | **Tổng** | **20** | |
 <!-- /TODOS -->
 
-## 11. Checklist trước khi nộp và mốc hạn
+## 11. Checklist trước khi nộp
 
-| Hạn | Việc | Xong |
-| --- | --- | --- |
-| 23/11 | Sơ đồ bản đồ bộ dashboard vẽ bằng draw.io, nộp `03_drawio` | ☐ |
-| 23/11 | Bản nháp `03-dashboard.tex` (thêm D1–D8; khung chờ giữ lại nếu chưa có ảnh) | ☐ |
-| 25/11 | Bản đầu DB4; nhận ảnh `4_DB1…DB3_*.png` và 3–5 câu nhận xét của Người 1, 2, 3 | ☐ |
-| 26/11 | Nhận bài học từ mọi người; gom và chọn 6–8 bài học | ☐ |
-| 27/11 | Slide và DB4 xong; kiểm tra checklist 4 dashboard; thay mọi khung chờ bằng ảnh; nộp `.tex` và hình vào `04_Docs/tex-nop/` | ☐ |
-| 28–29/11 | Tập 9 phút (gồm demo trực tiếp và phương án dự phòng nếu mất mạng: ảnh chụp), bấm giờ, tổng duyệt | ☐ |
+| Việc | Xong |
+| --- | --- |
+| Sơ đồ bản đồ bộ dashboard vẽ bằng draw.io, nộp `03_drawio` | ☐ |
+| Bản nháp `03-dashboard.tex` (thêm D1–D8; khung chờ giữ lại nếu chưa có ảnh) | ☐ |
+| Bản đầu DB4; nhận ảnh `4_DB1…DB3_*.png` và 3–5 câu nhận xét của Người 1, 2, 3 | ☐ |
+| Nhận bài học từ mọi người; gom và chọn 6–8 bài học | ☐ |
+| Slide và DB4 xong; kiểm tra checklist 4 dashboard; thay mọi khung chờ bằng ảnh; nộp `.tex` và hình vào `04_Docs/tex-nop/` | ☐ |
+| Tập (gồm demo trực tiếp và phương án dự phòng nếu mất mạng: ảnh chụp), bấm giờ, tổng duyệt | ☐ |
 
 Trước khi nộp slide: không còn khung đỏ `CHÈN ẢNH CHỤP` (tìm `khungchen`); ảnh đúng tên `4_DBx_<mô-tả>.png`; mỗi slide dashboard có tiêu đề là câu kết luận có số khớp bảng kỳ vọng; mỗi slide có `\muc{...}`; biên dịch bằng `thu-mot-phan.tex` không lỗi.

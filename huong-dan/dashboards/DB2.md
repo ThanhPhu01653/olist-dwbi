@@ -1,6 +1,6 @@
 # DB2 – Giao hàng và trải nghiệm khách
 
-*Loại: Vận hành và thống kê (Key Influencers). Người dựng: Người 2 (Phú dựng file gốc, tổng hợp và chỉnh sửa). Dựng theo `powerbi/model.md` (mục 8); công thức DAX ở `powerbi/measures.md`. Cây phân tích: `huong-dan/05-nghiep-vu-nhap.md` mục 6 (hình `figures/2-3_cay_phan_tich_DB2.png`).*
+*Loại: Vận hành và thống kê (Key Influencers). Người dựng: Người 2. Dựng theo `powerbi/model.md` (mục 8); công thức DAX ở `powerbi/measures.md`. Cây phân tích: `huong-dan/05-nghiep-vu-nhap.md` mục 6 (hình `figures/2-3_cay_phan_tich_DB2.png`).*
 
 ## 1. Mục tiêu
 

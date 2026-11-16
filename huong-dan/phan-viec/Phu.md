@@ -1,6 +1,6 @@
 # Phú – Mở đầu, mở rộng, kết luận, file gốc và ghép file tổng
 
-Chung cho cả nhóm (Drive, Power BI, Overleaf, draw.io, cách hỏi Phú): [`README.md`](README.md). File này viết dạng checklist cho Phú; các mục 1–3 và 5–6 giống khung của `Nguoi-1.md` … `Nguoi-4.md`.
+Chung cho cả nhóm (Drive, Power BI, Overleaf, draw.io): [`README.md`](README.md). File này viết dạng checklist cho Phú; các mục 1–3 và 5–6 giống khung của `Nguoi-1.md` … `Nguoi-4.md`.
 
 ## 1. Phần của bạn
 
@@ -120,8 +120,8 @@ Trước khi nộp slide: số liệu trong slide mở đầu khớp `handoff/00
 ## 7. Checklist việc của Phú
 
 ### 7.1 Power BI: file gốc, D8, ghép file tổng, publish, QR
-- [ ] **File gốc:** mở `powerbi/olist_base/olist_base.pbip` bằng Power BI Desktop, Refresh, đối chiếu số với bảng ở `powerbi/olist_base/README.md` mục 5, rồi lưu `olist_base.pbix`. *Thư mục `powerbi/olist_base/` hiện có thay đổi chưa commit do Power BI Desktop lưu lại (gồm tham số `DataFolder` trỏ vào đường dẫn máy của bạn): trước khi commit, đặt lại `DataFolder` về giá trị mặc định hoặc không commit `expressions.tmdl`.*
-- [ ] **Đóng gói:** `olist_pbi_2026-11-16.zip` (gồm `olist_base.pbix` và 37 file CSV) lên `02_Dashboard`; 37 file CSV lên `01_pBI_data`. Quy tắc: mọi người lưu thành `DBx_<tên>.pbix` trước khi dựng, **không sửa file gốc**.
+- [ ] **File gốc:** mở `powerbi/olist_base/olist_base.pbip` bằng Power BI Desktop, Refresh, đối chiếu số với bảng ở `powerbi/olist_base/README.md` mục 4, rồi lưu `olist_base.pbix`. *Thư mục `powerbi/olist_base/` hiện có thay đổi chưa commit do Power BI Desktop lưu lại (gồm tham số `DataFolder` trỏ vào đường dẫn máy của bạn): trước khi commit, đặt lại `DataFolder` về giá trị mặc định hoặc không commit `expressions.tmdl`.*
+- [ ] **Đóng gói:** `olist_base.pbix` lên `02_Dashboard`; 37 file CSV và `olist_geolocation_dataset.csv` lên `01_pBI_data`. Quy tắc: mọi người lưu thành `DBx_<tên>.pbix` trước khi dựng, **không sửa file gốc**.
 - [ ] **Measure mới:** nếu ai cần measure chưa có, thêm vào `powerbi/measures.md` và `olist_base`, rồi chạy `python scripts/gen_pbip.py` (ghi đè `powerbi/olist_base/` nên chỉ chạy khi chưa ai dựng trên bản mới) hoặc thêm tay trong file gốc. Không để mỗi người tạo measure riêng trong file riêng, vì khi ghép sẽ mất.
 - [ ] **D8 Thị trường Brazil:** sau P9, dựng bằng Power BI từ dữ liệu API; hướng dẫn `huong-dan/dashboards/D8.md` (do P9 viết). Không sửa DB1–DB4 của nhóm.
 - [ ] **Ghép file tổng** (4 file `DBx_<tên>.pbix` → `Olist_DW_BI.pbix`), cách làm gợi ý (chưa thử):

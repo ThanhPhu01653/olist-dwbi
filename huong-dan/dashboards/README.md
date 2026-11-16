@@ -1,6 +1,6 @@
 # Hướng dẫn dựng dashboard: DB1–DB4 và checklist chung
 
-Bộ dashboard Power BI gồm **4 dashboard** (gộp từ 7 dashboard ở bản trước, quyết định ngày 13/11). Mỗi dashboard thuộc một loại mà môn học yêu cầu và do một thành viên dựng; Phú làm file `.pbix` gốc, tổng hợp và chỉnh sửa.
+Bộ dashboard Power BI gồm **4 dashboard** (gộp từ 7 dashboard ở bản trước). Mỗi dashboard thuộc một loại mà môn học yêu cầu và do một thành viên dựng trên cùng một file `.pbix` gốc, sau đó ghép thành bộ chung.
 
 | Dashboard | Loại | Người dựng | Hướng dẫn |
 | --- | --- | --- | --- |

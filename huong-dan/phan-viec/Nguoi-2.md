@@ -1,6 +1,6 @@
 # Người 2 – Dữ liệu nguồn, ERD OLTP, khám phá dữ liệu và dashboard DB2
 
-Chung cho cả nhóm (Drive, Power BI, Overleaf, draw.io, cách hỏi Phú): [`README.md`](README.md). File này chỉ nói phần của Người 2.
+Chung cho cả nhóm (Drive, Power BI, Overleaf, draw.io): [`README.md`](README.md). File này chỉ nói phần của Người 2.
 
 ## 1. Phần của bạn
 
@@ -11,7 +11,7 @@ Chung cho cả nhóm (Drive, Power BI, Overleaf, draw.io, cách hỏi Phú): [`R
 | Sơ đồ draw.io | `2-4_data_taxonomy`, `2-4_data_flow_hien_trang`, `2-4_data_flow_de_xuat`, `2-5_erd_oltp_gach_chan`, `2-5_data_flow_oltp_olap` |
 | Dashboard | **DB2 Giao hàng và trải nghiệm khách** (vận hành + thống kê, có Key Influencers) |
 | Việc riêng | chạy Excel ToolPak trên `eda_sample.xlsx`, chụp ảnh đối chiếu với sheet `python_doi_chieu` |
-| Thuyết trình | khảo sát 2.4–2.5 và khám phá dữ liệu; giả định **khoảng 9 phút, 8 slide nói** (thời lượng chính thức chưa có, xem `README.md` mục 2) |
+| Thuyết trình | khảo sát 2.4–2.5 và khám phá dữ liệu; khoảng **8 slide nói** (điều chỉnh theo thời lượng chung của nhóm) |
 | Báo cáo (giai đoạn 2) | `2-4-du-lieu-nguon.tex`, `2-5-erd-oltp.tex`, `3-1-kham-pha.tex` |
 
 ## 2. Barem chấm gì ở phần này
@@ -160,7 +160,7 @@ Khối lượng: 12 slide 2.4–2.5 + 17 slide 3.1 = 29 slide đang có, thêm 6
 
 ## 6. Sơ đồ draw.io
 
-Quy ước chung (màu, font, xuất PNG): `README.md` mục 6. Nộp `.drawio` và PNG vào `03_drawio`.
+Quy ước chung (màu, font, xuất PNG): `README.md` mục 5. Nộp `.drawio` và PNG vào `03_drawio`.
 
 | Hình | Phải thể hiện | Bản nháp | Lỗi thầy hay bắt |
 | --- | --- | --- | --- |
@@ -172,7 +172,7 @@ Quy ước chung (màu, font, xuất PNG): `README.md` mục 6. Nộp `.drawio` 
 
 ## 7. Dashboard DB2 – Giao hàng và trải nghiệm khách
 
-Hướng dẫn đầy đủ: [`../dashboards/DB2.md`](../dashboards/DB2.md). Cách mở file, lưu, Refresh, đối chiếu số, chụp ảnh: `README.md` mục 4.
+Hướng dẫn đầy đủ: [`../dashboards/DB2.md`](../dashboards/DB2.md). Cách mở file, lưu, Refresh, đối chiếu số, chụp ảnh: `README.md` mục 3.
 
 **Câu hỏi trả lời:** đơn mất bao lâu ở từng chặng (duyệt → bàn giao → giao); tỷ lệ giao trễ và hủy, vùng/bang nào chậm nhất; Olist hứa bao nhiêu ngày so với thực tế; khách hài lòng không và vì sao (giao trễ có kéo điểm review xuống không); cơ cấu thanh toán; khách có quay lại mua không.
 
@@ -180,10 +180,10 @@ Hướng dẫn đầy đủ: [`../dashboards/DB2.md`](../dashboards/DB2.md). Cá
 
 **Measure chính** (thư mục `DB2 Giao hàng và trải nghiệm khách`, thư mục con *Xử lý đơn*, *Thanh toán*, *Review và khách hàng*): Orders placed, Cancel rate, On-time rate, Late rate, Avg lead days, Avg promised days, Promised vs actual (days), Avg review, % negative, Repeat customer rate, Payment value, Payment share; màu `Color On-time rate`, `Color Cancel rate`, `Color Avg review`, `Color % negative`, `Color promised vs actual`.
 
-**Checklist phải đạt:** ≥ 4 loại biểu đồ; định dạng số (Orders placed `K`, Payment value `M`, phần trăm 1 chữ số); tiêu đề dạng câu hỏi; màu đỏ chỉ để cảnh báo; định dạng có điều kiện (thẻ, bản đồ Late rate, cohort color scale); slicer phân cấp Năm → Quý → Tháng và Vùng → Bang; OLAP drill-down (Vùng → Bang → Thành phố; cohort năm → tháng); tooltip `Tooltip_Muc_tre` và tooltip theo bang; **Key Influencers (chỉ DB2 làm)**; publish và QR (Phú).
+**Checklist phải đạt:** ≥ 4 loại biểu đồ; định dạng số (Orders placed `K`, Payment value `M`, phần trăm 1 chữ số); tiêu đề dạng câu hỏi; màu đỏ chỉ để cảnh báo; định dạng có điều kiện (thẻ, bản đồ Late rate, cohort color scale); slicer phân cấp Năm → Quý → Tháng và Vùng → Bang; OLAP drill-down (Vùng → Bang → Thành phố; cohort năm → tháng); tooltip `Tooltip_Muc_tre` và tooltip theo bang; **Key Influencers (chỉ DB2 làm)**; publish và QR (làm khi ghép bộ chung).
 
 **Các bước dựng:**
-1. Mở `olist_base.pbix`, *Save as* `DB2_giao-hang.pbix`; Refresh (`README.md` mục 4).
+1. Mở `olist_base.pbix`, *Save as* `DB2_giao-hang.pbix`; Refresh (`README.md` mục 3).
 2. Trang 1: bộ lọc trang `dim_date[InWindow] = TRUE`; thẻ KPI từ thư mục DB2; so số với bảng kỳ vọng.
 3. Phễu `v_status_funnel` (`stage` sắp theo `stage_no`, lọc `in_window`); cột chồng Avg approval hours, Avg handling days, Avg transit days theo `year_month`; Late rate theo `state_code`; cột `Delay bucket` (cột tính toán đã có sẵn trong `fact_order_fulfillment`).
 4. Trang 2: thẻ; `v_review_vs_delay` (trục `delay_bucket` sắp theo `delay_bucket_no`, giá trị `avg_score`); donut `display_name` × Payment value; RFM `v_customer_rfm[segment]`; cohort từ `v_customer_cohort` (color scale).
@@ -206,7 +206,7 @@ Hướng dẫn đầy đủ: [`../dashboards/DB2.md`](../dashboards/DB2.md). Cá
 Hướng dẫn từng bước: `handoff/excel-toolpak-guide.md` (bật ToolPak, Descriptive Statistics, Correlation, Histogram trên `exports/eda_sample.xlsx`, sheet `du_lieu`, vùng `H1:U5001`). Làm theo thứ tự:
 1. Bật ToolPak (File → Options → Add-ins → Analysis ToolPak).
 2. Chạy Descriptive Statistics, Correlation, Histogram; mỗi lần chụp ảnh kết quả.
-3. So với sheet `python_doi_chieu` (số của Python) và với bảng đối chiếu trong guide (ví dụ `price_total` trung bình 138,22, độ lệch chuẩn 204,06). Hai công cụ phải khớp; nếu lệch, ghi lại và báo Phú.
+3. So với sheet `python_doi_chieu` (số của Python) và với bảng đối chiếu trong guide (ví dụ `price_total` trung bình 138,22, độ lệch chuẩn 204,06). Hai công cụ phải khớp; nếu lệch, ghi lại và báo lên nhóm.
 4. Đặt ảnh vào `04_Docs/tex-nop/figures/` (ví dụ `3-1_toolpak_descriptive.png`) và dùng ở slide M5, M6.
 
 ## 9. Câu hỏi có thể bị hỏi
@@ -277,17 +277,17 @@ Các `\todo` hiện có (đếm từ mã nguồn):
 | **Tổng** | **7** | |
 <!-- /TODOS -->
 
-## 11. Checklist trước khi nộp và mốc hạn
+## 11. Checklist trước khi nộp
 
-| Hạn | Việc | Xong |
-| --- | --- | --- |
-| 23/11 | 5 sơ đồ draw.io vẽ lại, xuất PNG đúng tên, nộp `03_drawio` | ☐ |
-| 23/11 | Bản nháp slide `01b-du-lieu-nguon-erd.tex`, `02a-kham-pha.tex` (thêm M1–M7, câu nhận xét cho mỗi biểu đồ) | ☐ |
-| 23/11 | Ảnh ToolPak (việc riêng) | ☐ |
-| 25/11 | Bản đầu DB2; ảnh `4_DB2_*.png` và 3–5 câu nhận xét gửi Người 4 | ☐ |
-| 26/11 | 3–5 câu bài học gửi Người 4 (về dữ liệu: ngày dự kiến quá rộng, toạ độ bẩn, ngoại lai giữ lại) | ☐ |
-| 27/11 | Slide và DB2 xong; nộp `.tex` và hình mới vào `04_Docs/tex-nop/` | ☐ |
-| 28–29/11 | Tập 9 phút, bấm giờ, tổng duyệt | ☐ |
+| Việc | Xong |
+| --- | --- |
+| 5 sơ đồ draw.io vẽ lại, xuất PNG đúng tên, nộp `03_drawio` | ☐ |
+| Bản nháp slide `01b-du-lieu-nguon-erd.tex`, `02a-kham-pha.tex` (thêm M1–M7, câu nhận xét cho mỗi biểu đồ) | ☐ |
+| Ảnh ToolPak (việc riêng) | ☐ |
+| Bản đầu DB2; ảnh `4_DB2_*.png` và 3–5 câu nhận xét gửi Người 4 | ☐ |
+| 3–5 câu bài học gửi Người 4 (về dữ liệu: ngày dự kiến quá rộng, toạ độ bẩn, ngoại lai giữ lại) | ☐ |
+| Slide và DB2 xong; nộp `.tex` và hình mới vào `04_Docs/tex-nop/` | ☐ |
+| Tập, bấm giờ, tổng duyệt | ☐ |
 
 Trước khi nộp slide: không còn khung đỏ `CHÈN HÌNH` (tìm `khungchen`); tiêu đề là câu kết luận có số; mỗi biểu đồ EDA có một câu nhận xét; mỗi slide có `\muc{...}`; biên dịch bằng `thu-mot-phan.tex` không lỗi.
 Trước khi nộp dashboard: mọi mục checklist DB2 (mục 10 của `DB2.md`) đã đánh dấu; số khớp mục 9; kết quả Key Influencers đã ghi lại.

@@ -1,6 +1,6 @@
 # Người 3 – Kiến trúc, ETL, chiều khái niệm, data model và dashboard DB3
 
-Chung cho cả nhóm (Drive, Power BI, Overleaf, draw.io, cách hỏi Phú): [`README.md`](README.md). File này chỉ nói phần của Người 3.
+Chung cho cả nhóm (Drive, Power BI, Overleaf, draw.io): [`README.md`](README.md). File này chỉ nói phần của Người 3.
 
 ## 1. Phần của bạn
 
@@ -11,7 +11,7 @@ Chung cho cả nhóm (Drive, Power BI, Overleaf, draw.io, cách hỏi Phú): [`R
 | Sơ đồ draw.io | `3-2_kien_truc_cac_lop` (có logo), `3-3_etl_jobs`, `3-5_data_model_logic`, `3-5_data_model_vat_ly`, `3-5_data_mart` |
 | Dashboard | **DB3 Địa lý và phí vận chuyển** (OLAP: drill-down Vùng → Bang → Thành phố, drill-through, tooltip) |
 | Việc riêng | chạy mã M trong `powerbi/power-query-vi-du.md`, chụp ảnh before/after |
-| Thuyết trình | kiến trúc, ETL, chiều khái niệm, data model; giả định **khoảng 11 phút, 9 slide nói** (thời lượng chính thức chưa có, xem `README.md` mục 2) |
+| Thuyết trình | kiến trúc, ETL, chiều khái niệm, data model; khoảng **9 slide nói** (điều chỉnh theo thời lượng chung của nhóm) |
 | Báo cáo (giai đoạn 2) | `3-2-kien-truc.tex`, `3-3-etl.tex`, `3-4-chieu-khai-niem.tex`, `3-5-data-model.tex` |
 
 ## 2. Barem chấm gì ở phần này
@@ -205,7 +205,7 @@ Khối lượng: 49 slide đang có + K1–K21 (K3–K11 là 9 trang, K12–K17 
 
 ## 6. Sơ đồ draw.io
 
-Quy ước chung (màu, font, xuất PNG): `README.md` mục 6. Nộp `.drawio` và PNG vào `03_drawio`.
+Quy ước chung (màu, font, xuất PNG): `README.md` mục 5. Nộp `.drawio` và PNG vào `03_drawio`.
 
 | Hình | Phải thể hiện | Bản nháp | Lỗi thầy hay bắt |
 | --- | --- | --- | --- |
@@ -219,7 +219,7 @@ Logo công nghệ: tải logo chính thức của PostgreSQL, Python, Power BI, 
 
 ## 7. Dashboard DB3 – Địa lý và phí vận chuyển
 
-Hướng dẫn đầy đủ: [`../dashboards/DB3.md`](../dashboards/DB3.md). Cách mở file, lưu, Refresh, đối chiếu số, chụp ảnh: `README.md` mục 4. DB3 là dashboard **OLAP chính** của bộ.
+Hướng dẫn đầy đủ: [`../dashboards/DB3.md`](../dashboards/DB3.md). Cách mở file, lưu, Refresh, đối chiếu số, chụp ảnh: `README.md` mục 3. DB3 là dashboard **OLAP chính** của bộ.
 
 **Câu hỏi trả lời:** GMV tập trung ở vùng/bang nào; phí vận chuyển chiếm bao nhiêu % giá hàng theo vùng; seller và khách xa nhau bao nhiêu và điều đó ảnh hưởng phí vận chuyển và lead time ra sao.
 
@@ -227,7 +227,7 @@ Hướng dẫn đầy đủ: [`../dashboards/DB3.md`](../dashboards/DB3.md). Cá
 
 **Measure chính** (thư mục `DB3 Địa lý và phí vận chuyển` và dùng lại từ DB1, DB2): GMV by seller state; GMV, Orders, Freight, Freight ratio; Avg lead days, Late rate; màu `Color Freight ratio`.
 
-**Checklist phải đạt:** ≥ 4 loại biểu đồ; định dạng số; tiêu đề dạng câu hỏi; màu đỏ chỉ để cảnh báo (Freight ratio cao); định dạng có điều kiện (data bars, màu bong bóng); slicer phân cấp Vùng → Bang; **OLAP drill-down/roll-up: Vùng → Bang → Thành phố → Zip trên bản đồ và ma trận (DB3 là dashboard chính của mục này)**; **drill-through trang Chi tiết bang** (trường `state_code`); tooltip `Tooltip_Bang`; publish và QR (Phú).
+**Checklist phải đạt:** ≥ 4 loại biểu đồ; định dạng số; tiêu đề dạng câu hỏi; màu đỏ chỉ để cảnh báo (Freight ratio cao); định dạng có điều kiện (data bars, màu bong bóng); slicer phân cấp Vùng → Bang; **OLAP drill-down/roll-up: Vùng → Bang → Thành phố → Zip trên bản đồ và ma trận (DB3 là dashboard chính của mục này)**; **drill-through trang Chi tiết bang** (trường `state_code`); tooltip `Tooltip_Bang`; publish và QR (làm khi ghép bộ chung).
 
 **Các bước dựng:**
 1. Mở `olist_base.pbix`, *Save as* `DB3_dia-ly.pbix`; Refresh.
@@ -252,12 +252,12 @@ Hướng dẫn đầy đủ: [`../dashboards/DB3.md`](../dashboards/DB3.md). Cá
 ## 8. Việc riêng: Power Query (mã M) và ảnh before/after
 
 Hướng dẫn: `powerbi/power-query-vi-du.md`. Quy tắc làm sạch tên thành phố và mã bưu chính của bảng toạ độ viết bằng M. Các bước:
-1. Lấy file nguồn `olist_geolocation_dataset.csv` từ Phú (không nằm trong 37 file CSV của Power BI; nằm ở `data/raw/ecommerce/`) và đặt vào thư mục `DataFolder`.
+1. Lấy file nguồn `olist_geolocation_dataset.csv` trên Drive, thư mục `01_pBI_data` (file nguồn Kaggle, khoảng 61 MB, không nằm trong 37 file CSV của Power BI) và đặt vào thư mục `DataFolder`.
 2. *Home → Transform data*; dán mã M vào truy vấn trống (bước `Nguon` đến `KieuText` cho `geolocation_raw`, rồi bước làm sạch cho `geolocation_clean`).
 3. Bật *View → Column quality, Column distribution, Column profile*; chụp trước (8.011 tên thành phố khác nhau, mã bưu chính bắt đầu bằng 0) và sau (5.968 tên; mã đủ 5 ký tự).
 4. Ghép ảnh trước/sau, đặt tên `3-3_power_query_before_after.png`, đưa vào `04_Docs/tex-nop/figures/` và dùng ở K20/S138.
 5. **Không bấm Close & Apply** nếu chỉ minh hoạ (truy vấn này không thuộc mô hình chính).
-Kết quả mong đợi (SQL đã chạy thật; Power Query chưa chạy thật): 8.011 → 5.968 tên thành phố; 73.440 dòng đổi. Nếu số khác, ghi lại và báo Phú.
+Kết quả mong đợi (SQL đã chạy thật; Power Query chưa chạy thật): 8.011 → 5.968 tên thành phố; 73.440 dòng đổi. Nếu số khác, ghi lại và báo lên nhóm.
 
 ## 9. Câu hỏi có thể bị hỏi
 
@@ -343,17 +343,17 @@ Các `\todo` hiện có (đếm từ mã nguồn):
 | **Tổng** | **14** | |
 <!-- /TODOS -->
 
-## 11. Checklist trước khi nộp và mốc hạn
+## 11. Checklist trước khi nộp
 
-| Hạn | Việc | Xong |
-| --- | --- | --- |
-| 23/11 | 5 sơ đồ draw.io vẽ lại (kiến trúc có logo; ETL job; data model logic, vật lý, mart), xuất PNG đúng tên, nộp `03_drawio` | ☐ |
-| 23/11 | Bản nháp `02b-kien-truc-etl-model.tex` (K1, K2–K17, K18–K21) | ☐ |
-| 23/11 | Ảnh Power Query before/after (việc riêng) | ☐ |
-| 25/11 | Bản đầu DB3; ảnh `4_DB3_*.png` và 3–5 câu nhận xét gửi Người 4 | ☐ |
-| 26/11 | 3–5 câu bài học gửi Người 4 (về ETL: không xoá âm thầm, chọn grain trước; về dữ liệu: 303 tên thành phố trùng) | ☐ |
-| 27/11 | Slide và DB3 xong; nộp `.tex` và hình mới vào `04_Docs/tex-nop/` | ☐ |
-| 28–29/11 | Tập 11 phút, bấm giờ, tổng duyệt | ☐ |
+| Việc | Xong |
+| --- | --- |
+| 5 sơ đồ draw.io vẽ lại (kiến trúc có logo; ETL job; data model logic, vật lý, mart), xuất PNG đúng tên, nộp `03_drawio` | ☐ |
+| Bản nháp `02b-kien-truc-etl-model.tex` (K1, K2–K17, K18–K21) | ☐ |
+| Ảnh Power Query before/after (việc riêng) | ☐ |
+| Bản đầu DB3; ảnh `4_DB3_*.png` và 3–5 câu nhận xét gửi Người 4 | ☐ |
+| 3–5 câu bài học gửi Người 4 (về ETL: không xoá âm thầm, chọn grain trước; về dữ liệu: 303 tên thành phố trùng) | ☐ |
+| Slide và DB3 xong; nộp `.tex` và hình mới vào `04_Docs/tex-nop/` | ☐ |
+| Tập, bấm giờ, tổng duyệt | ☐ |
 
 Trước khi nộp slide: không còn khung đỏ `CHÈN HÌNH` (tìm `khungchen`; các slide còn khung chờ có trạng thái "cần ảnh" trong bảng mục 5); tiêu đề là câu kết luận có số; mỗi slide có `\muc{...}`; số trong tiêu đề khớp số liệu mới nhất; biên dịch bằng `thu-mot-phan.tex` không lỗi.
 Trước khi nộp dashboard: mọi mục checklist DB3 (mục 10 của `DB3.md`) đã đánh dấu; drill-through hoạt động; số khớp mục 9.

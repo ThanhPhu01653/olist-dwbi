@@ -1,16 +1,16 @@
 # Người 1 – Nghiệp vụ, yêu cầu, KPI và dashboard DB1
 
-Chung cho cả nhóm (Drive, Power BI, Overleaf, draw.io, cách hỏi Phú): [`README.md`](README.md). File này chỉ nói phần của Người 1.
+Chung cho cả nhóm (Drive, Power BI, Overleaf, draw.io): [`README.md`](README.md). File này chỉ nói phần của Người 1.
 
 ## 1. Phần của bạn
 
 | Hạng mục | Nội dung |
 | --- | --- |
 | Mục barem (báo cáo / slide) | Ch.1 lý thuyết rút gọn · **2.1 Nghiệp vụ** · **2.2 Yêu cầu** · **2.3 KPI và cây phân tích** |
-| File slide | `slides/sections/01a-nghiep-vu-yeu-cau.tex` (2.1–2.3). Hai frame lý thuyết rút gọn nằm trong `00-mo-dau.tex` (nhãn `Mở đầu · lý thuyết rút gọn`): sửa đúng hai frame đó và báo Phú, vì file có hai người cùng sửa |
+| File slide | `slides/sections/01a-nghiep-vu-yeu-cau.tex` (2.1–2.3). Hai frame lý thuyết rút gọn nằm trong `00-mo-dau.tex` (nhãn `Mở đầu · lý thuyết rút gọn`): sửa đúng hai frame đó |
 | Sơ đồ draw.io | `3-2-1_bpmn_don_hang.png`, `3-2-2_bpmn_thu_hut_seller.png` |
 | Dashboard | **DB1 Tổng quan và doanh thu** (theo dòng thời gian, có dự báo) |
-| Thuyết trình | khảo sát 2.1–2.3; giả định **khoảng 7 phút, 6–7 slide nói** (thời lượng chính thức chưa có, xem `README.md` mục 2) |
+| Thuyết trình | khảo sát 2.1–2.3; khoảng **6–7 slide nói** (điều chỉnh theo thời lượng chung của nhóm) |
 | Báo cáo (giai đoạn 2) | `01-tong-quan-ly-thuyet.tex`, `2-1-nghiep-vu.tex`, `2-2-yeu-cau.tex`, `2-3-kpi.tex` |
 
 ## 2. Barem chấm gì ở phần này
@@ -139,7 +139,7 @@ Khối lượng: 24 slide đang có + 5 slide thêm (N1–N5) = **29 slide** tro
 
 ## 6. Sơ đồ draw.io
 
-Quy ước chung (màu, font, xuất PNG): `README.md` mục 6. Nộp `.drawio` và PNG vào `03_drawio`.
+Quy ước chung (màu, font, xuất PNG): `README.md` mục 5. Nộp `.drawio` và PNG vào `03_drawio`.
 
 **`3-2-1_bpmn_don_hang.png` (quy trình xử lý đơn)**
 - Phải thể hiện: các bước đặt hàng và thanh toán → duyệt → bàn giao → giao → đánh giá, nhánh hủy; ai làm bước nào (khách, Olist, seller, đơn vị vận chuyển); **điểm thu thập dữ liệu** (ô vàng) và **các điểm phân tích A1–A6** gắn đúng bước, mỗi điểm ghi dashboard và KPI.
@@ -156,7 +156,7 @@ Ngoài hai sơ đồ draw.io, các hình `3-2-3_business_model_canvas.png`, `3-2
 
 ## 7. Dashboard DB1 – Tổng quan và doanh thu
 
-Hướng dẫn đầy đủ: [`../dashboards/DB1.md`](../dashboards/DB1.md). Cách mở file, lưu, Refresh, đối chiếu số, chụp ảnh: `README.md` mục 4.
+Hướng dẫn đầy đủ: [`../dashboards/DB1.md`](../dashboards/DB1.md). Cách mở file, lưu, Refresh, đối chiếu số, chụp ảnh: `README.md` mục 3.
 
 **Câu hỏi trả lời:** doanh thu bao nhiêu, tăng hay giảm so với tháng trước và cùng kỳ năm trước; giao hàng có đúng hạn, tỷ lệ hủy; khách hài lòng không; vùng và nhóm ngành nào đóng góp nhiều; bao nhiêu danh mục tạo 80% GMV (Pareto); AOV và phí vận chuyển theo ngành.
 
@@ -164,10 +164,10 @@ Hướng dẫn đầy đủ: [`../dashboards/DB1.md`](../dashboards/DB1.md). Cá
 
 **Measure chính** (thư mục `DB1 Tổng quan và doanh thu`): GMV, Orders, AOV, Items, Freight, Freight ratio, GMV last month, GMV MoM %, GMV last year, GMV YoY %, GMV YTD; dùng thêm On-time rate, Avg review, Cancel rate từ thư mục DB2; màu `Color growth`, `Color On-time rate`, `Color Avg review`, `Color Cancel rate`, `Color Freight ratio`.
 
-**Checklist phải đạt** (ma trận chung ở `../dashboards/README.md`): ≥ 4 loại biểu đồ; định dạng số (GMV `13.5M`, Orders `98.2K`, phần trăm 1 chữ số); tiêu đề dạng câu hỏi; màu đỏ chỉ để cảnh báo; định dạng có điều kiện (thẻ, cột tăng trưởng, color scale matrix); slicer phân cấp Năm → Quý → Tháng; OLAP drill-down (đường theo Năm → Quý → Tháng, treemap/matrix Nhóm ngành → Danh mục → Sản phẩm); tooltip; **chuỗi thời gian có dự báo (chỉ DB1 làm)**; publish web và mã QR (Phú làm).
+**Checklist phải đạt** (ma trận chung ở `../dashboards/README.md`): ≥ 4 loại biểu đồ; định dạng số (GMV `13.5M`, Orders `98.2K`, phần trăm 1 chữ số); tiêu đề dạng câu hỏi; màu đỏ chỉ để cảnh báo; định dạng có điều kiện (thẻ, cột tăng trưởng, color scale matrix); slicer phân cấp Năm → Quý → Tháng; OLAP drill-down (đường theo Năm → Quý → Tháng, treemap/matrix Nhóm ngành → Danh mục → Sản phẩm); tooltip; **chuỗi thời gian có dự báo (chỉ DB1 làm)**; publish web và mã QR (làm khi ghép bộ chung).
 
 **Các bước dựng:**
-1. Mở `olist_base.pbix`, *Save as* `DB1_tong-quan.pbix`; kiểm tra `DataFolder` và Refresh (`README.md` mục 4).
+1. Mở `olist_base.pbix`, *Save as* `DB1_tong-quan.pbix`; kiểm tra `DataFolder` và Refresh (`README.md` mục 3).
 2. Trang 1: đặt bộ lọc trang `dim_date[InWindow] = TRUE`; dựng 6 thẻ, kéo measure từ thư mục DB1; so số với bảng kỳ vọng (GMV 13,449,529.68 và Orders 97,905 trong cửa sổ; 13,494,400.74 và 98,199 toàn bộ).
 3. Đường GMV theo `dim_date[year_month]` + `GMV last year`; bật *Analytics → Forecast* (3 điểm, 95%) và ghi chú "dữ liệu 20 tháng, chỉ để thấy hướng đi".
 4. Cột `GMV MoM %` tô màu theo `Color growth`; bar chart vùng; treemap nhóm ngành; gauge On-time rate với mục tiêu 95%.
@@ -243,16 +243,16 @@ Các `\todo` hiện có (đếm từ mã nguồn):
 | **Tổng** | **9** | |
 <!-- /TODOS -->
 
-## 11. Checklist trước khi nộp và mốc hạn
+## 11. Checklist trước khi nộp
 
-| Hạn | Việc | Xong |
-| --- | --- | --- |
-| 23/11 | BPMN vẽ lại bằng draw.io (đúng ký hiệu, có A1–A11, điểm thu thập dữ liệu) và nộp `03_drawio` | ☐ |
-| 23/11 | Bản nháp slide `01a-nghiep-vu-yeu-cau.tex` (thêm N1–N5, thay khung đỏ bằng hình) | ☐ |
-| 25/11 | Bản đầu DB1; ảnh `4_DB1_*.png` và 3–5 câu nhận xét gửi Người 4 | ☐ |
-| 26/11 | 3–5 câu bài học gửi Người 4 (bài học về chỉ số: GMV hai cách đo; về quy trình) | ☐ |
-| 27/11 | Slide và DB1 xong; nộp `.tex` và hình mới vào `04_Docs/tex-nop/` | ☐ |
-| 28–29/11 | Tập 7 phút, bấm giờ, tổng duyệt | ☐ |
+| Việc | Xong |
+| --- | --- |
+| BPMN vẽ lại bằng draw.io (đúng ký hiệu, có A1–A11, điểm thu thập dữ liệu) và nộp `03_drawio` | ☐ |
+| Bản nháp slide `01a-nghiep-vu-yeu-cau.tex` (thêm N1–N5, thay khung đỏ bằng hình) | ☐ |
+| Bản đầu DB1; ảnh `4_DB1_*.png` và 3–5 câu nhận xét gửi Người 4 | ☐ |
+| 3–5 câu bài học gửi Người 4 (bài học về chỉ số: GMV hai cách đo; về quy trình) | ☐ |
+| Slide và DB1 xong; nộp `.tex` và hình mới vào `04_Docs/tex-nop/` | ☐ |
+| Tập, bấm giờ, tổng duyệt | ☐ |
 
 Trước khi nộp slide: không còn khung đỏ `CHÈN HÌNH` (tìm `khungchen` trong file); mọi tiêu đề là câu kết luận có số; mỗi slide có nhãn `\muc{...}`; số trong tiêu đề khớp bảng kỳ vọng; biên dịch bằng `thu-mot-phan.tex` không lỗi.
 Trước khi nộp dashboard: mọi mục checklist DB1 (mục 10 của `DB1.md`) đã đánh dấu; số khớp mục 9; ảnh đặt đúng tên.
