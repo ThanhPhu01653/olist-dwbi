@@ -54,9 +54,9 @@ powerbi/                        # measures.md (DAX), model.md (quan hệ, phân 
 powerbi/olist_base/             # dự án Power BI dạng PBIP (TMDL + PBIR) sinh sẵn bằng scripts/gen_pbip.py; README.md hướng dẫn mở, Refresh, lưu .pbix
 exports/powerbi/                # CSV xuất từ dw/mart/etl_log cho Power BI
 handoff/                        # bàn giao cho cả nhóm (markdown)
-huong-dan/                      # hướng dẫn dùng chung: lộ trình đọc, pipeline bằng lời, thuật ngữ, từ điển dữ liệu, hỏi đáp, DB1-DB4
+huong-dan/                      # hướng dẫn dùng chung: lộ trình đọc, pipeline bằng lời, thuật ngữ, từ điển dữ liệu, hỏi đáp, DB1-DB4; phan-viec/ = hướng dẫn từng người
 report/                         # báo cáo LaTeX (XeLaTeX): chapters/ viết tay, tables/ sinh từ database (scripts/export_latex.py)
-slides/                         # slide Beamer theme HUST (LuaLaTeX): sections/ xếp theo barem (sửa tay từ P8; không chạy lại gen_beamer.py), hust-theme/
+slides/                         # slide Beamer theme HUST (LuaLaTeX): sections/ xếp theo barem, mỗi file một chủ (sửa tay từ P8; không chạy lại gen_beamer.py), hust-theme/, thu-mot-phan.tex (biên dịch thử một file)
 figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 ```
 
@@ -105,6 +105,7 @@ figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 - `python scripts/replay_increments.py` – lặp simulate + `run_pipeline --mode incremental` tới hết dữ liệu nguồn (in bảng các đợt)
 - `python scripts/compare_databases.py --a olist_dw --b <db full> [--keys]` – so sánh hai database kho (số dòng, tổng tiền, checksum; `--keys` so cả giá trị khoá thay thế, chỉ dùng cho hai bản dựng cùng code và cùng đường nạp)
 - `python scripts/run_olap_examples.py` – chạy 5 thao tác OLAP ở `sql/60_olap_examples/`, sinh `handoff/olap-examples.md`
+- `python scripts/gen_phan_viec.py` – điền các khối sinh tự động của `huong-dan/phan-viec/*.md` (bảng slide đang có đọc từ `slides/sections/*.tex`, số `	odo` và số trang báo cáo, câu hỏi đáp từ `huong-dan/04-cau-hoi-van-dap.md`); chạy lại sau khi sửa slide hoặc biên dịch lại báo cáo
 - `python scripts/gen_pbip.py [--no-csv]` – sinh `powerbi/olist_base/` (dự án PBIP: mô hình, quan hệ, measure, báo cáo 6 trang trống) từ `powerbi/model.md`, `measures.md`, `theme.json` và kiểm tra (measure, quan hệ, kiểu cột, JSON schema); chạy sau `gen_powerbi_docs.py`
 - `python scripts/gen_powerbi_docs.py` – cập nhật giá trị kỳ vọng trong `powerbi/measures.md` và phụ lục M trong `powerbi/model.md`
 - `python scripts/rebuild_all.py [--drop]` – dựng lại TOÀN BỘ bằng một lệnh (setup → nạp nguồn → pipeline full → 11 đợt tăng dần → test → xuất CSV), ghi `handoff/rebuild-report.md`

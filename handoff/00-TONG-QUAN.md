@@ -171,7 +171,7 @@ Từ P8 (13/11), báo cáo và slide xếp theo **barem chấm điểm** (11 m�
 | 5.2 Mở rộng: Thu thập dữ liệu từ API (khung, P9 điền) | `5-2-thu-thap-api.tex` | – | – |
 | 6 Kết luận và bài học kinh nghiệm | `06-ket-luan.tex` | – | – |
 
-Slide (`slides/sections/`): `00-mo-dau` · `01-khao-sat` (2.1–2.5) · `02-phan-tich-thiet-ke` (3.1–3.5) · `03-dashboard` (4) · `04-mo-rong` (5) · `05-tong-ket` (6) · `99-du-phong`; mỗi slide hiện nhãn mục barem ở góc trên bên phải. Mỗi file phase có mục "Gợi ý slide (2–4 slide)"; ghép theo thứ tự bảng trên.
+Slide (`slides/sections/`): `00-mo-dau` · `01a-nghiep-vu-yeu-cau` (2.1–2.3) · `01b-du-lieu-nguon-erd` (2.4–2.5) · `02a-kham-pha` (3.1) · `02b-kien-truc-etl-model` (3.2–3.5) · `03-dashboard` (4) · `04-mo-rong` (5) · `05-tong-ket` (6) · `99-du-phong`; mỗi slide hiện nhãn mục barem ở góc trên bên phải. Mỗi file phase có mục "Gợi ý slide (2–4 slide)"; ghép theo thứ tự bảng trên.
 
 ## 11. Việc cho nhóm (chưa gán người)
 1. **Phú dựng DB1 (Tổng quan và doanh thu) và file `.pbix` gốc trước**, làm theo `powerbi/model.md` từ mục 1: cài Power BI Desktop → tải CSV từ Drive → tạo tham số `DataFolder` và hàm `fnCsv` → nạp bảng → tạo quan hệ → tạo measure từ `powerbi/measures.md` → **đối chiếu với bảng "giá trị kỳ vọng" ở cuối `measures.md`** (ví dụ GMV toàn bộ phải ra 13.494.400,74). Ghi lại mọi chỗ tài liệu hướng dẫn chưa đúng hoặc khó hiểu và báo Phú để sửa.
