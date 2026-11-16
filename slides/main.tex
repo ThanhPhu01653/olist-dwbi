@@ -52,14 +52,21 @@
   \tableofcontents[hideallsubsections]
 \end{frame}
 
+% \CHIPHAN (đặt trong thu-mot-phan.tex) = chỉ biên dịch một file trong sections/ để xem thử nhanh; bình thường không đặt.
+\ifdefined\CHIPHAN
+  \input{\CHIPHAN}
+\else
 \input{sections/00-mo-dau}
-\input{sections/01-khao-sat}
-\input{sections/02-phan-tich-thiet-ke}
+\input{sections/01a-nghiep-vu-yeu-cau}
+\input{sections/01b-du-lieu-nguon-erd}
+\input{sections/02a-kham-pha}
+\input{sections/02b-kien-truc-etl-model}
 \input{sections/03-dashboard}
 \input{sections/04-mo-rong}
 \input{sections/05-tong-ket}
+\fi
 
 \appendix
 \hustsection[panel=false]
-\input{sections/99-du-phong}
+\ifdefined\CHIPHAN\else\input{sections/99-du-phong}\fi
 \end{document}

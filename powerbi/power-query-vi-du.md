@@ -15,11 +15,11 @@ Lý do cần quy tắc: cùng một thành phố xuất hiện với nhiều cá
 
 ## 2. Mã M (dán vào *Advanced Editor* của một truy vấn trống)
 
-Dùng tham số `DataFolder` đã tạo ở `powerbi/model.md` (đường dẫn thư mục chứa file CSV nguồn; đổi tên file nếu bạn lưu CSV nguồn ở nơi khác).
+Dùng tham số `DataFolder` của mô hình (`powerbi/model.md` mục 2; giá trị là đường dẫn thư mục **không có dấu `\` ở cuối**). File `olist_geolocation_dataset.csv` là **file nguồn Kaggle**, không nằm trong 37 file CSV xuất cho Power BI: nhờ Phú đưa file này (nằm ở `data/raw/ecommerce/`, không commit vì lớn) rồi đặt vào thư mục `DataFolder`, hoặc thay `DataFolder & "\olist_geolocation_dataset.csv"` bằng đường dẫn đầy đủ của file.
 
 ```m
 let
-    Nguon = Csv.Document(File.Contents(DataFolder & "olist_geolocation_dataset.csv"),
+    Nguon = Csv.Document(File.Contents(DataFolder & "\olist_geolocation_dataset.csv"),
                 [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
     Header = Table.PromoteHeaders(Nguon, [PromoteAllScalars = true]),
     // Giữ mã bưu chính ở dạng văn bản ngay từ đầu (không để Power BI đổi sang số)
