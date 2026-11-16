@@ -376,7 +376,7 @@ FNCSV = [
 def relationships_tmdl() -> str:
     o = []
     for r in RELS:
-        o.append(f"/// {r['from'][0]}.{r['from'][1]} -> {r['to'][0]}.{r['to'][1]}" + ("" if r["active"] else " (inactive: bật bằng USERELATIONSHIP)"))
+        # Relationships have no Description property in TMDL: a '///' line here makes Power BI Desktop refuse to open the project.
         o.append(f"relationship {guid('rel', str(r['n']))}")
         if not r["active"]:
             o.append("\tisActive: false")
