@@ -25,7 +25,8 @@ Việc riêng thêm:
 
 | File slide (`slides/sections/`) | Người phụ trách | Mục |
 | --- | --- | --- |
-| `00-mo-dau.tex` | Phú; hai frame lý thuyết rút gọn do Người 1 phụ trách | Mở đầu |
+| `00-mo-dau.tex` | Phú | Mở đầu |
+| `00b-ly-thuyet-rut-gon.tex` | Người 1 | Ch.1 lý thuyết rút gọn (2 frame) |
 | `01a-nghiep-vu-yeu-cau.tex` | Người 1 | 2.1–2.3 |
 | `01b-du-lieu-nguon-erd.tex` | Người 2 | 2.4–2.5 |
 | `02a-kham-pha.tex` | Người 2 | 3.1 |

@@ -37,29 +37,3 @@
 \note{[S03] Toàn bộ dựng lại từ đầu bằng một lệnh trong khoảng 7 phút và cho kết quả giống hệt; 136 phép kiểm thử đạt. Đây là bức tranh để quay lại khi cần.}
 \end{frame}
 
-\begin{frame}{Kho dữ liệu là nơi tích hợp dữ liệu hướng chủ đề, biến thiên theo thời gian và không bị ghi đè}
-\muc{Mở đầu · lý thuyết rút gọn}
-\begin{itemize}
-  \item Bốn đặc tính của Inmon: hướng chủ đề, tích hợp, biến thiên theo thời gian, không biến động
-\end{itemize}
-\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: sơ đồ 4 ô (vẽ)}
-
-\note{[S04] Ở dự án này chủ đề là quản lý đơn hàng; tích hợp hai nguồn bán hàng và marketing; lịch sử khách được giữ bằng SCD2.}
-\end{frame}
-
-\begin{frame}{OLTP tối ưu ghi từng giao dịch, OLAP tối ưu đọc và tổng hợp}
-\muc{Mở đầu · lý thuyết rút gọn}
-\begin{itemize}
-  \item OLTP: 9 bảng chuẩn hóa; OLAP: một fact nối các chiều
-\end{itemize}
-\begin{columns}[c]\begin{column}{0.3\textwidth}\anh[0.5\textheight]{3-2-4_erd_oltp.png}\end{column}\begin{column}{0.68\textwidth}\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
-\textbf{Tiêu chí} & \textbf{OLTP} & \textbf{OLAP (kho dữ liệu)} \\\midrule
-Mục đích & ghi từng giao dịch & phân tích, tổng hợp \\
-Mô hình dữ liệu & 9 bảng chuẩn hóa (\texttt{oltp}) & hình sao: 6 fact + 10 chiều (\texttt{dw}) \\
-Truy vấn điển hình & nối nhiều bảng, ít dòng & quét và gom nhiều dòng \\
-Dữ liệu & trạng thái hiện tại & có lịch sử (SCD2 cho khách) \\
-Ví dụ & \texttt{orders}, \texttt{order\_items} & \texttt{fact\_order\_item}, \texttt{dim\_date} \\
-\bottomrule\end{tabular}}\end{center}\end{column}\end{columns}
-
-\note{[S05] Cùng một câu hỏi "GMV theo bang theo tháng" cần nối ba bảng ở nguồn nhưng chỉ nối một fact với hai chiều ở kho.}
-\end{frame}

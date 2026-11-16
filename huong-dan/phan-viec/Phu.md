@@ -7,7 +7,7 @@ Chung cho cả nhóm (Drive, Power BI, Overleaf, draw.io): [`README.md`](README.
 | Hạng mục | Nội dung |
 | --- | --- |
 | Mục barem (báo cáo / slide) | **Mở đầu** · **Ch.5 Mở rộng** (5.1 Lakehouse, 5.2 thu thập API, D8, DB1 trên Superset) · **Ch.6 Kết luận** |
-| File slide | `slides/sections/00-mo-dau.tex` (3 frame của Phú; 2 frame lý thuyết rút gọn là của Người 1), `04-mo-rong.tex`, `05-tong-ket.tex`, `99-du-phong.tex` |
+| File slide | `slides/sections/00-mo-dau.tex` (3 frame), `04-mo-rong.tex`, `05-tong-ket.tex`, `99-du-phong.tex` |
 | Sơ đồ draw.io | **Kiến trúc Lakehouse** (`5-1_kien_truc_lakehouse.png`); sơ đồ API `5-2_kien_truc_api.png` |
 | Dashboard | file gốc `olist_base.pbix`, **D8 Thị trường Brazil**, ghép file tổng, publish, QR |
 | Thuyết trình | mở đầu (khoảng 3 phút, 3 slide) và mở rộng + kết luận (khoảng 5–6 phút); thứ tự: Phú → Người 1 → Người 2 → Người 3 → Người 4 → Phú |
@@ -62,7 +62,7 @@ Không được chép câu chữ, số liệu hay hình của nhóm 6.
 
 ## 5. Danh sách slide đề xuất
 
-**Các slide đang có trong `00-mo-dau.tex`** (bảng do script đọc từ file `.tex`; hai frame lý thuyết cuối là của Người 1):
+**Các slide đang có trong `00-mo-dau.tex`** (bảng do script đọc từ file `.tex`):
 
 <!-- SLIDES:00-mo-dau.tex -->
 | STT | S | Tiêu đề (câu kết luận) | Nội dung chính | Hình / bảng | Trạng thái |
@@ -70,10 +70,8 @@ Không được chép câu chữ, số liệu hay hình của nhóm 6.
 | 1 | 1 | Xây kho dữ liệu và BI cho 99.441 đơn hàng thương mại điện tử Olist | Học phần MI4214 – Kho dữ liệu và Kinh doanh thông minh; nhóm ...; giảng viên ... | `3-3-4_constellation.png` | đã có |
 | 2 | 2 | Bài trình bày gồm năm phần theo thứ tự khảo sát, phân tích thiết kế, dashboard, mở rộng và tổng kết | 2 Khảo sát (nghiệp vụ, yêu cầu, KPI, dữ liệu nguồn, ERD) 3 Phân tích và thiết kế (khám phá dữ liệu, kiến trúc, ETL, chiều khái niệm, data model) 4 Das | – | đã có |
 | 3 | 3 | Dự án trong một trang: 1,56 triệu dòng nguồn thành 6 fact, 17 view mart và 4 dashboard | 2 hệ thống nguồn → staging → ODS → kho (10 chiều + 6 fact) → 4 data mart → Power BI | `3-4-1_pipeline.png` | đã có |
-| 4 | 4 | Kho dữ liệu là nơi tích hợp dữ liệu hướng chủ đề, biến thiên theo thời gian và không bị ghi đè | Bốn đặc tính của Inmon: hướng chủ đề, tích hợp, biến thiên theo thời gian, không biến động | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: sơ đồ 4 ô (vẽ) |
-| 5 | 5 | OLTP tối ưu ghi từng giao dịch, OLAP tối ưu đọc và tổng hợp | OLTP: 9 bảng chuẩn hóa; OLAP: một fact nối các chiều | `3-2-4_erd_oltp.png` | đã có |
 
-*5 frame trong `00-mo-dau.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
+*3 frame trong `00-mo-dau.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
 <!-- /SLIDES -->
 
 **Các slide đang có trong `04-mo-rong.tex` và `05-tong-ket.tex`** (khung chờ P9, P10):
@@ -108,7 +106,7 @@ Không được chép câu chữ, số liệu hay hình của nhóm 6.
 | P9 | D8 Thị trường Brazil dựng từ dữ liệu API | dashboard D8 | ảnh chụp D8 | `huong-dan/dashboards/D8.md` (sau P9) | chờ P9 |
 | P10 | Kết luận: số kết quả, 3 bài học chính, hạn chế (sửa S đầu `05-tong-ket.tex`) | từ bài học Người 4 gom | bảng | Người 4 (26/11) | cần làm |
 
-Khối lượng: mở đầu 5 frame (3 của bạn + 2 của Người 1), mở rộng 9 frame khung (cộng khoảng 6–8 slide minh chứng khi có P9, P10), kết luận 2 frame, dự phòng 17 frame. **Chọn slide để nói:** mở đầu S1–S3 (khoảng 3 phút); cuối bài: kiến trúc lakehouse (P1), một slide minh chứng triển khai, kết quả (P6), DB1 Superset (P7), thu thập API và D8 (P8, P9), kết luận (P10): khoảng 7 slide trong 5–6 phút.
+Khối lượng: mở đầu 3 frame (cộng 2 frame lý thuyết của Người 1 ở `00b-ly-thuyet-rut-gon.tex`), mở rộng 9 frame khung (cộng khoảng 6–8 slide minh chứng khi có P9, P10), kết luận 2 frame, dự phòng 17 frame. **Chọn slide để nói:** mở đầu S1–S3 (khoảng 3 phút); cuối bài: kiến trúc lakehouse (P1), một slide minh chứng triển khai, kết quả (P6), DB1 Superset (P7), thu thập API và D8 (P8, P9), kết luận (P10): khoảng 7 slide trong 5–6 phút.
 
 Trước khi nộp slide: số liệu trong slide mở đầu khớp `handoff/00-TONG-QUAN.md`; mọi slide có `\muc{...}`.
 
@@ -140,7 +138,7 @@ Trước khi nộp slide: số liệu trong slide mở đầu khớp `handoff/00
 - [ ] **Kiến trúc Lakehouse bằng draw.io** (mục 6), có logo công nghệ, vẽ theo lớp.
 
 ### 7.3 Slide
-- [ ] **Mở đầu** (`00-mo-dau.tex`): bìa, mục lục, "Dự án trong một trang" (số liệu từ `handoff/00-TONG-QUAN.md`); điền tên nhóm, thành viên, giảng viên trong `main.tex` (khối THÔNG TIN CẦN SỬA); phối hợp Người 1 về hai frame lý thuyết (file này có hai người cùng sửa: thống nhất ai sửa frame nào).
+- [ ] **Mở đầu** (`00-mo-dau.tex`): bìa, mục lục, "Dự án trong một trang" (số liệu từ `handoff/00-TONG-QUAN.md`); điền tên nhóm, thành viên, giảng viên trong `main.tex` (khối THÔNG TIN CẦN SỬA); hai frame lý thuyết rút gọn do Người 1 viết ở `00b-ly-thuyet-rut-gon.tex`.
 - [ ] **Chương 5** theo kiến trúc → triển khai → minh chứng → kết quả (mục 5).
 - [ ] **Kết luận** (`05-tong-ket.tex`): số kết quả, 3 bài học chính từ Người 4, hạn chế.
 - [ ] **Ghép slide:** nhận `.tex` và hình từ `04_Docs/tex-nop/` (hạn 27/11); chép vào `slides/sections/` và `slides/figures/` (đúng tên file); biên dịch `latexmk -lualatex main.tex`; kiểm tra số trang (hiện 167), không còn khung đỏ (`khungchen`), không còn `[nhóm xác nhận]`; chạy `python scripts/make_slides_zip.py`.

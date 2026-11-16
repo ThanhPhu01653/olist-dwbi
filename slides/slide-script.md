@@ -9,7 +9,7 @@ Ký hiệu: **[nhóm xác nhận]** = nội dung cần nhóm kiểm tra hoặc t
 *Sau P8 các slide được xếp lại theo barem (khảo sát → phân tích và thiết kế → dashboard → mở rộng → tổng kết). Số `Sxx` giữ nguyên số cũ để tra ghi chú và câu hỏi đáp; thứ tự trình bày là thứ tự các mục dưới đây. Slide lý thuyết S06–S12 chuyển sang phụ lục (file `sections/99-du-phong.tex`). Mỗi slide hiện nhãn mục barem ở góc trên bên phải.*
 
 ---
-## MỞ ĐẦU – tiêu đề, mục lục, tối đa 2 slide lý thuyết (file `sections/00-mo-dau.tex`)
+## MỞ ĐẦU – tiêu đề, mục lục, tối đa 2 slide lý thuyết (file `sections/00-mo-dau.tex` cho S01–S03 và `sections/00b-ly-thuyet-rut-gon.tex` cho S04–S05)
 
 ### S01. Xây kho dữ liệu và BI cho 99.441 đơn hàng thương mại điện tử Olist
 - Học phần MI4214 – Kho dữ liệu và Kinh doanh thông minh; nhóm …; giảng viên …
