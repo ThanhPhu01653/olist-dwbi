@@ -1,0 +1,9 @@
+state_code,city,ibge_code,note
+MG,amparo da serra,3102506,"official IBGE name is 'Amparo do Serra'"
+MG,brasopolis,3108909,"older spelling of 'Brazópolis'"
+BA,santa teresinha,2928505,"spelling variant of 'Santa Terezinha'"
+TO,couto de magalhaes,1706001,"IBGE name has no 'de': 'Couto Magalhães'"
+PE,lagoa do itaenga,2608503,"official IBGE name is 'Lagoa de Itaenga'"
+SP,florinia,3516101,"older spelling of 'Florínea'"
+PE,iguaraci,2606903,"older spelling of 'Iguaracy'"
+MG,barao de monte alto,3105509,"IBGE name is 'Barão do Monte Alto' (fuzzy score 94.7, just below the threshold)"
