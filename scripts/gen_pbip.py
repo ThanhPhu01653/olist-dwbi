@@ -130,16 +130,16 @@ CATEGORY = {("dim_geography", "latitude"): "Latitude", ("dim_geography", "longit
 
 # ----------------------------------------------------------------------------- parse measures.md
 SECTION_FOLDER = {}
-for m in re.finditer(r"^## (\d)\. (DB\d) – (.+)$", MEAS, flags=re.M):
+for m in re.finditer(r"^## (\d)\. (DB?\d) – (.+)$", MEAS, flags=re.M):
     SECTION_FOLDER[int(m.group(1))] = f"{m.group(2)} {m.group(3).strip()}"
 SECTION_FOLDER[6] = "Cảnh báo màu"
 ETL_FOLDER = "Giám sát ETL"
 
 KM_MONEY = '[>=1000000]#,0.0,,"M";[>=1000]#,0.0,"K";#,0.00'
 KM_COUNT = '[>=1000000]#,0.0,,"M";[>=1000]#,0.0,"K";#,0'
-KM_MONEY_NAMES = {"GMV", "GMV last month", "GMV last year", "GMV YTD", "GMV by shipping limit date", "GMV by seller state", "Freight", "Payment value",
+KM_MONEY_NAMES = {"GMV USD", "GMV real", "GMV USD last year", "GMV real last year", "GMV", "GMV last month", "GMV last year", "GMV YTD", "GMV by shipping limit date", "GMV by seller state", "Freight", "Payment value",
                   "Seller GMV (monthly)", "Seller GMV first 90d"}
-KM_COUNT_NAMES = {"Orders", "Items", "Orders placed", "Failed orders", "Delivered orders", "Late orders", "Reviews", "Payments", "Customers", "Repeat customers",
+KM_COUNT_NAMES = {"Population", "Orders on official holidays", "Orders", "Items", "Orders placed", "Failed orders", "Delivered orders", "Late orders", "Reviews", "Payments", "Customers", "Repeat customers",
                   "Delivered orders by delivery date"}
 
 MEASURES: list[dict] = []

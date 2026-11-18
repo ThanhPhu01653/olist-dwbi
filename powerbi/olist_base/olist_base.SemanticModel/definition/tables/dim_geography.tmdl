@@ -48,6 +48,42 @@ table dim_geography
 		summarizeBy: none
 		sourceColumn: longitude
 
+	column ibge_municipio_code
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: ibge_municipio_code
+
+	column microrregiao
+		dataType: string
+		sourceColumn: microrregiao
+
+	column mesorregiao
+		dataType: string
+		sourceColumn: mesorregiao
+
+	column populacao_2016
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: populacao_2016
+
+	column populacao_2017
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: populacao_2017
+
+	column populacao_2018
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: populacao_2018
+
+	column match_method
+		dataType: string
+		sourceColumn: match_method
+
 	hierarchy Geography
 		level region
 			column: region
@@ -62,6 +98,26 @@ table dim_geography
 			column: zip_code_prefix
 			ordinal: 3
 
+	hierarchy 'Geography IBGE'
+		level region
+			column: region
+			ordinal: 0
+		level state_code
+			column: state_code
+			ordinal: 1
+		level mesorregiao
+			column: mesorregiao
+			ordinal: 2
+		level microrregiao
+			column: microrregiao
+			ordinal: 3
+		level city
+			column: city
+			ordinal: 4
+		level zip_code_prefix
+			column: zip_code_prefix
+			ordinal: 5
+
 	partition dim_geography = m
 		mode: import
 		source =
@@ -69,7 +125,8 @@ table dim_geography
 				    Source = fnCsv("dim_geography.csv", {
 				            {"geography_key", Int64.Type}, {"zip_code_prefix", type text}, {"city", type text}, {"state_code", type text},
 				            {"state_name", type text}, {"region", type text}, {"country", type text}, {"latitude", type number},
-				            {"longitude", type number}
+				            {"longitude", type number}, {"ibge_municipio_code", Int64.Type}, {"microrregiao", type text}, {"mesorregiao", type text},
+				            {"populacao_2016", Int64.Type}, {"populacao_2017", Int64.Type}, {"populacao_2018", Int64.Type}, {"match_method", type text}
 				        })
 				in
 				    Source

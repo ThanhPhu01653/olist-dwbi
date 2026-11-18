@@ -84,7 +84,8 @@ def match_cities(engine: Engine, batch_id: int) -> dict[str, dict]:
                           "LEFT JOIN ods.city_ibge_match m USING (state_code, city) GROUP BY 2"), {"b": batch_id})
         stats = {r[0]: {"pairs": r[1], "zips": r[2]} for r in conn.execute(
             text("SELECT method, city_pairs, zips FROM etl_log.api_match_stat WHERE batch_id = :b"), {"b": batch_id})}
-        conn.execute(text("DELETE FROM etl_log.rejected_rows WHERE batch_id = :b AND job_name = 'api.match_city_unmatched'"), {"b": batch_id})
+        # the unmatched pairs are recomputed on every run: keep only the latest list, so the monitoring totals do not grow with every batch
+        conn.execute(text("DELETE FROM etl_log.rejected_rows WHERE job_name = 'api.match_city_unmatched'"))
     if still:
         with job_run(engine, batch_id, "api.match_city_unmatched", "api_ods", "ods.city_ibge_match") as r:
             r.log_rejected("ods.v_geo_city_pair", "city not matched to an IBGE municipality (no exact, normalized, fuzzy or override match; often a district or neighbourhood)",

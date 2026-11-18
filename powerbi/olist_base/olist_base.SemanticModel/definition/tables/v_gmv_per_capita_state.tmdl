@@ -1,0 +1,86 @@
+/// Mart thị trường (D8): GMV trên 1.000 dân theo bang x năm, hạng theo đầu người và theo GMV tuyệt đối
+table v_gmv_per_capita_state
+
+	column year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column state_code
+		dataType: string
+		sourceColumn: state_code
+
+	column state_name
+		dataType: string
+		sourceColumn: state_name
+
+	column region
+		dataType: string
+		sourceColumn: region
+
+	column population
+		dataType: int64
+		formatString: #,0
+		sourceColumn: population
+
+	column gdp_thousand_brl
+		dataType: double
+		sourceColumn: gdp_thousand_brl
+
+	column gmv
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: gmv
+
+	column orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: orders
+
+	column customers
+		dataType: int64
+		formatString: #,0
+		sourceColumn: customers
+
+	column sellers
+		dataType: int64
+		formatString: #,0
+		sourceColumn: sellers
+
+	column gmv_per_1000_pop
+		dataType: double
+		sourceColumn: gmv_per_1000_pop
+
+	column orders_per_1000_pop
+		dataType: double
+		sourceColumn: orders_per_1000_pop
+
+	column gmv_per_100k_gdp
+		dataType: double
+		sourceColumn: gmv_per_100k_gdp
+
+	column rank_per_capita
+		dataType: int64
+		formatString: #,0
+		sourceColumn: rank_per_capita
+
+	column rank_gmv
+		dataType: int64
+		formatString: #,0
+		sourceColumn: rank_gmv
+
+	partition v_gmv_per_capita_state = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_gmv_per_capita_state.csv", {
+				            {"year", Int64.Type}, {"state_code", type text}, {"state_name", type text}, {"region", type text},
+				            {"population", Int64.Type}, {"gdp_thousand_brl", type number}, {"gmv", Currency.Type}, {"orders", Int64.Type},
+				            {"customers", Int64.Type}, {"sellers", Int64.Type}, {"gmv_per_1000_pop", type number}, {"orders_per_1000_pop", type number},
+				            {"gmv_per_100k_gdp", type number}, {"rank_per_capita", Int64.Type}, {"rank_gmv", Int64.Type}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

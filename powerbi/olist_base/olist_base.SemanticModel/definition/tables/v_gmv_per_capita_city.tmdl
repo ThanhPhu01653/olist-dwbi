@@ -1,0 +1,72 @@
+/// Mart thị trường (D8): GMV trên 1.000 dân theo đô thị IBGE x năm (đô thị ghép được)
+table v_gmv_per_capita_city
+
+	column year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column ibge_code
+		dataType: int64
+		formatString: #,0
+		sourceColumn: ibge_code
+
+	column city
+		dataType: string
+		sourceColumn: city
+
+	column state_code
+		dataType: string
+		sourceColumn: state_code
+
+	column mesorregiao
+		dataType: string
+		sourceColumn: mesorregiao
+
+	column microrregiao
+		dataType: string
+		sourceColumn: microrregiao
+
+	column population
+		dataType: int64
+		formatString: #,0
+		sourceColumn: population
+
+	column gmv
+		dataType: decimal
+		formatString: "#,0.00"
+		sourceColumn: gmv
+
+	column orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: orders
+
+	column gmv_per_1000_pop
+		dataType: double
+		sourceColumn: gmv_per_1000_pop
+
+	column rank_per_capita
+		dataType: int64
+		formatString: #,0
+		sourceColumn: rank_per_capita
+
+	column rank_gmv
+		dataType: int64
+		formatString: #,0
+		sourceColumn: rank_gmv
+
+	partition v_gmv_per_capita_city = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_gmv_per_capita_city.csv", {
+				            {"year", Int64.Type}, {"ibge_code", Int64.Type}, {"city", type text}, {"state_code", type text},
+				            {"mesorregiao", type text}, {"microrregiao", type text}, {"population", Int64.Type}, {"gmv", Currency.Type},
+				            {"orders", Int64.Type}, {"gmv_per_1000_pop", type number}, {"rank_per_capita", Int64.Type}, {"rank_gmv", Int64.Type}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

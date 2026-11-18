@@ -379,7 +379,7 @@ Bộ dashboard Power BI gồm **4 dashboard** (gộp từ 7 dashboard ở bản 
 | DB4 – Thu hút và hiệu quả seller (2 trang + trang chi tiết) | Vận hành; funnel; drill-through sang chi tiết seller | Người 4 | [`DB4.md`](DB4.md) |
 
 - **Giám sát chất lượng dữ liệu và ETL** không còn là dashboard: số liệu được trình bày ở mục 3.3 của báo cáo (bảng kết quả nạp và giám sát).
-- **Thị trường Brazil (dữ liệu API)** thuộc chương 5 (P9); trang này chỉ để chỗ.
+- **Thị trường Brazil (dữ liệu API)** là dashboard D8 của chương 5 (P9), không thuộc bộ DB1–DB4: hướng dẫn ở [`D8.md`](D8.md).
 - **DB1 trên Superset** (chương 5) làm sau; xem `5-1-lakehouse.tex`.
 
 ## 1. Checklist chung

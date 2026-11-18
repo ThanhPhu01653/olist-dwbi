@@ -1,0 +1,39 @@
+/// Mart thị trường (D8): GMV quy đổi USD theo tháng (mỗi dòng hàng theo tỷ giá ngày mua)
+table v_gmv_usd_month
+
+	column year_month
+		dataType: string
+		sourceColumn: year_month
+
+	column in_window
+		dataType: boolean
+		sourceColumn: in_window
+
+	column gmv_brl
+		dataType: double
+		sourceColumn: gmv_brl
+
+	column gmv_usd
+		dataType: double
+		sourceColumn: gmv_usd
+
+	column avg_usd_brl
+		dataType: double
+		sourceColumn: avg_usd_brl
+
+	column month_avg_rate
+		dataType: double
+		sourceColumn: month_avg_rate
+
+	partition v_gmv_usd_month = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_gmv_usd_month.csv", {
+				            {"year_month", type text}, {"in_window", type logical}, {"gmv_brl", type number}, {"gmv_usd", type number},
+				            {"avg_usd_brl", type number}, {"month_avg_rate", type number}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

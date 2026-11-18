@@ -1,6 +1,6 @@
 # Dữ liệu xuất cho Power BI
 
-> Sinh tự động bằng `python scripts/export_powerbi.py` lúc 2026-11-18 15:10 từ database `olist_dw` (lô ETL mới nhất: 64; đơn mua muộn nhất trong dữ liệu: 2018-10-17). Đừng sửa tay.
+> Sinh tự động bằng `python scripts/export_powerbi.py` lúc 2026-11-18 15:22 từ database `olist_dw` (lô ETL mới nhất: 65; đơn mua muộn nhất trong dữ liệu: 2018-10-17). Đừng sửa tay.
 
 **Định dạng**: UTF-8 có BOM, phân cách `,`, số thập phân `.`, ngày `YYYY-MM-DD`, cột đúng/sai ghi `true`/`false`, ô trống = NULL, tên file = tên bảng. Trong Power BI chọn *Get data → Text/CSV*, đặt *File origin* = UTF-8, rồi **Transform Data** để đặt kiểu cột (xem hướng dẫn trong `handoff/`).
 
@@ -23,15 +23,15 @@
 | fact_order_item.csv | Fact giao dịch: 1 dòng hàng của 1 đơn | 112,650 | 11.03 MB | 14 |
 | fact_order_fulfillment.csv | Fact accumulating snapshot: 1 đơn | 99,441 | 23.75 MB | 30 |
 | fact_payment.csv | Fact giao dịch: 1 lần thanh toán | 103,886 | 6.23 MB | 8 |
-| fact_review.csv | Fact giao dịch: 1 review | 99,224 | 10.68 MB | 14 |
+| fact_review.csv | Fact giao dịch: 1 review | 99,224 | 10.69 MB | 14 |
 | fact_lead_funnel.csv | Fact accumulating snapshot: 1 MQL | 8,000 | 0.83 MB | 18 |
 | fact_seller_monthly.csv | Fact periodic snapshot: 1 seller × 1 tháng | 36,583 | 1.70 MB | 14 |
 | fact_state_year.csv | Fact periodic snapshot: 1 bang × 1 năm (dân số và PIB từ IBGE; GMV, đơn, khách, seller của Olist) – dashboard D8 | 81 | 0.01 MB | 11 |
-| job_run.csv | Nhật ký chạy ETL từng job (số liệu cho mục 3.3 ETL) | 981 | 0.13 MB | 13 |
+| job_run.csv | Nhật ký chạy ETL từng job (số liệu cho mục 3.3 ETL) | 989 | 0.13 MB | 13 |
 | v_run_summary.csv | Tóm tắt mỗi lô ETL: chế độ, thời gian, số dòng từng tầng (mục 3.3 ETL) | 26 | 0.00 MB | 17 |
-| v_dq_summary.csv | Kết quả kiểm thử chất lượng theo lô (mục 3.3 ETL) | 18 | 0.00 MB | 8 |
-| v_rejected_summary.csv | Số dòng bị loại theo lô, job, lý do (mục 3.3 ETL) | 27 | 0.00 MB | 6 |
-| batch_metrics.csv | Chỉ số chính của kho sau mỗi lô: đơn, GMV, MQL, deal… (mục 3.3 ETL, minh hoạ funnel lấp đầy dần) | 12 | 0.00 MB | 12 |
+| v_dq_summary.csv | Kết quả kiểm thử chất lượng theo lô (mục 3.3 ETL) | 13 | 0.00 MB | 8 |
+| v_rejected_summary.csv | Số dòng bị loại theo lô, job, lý do (mục 3.3 ETL) | 3 | 0.00 MB | 6 |
+| batch_metrics.csv | Chỉ số chính của kho sau mỗi lô: đơn, GMV, MQL, deal… (mục 3.3 ETL, minh hoạ funnel lấp đầy dần) | 13 | 0.00 MB | 12 |
 | fact_load_issue.csv | Khoá rơi về Unknown và khoảng thời gian âm khi nạp fact (mục 3.3 ETL) | 20 | 0.00 MB | 6 |
 | v_sales_daily.csv | Mart: GMV, đơn, AOV theo ngày (chỉ đơn không Failed) | 614 | 0.05 MB | 14 |
 | v_sales_category_month.csv | Mart: GMV theo tháng x nhóm ngành x danh mục | 1,282 | 0.10 MB | 11 |

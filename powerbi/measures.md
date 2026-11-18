@@ -600,6 +600,88 @@ Dùng để đối chiếu số trên Power BI: đặt các slicer/bộ lọc gi
 Ghi chú: dòng *Tháng 2017-11* và các cột có lọc thời gian áp dụng cho ngày mua (đơn, thanh toán), ngày tạo review (review), tháng liên hệ đầu (funnel) và tháng của snapshot (seller theo tháng). Bộ lọc tương ứng trên Power BI: slicer `dim_date[year_month]` hoặc bộ lọc trang `InWindow = TRUE`. Measure dùng ở nhiều dashboard (ví dụ GMV ở DB1 và DB3) có cùng giá trị.
 <!-- EXPECTED:END -->
 
+## 8. D8 – Thị trường Brazil
+
+Measure của dashboard D8 (chương 5, dữ liệu API; xem `huong-dan/dashboards/D8.md`). Dùng thêm GMV, Orders (mục 1) và các cột mới của `dim_date` (`usd_brl`, `ipca_index`, `is_holiday_official`) và bảng `fact_state_year`. Các cột và bảng mới không làm đổi số của DB1–DB4. Bảng giá trị kỳ vọng nằm ở mục 8 của `D8.md`.
+
+### Population
+```dax
+Population =
+VAR y = MAX ( fact_state_year[year_date_key] )
+RETURN CALCULATE ( SUM ( fact_state_year[population] ), fact_state_year[year_date_key] = y )
+```
+Dân số ước tính (IBGE) của năm đang chọn: lấy năm lớn nhất trong bộ lọc, không cộng dân số của nhiều năm. Định dạng: `#,0.0,,"M"`.
+
+### GMV per 1000 pop
+```dax
+GMV per 1000 pop =
+VAR y = MAX ( fact_state_year[year_date_key] )
+RETURN DIVIDE ( CALCULATE ( SUM ( fact_state_year[gmv] ), fact_state_year[year_date_key] = y ), [Population] ) * 1000
+```
+GMV (theo bang của khách) trên 1.000 dân của năm đang chọn. Định dạng: `#,0.00`.
+
+### GMV USD
+```dax
+GMV USD =
+CALCULATE (
+    SUMX ( fact_order_item, DIVIDE ( fact_order_item[price], RELATED ( dim_date[usd_brl] ) ) ),
+    KEEPFILTERS ( dim_order_status[status_group] <> "Failed" )
+)
+```
+GMV quy USD: mỗi dòng hàng chia tỷ giá USD/BRL của ngày mua (cột `usd_brl` của `dim_date`). Định dạng: `#,0.00`.
+
+### Avg USD/BRL
+```dax
+Avg USD/BRL = DIVIDE ( [GMV], [GMV USD] )
+```
+Tỷ giá bình quân gia quyền theo GMV (BRL mỗi USD). Định dạng: `0.0000`.
+
+### IPCA index
+```dax
+IPCA index = AVERAGE ( dim_date[ipca_index] )
+```
+Chỉ số giá IPCA, tháng đầu kỳ (01/2016) = 100; mọi ngày của một tháng cùng giá trị. Định dạng: `0.0`.
+
+### GMV real
+```dax
+GMV real =
+SUMX (
+    VALUES ( dim_date[year_month] ),
+    DIVIDE ( [GMV], CALCULATE ( MAX ( dim_date[ipca_index] ) ) ) * 100
+)
+```
+GMV thực: GMV từng tháng chia chỉ số IPCA của tháng đó, nhân 100 (giá tháng 01/2016). Định dạng: `#,0.00`.
+
+### GMV real last year
+```dax
+GMV real last year = CALCULATE ( [GMV real], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+```
+GMV thực cùng kỳ năm trước. Định dạng: `#,0.00`.
+
+### GMV real YoY %
+```dax
+GMV real YoY % = DIVIDE ( [GMV real] - [GMV real last year], [GMV real last year] )
+```
+Tăng trưởng thực so với cùng kỳ năm trước. Định dạng: `+0.0%;-0.0%;0.0%`.
+
+### GMV USD last year
+```dax
+GMV USD last year = CALCULATE ( [GMV USD], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+```
+GMV quy USD cùng kỳ năm trước. Định dạng: `#,0.00`.
+
+### GMV USD YoY %
+```dax
+GMV USD YoY % = DIVIDE ( [GMV USD] - [GMV USD last year], [GMV USD last year] )
+```
+Tăng trưởng GMV quy USD so với cùng kỳ năm trước. Định dạng: `+0.0%;-0.0%;0.0%`.
+
+### Orders on official holidays
+```dax
+Orders on official holidays = CALCULATE ( [Orders], dim_date[is_holiday_official] = TRUE () )
+```
+Số đơn có doanh thu trong các ngày lễ quốc gia (BrasilAPI). Định dạng: `#,0`.
+
 ## Phụ lục: Giám sát ETL (dùng ở mục 3.3)
 Không có dashboard giám sát ETL. Các bảng `etl_log` vẫn được xuất CSV (`job_run`, `v_run_summary`, `v_dq_summary`, `v_rejected_summary`, `batch_metrics`, `fact_load_issue`) để dùng làm số liệu cho mục 3.3 của báo cáo (bảng kết quả nạp và giám sát). Nếu muốn xem trong Power BI, measure dưới đây tính tỷ lệ test đạt của lô mới nhất.
 
@@ -611,12 +693,12 @@ Tỷ lệ phép kiểm thử đạt của lô mới nhất. Định dạng: `0.0
 <!-- ETL:START -->
 | Chỉ số | Giá trị |
 | --- | ---: |
-| Số phép kiểm thử ở lô mới nhất (checks / đạt / lỗi) | 136 / 136 / 0 |
+| Số phép kiểm thử ở lô mới nhất (checks / đạt / lỗi) | 156 / 156 / 0 |
 | `pass_pct` lô mới nhất | 100.0 |
 | Đối chiếu EDA (khớp / tổng) | 6 / 6 |
 | Số lô tăng dần (`mode = incremental`, có dữ liệu mới) | 11 |
-| Thời gian mỗi lô: nhỏ nhất / TB / lớn nhất (giây) | 21.3 / 23.8 / 27.6 |
-| Tổng `row_count` ở `v_rejected_summary` | 42 |
+| Thời gian mỗi lô: nhỏ nhất / TB / lớn nhất (giây) | 26.2 / 30.7 / 42.6 |
+| Tổng `row_count` ở `v_rejected_summary` | 760 |
 | `batch_metrics`: MQL nhỏ nhất → lớn nhất | 2,002 → 8,000 |
 | `batch_metrics`: deal chốt nhỏ nhất → lớn nhất | 3 → 842 |
 | `batch_metrics`: seller có đơn nhỏ nhất → lớn nhất | 0 → 379 |

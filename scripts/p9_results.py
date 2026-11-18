@@ -120,7 +120,7 @@ for m in order:
     else:
         match_rows.append((label[m], n(p), n(z), n(orders_by.loc[m, "orders"]), "–", "–", f1(g / tg * 100) + " (chưa khớp)"))
 table_tex("p9_match_tiers.tex", "Ghép thành phố Olist với đô thị IBGE: số cặp (bang, thành phố), zip và GMV sau từng tầng", "tab:api-match",
-          ["Tầng", "Cặp (bang, thành phố)", "Zip", "Đơn", "Luỹ kế cặp (\\%)", "Luỹ kế zip (\\%)", "Luỹ kế GMV (\\%)"], match_rows, "lrrrrrr",
+          ["Tầng", "Cặp (bang, thành phố)", "Zip", "Đơn", "Luỹ kế cặp (%)", "Luỹ kế zip (%)", "Luỹ kế GMV (%)"], match_rows, "lrrrrrr",
           f"Tổng {n(tp)} cặp (bang, thành phố), {n(tz)} zip. Luỹ kế GMV tính theo bang của khách; cột Đơn là đơn có doanh thu.")
 md += ["", "## 3. Ghép (bang, thành phố) với đô thị IBGE theo tầng", "", f"Tổng {n(tp)} cặp, {n(tz)} zip, GMV {f1(tg, 2)} BRL.", "",
        "| Tầng | Cặp | Zip | Đơn | Luỹ kế cặp % | Luỹ kế zip % | Luỹ kế GMV % |", "| --- | ---: | ---: | ---: | ---: | ---: | ---: |"]
@@ -218,7 +218,7 @@ md += ["", "## 5. GMV danh nghĩa, GMV thực và GMV quy USD", "",
        f"GMV quy USD (mỗi dòng hàng theo tỷ giá ngày mua), tháng 1–8: 2017 = {f1(u17, 2)} USD, 2018 = {f1(u18, 2)} USD: **tăng {f1(gu)}%** (so với {f1(gn)}% bằng BRL); tỷ giá bình quân gia quyền theo GMV: {f1(rate_m.get('2017-01', 0), 3)} (01/2017) → {f1(rate_m.get('2018-08', 0), 3)} (08/2018); "
        f"khoảng {f1(rate.lo, 3)} – {f1(rate.hi, 3)} BRL/USD trong 2017-01 → 2018-08.", ""]
 table_tex("p9_growth.tex", "Tăng trưởng GMV tháng 1–8 năm 2018 so với cùng kỳ 2017: danh nghĩa, thực và quy USD", "tab:api-growth",
-          ["Thước đo", "2017 (1–8)", "2018 (1–8)", "Tăng (\\%)"],
+          ["Thước đo", "2017 (1–8)", "2018 (1–8)", "Tăng (%)"],
           [("GMV danh nghĩa (BRL)", n(nom17), n(nom18), f1(gn)), ("GMV thực (BRL, giá 01/2016)", n(re17), n(re18), f1(gr)), ("GMV quy USD", n(u17), n(u18), f1(gu))], "lrrr",
           f"Lạm phát IPCA từ 08/2017 đến 08/2018: {f1(infl)}\\%.")
 fig, ax = plt.subplots(figsize=(8.4, 3.9))
@@ -290,12 +290,12 @@ newcols = q("""SELECT table_name, column_name FROM information_schema.columns WH
 tests = q("""SELECT count(*) FILTER (WHERE check_name LIKE 'API:%' OR check_name LIKE 'fact_state_year:%' OR check_name LIKE 'mart_market.%') AS p9, count(*) FILTER (WHERE passed AND (check_name LIKE 'API:%' OR check_name LIKE 'fact_state_year:%' OR check_name LIKE 'mart_market.%')) AS p9_ok,
                     count(*) AS total, count(*) FILTER (WHERE passed) AS ok FROM etl_log.dq_check WHERE batch_id = (SELECT max(batch_id) FROM etl_log.dq_check WHERE check_name LIKE 'API:%') AND check_name NOT LIKE 'EDA:%'""").iloc[0]
 md += ["", "## 8. Kiểm thử", "", f"Lô kiểm thử cuối: {int(tests.ok)}/{int(tests.total)} phép đạt (không tính 6 phép đối chiếu EDA); trong đó test của P9: {int(tests.p9_ok)}/{int(tests.p9)} đạt."]
-rows_dw = q("""SELECT (SELECT count(*) FROM dw.dim_geography) geo, (SELECT count(*) FROM dw.dim_date) dt, (SELECT count(*) FROM dw.fact_state_year) fsy""").iloc[0]
-md += ["", f"Số dòng: dim_geography {n(rows_dw.geo)}, dim_date {n(rows_dw.dt)}, fact_state_year {n(rows_dw.fsy)}.", "",
+rows_dw = q("""SELECT (SELECT count(*) FROM dw.dim_geography) geo, (SELECT count(*) FROM dw.dim_date) dtc, (SELECT count(*) FROM dw.fact_state_year) fsy""").iloc[0]
+md += ["", f"Số dòng: dim_geography {n(rows_dw.geo)}, dim_date {n(rows_dw.dtc)}, fact_state_year {n(rows_dw.fsy)}.", "",
        "Cột mới: " + ", ".join(f"`{r.table_name}.{r.column_name}`" for _, r in newcols.iterrows()) + "."]
 
 # ------------------------------------------------------------------ 9. architecture diagram (draft; the group redraws it in draw.io)
-d = Diagram("5-2_kien_truc_api", 1500, 640)
+d = Diagram("5-2_kien_truc_api", 1500, 420)
 d.label(20, 8, 700, 28, "Kiến trúc thu thập dữ liệu API (P9): nguồn → collector → landing zone → staging → ODS → kho → mart → BI", 15)
 xs0, w, h, y0 = 20, 170, 110, 80
 cols = [("API công khai", "IBGE Localidades và SIDRA\nBanco Central (SGS)\nBrasilAPI (ngày lễ)\nOpen-Meteo (mưa)", BLUE), ("Collector", "api_ingest (Python)\nrequests + thử lại, backoff\ntimeout, giới hạn tốc độ\nwatermark BCB", YELLOW),
@@ -316,3 +316,38 @@ d.save("api-kien-truc.drawio", "5-2_kien_truc_api.png")
 
 (HAND / "2026-11-18-P9-results.md").write_text("\n".join(md) + "\n", encoding="utf-8")
 print("written handoff/2026-11-18-P9-results.md, report/tables/p9_*.tex, figures/5-2_*.png")
+
+
+# ------------------------------------------------------------------ D8 expected values (measures of powerbi/measures.md section 8), written into huong-dan/dashboards/D8.md
+def d8_expected() -> None:
+    scopes = [("Toàn bộ dữ liệu", "TRUE", None), ("Cửa sổ 2017-01 → 2018-08", "d.year_month BETWEEN '2017-01' AND '2018-08'", None),
+              ("Năm 2017", "d.year = 2017", None), ("Năm 2018", "d.year = 2018", None)]
+    vals = {}
+    for name, cond, _ in scopes:
+        r = q(f"""SELECT sum(f.price) AS gmv, sum(f.price / d.usd_brl) AS gmv_usd, sum(f.price * 100 / d.ipca_index) AS gmv_real,
+                         count(DISTINCT f.order_id) FILTER (WHERE d.is_holiday_official) AS orders_hol
+                  FROM dw.fact_order_item f JOIN dw.dim_order_status os ON os.order_status_key = f.order_status_key AND os.status_group <> 'Failed'
+                  JOIN dw.dim_date d ON d.date_key = f.purchase_date_key WHERE {cond}""").iloc[0]
+        vals[name] = r
+    md_rows = ["| Measure | " + " | ".join(s[0] for s in scopes) + " |", "| --- | " + " | ".join("---:" for _ in scopes) + " |"]
+    md_rows.append("| GMV (BRL) | " + " | ".join(f1(vals[s[0]].gmv, 2) for s in scopes) + " |")
+    md_rows.append("| GMV USD | " + " | ".join(f1(vals[s[0]].gmv_usd, 2) for s in scopes) + " |")
+    md_rows.append("| Avg USD/BRL | " + " | ".join(f1(vals[s[0]].gmv / vals[s[0]].gmv_usd, 4) for s in scopes) + " |")
+    md_rows.append("| GMV real (giá 01/2016) | " + " | ".join(f1(vals[s[0]].gmv_real, 2) for s in scopes) + " |")
+    md_rows.append("| Orders on official holidays | " + " | ".join(n(vals[s[0]].orders_hol) for s in scopes) + " |")
+    pop = q("SELECT year, sum(population) p, sum(gmv) g FROM mart_market.v_gmv_per_capita_state GROUP BY year ORDER BY year").set_index("year")
+    md_rows += ["", "| Năm | Population (Brazil) | GMV | GMV per 1000 pop (Brazil) |", "| ---: | ---: | ---: | ---: |"]
+    md_rows += [f"| {y} | {n(r.p)} | {f1(r.g, 2)} | {f1(r.g / r.p * 1000, 2)} |" for y, r in pop.iterrows()]
+    md_rows += ["", "GMV per 1000 pop theo bang (năm 2017): " + ", ".join(f"{r.state_code} {f1(r.gmv_per_1000_pop, 2)}" for _, r in d17.sort_values("gmv_per_1000_pop", ascending=False).head(5).iterrows()) + " (5 bang đầu; đủ 27 bang ở `handoff/2026-11-18-P9-results.md` mục 4.1)."]
+    yo = real[real.year_month.isin(["2018-05", "2018-08"])].set_index("year_month")
+    md_rows += ["", "| Tháng | GMV | GMV real | GMV YoY % (danh nghĩa) | GMV real YoY % |", "| --- | ---: | ---: | ---: | ---: |"]
+    md_rows += [f"| {m} | {f1(r.gmv_nominal, 2)} | {f1(r.gmv_real, 2)} | {r.nominal_yoy_pct} | {r.real_yoy_pct} |" for m, r in yo.iterrows()]
+    md_rows += ["", f"Cùng kỳ tháng 1–8 (2018 so với 2017): GMV danh nghĩa +{f1(gn)}%, GMV real +{f1(gr)}%, GMV USD +{f1(gu)}%."]
+    p = ROOT / "huong-dan" / "dashboards" / "D8.md"
+    t = p.read_text(encoding="utf-8")
+    a, b = t.index("<!-- D8:EXPECTED:START -->"), t.index("<!-- D8:EXPECTED:END -->")
+    p.write_text(t[:a] + "<!-- D8:EXPECTED:START -->\n*Sinh bởi `python scripts/p9_results.py`; số của DB1–DB4 không đổi (xem `powerbi/measures.md` mục 7).*\n\n" + "\n".join(md_rows) + "\n" + t[b:], encoding="utf-8", newline="\n")
+
+
+d8_expected()
+print("D8 expected values written")

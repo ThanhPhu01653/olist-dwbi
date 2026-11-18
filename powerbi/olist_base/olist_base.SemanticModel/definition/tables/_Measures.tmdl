@@ -373,6 +373,73 @@ table _Measures
 			RETURN IF ( msgs = "", "Các chỉ số chính trong ngưỡng", "⚠ " & msgs )
 		displayFolder: "Cảnh báo màu"
 
+	/// Dân số ước tính (IBGE) của năm đang chọn: lấy năm lớn nhất trong bộ lọc, không cộng dân số của nhiều năm.
+	measure Population =
+			VAR y = MAX ( fact_state_year[year_date_key] )
+			RETURN CALCULATE ( SUM ( fact_state_year[population] ), fact_state_year[year_date_key] = y )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0"
+		displayFolder: "D8 Thị trường Brazil"
+
+	/// GMV (theo bang của khách) trên 1.000 dân của năm đang chọn.
+	measure 'GMV per 1000 pop' =
+			VAR y = MAX ( fact_state_year[year_date_key] )
+			RETURN DIVIDE ( CALCULATE ( SUM ( fact_state_year[gmv] ), fact_state_year[year_date_key] = y ), [Population] ) * 1000
+		formatString: "#,0.00"
+		displayFolder: "D8 Thị trường Brazil"
+
+	/// GMV quy USD: mỗi dòng hàng chia tỷ giá USD/BRL của ngày mua (cột `usd_brl` của `dim_date`).
+	measure 'GMV USD' =
+			CALCULATE (
+			    SUMX ( fact_order_item, DIVIDE ( fact_order_item[price], RELATED ( dim_date[usd_brl] ) ) ),
+			    KEEPFILTERS ( dim_order_status[status_group] <> "Failed" )
+			)
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0.00"
+		displayFolder: "D8 Thị trường Brazil"
+
+	/// Tỷ giá bình quân gia quyền theo GMV (BRL mỗi USD).
+	measure 'Avg USD/BRL' = DIVIDE ( [GMV], [GMV USD] )
+		formatString: "0.0000"
+		displayFolder: "D8 Thị trường Brazil"
+
+	/// Chỉ số giá IPCA, tháng đầu kỳ (01/2016) = 100; mọi ngày của một tháng cùng giá trị.
+	measure 'IPCA index' = AVERAGE ( dim_date[ipca_index] )
+		formatString: "0.0"
+		displayFolder: "D8 Thị trường Brazil"
+
+	/// GMV thực: GMV từng tháng chia chỉ số IPCA của tháng đó, nhân 100 (giá tháng 01/2016).
+	measure 'GMV real' =
+			SUMX (
+			    VALUES ( dim_date[year_month] ),
+			    DIVIDE ( [GMV], CALCULATE ( MAX ( dim_date[ipca_index] ) ) ) * 100
+			)
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0.00"
+		displayFolder: "D8 Thị trường Brazil"
+
+	/// GMV thực cùng kỳ năm trước.
+	measure 'GMV real last year' = CALCULATE ( [GMV real], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0.00"
+		displayFolder: "D8 Thị trường Brazil"
+
+	/// Tăng trưởng thực so với cùng kỳ năm trước.
+	measure 'GMV real YoY %' = DIVIDE ( [GMV real] - [GMV real last year], [GMV real last year] )
+		formatString: "+0.0%;-0.0%;0.0%"
+		displayFolder: "D8 Thị trường Brazil"
+
+	/// GMV quy USD cùng kỳ năm trước.
+	measure 'GMV USD last year' = CALCULATE ( [GMV USD], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0.00"
+		displayFolder: "D8 Thị trường Brazil"
+
+	/// Tăng trưởng GMV quy USD so với cùng kỳ năm trước.
+	measure 'GMV USD YoY %' = DIVIDE ( [GMV USD] - [GMV USD last year], [GMV USD last year] )
+		formatString: "+0.0%;-0.0%;0.0%"
+		displayFolder: "D8 Thị trường Brazil"
+
+	/// Số đơn có doanh thu trong các ngày lễ quốc gia (BrasilAPI).
+	measure 'Orders on official holidays' = CALCULATE ( [Orders], dim_date[is_holiday_official] = TRUE () )
+		formatString: "[>=1000000]#,0.0,,""M"";[>=1000]#,0.0,""K"";#,0"
+		displayFolder: "D8 Thị trường Brazil"
+
 	/// Tỷ lệ phép kiểm thử đạt của lô mới nhất.
 	measure 'Latest pass pct' = CALCULATE ( MAX ( v_dq_summary[pass_pct] ), FILTER ( ALL ( v_dq_summary ), v_dq_summary[batch_id] = MAX ( v_dq_summary[batch_id] ) ) )
 		formatString: "0.0"

@@ -1,11 +1,49 @@
 \section{Mở rộng: Thu thập dữ liệu thực tế từ API}\label{sec:api}
-\subsection{Bài toán}
-\todo{P9 điền: dữ liệu Olist là ảnh chụp tĩnh; bài toán là bổ sung dữ liệu thực tế (nguồn API nào, bổ sung cho câu hỏi phân tích nào của chương 2).}
-\subsection{Kiến trúc}
-\todo{P9 điền: sơ đồ luồng từ API đến staging, tần suất gọi, xử lý lỗi và giới hạn tốc độ; nối với kiến trúc các lớp ở mục \ref{sec:kien-truc}.}
-\subsection{Triển khai}
-\todo{P9 điền: mã thu thập (Python), lược đồ bảng đích, lịch chạy, cách đưa vào pipeline.}
-\subsection{Kết quả}
-\todo{P9 điền: số dòng thu được, ví dụ phân tích dùng dữ liệu mới, hạn chế.}
+\subsection{Bài toán}\label{sec:api-bai-toan}
+Bộ Olist chỉ có dữ liệu nội bộ của sàn và là ảnh chụp tĩnh (09/2016--10/2018), nên không tự trả lời được một số câu hỏi phân tích của chương~2: bang nào mua nhiều nhất \emph{theo đầu người} chứ không chỉ theo GMV tuyệt đối; tăng trưởng GMV \emph{thực} sau khi trừ lạm phát; GMV quy đổi USD khi đồng real mất giá; ngày lễ chính thức có làm giảm số đơn không; và (tuỳ chọn) mưa có làm giao trễ không. Mục này bổ sung dữ liệu công khai, có thật, của Brazil qua API để trả lời các câu hỏi đó, theo thứ tự kiến trúc, triển khai, kết quả. Thiết kế đầy đủ nằm ở \code{docs/THU\_THAP\_API.md}.
+
+Bốn nguồn được dùng, mỗi nguồn đã kiểm tra bằng lời gọi thật và đối chiếu mã chuỗi, mã biến với metadata của chính API trước khi viết mã: \textbf{IBGE} (Localidades: 27 bang và 5.571 đô thị với mesorregião, microrregião; SIDRA: dân số ước tính, bảng 6579 biến 9324, và PIB đô thị, bảng 5938 biến 37), \textbf{Banco Central do Brasil} (SGS: chuỗi 1 tỷ giá USD/BRL giá bán theo ngày, chuỗi 433 biến động tháng của chỉ số giá IPCA), \textbf{BrasilAPI} (ngày lễ quốc gia) và \textbf{Open-Meteo} (lượng mưa ngày tại 27 thủ phủ bang, nguồn tuỳ chọn). Chuỗi 433 được xác nhận bằng cách so với biến ``IPCA -- Variação mensal'' của IBGE (bảng 1737): trùng khớp cả 60 tháng.
+
+\subsection{Kiến trúc}\label{sec:api-kien-truc}
+Dữ liệu đi qua các lớp giống chương~3 (Hình~\ref{fig:api-kien-truc}): bộ thu thập $\rightarrow$ vùng đổ bộ (landing zone) chứa JSON thô $\rightarrow$ staging (schema \code{api}) $\rightarrow$ ODS $\rightarrow$ kho (làm giàu hai chiều và thêm một fact) $\rightarrow$ data mart $\rightarrow$ Power BI. Hình vẽ theo lớp, không vẽ thành luồng, và nối với kiến trúc các lớp ở mục~\ref{sec:kien-truc}.
+\hinh{5-2_kien_truc_api.png}{Kiến trúc thu thập dữ liệu API và nối vào kho (bản nháp, nhóm vẽ lại bằng draw.io)}{fig:api-kien-truc}{0.98}
+
+Các nguyên tắc của bộ thu thập: gọi lại tối đa 5 lần với thời gian chờ tăng dần (1,5; 3; 6; 12 giây) khi gặp lỗi mạng hoặc HTTP 429, 5xx; có timeout; giữ khoảng cách tối thiểu giữa hai lời gọi tới cùng một máy chủ; dùng một User-Agent chung, không chứa email cá nhân. Phản hồi được ghi \emph{nguyên văn} vào \code{data/raw/api/<nguồn>/<ngày chạy>/} cùng một tệp \code{manifest.json} (URL, thời điểm gọi, mã HTTP, số bản ghi, số byte, sha256, thời gian). Chạy lại không nhân đôi dữ liệu: cùng ngày ghi đè cùng tệp; staging nạp bằng \code{TRUNCATE + COPY} (danh mục, dân số, PIB, ngày lễ thay toàn bộ có kiểm soát) hoặc upsert theo khoá tự nhiên (chuỗi Banco Central chỉ xin phần sau mốc watermark). Lỗi gọi API được ghi vào \code{etl\_log.api\_call} và \code{etl\_log.job\_run}, không chặn nguồn khác và không làm hỏng pipeline chính: khi thiếu dữ liệu API, các cột mới của kho giữ NULL và bốn dashboard DB1--DB4 cho đúng số cũ. Tần suất thu thập đề xuất: tỷ giá hằng ngày, IPCA hằng tháng, dân số và PIB hằng năm, ngày lễ hằng năm, danh mục đô thị khi IBGE cập nhật.
+
+\subsection{Triển khai}\label{sec:api-trien-khai}
+\textbf{Mã và lệnh.} Package \code{api\_ingest/} gồm bộ thu thập (\code{collect.py}, \code{http.py}), nạp staging (\code{stage.py}), ODS và ghép đô thị (\code{ods.py}, \code{match.py}) và giao diện dòng lệnh \code{python -m api\_ingest.run --source all|ibge|bcb|holidays|weather}. Tuỳ chọn \code{--with-api} của \code{etl.run\_pipeline} đưa dữ liệu vào kho trước bước nạp chiều; \code{rebuild\_all.py} dùng vùng đổ bộ nên dựng lại toàn bộ không cần mạng.
+
+\textbf{Bảng đích.} Staging có chín bảng \code{api.stg\_api\_*}; ODS thêm \code{ods.ibge\_municipio}, \code{ibge\_population}, \code{ibge\_gdp}, \code{fx\_usd\_brl} (mỗi ngày một tỷ giá, ngày nghỉ lấy giá ngày làm việc trước đó), \code{ipca\_month} (chỉ số nối từ biến động tháng, tháng đầu kỳ bằng 100), \code{holiday\_official}, \code{weather\_daily} và \code{city\_ibge\_match}. Kho được làm giàu mà không đổi khoá nào: \code{dim\_geography} thêm \code{ibge\_municipio\_code}, \code{microrregiao}, \code{mesorregiao}, \code{populacao\_2016/2017/2018}, \code{match\_method}; \code{dim\_date} thêm \code{usd\_brl}, \code{ipca\_index}, \code{is\_holiday\_official}, \code{holiday\_name\_official}; bảng mới \code{fact\_state\_year} là fact periodic snapshot với grain bang $\times$ năm (27 bang $\times$ 3 năm = 81 dòng: dân số, PIB, GMV, số đơn, khách, seller). Schema \code{mart\_market} có bảy view cho dashboard D8.
+
+\textbf{Ghép thành phố Olist với đô thị IBGE.} Khó khăn chính là tên: Olist lưu tên thành phố đã chuẩn hoá (chữ thường, không dấu) còn IBGE dùng tên có dấu và có ký tự như dấu nháy. Phép ghép theo (bang, tên) đi qua bốn tầng và đếm tỉ lệ khớp sau mỗi tầng: (1) khớp đúng sau khi đổi IBGE sang chữ thường; (2) sau \code{unaccent} và chuẩn hoá ký tự thừa, chỉ nhận khi khoá duy nhất trong bang; (3) fuzzy bằng \code{rapidfuzz}, chỉ trong cùng bang, nhận khi điểm từ 95 trở lên và ứng viên thứ hai thấp hơn ít nhất 10 điểm; (4) bảng ghép tay \code{seeds/city\_ibge\_override.csv} cho các biến thể chính tả đã kiểm tra từng dòng. Ngưỡng 95 được chọn bằng cách đọc các ứng viên: mọi cặp từ 95 là biến thể chính tả đúng, còn ở khoảng 90--94 đã có ghép sai (ví dụ \emph{boa vista de minas} thành \emph{Bela Vista de Minas}, điểm 92). Cặp không khớp ghi vào \code{etl\_log.rejected\_rows} kèm lý do, không bỏ âm thầm.
+
+\textbf{Kiểm thử.} Hai mươi phép kiểm thử SQL mới (tổng số phép đạt của pipeline tăng từ 136 lên 156, đạt 100\%) và bộ \code{pytest} cho bộ thu thập (không gọi API thật): chạy lại không nhân đôi; lỗi một nguồn không chặn nguồn khác; thử lại với backoff; chỉ xin phần sau watermark; kiểm tra mã biến với metadata. Các phép SQL kiểm tra tỷ giá có đủ 1.827 ngày và không thiếu ngày làm việc nào, IPCA đủ 60 tháng và trùng chỉ số IBGE, mã IBGE hợp lệ và cùng bang, không zip nào bị gán hai đô thị, \code{fact\_state\_year} khớp tổng GMV 13.494.400,74 BRL.
+
+\subsection{Kết quả}\label{sec:api-ket-qua}
+\textbf{Thu thập.} Lần thu thập thật gồm 69 lời gọi, 48.016 bản ghi, 4,66~MB JSON, tổng thời gian chờ phản hồi 60 giây, không lỗi (Bảng~\ref{tab:api-calls}). IBGE chiếm gần hết dung lượng (danh mục đô thị 2,4~MB); Banco Central trả 1.276 tỷ giá ngày và 60 điểm IPCA; BrasilAPI trả 65 ngày lễ; Open-Meteo trả 29.821 ngày-điểm mưa (hai lời gọi cho mỗi thủ phủ).
+\input{tables/p9_api_calls}
+
+\textbf{Ghép đô thị.} Trong 6.190 cặp (bang, thành phố) và 19.177 zip, hai tầng đầu đã gán 96,1\% số zip và 99,4\% GMV; tầng fuzzy thêm 9 cặp và tầng ghép tay thêm 8 cặp, đưa tỉ lệ cuối lên \textbf{96,3\% số zip (18.458 zip thuộc 5.473 đô thị)} và \textbf{99,5\% GMV} (Bảng~\ref{tab:api-match}, Hình~\ref{fig:api-khop}). Phần chưa khớp là 715 cặp, 719 zip, 502 đơn (0,5\% GMV), phần lớn là quận, huyện hoặc khu dân cư không phải đô thị (ví dụ \emph{parati}, \emph{barra de sao joao}). Bảng~\ref{tab:api-match-ex} nêu vài ví dụ tên lệch đã sửa được.
+\input{tables/p9_match_tiers}
+\hinh{5-2_ty_le_khop_theo_tang.png}{Tỉ lệ khớp luỹ kế sau từng tầng ghép đô thị}{fig:api-khop}{0.8}
+\input{tables/p9_match_examples}
+
+\textbf{Phát hiện 1: theo đầu người, thứ tự các bang đổi khác.} Năm 2017, GMV trên 1.000 dân cao nhất ở Rio de Janeiro (53,90 BRL), São Paulo (48,58) và Distrito Federal (43,95); thấp nhất ở Amazonas (2,58) và Roraima (2,69). Dù tương quan thứ hạng giữa GMV theo đầu người và GMV tuyệt đối là 0,78 (Spearman, 27 bang), nhiều bang đổi hạng mạnh: Maranhão từ hạng 15 xuống 24, Pará từ 13 xuống 22, Ceará từ 12 xuống 20, còn Tocantins từ 23 lên 12 và Sergipe từ 21 lên 14; Distrito Federal đứng thứ 9 về GMV nhưng thứ 3 theo đầu người (Bảng~\ref{tab:api-percapita}, Hình~\ref{fig:api-dau-nguoi}). Cả nước, GMV trên 1.000 dân là 29,42 BRL năm 2017 và 35,21 năm 2018 (cho đến tháng 10).
+\input{tables/p9_state_per_capita}
+\hinh{5-2_gmv_dau_nguoi_theo_bang.png}{GMV trên 1.000 dân theo bang năm 2017, kèm hạng theo GMV tuyệt đối}{fig:api-dau-nguoi}{0.85}
+
+\textbf{Phát hiện 2: tăng trưởng thực thấp hơn danh nghĩa, tăng trưởng USD thấp hơn nữa.} So tháng 1--8 năm 2018 với cùng kỳ 2017, GMV tăng 138,3\% theo giá danh nghĩa, 130,9\% theo giá cố định (chia chỉ số IPCA, lạm phát 4,2\% giữa 08/2017 và 08/2018) và 116,7\% khi quy sang USD, vì tỷ giá bình quân gia quyền theo GMV tăng từ 3,17 BRL mỗi USD (tháng 01/2017) lên 3,84 (tháng 08/2018) (Bảng~\ref{tab:api-growth}, Hình~\ref{fig:api-thuc} và~\ref{fig:api-usd}). Con số tăng trưởng lớn phản ánh chủ yếu việc dữ liệu 2017 còn đang lớn dần; hiệu ứng lạm phát và tỷ giá làm giảm mức tăng lần lượt 7,4 và 21,6 điểm phần trăm.
+\input{tables/p9_growth}
+\hinh{5-2_danh_nghia_so_voi_thuc.png}{GMV danh nghĩa và GMV thực (giá 01/2016) theo tháng}{fig:api-thuc}{0.85}
+\hinh{5-2_gmv_usd_theo_thang.png}{GMV quy USD theo tháng và tỷ giá bình quân gia quyền theo GMV}{fig:api-usd}{0.85}
+
+\textbf{Phát hiện 3: ngày lễ làm giảm đơn, và thư viện ngày lễ thiếu 19 ngày.} BrasilAPI có 64 ngày lễ quốc gia trong 2016--2020, còn cờ \code{is\_holiday\_br} của thư viện \code{holidays} chỉ đánh dấu 45 ngày; 19 ngày chỉ có ở BrasilAPI, gồm Carnaval, Chủ nhật Phục sinh và Corpus Christi, và không có ngày nào chỉ có ở thư viện. Trong 01/2017--08/2018 (bỏ Black Friday), ngày thường có lễ quốc gia trung bình 124,7 đơn, thấp hơn 27,9\% so với 172,9 đơn của ngày thường không lễ (Bảng~\ref{tab:api-holiday}).
+\input{tables/p9_holidays}
+
+\textbf{Phần tuỳ chọn: mưa và giao trễ.} Ghép mưa ngày giao tại thủ phủ bang của khách, tỉ lệ giao trễ tăng từ 5,45\% (không mưa) lên 7,13\%, 8,06\% và 9,55\% ở các mức mưa 0--5, 5--20 và từ 20~mm trở lên. Đây là liên hệ thống kê; hạn chế là mưa đo ở thủ phủ chứ không ở nơi khách ở.
+
+\textbf{Hạn chế.} Dân số và PIB là ước tính của IBGE; GMV theo bang của khách; 0,5\% GMV thuộc cặp thành phố chưa ghép được nên không có ở số liệu theo đô thị; năm 2016 chỉ có 370 dòng hàng và 2018 chỉ đến tháng 10.
+
 \subsection{Dashboard D8 -- Thị trường Brazil}\label{sec:d8}
-\todo{P9 điền: dashboard D8 (thị trường Brazil, dữ liệu API) thuộc chương 5, dựng bằng Power BI từ dữ liệu thu thập qua API; hướng dẫn ở huong-dan/dashboards/D8.md; ảnh chụp đặt tên theo quy ước của chương 5.}
+Dashboard D8 là dashboard riêng của chương này (không thuộc bộ DB1--DB4 và không làm đổi số của chúng), dựng bằng Power BI từ \code{fact\_state\_year}, các cột mới của \code{dim\_date} và các view \code{mart\_market}. Bốn trang: bang nào mua nhiều nhất theo đầu người (bản đồ và xếp hạng so với hạng theo GMV tuyệt đối); GMV danh nghĩa so với GMV thực và GMV USD; đô thị lớn (drill-down từ bang); ngày lễ quốc gia và số đơn. Hướng dẫn dựng, công thức DAX (\code{powerbi/measures.md}, mục~8) và bảng giá trị kỳ vọng nằm ở \code{huong-dan/dashboards/D8.md}.
+\todo{Phú dựng D8 trên Power BI, chụp ảnh đặt tên 4\_D8\_\ldots.png vào figures/ và chèn vào đây; đối chiếu số với bảng giá trị kỳ vọng của D8.md.}

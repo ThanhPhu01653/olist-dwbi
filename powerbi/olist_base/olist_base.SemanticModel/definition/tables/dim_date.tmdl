@@ -87,6 +87,22 @@ table dim_date
 		dataType: boolean
 		sourceColumn: is_black_friday
 
+	column usd_brl
+		dataType: double
+		sourceColumn: usd_brl
+
+	column ipca_index
+		dataType: double
+		sourceColumn: ipca_index
+
+	column is_holiday_official
+		dataType: boolean
+		sourceColumn: is_holiday_official
+
+	column holiday_name_official
+		dataType: string
+		sourceColumn: holiday_name_official
+
 	/// TRUE cho ngày trong giai đoạn 2017-01 đến 2018-08; dùng làm bộ lọc trang của DB1-DB4
 	column InWindow
 		dataType: boolean
@@ -125,7 +141,8 @@ table dim_date
 				            {"date_key", Int64.Type}, {"full_date", type date}, {"day_of_month", Int64.Type}, {"day_of_week", Int64.Type},
 				            {"day_name", type text}, {"week_of_year", Int64.Type}, {"month", Int64.Type}, {"month_name", type text},
 				            {"quarter", Int64.Type}, {"year", Int64.Type}, {"year_month", type text}, {"year_quarter", type text},
-				            {"is_weekend", type logical}, {"is_holiday_br", type logical}, {"holiday_name", type text}, {"is_black_friday", type logical}
+				            {"is_weekend", type logical}, {"is_holiday_br", type logical}, {"holiday_name", type text}, {"is_black_friday", type logical},
+				            {"usd_brl", type number}, {"ipca_index", type number}, {"is_holiday_official", type logical}, {"holiday_name_official", type text}
 				        }),
 				    NoUnknown = Table.SelectRows(Source, each [date_key] <> -1),
 				    Window = Table.AddColumn(NoUnknown, "InWindow", each [year_month] >= "2017-01" and [year_month] <= "2018-08", type logical)

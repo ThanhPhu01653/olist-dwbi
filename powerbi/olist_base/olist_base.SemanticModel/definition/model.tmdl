@@ -6,7 +6,7 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-annotation PBI_QueryOrder = ["DataFolder", "fnCsv", "dim_date", "dim_geography", "dim_customer", "dim_seller", "dim_product", "dim_order_status", "dim_payment_type", "dim_lead_origin", "dim_lead_profile", "dim_sales_rep", "fact_order_item", "fact_order_fulfillment", "fact_payment", "fact_review", "fact_lead_funnel", "fact_seller_monthly", "v_sales_daily", "v_sales_category_month", "v_sales_state_month", "v_geo_state", "v_geo_zip", "v_category_pareto", "v_fulfillment_state_month", "v_status_funnel", "v_review_vs_delay", "v_payment_mix_month", "v_customer_rfm", "v_customer_cohort", "v_funnel_by_origin_month", "v_seller_scorecard", "v_seller_by_channel", "job_run", "v_run_summary", "v_dq_summary", "v_rejected_summary", "batch_metrics", "fact_load_issue", "_Measures"]
+annotation PBI_QueryOrder = ["DataFolder", "fnCsv", "dim_date", "dim_geography", "dim_customer", "dim_seller", "dim_product", "dim_order_status", "dim_payment_type", "dim_lead_origin", "dim_lead_profile", "dim_sales_rep", "fact_order_item", "fact_order_fulfillment", "fact_payment", "fact_review", "fact_lead_funnel", "fact_seller_monthly", "fact_state_year", "v_sales_daily", "v_sales_category_month", "v_sales_state_month", "v_geo_state", "v_geo_zip", "v_category_pareto", "v_fulfillment_state_month", "v_status_funnel", "v_review_vs_delay", "v_payment_mix_month", "v_customer_rfm", "v_customer_cohort", "v_funnel_by_origin_month", "v_seller_scorecard", "v_seller_by_channel", "v_gmv_per_capita_state", "v_gmv_per_capita_city", "v_gmv_usd_month", "v_gmv_real_month", "v_holiday_effect", "v_holiday_diff", "v_late_by_rain", "job_run", "v_run_summary", "v_dq_summary", "v_rejected_summary", "batch_metrics", "fact_load_issue", "_Measures"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
@@ -26,6 +26,7 @@ ref table fact_payment
 ref table fact_review
 ref table fact_lead_funnel
 ref table fact_seller_monthly
+ref table fact_state_year
 ref table v_sales_daily
 ref table v_sales_category_month
 ref table v_sales_state_month
@@ -41,6 +42,13 @@ ref table v_customer_cohort
 ref table v_funnel_by_origin_month
 ref table v_seller_scorecard
 ref table v_seller_by_channel
+ref table v_gmv_per_capita_state
+ref table v_gmv_per_capita_city
+ref table v_gmv_usd_month
+ref table v_gmv_real_month
+ref table v_holiday_effect
+ref table v_holiday_diff
+ref table v_late_by_rain
 ref table job_run
 ref table v_run_summary
 ref table v_dq_summary

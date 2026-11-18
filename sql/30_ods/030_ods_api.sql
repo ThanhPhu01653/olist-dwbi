@@ -50,7 +50,7 @@ CREATE OR REPLACE PROCEDURE ods.load_api_ibge(p_batch_id bigint, INOUT p_read bi
 LANGUAGE plpgsql AS $$
 DECLARE n_pop bigint; n_gdp bigint;
 BEGIN
-    DELETE FROM etl_log.rejected_rows WHERE batch_id = p_batch_id AND job_name = 'ods.load_api_ibge';
+    DELETE FROM etl_log.rejected_rows WHERE job_name = 'ods.load_api_ibge';   -- recomputed from the full staging on every run: keep only the latest list
     SELECT (SELECT count(*) FROM api.stg_api_ibge_municipio) + (SELECT count(*) FROM api.stg_api_ibge_populacao)
            + (SELECT count(*) FROM api.stg_api_ibge_pib) INTO p_read;
     TRUNCATE ods.city_ibge_match, ods.ibge_municipio, ods.ibge_population, ods.ibge_gdp;
@@ -81,7 +81,7 @@ END $$;
 CREATE OR REPLACE PROCEDURE ods.load_api_fx(p_batch_id bigint, INOUT p_read bigint DEFAULT 0, INOUT p_inserted bigint DEFAULT 0, INOUT p_rejected bigint DEFAULT 0)
 LANGUAGE plpgsql AS $$
 BEGIN
-    DELETE FROM etl_log.rejected_rows WHERE batch_id = p_batch_id AND job_name = 'ods.load_api_fx';
+    DELETE FROM etl_log.rejected_rows WHERE job_name = 'ods.load_api_fx';   -- recomputed from the full staging on every run: keep only the latest list
     SELECT count(*) INTO p_read FROM api.stg_api_bcb_serie WHERE series_code = 1;
     TRUNCATE ods.fx_usd_brl;
     -- days without a quotation (weekends, holidays) take the rate of the closest earlier business day
@@ -101,7 +101,7 @@ END $$;
 CREATE OR REPLACE PROCEDURE ods.load_api_ipca(p_batch_id bigint, INOUT p_read bigint DEFAULT 0, INOUT p_inserted bigint DEFAULT 0, INOUT p_rejected bigint DEFAULT 0)
 LANGUAGE plpgsql AS $$
 BEGIN
-    DELETE FROM etl_log.rejected_rows WHERE batch_id = p_batch_id AND job_name = 'ods.load_api_ipca';
+    DELETE FROM etl_log.rejected_rows WHERE job_name = 'ods.load_api_ipca';   -- recomputed from the full staging on every run: keep only the latest list
     SELECT count(*) INTO p_read FROM api.stg_api_bcb_serie WHERE series_code = 433;
     TRUNCATE ods.ipca_month;
     -- index(first month) = 100; index(m) = 100 * product of (1 + change/100) over the months after the first up to m
@@ -133,7 +133,7 @@ END $$;
 CREATE OR REPLACE PROCEDURE ods.load_api_weather(p_batch_id bigint, INOUT p_read bigint DEFAULT 0, INOUT p_inserted bigint DEFAULT 0, INOUT p_rejected bigint DEFAULT 0)
 LANGUAGE plpgsql AS $$
 BEGIN
-    DELETE FROM etl_log.rejected_rows WHERE batch_id = p_batch_id AND job_name = 'ods.load_api_weather';
+    DELETE FROM etl_log.rejected_rows WHERE job_name = 'ods.load_api_weather';   -- recomputed from the full staging on every run: keep only the latest list
     SELECT count(*) INTO p_read FROM api.stg_api_weather_daily;
     TRUNCATE ods.weather_station, ods.weather_daily;
     INSERT INTO ods.weather_station (state_code, city, latitude, longitude, etl_batch_id)

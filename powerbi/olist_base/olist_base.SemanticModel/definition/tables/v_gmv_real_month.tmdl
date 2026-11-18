@@ -1,0 +1,43 @@
+/// Mart thị trường (D8): GMV danh nghĩa và GMV thực (giá 01/2016, chia chỉ số IPCA) theo tháng, tăng trưởng YoY
+table v_gmv_real_month
+
+	column year_month
+		dataType: string
+		sourceColumn: year_month
+
+	column in_window
+		dataType: boolean
+		sourceColumn: in_window
+
+	column ipca_index
+		dataType: double
+		sourceColumn: ipca_index
+
+	column gmv_nominal
+		dataType: double
+		sourceColumn: gmv_nominal
+
+	column gmv_real
+		dataType: double
+		sourceColumn: gmv_real
+
+	column nominal_yoy_pct
+		dataType: double
+		sourceColumn: nominal_yoy_pct
+
+	column real_yoy_pct
+		dataType: double
+		sourceColumn: real_yoy_pct
+
+	partition v_gmv_real_month = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_gmv_real_month.csv", {
+				            {"year_month", type text}, {"in_window", type logical}, {"ipca_index", type number}, {"gmv_nominal", type number},
+				            {"gmv_real", type number}, {"nominal_yoy_pct", type number}, {"real_yoy_pct", type number}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

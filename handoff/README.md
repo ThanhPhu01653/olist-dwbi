@@ -19,6 +19,7 @@ Thư mục này ghi lại từng phase của dự án (đã làm gì, số liệ
 | [`2026-11-14-P8b.md`](2026-11-14-P8b.md) | P8b: gộp bộ dashboard từ 7 xuống 4 (DB1–DB4); giám sát ETL thành bảng ở mục 3.3 |
 | [`2026-11-14-P8c.md`](2026-11-14-P8c.md) | P8c: dự án Power BI gốc dạng PBIP (`powerbi/olist_base/`): mô hình, quan hệ, measure, báo cáo trống |
 | [`2026-11-16-P8d.md`](2026-11-16-P8d.md) | P8d: tách file slide theo người, hướng dẫn từng người (`huong-dan/phan-viec/`) |
+| [`2026-11-18-P9-api.md`](2026-11-18-P9-api.md) | P9: thu thập dữ liệu công khai qua API (IBGE, Banco Central, BrasilAPI, Open-Meteo), ghép đô thị, làm giàu kho, dashboard D8; số liệu chi tiết: [`2026-11-18-P9-results.md`](2026-11-18-P9-results.md) |
 | [`2026-11-14-P8-eda.md`](2026-11-14-P8-eda.md) | P8-D: ngoại lai, Cramér's V và η, STL, thống kê đặc trưng, từ điển nguồn (số liệu và nhận xét từng hình) |
 | [`2026-11-14-P8-source.md`](2026-11-14-P8-source.md), [`-layers`](2026-11-14-P8-layers.md), [`-mapping-summary`](2026-11-14-P8-mapping-summary.md), [`-dimensions`](2026-11-14-P8-dimensions.md), [`-etl`](2026-11-14-P8-etl.md) | P8-C, E: tần suất và taxonomy dữ liệu nguồn, các lớp kiến trúc, tổng hợp mapping, hệ thống chiều khái niệm, ETL |
 

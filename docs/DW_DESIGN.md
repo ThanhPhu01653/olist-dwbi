@@ -38,6 +38,12 @@
 | 12/11 | Mốc chốt thiết kế: xem lại các dòng "Chốt 05/11" ở trên; mọi thay đổi sau đó phải cập nhật file này trước rồi mới sửa code | |
 | 13/11 | Bổ sung §5a (hệ thống chiều khái niệm: phân cấp từng chiều, phân nhóm 10 chiều, kiểm tra phân cấp đúng) theo barem chấm điểm | Không đổi schema `dw`; số liệu §5a đếm từ `olist_dw` bằng `scripts/p8_dimensions.py` (báo cáo mục 3.4) |
 | 13/11 | Gộp bộ dashboard từ 7 xuống 4 (DB1–DB4); bỏ dashboard giám sát ETL (D7) khỏi bộ, số liệu thành bảng ở mục 3.3 báo cáo; D8 (API) thuộc chương 5 | Không đổi schema `dw`; thêm vào §10 |
+| 18/11 | P9 (mở rộng 2): thu thập dữ liệu công khai qua API (IBGE Localidades và SIDRA, Banco Central SGS, BrasilAPI, Open-Meteo) để làm giàu kho; nhánh mới `api_ingest/` → landing zone `data/raw/api/` → staging schema `api` → ODS → kho. Thiết kế đầy đủ: `docs/THU_THAP_API.md` | Thêm schema `api` và `mart_market`, các bảng `ods.*` của API, `etl_log.api_call`, `etl_log.api_match_stat`; không đổi khoá nào; khi không có dữ liệu API các cột mới là NULL |
+| 18/11 | `dw.dim_geography` thêm `ibge_municipio_code`, `microrregiao`, `mesorregiao`, `populacao_2016/2017/2018`, `match_method`; phân cấp khái niệm mới Vùng → Bang → Mesorregião → Microrregião → Đô thị → Mã bưu chính | Ghép (bang, thành phố) của Olist với đô thị IBGE qua 4 tầng (khớp đúng, chuẩn hoá, fuzzy ngưỡng 95, bảng ghép tay `seeds/city_ibge_override.csv`); 96,3% zip có mã IBGE; dân số là của đô thị, lặp lại cho mọi zip của đô thị (không cộng theo zip) |
+| 18/11 | `dw.dim_date` thêm `usd_brl` (ngày không có tỷ giá lấy ngày làm việc gần nhất trước đó), `ipca_index` (tháng đầu kỳ 2016-01 = 100), `is_holiday_official`, `holiday_name_official` | Chuỗi Banco Central: SGS 1 (USD bán, ngày) và SGS 433 (IPCA tháng, đối chiếu với IBGE SIDRA 1737); ngày lễ theo BrasilAPI (64 ngày) so với `is_holiday_br` (45 ngày) |
+| 18/11 | Bảng mới `dw.fact_state_year`: periodic snapshot, grain bang × năm (27 bang × 3 năm = 81 dòng): dân số, PIB (IBGE), GMV, đơn, khách, seller của Olist | Σ gmv khớp GMV 13.494.400,74; thêm vào bus matrix và `etl.run_pipeline` (sau `fact_seller_monthly`) |
+| 18/11 | Schema `mart_market` (7 view): `v_gmv_per_capita_state`, `v_gmv_per_capita_city`, `v_gmv_usd_month`, `v_gmv_real_month`, `v_holiday_effect`, `v_holiday_diff`, `v_late_by_rain` | Nguồn cho dashboard D8 (chương 5); D8 không thuộc bộ DB1–DB4 và các cột mới không làm đổi số của DB1–DB4 |
+| 18/11 | `etl.run_pipeline --with-api [--api-offline]`; `rebuild_all.py` dùng landing zone (không cần mạng); layer `api` và `api_ods` trong `etl_log.job_run` | Hai layer mới không nằm trong các cột của `v_run_summary`; ba job mới ở layer `dw` (`enrich_dim_geography`, `enrich_dim_date`, `load_fact_state_year`) làm tăng nhẹ số dòng chèn và cập nhật của lớp kho; 20 phép kiểm thử mới (tổng 156) |
 
 ---
 
@@ -146,6 +152,8 @@ etl_log: job_run, rejected_rows, watermark  (giám sát → bảng ở mục 3.3
 **Công nghệ:** PostgreSQL 18 (16+ đều chạy được) cài trực tiếp trên máy (không dùng Docker, không PostGIS), extension `unaccent`;
 Python 3.11 (pandas, SQLAlchemy, psycopg2); SQL stored procedure (PL/pgSQL); Git/GitHub; Power BI Desktop/Service.
 
+**Nhánh API (P9):** `api_ingest` (collector) → landing zone `data/raw/api/<nguồn>/<ngày>/*.json` → staging `api.stg_api_*` → `ods.ibge_*`, `fx_usd_brl`, `ipca_month`, `holiday_official`, `city_ibge_match` → làm giàu `dim_geography`, `dim_date` và nạp `fact_state_year` → `mart_market` → Power BI (D8). Chạy bằng `python -m api_ingest.run` và `etl.run_pipeline --with-api`; layer trong `etl_log.job_run` là `api` (collector, staging) và `api_ods` (ODS, ghép). Chi tiết: `docs/THU_THAP_API.md`.
+
 **Cầu nối sang Power BI:** chỉ Phú chạy database, nên `dw`, `mart_*` và `etl_log` được xuất ra CSV (`exports/powerbi/`)
 sau mỗi lần chạy pipeline; cả nhóm dựng Power BI ở chế độ Import từ các file này. Publish to web cũng cần chế độ Import.
 
@@ -161,6 +169,7 @@ sau mỗi lần chạy pipeline; cả nhóm dựng Power BI ở chế độ Impo
 | Đánh giá → `fact_review` | Transaction | ✓ ×2 | ✓ | | | | | | | | |
 | Thu hút seller → `fact_lead_funnel` | Accumulating snapshot | ✓ ×3 | | ✓ | | | | | ✓ | ✓ | ✓ ×2 (SDR, SR) |
 | Hiệu suất seller → `fact_seller_monthly` | Periodic snapshot | ✓ (tháng) | | ✓ | | | | | | | |
+| Thị trường theo bang → `fact_state_year` (P9) | Periodic snapshot | ✓ (năm) | | | | (bang trong bảng, không qua khoá) | | | | | |
 
 `dim_seller` là **conformed dimension** nối hai quy trình bán hàng và thu hút seller. Kho có đủ 3 loại fact của Kimball.
 
@@ -181,6 +190,7 @@ sau mỗi lần chạy pipeline; cả nhóm dựng Power BI ở chế độ Impo
 | --- | --- | --- |
 | `dim_date` | Năm → Quý → Tháng → Ngày | 5 / 20 / 60 / 1.827 |
 | `dim_geography` | Vùng → Bang → Thành phố (kèm bang) → Mã bưu chính | 5 / 27 / 6.190 / 19.177 |
+| `dim_geography` (từ P9) | Vùng → Bang → Mesorregião → Microrregião → Đô thị IBGE → Mã bưu chính | 5 / 27 / 137 / 554 / 5.473 / 18.458 (chỉ zip ghép được mã IBGE: 96,3% số zip) |
 | `dim_product` | Nhóm ngành → Danh mục → Sản phẩm | 13 / 74 / 32.951 |
 | `dim_seller` | Vùng → Bang → Thành phố → Seller; Kênh → Origin → Seller | 6 (gồm Unknown) / 23 / 636 / 3.557 |
 | `dim_customer` (SCD2) | Vùng → Bang → Thành phố → Mã bưu chính → Khách thật → Phiên bản | 5 / 27 / 4.310 / 14.994 / 96.096 / 96.338 |
@@ -221,6 +231,9 @@ Phạm vi 2016-01-01 → 2020-12-31 (1.827 dòng) + dòng `-1`.
 | is_weekend | bool | |
 | is_holiday_br, holiday_name | bool, text | Dùng package Python `holidays` (Brazil) |
 | is_black_friday | bool | Thứ Sáu sau thứ Năm thứ 4 của tháng 11 (2016-11-25, 2017-11-24, 2018-11-23) |
+| usd_brl | numeric(10,4) | P9: tỷ giá USD/BRL (giá bán, Banco Central SGS 1); ngày không giao dịch lấy giá ngày làm việc gần nhất trước đó; NULL nếu chưa nạp API |
+| ipca_index | numeric(14,6) | P9: chỉ số giá IPCA, tháng đầu kỳ (2016-01) = 100, nối theo biến động tháng (SGS 433); mọi ngày trong tháng cùng giá trị |
+| is_holiday_official, holiday_name_official | bool, text | P9: ngày lễ quốc gia theo BrasilAPI (so với `is_holiday_br` của thư viện `holidays`) |
 
 Phân cấp: Ngày → Tuần; Ngày → Tháng → Quý → Năm.
 Role-playing qua view: `dw.v_dim_purchase_date`, `v_dim_approved_date`, `v_dim_carrier_date`, `v_dim_delivered_date`, `v_dim_estimated_date`, `v_dim_first_contact_date`, `v_dim_won_date`… (hoặc dùng role-playing trực tiếp trong Power BI).
@@ -238,6 +251,10 @@ Grain: 1 zip code prefix. ~19.000 dòng.
 | region | Norte / Nordeste / Centro-Oeste / Sudeste / Sul |
 | country | 'Brazil' |
 | latitude, longitude | median sau khi lọc bbox; NULL nếu zip không có trong geolocation hoặc mọi điểm của zip nằm ngoài bbox |
+| ibge_municipio_code | P9: mã đô thị IBGE (7 chữ số) ghép từ (bang, thành phố); NULL nếu không ghép được hoặc chưa nạp API |
+| microrregiao, mesorregiao | P9: microrregião và mesorregião IBGE của đô thị |
+| populacao_2016, populacao_2017, populacao_2018 | P9: dân số ước tính của **đô thị** (IBGE SIDRA 6579); lặp lại cho mọi zip của đô thị, không cộng theo zip |
+| match_method | P9: tầng ghép đô thị: exact, normalized, fuzzy, override, unmatched (NULL nếu chưa nạp API) |
 | *(không có cột geom – không dùng PostGIS; khoảng cách tính bằng haversine trên latitude/longitude)* | |
 
 Phân cấp: Zip → Thành phố → Bang → Vùng → Quốc gia.
@@ -419,6 +436,20 @@ is_negative (score ≤ 2), has_comment_title, has_comment_message, comment_lengt
 | is_active | orders > 0 |
 | months_since_first_sale | số tháng kể từ tháng của `dim_seller.first_sale_date` (0 = tháng có đơn bán được đầu tiên); âm nếu là tháng trước đó chỉ có đơn Failed; NULL nếu seller chưa có đơn bán được (cột cho phép NULL) |
 
+### 7.7 `dw.fact_state_year` – Periodic snapshot (P9)
+**Grain:** 1 bang × 1 năm của dữ liệu đơn hàng (2016, 2017, 2018) = 27 × 3 = 81 dòng, tính lại hoàn toàn mỗi lần chạy (`dw.load_fact_state_year`). `year_date_key` = date_key của ngày 1/1 của năm.
+
+| Cột | Ghi chú |
+| --- | --- |
+| year_date_key, state_code | PK; `year_date_key` → `dim_date`; `state_code` là thuộc tính suy biến (bang), kèm `state_name`, `region` từ seed |
+| population | dân số ước tính của bang = tổng các đô thị (IBGE SIDRA 6579, biến 9324); NULL nếu chưa nạp API |
+| gdp_thousand_brl | PIB giá hiện hành của bang = tổng PIB đô thị (IBGE SIDRA 5938, biến 37), nghìn BRL; NULL nếu chưa nạp API |
+| gmv, orders, customers | chỉ đơn không thuộc nhóm Failed, theo bang của **khách** và năm mua; `customers` = số `customer_unique_id` khác nhau |
+| sellers | số seller có đơn có doanh thu, theo bang của **seller** |
+| etl_batch_id | lô ETL đã tính |
+
+Kiểm thử: Σ gmv = GMV (13.494.400,74), Σ orders = 98.199, dân số Brazil 2017 = tổng ODS (207.660.929).
+
 ---
 
 ## 8. Data mart (schema riêng, dạng view; view nặng có thể là materialized view)
@@ -429,6 +460,7 @@ is_negative (score ≤ 2), has_comment_title, has_comment_message, comment_lengt
 | `mart_fulfillment` | `v_fulfillment_order`, `v_fulfillment_state_month`, `v_status_funnel` | lead time từng chặng, tỷ lệ trễ, hủy theo bang/tháng |
 | `mart_cx` | `v_review_vs_delay`, `v_payment_mix_month`, `v_customer_rfm`, `v_customer_cohort` | review vs trễ, cơ cấu thanh toán, RFM, cohort khách quay lại |
 | `mart_acquisition` | `v_funnel_by_origin_month`, `v_seller_scorecard`, `v_seller_by_channel` | MQL → won → first sale theo kênh; scorecard seller; GMV theo kênh thu hút |
+| `mart_market` (P9) | `v_gmv_per_capita_state`, `v_gmv_per_capita_city`, `v_gmv_usd_month`, `v_gmv_real_month`, `v_holiday_effect`, `v_holiday_diff`, `v_late_by_rain` | GMV trên 1.000 dân theo bang và đô thị; GMV quy USD; GMV thực (chia chỉ số IPCA); ngày lễ; mưa và giao trễ (tuỳ chọn); nguồn của dashboard D8 |
 
 Lưu ý giai đoạn dữ liệu: đơn 2016 rất thưa và 09–10/2018 gần như trống → dashboard xu hướng lọc 2017-01 → 2018-08.
 
@@ -471,6 +503,8 @@ Giám sát chất lượng dữ liệu và ETL không còn là dashboard: số l
 - `etl_log.watermark(source_table, last_value timestamptz, updated_at)` – cho incremental load
 - `etl_log.dq_check(batch_id, check_name, target_table, expected, actual, passed, checked_at)` – kết quả kiểm thử sau mỗi lần chạy
 - `etl_log.fact_load_issue(batch_id, fact_table, issue_type, detail, row_count, logged_at)` – khoá rơi về Unknown (`unknown_member`) và khoảng thời gian âm bị đặt NULL (`negative_interval`) khi nạp fact
+- `etl_log.api_call(call_id, batch_id, source, name, url, called_at, http_status, records, bytes, sha256, seconds, attempts, landing_path, error)` – mỗi lời gọi API của collector (P9)
+- `etl_log.api_match_stat(batch_id, method, city_pairs, zips)` – số cặp (bang, thành phố) và zip theo từng tầng ghép đô thị (P9)
 
 ## 12. Mô phỏng cập nhật (incremental)
 
@@ -489,3 +523,4 @@ Giới hạn cần nói rõ khi trình bày: bản ghi đơn được chèn vớ
 - Unique grain của mọi fact; không có FK NULL; không có FK trỏ tới key không tồn tại.
 - Mỗi dim có đúng 1 dòng `-1`; SCD2: mỗi `customer_unique_id` có đúng 1 dòng `is_current`, không chồng khoảng hiệu lực.
 - fact_lead_funnel: `is_won = 1` ⇔ `won_date_key <> -1` ⇔ `seller_key <> -1`.
+- P9 (`sql/90_tests/050_api_tests.sql`, 20 phép, đạt khi chưa nạp API): IBGE có 27 bang và mã hợp lệ; dân số 2016–2018 cho ≥ 5.570 đô thị; tỷ giá có cho đủ 1.827 ngày và không thiếu ngày làm việc nào; IPCA đủ 60 tháng, mốc đầu = 100 và khớp chỉ số IBGE; mã IBGE của `dim_geography` hợp lệ và cùng bang; không zip nào gán hai đô thị; ≥ 95% zip có mã IBGE; ngày lễ chính thức khớp BrasilAPI; `fact_state_year` khớp GMV, số đơn, dân số; các view `mart_market` khớp GMV.

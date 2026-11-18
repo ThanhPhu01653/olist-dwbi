@@ -1,6 +1,6 @@
 # olist_base – dự án Power BI gốc (định dạng PBIP)
 
-Thư mục này là một **dự án Power BI dạng văn bản** (PBIP) đã dựng sẵn mô hình dữ liệu: 38 bảng (37 bảng từ CSV và bảng chứa measure), 32 quan hệ, 65 measure, 9 cột tính toán, 10 phân cấp, theme và 6 trang báo cáo trống. Mở bằng Power BI Desktop, bấm Refresh, đối chiếu số rồi lưu thành `olist_base.pbix`; từ đó cả nhóm dựng DB1–DB4 trên file `.pbix` đó.
+Thư mục này là một **dự án Power BI dạng văn bản** (PBIP) đã dựng sẵn mô hình dữ liệu: 46 bảng (45 bảng từ CSV và bảng chứa measure), 33 quan hệ, 76 measure, 9 cột tính toán, 11 phân cấp, theme và 6 trang báo cáo trống. Từ P9 có thêm các bảng và measure cho dashboard D8 (mục 8b của `powerbi/model.md`); DB1–DB4 không đổi. Mở bằng Power BI Desktop, bấm Refresh, đối chiếu số rồi lưu thành `olist_base.pbix`; từ đó cả nhóm dựng DB1–DB4 trên file `.pbix` đó.
 
 Chưa có visual nào: việc dựng visual do nhóm làm theo `huong-dan/dashboards/DB1.md` … `DB4.md`.
 
@@ -9,7 +9,7 @@ Chưa có visual nào: việc dựng visual do nhóm làm theo `huong-dan/dashbo
 ## 1. Yêu cầu
 - **Power BI Desktop trên Windows, bản tháng 6/2025 trở lên** (báo cáo dùng định dạng PBIR phiên bản schema 2.0.0 ra tháng 6/2025; mô hình dùng TMDL, `definition.pbism` phiên bản 4.0). Nên dùng **bản mới nhất** từ Microsoft Store hoặc trang tải Power BI Desktop; các bản mới đọc được định dạng cũ.
 - Nếu Power BI Desktop báo không mở được file `.pbip`: vào *File → Options and settings → Options → Preview features* và bật ba mục *Power BI Project (.pbip) save option*, *Store semantic model using TMDL format*, *Store reports using enhanced metadata format (PBIR)* (bản mới có thể không còn các mục này vì đã là mặc định), rồi khởi động lại.
-- Thư mục CSV **`01_pBI_data`** (link Google Drive ở `exports/README.md`): chứa 37 file `dim_*.csv`, `fact_*.csv`, `v_*.csv`, `job_run.csv`, `batch_metrics.csv`. Đừng đổi tên file.
+- Thư mục CSV **`01_pBI_data`** (link Google Drive ở `exports/README.md`): chứa 45 file `dim_*.csv`, `fact_*.csv`, `v_*.csv`, `job_run.csv`, `batch_metrics.csv`. Đừng đổi tên file.
 
 ## 2. Cấu trúc thư mục
 ```
@@ -20,9 +20,9 @@ powerbi/olist_base/
     definition/
       database.tmdl, model.tmdl        cấu hình chung, thứ tự bảng
       expressions.tmdl                 tham số DataFolder và hàm fnCsv
-      relationships.tmdl               32 quan hệ (10 quan hệ inactive)
+      relationships.tmdl               33 quan hệ (10 quan hệ inactive)
       tables/*.tmdl                    mỗi bảng một file: cột, phân cấp, truy vấn Power Query
-      tables/_Measures.tmdl            65 measure, thư mục hiển thị DB1–DB4
+      tables/_Measures.tmdl            76 measure, thư mục hiển thị DB1–DB4 và D8
     DAXQueries/kiem_tra_so_lieu.dax    truy vấn kiểm tra số sau Refresh
   olist_base.Report/                   báo cáo (PBIR): 6 trang trống, theme
 ```
@@ -43,7 +43,7 @@ Các file này do `python scripts/gen_pbip.py` sinh từ `powerbi/model.md`, `po
 3. Bấm **Close & Apply** (nếu đang ở Power Query).
 
 ## 4. Refresh
-**Home → Refresh.** Lần đầu khoảng 1–3 phút (37 file, khoảng 80 MB) và thêm vài chục giây để tính các cột tính toán. Nếu Power BI hỏi quyền truy cập file hoặc mức riêng tư (*Privacy levels*), chọn *Continue* / *Ignore privacy levels* (dữ liệu cục bộ). Sau khi xong, mỗi bảng có số dòng đúng bằng số dòng CSV (ví dụ `fact_order_fulfillment` 99.441 dòng; `dim_date` 1.827 dòng vì bỏ dòng Unknown `date_key = -1`).
+**Home → Refresh.** Lần đầu khoảng 1–3 phút (45 file, khoảng 82 MB) và thêm vài chục giây để tính các cột tính toán. Nếu Power BI hỏi quyền truy cập file hoặc mức riêng tư (*Privacy levels*), chọn *Continue* / *Ignore privacy levels* (dữ liệu cục bộ). Sau khi xong, mỗi bảng có số dòng đúng bằng số dòng CSV (ví dụ `fact_order_fulfillment` 99.441 dòng; `dim_date` 1.827 dòng vì bỏ dòng Unknown `date_key = -1`).
 
 ## 5. Kiểm tra số liệu
 Cách chính xác nhất là **DAX query view** (biểu tượng DAX query view ở thanh bên trái Power BI Desktop): mở tab `kiem_tra_so_lieu` (nếu không thấy tab, dán nội dung file `olist_base.SemanticModel/DAXQueries/kiem_tra_so_lieu.dax`), chạy từng khối `EVALUATE`; kết quả là số đầy đủ, không bị định dạng K/M. Khối 1 = toàn bộ dữ liệu, khối 2 = cửa sổ 2017-01 → 2018-08 (`dim_date[InWindow] = TRUE`).
@@ -71,7 +71,7 @@ Nếu số khớp (làm tròn theo cột kỳ vọng) thì mô hình, quan hệ 
 - Trên thẻ (card) hoặc bảng, measure tiền và số đơn hiển thị rút gọn theo định dạng của dự án (GMV `13.5M`, Orders `98.2K`); đó là hiển thị, giá trị thật là số đầy đủ ở DAX query view.
 - Cùng mô hình, cùng bộ lọc thì số phải khớp từng chữ số vì cột tiền dùng kiểu *Fixed decimal number*.
 
-Kiểm tra thêm trong **Model view**: 32 quan hệ, trong đó 10 quan hệ nét đứt (inactive: ngày giao, ngày hạn bàn giao, địa lý seller, …); `dim_date` có biểu tượng bảng ngày.
+Kiểm tra thêm trong **Model view**: 33 quan hệ, trong đó 10 quan hệ nét đứt (inactive: ngày giao, ngày hạn bàn giao, địa lý seller, …); `dim_date` có biểu tượng bảng ngày.
 
 ## 6. Lưu thành `olist_base.pbix`
 Sau khi số khớp: **File → Save as** và chọn loại file **Power BI files (.pbix)**, đặt tên `olist_base.pbix`. Đưa file này lên Google Drive cho cả nhóm. File `.pbix` và bộ nhớ đệm không được commit (đã có trong `.gitignore`: `*.pbix`, `**/.pbi/cache.abf`, `**/.pbi/localSettings.json`).
@@ -81,14 +81,14 @@ Sau khi lưu `.pbix`, file đó là bản làm việc; nếu sửa mô hình th�
 Nội dung đã dựng sẵn để nhóm biết dùng:
 | Thành phần | Chi tiết |
 | --- | --- |
-| Bảng | 10 `dim_*`, 6 `fact_*`, 15 `v_*` (mart, bảng rời, không có quan hệ), 6 bảng giám sát ETL (`job_run`, `v_run_summary`, `v_dq_summary`, `v_rejected_summary`, `batch_metrics`, `fact_load_issue`), `_Measures` |
+| Bảng | 10 `dim_*`, 7 `fact_*` (gồm `fact_state_year` của D8), 22 `v_*` (mart, bảng rời, không có quan hệ; 7 trong số đó thuộc `mart_market` cho D8), 6 bảng giám sát ETL (`job_run`, `v_run_summary`, `v_dq_summary`, `v_rejected_summary`, `batch_metrics`, `fact_load_issue`), `_Measures` |
 | Kiểu dữ liệu | khoá và số đếm: số nguyên; tiền: *Fixed decimal number*; ngày: Date (`YYYY-MM-DD`); zip: văn bản (giữ số 0 đầu); cờ: True/False |
 | `dim_date` | bỏ dòng `date_key = -1`; đánh dấu là bảng ngày (cột `full_date`); thêm cột `InWindow` (TRUE cho 2017-01 → 2018-08) dùng làm bộ lọc trang |
-| Quan hệ | 32 quan hệ nhiều–một, lọc một chiều; mỗi fact một quan hệ ngày active, còn lại inactive (measure dùng `USERELATIONSHIP`); `dim_sales_rep`: SDR active, SR inactive |
+| Quan hệ | 33 quan hệ nhiều–một, lọc một chiều; mỗi fact một quan hệ ngày active, còn lại inactive (measure dùng `USERELATIONSHIP`); `dim_sales_rep`: SDR active, SR inactive |
 | Phân cấp | Date, Week, Geography (vùng → bang → thành phố → zip), Product (nhóm ngành → danh mục), Seller location, Acquisition, Customer location, Lead origin, Status, Payment |
 | Sắp xếp theo cột | `month_name` theo `month`; `day_name` theo `day_of_week`; `delay_bucket` theo `delay_bucket_no`; `stage` theo `stage_no`; `Delay bucket` theo `Delay bucket order` |
 | Cột tính toán | `Delay bucket` và `Delay bucket order` trên `fact_order_fulfillment`; 7 cột cho Key Influencers của DB2 trên `fact_review` (`Review type`, `Delay days (order)`, …) |
-| Measure | 65 measure trong `_Measures`, thư mục hiển thị: `DB1 Tổng quan và doanh thu`, `DB2 Giao hàng và trải nghiệm khách`, `DB3 Địa lý và phí vận chuyển`, `DB4 Thu hút và hiệu quả seller` (kèm thư mục con), `Cảnh báo màu`, `Giám sát ETL` |
+| Measure | 76 measure trong `_Measures`, thư mục hiển thị: `D8 Thị trường Brazil`, `DB1 Tổng quan và doanh thu`, `DB2 Giao hàng và trải nghiệm khách`, `DB3 Địa lý và phí vận chuyển`, `DB4 Thu hút và hiệu quả seller` (kèm thư mục con), `Cảnh báo màu`, `Giám sát ETL` |
 | Định dạng measure | tiền `13.5M` / `998.2K`; số đơn `98.2K`; phần trăm `0.0%`; ngày `0.0` (chuỗi `[>=1000000]#,0.0,,"M";[>=1000]#,0.0,"K";…`) |
 | Cột ẩn | mọi cột `*_key`, `etl_batch_id`, `Delay bucket order` |
 | Báo cáo | 6 trang trống: DB1, DB2, DB3, *DB3 Chi tiết bang* (drill-through theo `dim_geography[state_code]`), DB4, *DB4 Chi tiết seller* (drill-through theo `dim_seller[seller_id]`); theme `powerbi/theme.json` |
@@ -122,8 +122,8 @@ Lệnh này **ghi đè** hai thư mục `olist_base.SemanticModel` và `olist_ba
 
 ## 9. Đã kiểm tra những gì (không cần Power BI)
 `gen_pbip.py` kiểm tra sau khi sinh:
-- mọi `bảng[cột]` và `[measure]` trong 65 measure và 9 cột tính toán đều tồn tại trong mô hình;
-- 32 quan hệ: hai đầu cùng kiểu dữ liệu; mỗi cặp bảng chỉ có một quan hệ active; cột phía "một" không trùng và không rỗng; không dòng nào của bảng fact thiếu khoá ở phía "một" (ngoài giá trị `-1` / rỗng, nơi dim đã có dòng Unknown hoặc đã bỏ có chủ đích);
-- 37 file CSV trong `exports/powerbi/`: tên cột khớp, mọi giá trị đúng kiểu đã khai báo (số nguyên, số, ngày, ngày giờ, đúng/sai);
+- mọi `bảng[cột]` và `[measure]` trong 76 measure và 9 cột tính toán đều tồn tại trong mô hình;
+- 33 quan hệ: hai đầu cùng kiểu dữ liệu; mỗi cặp bảng chỉ có một quan hệ active; cột phía "một" không trùng và không rỗng; không dòng nào của bảng fact thiếu khoá ở phía "một" (ngoài giá trị `-1` / rỗng, nơi dim đã có dòng Unknown hoặc đã bỏ có chủ đích);
+- 45 file CSV trong `exports/powerbi/`: tên cột khớp, mọi giá trị đúng kiểu đã khai báo (số nguyên, số, ngày, ngày giờ, đúng/sai);
 - phân cấp và cột sắp xếp trỏ tới cột có thật;
 - các file JSON (`.pbip`, `.pbism`, `.pbir`, `.platform`, `report.json`, `page.json`, `pages.json`, `version.json`) hợp lệ với JSON schema công bố của Microsoft.

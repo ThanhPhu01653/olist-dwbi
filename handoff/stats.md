@@ -1,4 +1,4 @@
-# Thống kê dữ liệu (sinh tự động 2026-11-13 15:41)
+# Thống kê dữ liệu (sinh tự động 2026-11-18 15:22)
 
 ## File CSV nguồn
 
@@ -36,8 +36,8 @@
 | crm.closed_deals | 842 | 14 | 400.0 KB |
 | **Tổng (11 bảng)** | **1,559,764** | **71** | |
 
-- Dung lượng cả database: **861.74 MB**
-- Số dòng trong etl_log.rejected_rows: **42**
+- Dung lượng cả database: **882.25 MB**
+- Số dòng trong etl_log.rejected_rows: **796**
 
 ### Database `olist_full`
 
@@ -56,7 +56,7 @@
 | crm.closed_deals | 842 | 14 | 504.0 KB |
 | **Tổng (11 bảng)** | **1,559,764** | **71** | |
 
-- Dung lượng cả database: **261.77 MB**
+- Dung lượng cả database: **261.84 MB**
 - Số dòng trong etl_log.rejected_rows: **0**
 
 
@@ -82,17 +82,27 @@
 | dw | fact_payment | 103,886 |
 | dw | fact_review | 99,224 |
 | dw | fact_seller_monthly | 36,583 |
+| dw | fact_state_year | 81 |
+| etl_log | api_call | 69 |
+| etl_log | api_match_stat | 65 |
 | etl_log | batch_metrics | 13 |
-| etl_log | dq_check | 1,846 |
+| etl_log | dq_check | 2,106 |
 | etl_log | fact_load_issue | 20 |
-| etl_log | job_run | 712 |
-| etl_log | rejected_rows | 42 |
-| etl_log | watermark | 4 |
+| etl_log | job_run | 972 |
+| etl_log | rejected_rows | 796 |
+| etl_log | watermark | 6 |
 | ods | category_translation | 71 |
+| ods | city_ibge_match | 5,475 |
 | ods | closed_deals | 842 |
 | ods | customer_map | 99,441 |
 | ods | customers | 99,441 |
+| ods | fx_usd_brl | 1,827 |
 | ods | geolocation_zip | 19,015 |
+| ods | holiday_official | 65 |
+| ods | ibge_gdp | 16,710 |
+| ods | ibge_municipio | 5,571 |
+| ods | ibge_population | 16,710 |
+| ods | ipca_month | 60 |
 | ods | mql | 8,000 |
 | ods | order_items | 112,650 |
 | ods | order_payments | 103,886 |
@@ -106,6 +116,8 @@
 | ods | ref_payment_type | 5 |
 | ods | ref_state_region | 27 |
 | ods | sellers | 3,095 |
+| ods | weather_daily | 29,592 |
+| ods | weather_station | 27 |
 | oltp | customers | 99,441 |
 | oltp | geolocation | 1,000,163 |
 | oltp | order_items | 112,650 |
@@ -133,25 +145,25 @@
 
 Phân cấp / số phần tử: Năm (5) → Quý (20) → Tháng (60) → Ngày (1,827)
 
-| date_key | full_date | day_of_month | day_of_week | day_name | week_of_year | month | month_name | quarter | year | year_month | year_quarter | is_weekend | is_holiday_br | holiday_name | is_black_friday |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 20160101 | 2016-01-01 | 1 | 5 | Friday | 53 | 1 | January | 1 | 2016 | 2016-01 | 2016-Q1 | False | True | Confraternização Unive | False |
-| 20160102 | 2016-01-02 | 2 | 6 | Saturday | 53 | 1 | January | 1 | 2016 | 2016-01 | 2016-Q1 | True | False | NULL | False |
-| 20160103 | 2016-01-03 | 3 | 7 | Sunday | 53 | 1 | January | 1 | 2016 | 2016-01 | 2016-Q1 | True | False | NULL | False |
-| 20160104 | 2016-01-04 | 4 | 1 | Monday | 1 | 1 | January | 1 | 2016 | 2016-01 | 2016-Q1 | False | False | NULL | False |
-| 20160105 | 2016-01-05 | 5 | 2 | Tuesday | 1 | 1 | January | 1 | 2016 | 2016-01 | 2016-Q1 | False | False | NULL | False |
+| date_key | full_date | day_of_month | day_of_week | day_name | week_of_year | month | month_name | quarter | year | year_month | year_quarter | is_weekend | is_holiday_br | holiday_name | is_black_friday | usd_brl | ipca_index | is_holiday_official | holiday_name_official |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 20160101 | 2016-01-01 | 1 | 5 | Friday | 53 | 1 | January | 1 | 2016 | 2016-01 | 2016-Q1 | False | True | Confraternização Unive | False | 3.9048 | 100.0 | True | Confraternização mundi |
+| 20160102 | 2016-01-02 | 2 | 6 | Saturday | 53 | 1 | January | 1 | 2016 | 2016-01 | 2016-Q1 | True | False | NULL | False | 3.9048 | 100.0 | False | NULL |
+| 20160103 | 2016-01-03 | 3 | 7 | Sunday | 53 | 1 | January | 1 | 2016 | 2016-01 | 2016-Q1 | True | False | NULL | False | 3.9048 | 100.0 | False | NULL |
+| 20160104 | 2016-01-04 | 4 | 1 | Monday | 1 | 1 | January | 1 | 2016 | 2016-01 | 2016-Q1 | False | False | NULL | False | 4.0387 | 100.0 | False | NULL |
+| 20160105 | 2016-01-05 | 5 | 2 | Tuesday | 1 | 1 | January | 1 | 2016 | 2016-01 | 2016-Q1 | False | False | NULL | False | 4.0114 | 100.0 | False | NULL |
 
 ### dw.dim_geography – 19,178 dòng (gồm dòng Unknown key −1)
 
 Phân cấp / số phần tử: Vùng (5) → Bang (27) → Thành phố (6,190) → Zip (19,177)
 
-| geography_key | zip_code_prefix | city | state_code | state_name | region | country | latitude | longitude |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 01001 | sao paulo | SP | São Paulo | Sudeste | Brazil | -23.550380539269455 | -46.63402699777831 |
-| 2 | 01002 | sao paulo | SP | São Paulo | Sudeste | Brazil | -23.548551065785627 | -46.63507239078997 |
-| 3 | 01003 | sao paulo | SP | São Paulo | Sudeste | Brazil | -23.54897652899767 | -46.63531311226845 |
-| 4 | 01004 | sao paulo | SP | São Paulo | Sudeste | Brazil | -23.549534948092827 | -46.634770582289825 |
-| 5 | 01005 | sao paulo | SP | São Paulo | Sudeste | Brazil | -23.54961248124544 | -46.63653202553522 |
+| geography_key | zip_code_prefix | city | state_code | state_name | region | country | latitude | longitude | ibge_municipio_code | microrregiao | mesorregiao | populacao_2016 | populacao_2017 | populacao_2018 | match_method |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 01001 | sao paulo | SP | São Paulo | Sudeste | Brazil | -23.550380539269455 | -46.63402699777831 | 3550308 | São Paulo | Metropolitana de São P | 12038175 | 12106920 | 12176866 | normalized |
+| 2 | 01002 | sao paulo | SP | São Paulo | Sudeste | Brazil | -23.548551065785627 | -46.63507239078997 | 3550308 | São Paulo | Metropolitana de São P | 12038175 | 12106920 | 12176866 | normalized |
+| 3 | 01003 | sao paulo | SP | São Paulo | Sudeste | Brazil | -23.54897652899767 | -46.63531311226845 | 3550308 | São Paulo | Metropolitana de São P | 12038175 | 12106920 | 12176866 | normalized |
+| 4 | 01004 | sao paulo | SP | São Paulo | Sudeste | Brazil | -23.549534948092827 | -46.634770582289825 | 3550308 | São Paulo | Metropolitana de São P | 12038175 | 12106920 | 12176866 | normalized |
+| 5 | 01005 | sao paulo | SP | São Paulo | Sudeste | Brazil | -23.54961248124544 | -46.63653202553522 | 3550308 | São Paulo | Metropolitana de São P | 12038175 | 12106920 | 12176866 | normalized |
 
 ### dw.dim_customer – 96,339 dòng (gồm dòng Unknown key −1)
 
