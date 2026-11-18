@@ -10,3 +10,5 @@ CREATE SCHEMA IF NOT EXISTS mart_fulfillment;
 CREATE SCHEMA IF NOT EXISTS mart_cx;
 CREATE SCHEMA IF NOT EXISTS mart_acquisition;
 CREATE SCHEMA IF NOT EXISTS etl_log;           -- job monitoring
+CREATE SCHEMA IF NOT EXISTS api;               -- P9: public data collected from APIs (IBGE, Banco Central, BrasilAPI, Open-Meteo): stg_api_*
+CREATE SCHEMA IF NOT EXISTS mart_market;       -- P9: market view (GMV per capita, USD, real growth); feeds dashboard D8
