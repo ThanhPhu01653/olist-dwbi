@@ -66,10 +66,19 @@ class Collector:
                  "attempts": resp.attempts, "file": path.name if path else None, "error": error}
         self.calls.append(entry)
         self._manifest(folder, entry)
-        self._log(entry, str(path.relative_to(config.ROOT)).replace("\\", "/") if path else None)
+        self._log(entry, self._rel(path))
         if error and required:
             raise SourceError(f"{source}/{name}: {error}")
         return resp, body
+
+    @staticmethod
+    def _rel(path: Path | None) -> str | None:
+        if path is None:
+            return None
+        try:
+            return str(path.relative_to(config.ROOT)).replace("\\", "/")
+        except ValueError:                      # landing root outside the repo (tests)
+            return str(path).replace("\\", "/")
 
     def _manifest(self, folder: Path, entry: dict) -> None:
         folder.mkdir(parents=True, exist_ok=True)

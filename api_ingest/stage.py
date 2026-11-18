@@ -118,20 +118,20 @@ def stage_all(engine: Engine, batch_id: int, root: Path | None = None) -> dict[s
         if rows:
             plan.append((job, table, columns, rows, truncate, key))
 
-    f = latest_file("ibge", "estados")
+    f = latest_file("ibge", "estados", root)
     if f:
         add("api.stage_ibge_estado", "api.stg_api_ibge_estado", ["ibge_code", "sigla", "nome", "regiao_code", "regiao_sigla", "regiao_nome"],
             parse_estados(read_json(f)), True, ["ibge_code"])
-    f = latest_file("ibge", "municipios")
+    f = latest_file("ibge", "municipios", root)
     if f:
         add("api.stage_ibge_municipio", "api.stg_api_ibge_municipio",
             ["ibge_code", "nome", "uf_code", "uf_sigla", "microrregiao_code", "microrregiao_nome", "mesorregiao_code", "mesorregiao_nome",
              "imediata_code", "imediata_nome", "intermediaria_code", "intermediaria_nome"], parse_municipios(read_json(f)), True, ["ibge_code"])
     for name, table in (("populacao", "api.stg_api_ibge_populacao"), ("pib", "api.stg_api_ibge_pib")):
-        f = latest_file("ibge", name)
+        f = latest_file("ibge", name, root)
         if f:
             add(f"api.stage_ibge_{name}", table, ["ibge_code", "year", "value_raw"], parse_sidra(read_json(f)), True, ["ibge_code", "year"])
-    f = latest_file("ibge", "ipca_ibge")
+    f = latest_file("ibge", "ipca_ibge", root)
     if f:
         add("api.stage_ibge_ipca", "api.stg_api_ibge_ipca", ["period", "var_raw", "index_raw"], parse_ipca_ibge(read_json(f)), True, ["period"])
 
