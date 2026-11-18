@@ -42,6 +42,7 @@ TABLES: list[tuple[str, str, tuple[str, ...]]] = [
     ("dw.fact_review", "Fact giao dịch: 1 review", ()),
     ("dw.fact_lead_funnel", "Fact accumulating snapshot: 1 MQL", ()),
     ("dw.fact_seller_monthly", "Fact periodic snapshot: 1 seller × 1 tháng", ()),
+    ("dw.fact_state_year", "Fact periodic snapshot: 1 bang × 1 năm (dân số và PIB từ IBGE; GMV, đơn, khách, seller của Olist) – dashboard D8", ()),
     ("etl_log.job_run", "Nhật ký chạy ETL từng job (số liệu cho mục 3.3 ETL)", ()),
     ("etl_log.v_run_summary", "Tóm tắt mỗi lô ETL: chế độ, thời gian, số dòng từng tầng (mục 3.3 ETL)", ()),
     ("etl_log.v_dq_summary", "Kết quả kiểm thử chất lượng theo lô (mục 3.3 ETL)", ()),
@@ -63,6 +64,13 @@ TABLES: list[tuple[str, str, tuple[str, ...]]] = [
     ("mart_acquisition.v_funnel_by_origin_month", "Mart: funnel MQL -> won -> có đơn theo tháng liên hệ x origin", ()),
     ("mart_acquisition.v_seller_scorecard", "Mart: scorecard từng seller có đơn (Pareto, cờ mẫu nhỏ)", ()),
     ("mart_acquisition.v_seller_by_channel", "Mart: seller và GMV theo kênh thu hút", ()),
+    ("mart_market.v_gmv_per_capita_state", "Mart thị trường (D8): GMV trên 1.000 dân theo bang x năm, hạng theo đầu người và theo GMV tuyệt đối", ()),
+    ("mart_market.v_gmv_per_capita_city", "Mart thị trường (D8): GMV trên 1.000 dân theo đô thị IBGE x năm (đô thị ghép được)", ()),
+    ("mart_market.v_gmv_usd_month", "Mart thị trường (D8): GMV quy đổi USD theo tháng (mỗi dòng hàng theo tỷ giá ngày mua)", ()),
+    ("mart_market.v_gmv_real_month", "Mart thị trường (D8): GMV danh nghĩa và GMV thực (giá 01/2016, chia chỉ số IPCA) theo tháng, tăng trưởng YoY", ()),
+    ("mart_market.v_holiday_effect", "Mart thị trường (D8): đơn trung bình mỗi ngày: ngày lễ quốc gia so với ngày thường", ()),
+    ("mart_market.v_holiday_diff", "Mart thị trường (D8): ngày lễ khác nhau giữa BrasilAPI và thư viện holidays", ()),
+    ("mart_market.v_late_by_rain", "Mart thị trường (D8, tuỳ chọn): tỷ lệ giao trễ theo lượng mưa ngày giao tại thủ phủ bang", ()),
 ]
 
 # join keys shown in the README: fact column -> dimension (role)
@@ -73,6 +81,7 @@ JOINS = [
     ("fact_review", "review_creation_date_key, review_answer_date_key → dim_date.date_key; customer_key → dim_customer; (order_id nối được với fact_order_fulfillment)"),
     ("fact_lead_funnel", "first_contact_date_key, won_date_key, first_sale_date_key → dim_date.date_key; lead_origin_key → dim_lead_origin; lead_profile_key → dim_lead_profile; seller_key → dim_seller; sdr_key, sr_key → dim_sales_rep.sales_rep_key"),
     ("fact_seller_monthly", "month_date_key → dim_date.date_key; seller_key → dim_seller"),
+    ("fact_state_year", "year_date_key → dim_date.date_key (1/1 của năm); state_code (bang) nối với dim_geography[state_code] bằng slicer hoặc bảng trung gian; ghi chú: không có quan hệ nhiều-một trực tiếp"),
     ("dim_customer", "geography_key → dim_geography"),
     ("dim_seller", "geography_key → dim_geography"),
 ]
@@ -95,7 +104,9 @@ def export_table(conn, table: str, drop: tuple[str, ...]) -> tuple[int, list[str
     # booleans as true/false (COPY would write t/f), char(n) without trailing blanks
     select_list = ", ".join(f"{c}::text AS {c}" if u == "bool" else f"rtrim({c}) AS {c}" if u == "bpchar" else c for c, u in info)
     order = {"fact_order_item": "order_id, order_item_id", "fact_payment": "order_id, payment_sequential", "fact_review": "review_id, order_id",
-             "fact_seller_monthly": "month_date_key, seller_key", "job_run": "run_id", "v_run_summary": "batch_id", "batch_metrics": "batch_id"}.get(name, cols[0])
+             "fact_seller_monthly": "month_date_key, seller_key", "fact_state_year": "year_date_key, state_code", "v_gmv_per_capita_state": "year, state_code",
+             "v_gmv_per_capita_city": "year, ibge_code", "v_holiday_effect": "day_type, is_holiday_official", "v_holiday_diff": "full_date",
+             "v_late_by_rain": "rain_bucket_no", "v_gmv_usd_month": "year_month", "v_gmv_real_month": "year_month", "job_run": "run_id", "v_run_summary": "batch_id", "batch_metrics": "batch_id"}.get(name, cols[0])
     # session settings give ISO dates and '.' decimals regardless of the server defaults
     conn.exec_driver_sql("SET datestyle = 'ISO, YMD'")
     raw = conn.connection.dbapi_connection if hasattr(conn.connection, "dbapi_connection") else conn.connection.connection

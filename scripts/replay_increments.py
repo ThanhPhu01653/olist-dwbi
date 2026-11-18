@@ -32,6 +32,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--database", default=config.DB_NAME)
     parser.add_argument("--max-batches", type=int, default=24)
+    parser.add_argument("--with-api", action="store_true", help="P9: also load the API data (from data/raw/api, offline) in every batch")
     args = parser.parse_args()
     engine = get_engine(args.database)
     stop = last_source_date()
@@ -45,7 +46,7 @@ def main() -> None:
         if prev >= stop:
             break
         sim = simulate(args.database, None)
-        res = run_pipeline("incremental", args.database, export=False)
+        res = run_pipeline("incremental", args.database, export=False, with_api=args.with_api, api_offline=True)   # P9: API data from the landing zone, never the network
         if res["fails"]:
             print("TESTS FAILED:", res["fails"][:3])
             sys.exit(1)

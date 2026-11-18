@@ -3,6 +3,8 @@
     [drop both databases] -> setup_db -> load_source --initial (olist_dw) -> load_source --full (olist_full, for EDA)
     -> run_pipeline --mode full -> replay_increments (11 monthly batches: simulate_increment + incremental) -> run_pipeline --mode incremental (tests + export)
 Prerequisites: PostgreSQL running, .env filled in, the Kaggle CSV files in data/raw/ (see README.md). Takes about 7 minutes.
+P9: the pipeline steps use --with-api --api-offline, i.e. the public API data already collected in data/raw/api/ (a rebuild never calls the network;
+run `python -m api_ingest.run` first to refresh it). Without that folder the API columns simply stay NULL.
 --drop             first DROP olist_dw and olist_full (a true "from zero" run; all data is rebuilt from the CSV files)
 --skip-full-db     do not load olist_full (only needed for EDA and the benchmark of the source schema is NOT affected)
 --signature FILE   before dropping, save a content signature of every dimension / fact (row count, sum of money, checksum on natural keys)
@@ -93,9 +95,9 @@ def main() -> None:
              ("load_source --initial (olist_dw, to 2017-12-31)", ["-m", "etl.load_source", "--initial"])]
     if not a.skip_full_db:
         steps.append(("load_source --full (olist_full)", ["-m", "etl.load_source", "--full", "--database", config.DB_NAME_FULL]))
-    steps += [("run_pipeline --mode full (initial state)", ["-m", "etl.run_pipeline", "--mode", "full", "--no-export"]),
-              ("replay_increments (11 x simulate + incremental)", ["scripts/replay_increments.py"]),
-              ("run_pipeline --mode incremental (tests + export_powerbi)", ["-m", "etl.run_pipeline", "--mode", "incremental"])]
+    steps += [("run_pipeline --mode full (initial state)", ["-m", "etl.run_pipeline", "--mode", "full", "--no-export", "--with-api", "--api-offline"]),
+              ("replay_increments (11 x simulate + incremental)", ["scripts/replay_increments.py", "--with-api"]),
+              ("run_pipeline --mode incremental (tests + export_powerbi)", ["-m", "etl.run_pipeline", "--mode", "incremental", "--with-api", "--api-offline"])]
     ok = True
     final_line = ""
     for name, cmd in steps:

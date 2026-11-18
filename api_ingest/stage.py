@@ -173,3 +173,27 @@ def stage_all(engine: Engine, batch_id: int, root: Path | None = None) -> dict[s
     finally:
         raw.close()
     return counts
+
+
+def restore_log(engine: Engine, batch_id: int, root: Path | None = None) -> dict[str, int]:
+    """After a rebuild etl_log is empty but the landing zone still has the manifests: put the calls back into etl_log.api_call (once each)
+    and the Banco Central watermarks back into etl_log.watermark (newest date in staging), so history and incremental fetching survive a rebuild."""
+    from sqlalchemy import text
+    base = root or config.LANDING_DIR
+    added = 0
+    with engine.begin() as conn:
+        for mf in sorted(base.glob("*/*/manifest.json")):
+            for e in read_json(mf):
+                exists = conn.execute(text("SELECT 1 FROM etl_log.api_call WHERE url = :u AND called_at = :t"), {"u": e["url"], "t": e["called_at"]}).first()
+                if exists:
+                    continue
+                conn.execute(text(
+                    "INSERT INTO etl_log.api_call (batch_id, source, name, url, called_at, http_status, records, bytes, sha256, seconds, attempts, landing_path, error) "
+                    "VALUES (:b, :s, :n, :u, :t, :h, :r, :y, :x, :sec, :a, :p, :err)"),
+                    {"b": batch_id, "s": e["source"], "n": e["name"], "u": e["url"], "t": e["called_at"], "h": e["http_status"], "r": e["records"], "y": e["bytes"],
+                     "x": e["sha256"], "sec": e["seconds"], "a": e["attempts"], "p": f"data/raw/api/{e['source']}/{mf.parent.name}/{e['file']}" if e.get("file") else None,
+                     "err": e["error"]})
+                added += 1
+        conn.execute(text("INSERT INTO etl_log.watermark (source_table, last_value) SELECT 'api.bcb_sgs_' || series_code, max(ref_date) FROM api.stg_api_bcb_serie GROUP BY series_code "
+                          "ON CONFLICT (source_table) DO UPDATE SET last_value = GREATEST(etl_log.watermark.last_value, EXCLUDED.last_value), updated_at = now()"))
+    return {"api_call_restored": added}

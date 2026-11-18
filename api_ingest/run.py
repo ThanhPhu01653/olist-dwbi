@@ -19,7 +19,7 @@ from etl.log import job_run, new_batch_id
 
 from . import config
 from .collect import Collector
-from .stage import stage_all
+from .stage import restore_log, stage_all
 
 
 def run_api(engine: Engine, batch_id: int, sources: list[str], fetch: bool = True, stage: bool = True, ods: bool = True) -> dict:
@@ -38,6 +38,7 @@ def run_api(engine: Engine, batch_id: int, sources: list[str], fetch: bool = Tru
         summary["fetch"] = {"calls": len(col.calls), "failed": failed, "seconds": round(time.perf_counter() - t0, 1)}
     if stage:
         summary["stage"] = stage_all(engine, batch_id)
+        summary["restored"] = restore_log(engine, batch_id)
     if stage and ods:
         from .ods import run_ods
         summary["ods"] = run_ods(engine, batch_id)
