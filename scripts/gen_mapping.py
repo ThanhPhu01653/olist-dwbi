@@ -193,6 +193,25 @@ _dim("fact_seller_monthly", [
     ("months_since_first_sale", "(tính)", "month_date_key", "Số tháng kể từ tháng của dim_seller.first_sale_date (đơn đầu không Failed); âm nếu tháng đó chỉ có đơn Failed; NULL nếu seller chưa có đơn bán được")])
 
 
+# P9: API enrichment (public data collected by api_ingest). Source tables are ods.* tables loaded from the API staging (schema api).
+_dim("dim_geography", [
+    ("ibge_municipio_code", "ods.city_ibge_match", "ibge_code", "Ghép (bang, thành phố) với đô thị IBGE qua 4 tầng (đúng, chuẩn hoá, fuzzy >= 95, bảng ghép tay); NULL nếu không ghép được"),
+    ("microrregiao / mesorregiao", "ods.ibge_municipio", "microrregiao, mesorregiao", "Giữ nguyên theo đô thị đã ghép"),
+    ("populacao_2016 / 2017 / 2018", "ods.ibge_population", "population", "Dân số của đô thị đã ghép, năm tương ứng (lặp lại cho mọi zip của đô thị)"),
+    ("match_method", "ods.city_ibge_match", "method", "exact | normalized | fuzzy | override; 'unmatched' nếu không ghép; NULL nếu chưa nạp API")])
+_dim("dim_date", [
+    ("usd_brl", "ods.fx_usd_brl", "usd_brl", "Tỷ giá theo full_date; ngày không giao dịch đã điền ở ODS bằng giá ngày làm việc gần nhất trước đó"),
+    ("ipca_index", "ods.ipca_month", "ipca_index", "Chỉ số IPCA của tháng chứa full_date (tháng 2016-01 = 100)"),
+    ("is_holiday_official / holiday_name_official", "ods.holiday_official", "holiday_date, name", "true nếu full_date có trong BrasilAPI; tên ngày lễ nối bằng ' / ' nếu có nhiều")])
+_dim("fact_state_year", [
+    ("year_date_key", "(tính)", "dim_date.year", "date_key của ngày 1/1 của năm (2016..2018)"),
+    ("state_code / state_name / region", "ods.ref_state_region", "state_code, state_name, region", "27 bang x mỗi năm có đơn"),
+    ("population", "ods.ibge_population", "population", "Σ dân số các đô thị của bang, năm tương ứng"),
+    ("gdp_thousand_brl", "ods.ibge_gdp", "gdp_thousand_brl", "Σ PIB các đô thị của bang, năm tương ứng"),
+    ("gmv / orders / customers", "dw.fact_order_item", "price, order_id, customer_key", "Đơn không Failed, theo bang của khách (customer_geography_key) và năm mua; customers = count distinct customer_unique_id"),
+    ("sellers", "dw.fact_order_item", "seller_key", "count distinct seller có đơn không Failed, theo bang của seller (seller_geography_key)")])
+
+
 def build() -> list[dict]:
     eng = get_engine(config.DB_NAME)
     rows: list[dict] = []

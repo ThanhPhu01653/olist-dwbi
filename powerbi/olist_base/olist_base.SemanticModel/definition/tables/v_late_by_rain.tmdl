@@ -1,0 +1,38 @@
+/// Mart thị trường (D8, tuỳ chọn): tỷ lệ giao trễ theo lượng mưa ngày giao tại thủ phủ bang
+table v_late_by_rain
+
+	column rain_bucket
+		dataType: string
+		sourceColumn: rain_bucket
+
+	column rain_bucket_no
+		dataType: int64
+		formatString: 0
+		sourceColumn: rain_bucket_no
+
+	column delivered_orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: delivered_orders
+
+	column late_orders
+		dataType: int64
+		formatString: #,0
+		sourceColumn: late_orders
+
+	column late_rate_pct
+		dataType: double
+		sourceColumn: late_rate_pct
+
+	partition v_late_by_rain = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_late_by_rain.csv", {
+				            {"rain_bucket", type text}, {"rain_bucket_no", Int64.Type}, {"delivered_orders", Int64.Type}, {"late_orders", Int64.Type},
+				            {"late_rate_pct", type number}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

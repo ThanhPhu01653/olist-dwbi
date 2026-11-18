@@ -1,0 +1,36 @@
+/// Mart thị trường (D8): đơn trung bình mỗi ngày: ngày lễ quốc gia so với ngày thường
+table v_holiday_effect
+
+	column day_type
+		dataType: string
+		sourceColumn: day_type
+
+	column is_holiday_official
+		dataType: boolean
+		sourceColumn: is_holiday_official
+
+	column days
+		dataType: int64
+		formatString: #,0
+		sourceColumn: days
+
+	column avg_orders_per_day
+		dataType: double
+		sourceColumn: avg_orders_per_day
+
+	column avg_gmv_per_day
+		dataType: double
+		sourceColumn: avg_gmv_per_day
+
+	partition v_holiday_effect = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_holiday_effect.csv", {
+				            {"day_type", type text}, {"is_holiday_official", type logical}, {"days", Int64.Type}, {"avg_orders_per_day", type number},
+				            {"avg_gmv_per_day", type number}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,10 @@
+\begin{table}[htbp]\centering\scriptsize\caption{Ghép thành phố Olist với đô thị IBGE: số cặp (bang, thành phố), zip và GMV sau từng tầng}\label{tab:api-match}
+\begin{tabular}{lrrrrrr}\toprule
+\textbf{Tầng} & \textbf{Cặp (bang, thành phố)} & \textbf{Zip} & \textbf{Đơn} & \textbf{Luỹ kế cặp (\%)} & \textbf{Luỹ kế zip (\%)} & \textbf{Luỹ kế GMV (\%)} \\\midrule
+1. Khớp đúng & 3.124 & 9.006 & 51.955 & 50,5 & 47,0 & 54,0 \\
+2. Sau unaccent và chuẩn hoá & 2.334 & 9.428 & 45.693 & 88,2 & 96,1 & 99,4 \\
+3. Fuzzy (rapidfuzz) & 9 & 16 & 36 & 88,3 & 96,2 & 99,5 \\
+4. Bảng ghép tay & 8 & 8 & 13 & 88,4 & 96,3 & 99,5 \\
+Không khớp & 715 & 719 & 502 & – & – & 0,5 (chưa khớp) \\
+\bottomrule\end{tabular}\\[2pt]{\footnotesize Tổng 6.190 cặp (bang, thành phố), 19.177 zip. Luỹ kế GMV tính theo bang của khách; cột Đơn là đơn có doanh thu.}
+\end{table}

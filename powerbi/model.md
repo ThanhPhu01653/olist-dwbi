@@ -38,8 +38,9 @@ Giải thích: `Encoding = 65001` là UTF-8; `"en-US"` để dấu thập phân 
 | Nhóm | Bảng (tên = tên file CSV) | Dùng cho |
 | --- | --- | --- |
 | Chiều (10) | `dim_date`, `dim_geography`, `dim_customer`, `dim_seller`, `dim_product`, `dim_order_status`, `dim_payment_type`, `dim_lead_origin`, `dim_lead_profile`, `dim_sales_rep` | mọi dashboard |
-| Fact (6) | `fact_order_item`, `fact_order_fulfillment`, `fact_payment`, `fact_review`, `fact_lead_funnel`, `fact_seller_monthly` | mọi dashboard |
+| Fact (7) | `fact_order_item`, `fact_order_fulfillment`, `fact_payment`, `fact_review`, `fact_lead_funnel`, `fact_seller_monthly`, `fact_state_year` (P9: bang × năm, chỉ D8) | mọi dashboard (D8 dùng `fact_state_year`) |
 | Mart (15, *bảng rời, không tạo quan hệ*) | `v_sales_daily`, `v_sales_category_month`, `v_sales_state_month`, `v_category_pareto`, `v_fulfillment_state_month`, `v_status_funnel`, `v_review_vs_delay`, `v_payment_mix_month`, `v_customer_rfm`, `v_customer_cohort`, `v_funnel_by_origin_month`, `v_seller_scorecard`, `v_seller_by_channel`, `v_geo_state`, `v_geo_zip` | các visual đặc biệt (Pareto, cohort, RFM, funnel, scorecard, bản đồ) – mục 8 |
+| Mart thị trường (7, *bảng rời*, P9) | `v_gmv_per_capita_state`, `v_gmv_per_capita_city`, `v_gmv_usd_month`, `v_gmv_real_month`, `v_holiday_effect`, `v_holiday_diff`, `v_late_by_rain` | chỉ dashboard D8 (mục 8b) |
 | Giám sát ETL (6, *bảng rời*) | `job_run`, `v_run_summary`, `v_dq_summary`, `v_rejected_summary`, `batch_metrics`, `fact_load_issue` | không có dashboard (số liệu cho mục 3.3 ETL của báo cáo); nạp nếu muốn xem trong Power BI |
 
 ### 3.2 Cách nạp một bảng
@@ -103,6 +104,7 @@ Power BI có thể tự dò quan hệ theo tên cột: **xoá các quan hệ t�
 | 30 | fact_lead_funnel[sr_key] | dim_sales_rep[sales_rep_key] | *:1 | Inactive (SR) |
 | 31 | fact_seller_monthly[month_date_key] | dim_date[date_key] | *:1 | Active |
 | 32 | fact_seller_monthly[seller_key] | dim_seller[seller_key] | *:1 | Active |
+| 33 | fact_state_year[year_date_key] | dim_date[date_key] | *:1 | Active (P9, D8) |
 
 Không tạo: `dim_customer[geography_key]` và `dim_seller[geography_key]` → `dim_geography` (sẽ tạo đường lọc thứ hai, gây mơ hồ); `fact_review[order_id]` → `fact_order_fulfillment` (cũng gây mơ hồ – dùng hai cột `delivered_late` và `is_delivered` có sẵn trong `fact_review`); các bảng mart và bảng giám sát ETL để rời.
 Khi Power BI cảnh báo "ambiguous path" nghĩa là đã lỡ tạo thừa quan hệ: xoá hoặc chuyển thành Inactive.
@@ -151,6 +153,7 @@ Cách tạo: trong khung **Data**, chuột phải cột cấp cao nhất → **A
 | dim_date | Date | `year` → `year_quarter` → `year_month` → `full_date` |
 | dim_date | Week | `year` → `week_of_year` → `full_date` |
 | dim_geography | Geography | `region` → `state_code` → `city` → `zip_code_prefix` |
+| dim_geography | Geography IBGE | `region` → `state_code` → `mesorregiao` → `microrregiao` → `city` → `zip_code_prefix` (P9; các cột IBGE NULL với zip chưa ghép được) |
 | dim_product | Product | `category_group` → `category_name_en` → `product_id` |
 | dim_seller | Seller location | `state_code` → `city` → `seller_id` |
 | dim_seller | Acquisition | `acquisition_channel` → `acquisition_origin` → `seller_id` |
@@ -289,6 +292,13 @@ Lưu ý: trang 2 dùng bảng mart (không chịu bộ lọc ngày); nhớ ghi "
 | Cảnh báo | **Small sample warning** |
 | Nút quay lại | *Insert → Buttons → Back* |
 
+### 8b. D8 – Thị trường Brazil (P9, chương 5; không thuộc DB1–DB4)
+Dashboard riêng của chương 5, dựng từ dữ liệu API. Hướng dẫn đầy đủ (bố cục 4 trang, giá trị kỳ vọng): `huong-dan/dashboards/D8.md`; measure: `powerbi/measures.md` mục 8.
+- **Bảng mới cần nạp:** `fact_state_year`, `v_gmv_per_capita_state`, `v_gmv_per_capita_city`, `v_gmv_usd_month`, `v_gmv_real_month`, `v_holiday_effect`, `v_holiday_diff`, `v_late_by_rain` (CSV mới trong `exports/powerbi/`; mã M của từng bảng ở Phụ lục).
+- **Cột mới của bảng cũ:** `dim_date[usd_brl]`, `[ipca_index]`, `[is_holiday_official]`, `[holiday_name_official]`; `dim_geography[ibge_municipio_code]`, `[microrregiao]`, `[mesorregiao]`, `[populacao_2016]`, `[populacao_2017]`, `[populacao_2018]`, `[match_method]`. Các cột này nằm cuối bảng và **không làm đổi số của DB1–DB4**: nếu mô hình cũ không khai báo các cột này trong `fnCsv`, Power Query vẫn đọc chúng (kiểu văn bản) và có thể bỏ qua; muốn dùng thì thêm vào danh sách kiểu theo Phụ lục.
+- **Quan hệ #33:** `fact_state_year[year_date_key]` → `dim_date[date_key]` (*:1, Active). `fact_state_year` không có quan hệ trực tiếp với `dim_geography` (grain bang × năm): dùng `fact_state_year[state_code]`, `[state_name]`, `[region]` làm trục.
+- **Bản đồ:** đặt `fact_state_year[state_name]` *Data category* = State or Province (và `country` ở bảng khác nếu bản đồ hiểu sai).
+
 ### Giám sát ETL (không có dashboard)
 Các bảng `etl_log` (`v_run_summary`, `v_dq_summary`, `v_rejected_summary`, `batch_metrics`, `fact_load_issue`, `job_run`) vẫn xuất CSV nhưng không có dashboard: số liệu được trình bày thành bảng kết quả nạp và giám sát ở mục 3.3 của báo cáo (`handoff/2026-11-14-P8b.md`).
 
@@ -331,7 +341,8 @@ let
         {"day_of_week", Int64.Type}, {"day_name", type text}, {"week_of_year", Int64.Type}, {"month", Int64.Type},
         {"month_name", type text}, {"quarter", Int64.Type}, {"year", Int64.Type}, {"year_month", type text},
         {"year_quarter", type text}, {"is_weekend", type logical}, {"is_holiday_br", type logical},
-        {"holiday_name", type text}, {"is_black_friday", type logical}
+        {"holiday_name", type text}, {"is_black_friday", type logical}, {"usd_brl", type number},
+        {"ipca_index", type number}, {"is_holiday_official", type logical}, {"holiday_name_official", type text}
     })
 in
     Source
@@ -345,7 +356,9 @@ let
     Source = fnCsv("dim_geography.csv", {
         {"geography_key", Int64.Type}, {"zip_code_prefix", type text}, {"city", type text},
         {"state_code", type text}, {"state_name", type text}, {"region", type text}, {"country", type text},
-        {"latitude", type number}, {"longitude", type number}
+        {"latitude", type number}, {"longitude", type number}, {"ibge_municipio_code", Int64.Type},
+        {"microrregiao", type text}, {"mesorregiao", type text}, {"populacao_2016", Int64.Type},
+        {"populacao_2017", Int64.Type}, {"populacao_2018", Int64.Type}, {"match_method", type text}
     })
 in
     Source
@@ -544,6 +557,19 @@ let
         {"late_orders", Int64.Type}, {"late_rate", type number}, {"canceled_orders", Int64.Type},
         {"avg_review_score", type number}, {"is_active", Int64.Type}, {"months_since_first_sale", Int64.Type},
         {"etl_batch_id", Int64.Type}
+    })
+in
+    Source
+```
+
+**fact_state_year** – Fact periodic snapshot: 1 bang × 1 năm (dân số và PIB từ IBGE; GMV, đơn, khách, seller của Olist) – dashboard D8
+
+```m
+let
+    Source = fnCsv("fact_state_year.csv", {
+        {"year_date_key", Int64.Type}, {"state_code", type text}, {"state_name", type text}, {"region", type text},
+        {"population", Int64.Type}, {"gdp_thousand_brl", type number}, {"gmv", type number},
+        {"orders", Int64.Type}, {"customers", Int64.Type}, {"sellers", Int64.Type}, {"etl_batch_id", Int64.Type}
     })
 in
     Source
@@ -833,6 +859,97 @@ let
         {"pct_selling", type number}, {"orders", type number}, {"gmv", type number},
         {"gmv_per_selling_seller", type number}, {"late_rate_pct", type number}, {"avg_review_score", type number},
         {"small_sample", type logical}
+    })
+in
+    Source
+```
+
+**v_gmv_per_capita_state** – Mart thị trường (D8): GMV trên 1.000 dân theo bang x năm, hạng theo đầu người và theo GMV tuyệt đối
+
+```m
+let
+    Source = fnCsv("v_gmv_per_capita_state.csv", {
+        {"year", Int64.Type}, {"state_code", type text}, {"state_name", type text}, {"region", type text},
+        {"population", Int64.Type}, {"gdp_thousand_brl", type number}, {"gmv", type number},
+        {"orders", Int64.Type}, {"customers", Int64.Type}, {"sellers", Int64.Type},
+        {"gmv_per_1000_pop", type number}, {"orders_per_1000_pop", type number}, {"gmv_per_100k_gdp", type number},
+        {"rank_per_capita", Int64.Type}, {"rank_gmv", Int64.Type}
+    })
+in
+    Source
+```
+
+**v_gmv_per_capita_city** – Mart thị trường (D8): GMV trên 1.000 dân theo đô thị IBGE x năm (đô thị ghép được)
+
+```m
+let
+    Source = fnCsv("v_gmv_per_capita_city.csv", {
+        {"year", Int64.Type}, {"ibge_code", Int64.Type}, {"city", type text}, {"state_code", type text},
+        {"mesorregiao", type text}, {"microrregiao", type text}, {"population", Int64.Type}, {"gmv", type number},
+        {"orders", Int64.Type}, {"gmv_per_1000_pop", type number}, {"rank_per_capita", Int64.Type},
+        {"rank_gmv", Int64.Type}
+    })
+in
+    Source
+```
+
+**v_gmv_usd_month** – Mart thị trường (D8): GMV quy đổi USD theo tháng (mỗi dòng hàng theo tỷ giá ngày mua)
+
+```m
+let
+    Source = fnCsv("v_gmv_usd_month.csv", {
+        {"year_month", type text}, {"in_window", type logical}, {"gmv_brl", type number}, {"gmv_usd", type number},
+        {"avg_usd_brl", type number}, {"month_avg_rate", type number}
+    })
+in
+    Source
+```
+
+**v_gmv_real_month** – Mart thị trường (D8): GMV danh nghĩa và GMV thực (giá 01/2016, chia chỉ số IPCA) theo tháng, tăng trưởng YoY
+
+```m
+let
+    Source = fnCsv("v_gmv_real_month.csv", {
+        {"year_month", type text}, {"in_window", type logical}, {"ipca_index", type number},
+        {"gmv_nominal", type number}, {"gmv_real", type number}, {"nominal_yoy_pct", type number},
+        {"real_yoy_pct", type number}
+    })
+in
+    Source
+```
+
+**v_holiday_effect** – Mart thị trường (D8): đơn trung bình mỗi ngày: ngày lễ quốc gia so với ngày thường
+
+```m
+let
+    Source = fnCsv("v_holiday_effect.csv", {
+        {"day_type", type text}, {"is_holiday_official", type logical}, {"days", Int64.Type},
+        {"avg_orders_per_day", type number}, {"avg_gmv_per_day", type number}
+    })
+in
+    Source
+```
+
+**v_holiday_diff** – Mart thị trường (D8): ngày lễ khác nhau giữa BrasilAPI và thư viện holidays
+
+```m
+let
+    Source = fnCsv("v_holiday_diff.csv", {
+        {"full_date", type date}, {"day_name", type text}, {"is_holiday_official", type logical},
+        {"holiday_name_official", type text}, {"is_holiday_br", type logical}, {"holiday_name_lib", type text},
+        {"agreement", type text}
+    })
+in
+    Source
+```
+
+**v_late_by_rain** – Mart thị trường (D8, tuỳ chọn): tỷ lệ giao trễ theo lượng mưa ngày giao tại thủ phủ bang
+
+```m
+let
+    Source = fnCsv("v_late_by_rain.csv", {
+        {"rain_bucket", type text}, {"rain_bucket_no", Int64.Type}, {"delivered_orders", Int64.Type},
+        {"late_orders", Int64.Type}, {"late_rate_pct", type number}
     })
 in
     Source

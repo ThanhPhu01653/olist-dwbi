@@ -136,3 +136,6 @@ relationship ef43b440-0c81-50e5-ae3d-c00263e3f832
 	fromColumn: fact_seller_monthly.seller_key
 	toColumn: dim_seller.seller_key
 
+relationship 7b128e7f-5d58-5dd3-822d-de3fefbaec34
+	fromColumn: fact_state_year.year_date_key
+	toColumn: dim_date.date_key

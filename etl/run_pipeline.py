@@ -2,7 +2,7 @@
 
 One batch_id per run; every stage writes etl_log.job_run and the whole run is one 'pipeline.<mode>' row. The first error stops the
 run: the failing job and the pipeline row get status 'failed' with the message, the exit code is 1.
-    extract (oltp/crm -> staging) -> seeds -> ods -> dim -> fact -> mart (refresh materialized views) -> tests -> snapshot (etl_log.batch_metrics) -> export_powerbi
+    extract (oltp/crm -> staging) -> seeds -> ods -> [api, with --with-api] -> dim -> fact -> mart (refresh materialized views) -> tests -> snapshot (etl_log.batch_metrics) -> export_powerbi
 --no-export skips the CSV export (used while replaying many batches).
 """
 from __future__ import annotations
@@ -53,7 +53,7 @@ ON CONFLICT (batch_id) DO UPDATE SET taken_at = now(), mode = EXCLUDED.mode, ord
 """
 
 
-def run_pipeline(mode: str, database: str, only_tests: str | None = None, export: bool = True) -> dict:
+def run_pipeline(mode: str, database: str, only_tests: str | None = None, export: bool = True, with_api: bool = False, api_offline: bool = False) -> dict:
     engine = get_engine(database)
     batch = new_batch_id(engine)
     summary: dict = {"batch": batch, "mode": mode, "stages": {}, "fails": []}
@@ -77,6 +77,20 @@ def run_pipeline(mode: str, database: str, only_tests: str | None = None, export
                 conn.exec_driver_sql("CALL ods.truncate_data()")
         res = call_procedures(engine, batch, "ods", ODS_PROCS)
         done({"inserted": sum(r["inserted"] for r in res), "rejected": sum(r["rejected"] for r in res)})
+
+        if with_api:   # P9: public API data (IBGE, Banco Central, BrasilAPI) -> staging api -> ODS -> city match, before the dimensions use it
+            done = stage("api")
+            try:
+                from api_ingest.run import run_api
+                from api_ingest import config as api_config
+                res = run_api(engine, batch, api_config.SOURCES, fetch=not api_offline)
+                done({"calls": res["fetch"].get("calls", 0), "failed": sorted(res["fetch"].get("failed", {})), "staged": sum(res["stage"].values()),
+                      "matched_pairs": sum(v["pairs"] for k, v in res["ods"].get("city_match", {}).items() if k != "unmatched")})
+            except Exception as exc:    # an API problem must never break the sales pipeline; the dimensions then simply keep NULL in the new columns
+                with engine.begin() as conn:
+                    conn.execute(text("INSERT INTO etl_log.job_run (batch_id, job_name, layer, status, finished_at, message) VALUES (:b, 'api.pipeline_stage', 'api', 'failed', now(), :m)"),
+                                 {"b": batch, "m": f"{type(exc).__name__}: {str(exc)[:400]}"})
+                done({"error": type(exc).__name__})
 
         done = stage("dim")
         done(load_dimensions(engine, batch, mode))
@@ -117,9 +131,11 @@ def main() -> None:
     parser.add_argument("--database", default=config.DB_NAME)
     parser.add_argument("--only-tests", help="run only the test files whose name contains this text")
     parser.add_argument("--no-export", action="store_true", help="skip exports/powerbi CSV export")
+    parser.add_argument("--with-api", action="store_true", help="P9: collect/load the public API data (IBGE, Banco Central, BrasilAPI) before the dimensions")
+    parser.add_argument("--api-offline", action="store_true", help="with --with-api: do not call the APIs, load what is already in data/raw/api/")
     args = parser.parse_args()
     try:
-        s = run_pipeline(args.mode, args.database, args.only_tests, export=not args.no_export)
+        s = run_pipeline(args.mode, args.database, args.only_tests, export=not args.no_export, with_api=args.with_api, api_offline=args.api_offline)
     except Exception as exc:    # the failing job already has status 'failed' in etl_log.job_run
         print(f"PIPELINE FAILED ({args.mode}): {type(exc).__name__}: {str(exc)[:600]}", file=sys.stderr)
         sys.exit(1)

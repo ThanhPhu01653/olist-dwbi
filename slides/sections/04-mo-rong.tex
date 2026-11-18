@@ -20,28 +20,198 @@
 \end{frame}
 
 \subsection{5.2 Thu thập dữ liệu từ API}
-\begin{frame}{[P9] Bài toán: dữ liệu Olist là ảnh chụp tĩnh nên cần nguồn thực tế bổ sung qua API}
+\begin{frame}{Olist là ảnh chụp tĩnh nên cần dữ liệu công khai của Brazil để trả lời năm câu hỏi mà bán hàng một mình không trả lời được}
 \muc{5.2 · Thu thập từ API}
-\khungchen[0.5\textheight]{P9 điền: bài toán}
-\note{[S118] Khung: bài toán thu thập API (P9).}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{lll}
+\toprule
+\textbf{Câu hỏi} & \textbf{Cần thêm} & \textbf{Nguồn API} \\
+\midrule
+Bang nào mua nhiều nhất \emph{theo đầu người}? & dân số, PIB theo đô thị & IBGE SIDRA \\
+Phân cấp hành chính chính thức của đô thị & mesorregião, microrregião, mã IBGE & IBGE Localidades \\
+Tăng trưởng \emph{thực} sau lạm phát & chỉ số giá IPCA & Banco Central (SGS) \\
+GMV tính bằng USD & tỷ giá USD/BRL theo ngày & Banco Central (SGS) \\
+Ngày lễ chính thức có làm giảm đơn không & ngày lễ quốc gia & BrasilAPI \\
+(Tuỳ chọn) Mưa có làm giao trễ không & mưa ngày tại 27 thủ phủ & Open-Meteo \\
+\bottomrule
+\end{tabular}}\end{center}
+\note{[S118] Bài toán: dữ liệu Olist chỉ có nội bộ và tĩnh. Năm câu hỏi này cần dữ liệu công khai thật của Brazil qua API; trình bày theo kiến trúc, triển khai, kết quả.}
 \end{frame}
 
-\begin{frame}{[P9] Kiến trúc thu thập: từ API đến staging, tần suất gọi và xử lý lỗi}
+\begin{frame}{Kiến trúc: collector, landing zone, staging, ODS, kho và mart; lỗi API không làm hỏng pipeline chính}
 \muc{5.2 · Thu thập từ API}
-\khungchen[0.5\textheight]{P9 điền: sơ đồ kiến trúc}
-\note{[S119] Khung: kiến trúc thu thập API (P9).}
+\begin{center}\anh[0.5\textheight]{5-2_kien_truc_api.png}\end{center}
+\begin{itemize}
+  \item Dựng lại toàn bộ (rebuild) dùng landing zone, không cần mạng
+\end{itemize}
+\note{[S119] Sơ đồ vẽ theo lớp. Lỗi gọi API ghi vào etl\_log; các cột mới của kho giữ NULL và bốn dashboard DB1--DB4 không đổi số.}
 \end{frame}
 
-\begin{frame}{[P9] Triển khai thu thập: mã Python, bảng đích và lịch chạy}
+\begin{frame}{Bốn nguồn API công khai, mã bảng và mã chuỗi đều được đối chiếu với metadata của chính API}
 \muc{5.2 · Thu thập từ API}
-\khungchen[0.5\textheight]{P9 điền: mã và lược đồ}
-\note{[S120] Khung: triển khai thu thập API (P9).}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{llll}
+\toprule
+\textbf{Nguồn} & \textbf{Dữ liệu} & \textbf{Mã kiểm tra} & \textbf{Tần suất đề xuất} \\
+\midrule
+IBGE Localidades & 27 bang, 5.571 đô thị & /estados, /municipios & khi IBGE đổi \\
+IBGE SIDRA & dân số, PIB đô thị 2016--2018 & bảng 6579 (biến 9324), 5938 (biến 37) & hằng năm \\
+Banco Central SGS & USD/BRL ngày; IPCA tháng & chuỗi 1 và 433 (433 trùng IBGE 1737, 60/60 tháng) & hằng ngày, hằng tháng \\
+BrasilAPI & ngày lễ quốc gia & /feriados/v1/<năm> & hằng năm \\
+Open-Meteo & mưa ngày, 27 thủ phủ & geocoding + archive (CC BY 4.0) & hằng tuần \\
+\bottomrule
+\end{tabular}}\end{center}
+\note{[S150] Mỗi endpoint được gọi thử thật trước khi viết mã. BCB không có trang mô tả cho chuỗi 433 nên được xác nhận bằng cách so với biến IPCA của IBGE: trùng cả 60 tháng.}
 \end{frame}
 
-\begin{frame}{[P9] Kết quả thu thập: số dòng thu được và ví dụ phân tích}
+\begin{frame}{Collector thử lại tối đa 5 lần với chờ tăng dần, có timeout, giữ khoảng cách giữa các lời gọi và dùng User-Agent chung}
 \muc{5.2 · Thu thập từ API}
-\khungchen[0.5\textheight]{P9 điền: số liệu và hình}
-\note{[S121] Khung: kết quả thu thập API (P9).}
+\begin{itemize}
+  \item Lỗi mạng, HTTP 429 và 5xx: chờ 1,5 $\rightarrow$ 3 $\rightarrow$ 6 $\rightarrow$ 12 giây giữa các lần thử
+  \item Banco Central chỉ xin phần sau watermark; cửa sổ ngày $\le$ 10 năm theo quy định mới của BCB
+  \item Một nguồn lỗi không chặn nguồn khác; mọi lời gọi ghi vào \texttt{etl\_log.api\_call}
+  \item Kiểm thử \texttt{pytest}: thử lại có backoff, lỗi 404 không thử lại, chạy lại không nhân đôi, watermark
+\end{itemize}
+\note{[S151] Collector trong api\_ingest/collect.py và http.py. Không dùng email cá nhân trong User-Agent. Pytest chạy offline bằng session giả.}
+\end{frame}
+
+\begin{frame}{Landing zone giữ JSON nguyên văn kèm manifest: 69 lời gọi, 4,66 MB, 48.016 bản ghi, không lỗi}
+\muc{5.2 · Thu thập từ API}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{lrrrr}
+\toprule
+\textbf{Nguồn} & \textbf{Lời gọi} & \textbf{Bản ghi} & \textbf{JSON (MB)} & \textbf{Giây} \\
+\midrule
+IBGE & 8 & 16.794 & 4,02 & 5,9 \\
+Banco Central & 2 & 1.336 & 0,05 & 7,8 \\
+BrasilAPI & 5 & 65 & 0,01 & 2,8 \\
+Open-Meteo & 54 & 29.821 & 0,59 & 43,6 \\
+\textbf{Tổng} & \textbf{69} & \textbf{48.016} & \textbf{4,66} & \textbf{60,0} \\
+\bottomrule
+\end{tabular}}\end{center}
+\note{[S120] Số liệu lấy từ manifest.json của landing zone. Manifest ghi URL, thời điểm, HTTP, số bản ghi, byte và sha256 của từng lời gọi.}
+\end{frame}
+
+\begin{frame}{Staging giữ nguyên giá trị API; ODS ép kiểu, điền tỷ giá cho ngày nghỉ và nối chỉ số IPCA}
+\muc{5.2 · Thu thập từ API}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{lrl}
+\toprule
+\textbf{Bảng staging (schema api)} & \textbf{Dòng} & \textbf{ODS làm gì} \\
+\midrule
+stg\_api\_ibge\_municipio & 5.571 & chuẩn hoá tên; 1 đô thị mới lập không có số liệu \\
+stg\_api\_ibge\_populacao & 16.713 & ép số; 3 giá trị ``...'' ghi rejected\_rows \\
+stg\_api\_ibge\_pib & 16.710 & ép số; 5.570 đô thị (đô thị mới lập không có dòng) \\
+stg\_api\_bcb\_serie & 1.336 & 1.827 ngày tỷ giá; 60 tháng IPCA, tháng đầu = 100 \\
+stg\_api\_holiday & 65 & 64 ngày lễ khác nhau \\
+stg\_api\_weather\_daily & 29.592 & mưa ngày (mm), 27 thủ phủ \\
+\bottomrule
+\end{tabular}}\end{center}
+\note{[S152] Dòng không dùng được ghi vào etl\_log.rejected\_rows kèm lý do, không bỏ âm thầm.}
+\end{frame}
+
+\begin{frame}{Ghép thành phố Olist với đô thị IBGE qua bốn tầng: hai tầng đầu gán 96,1\% số zip, bốn tầng gán 96,3\% zip và 99,5\% GMV}
+\muc{5.2 · Thu thập từ API}
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Tầng} & \textbf{Cặp} & \textbf{Zip} & \textbf{Luỹ kế zip (\%)} & \textbf{Luỹ kế GMV (\%)} & \textbf{Đơn} \\
+\midrule
+1. Khớp đúng & 3.124 & 9.006 & 47,0 & 54,0 & 51.955 \\
+2. Sau unaccent, chuẩn hoá & 2.334 & 9.428 & 96,1 & 99,4 & 45.693 \\
+3. Fuzzy (rapidfuzz $\ge$ 95) & 9 & 16 & 96,2 & 99,5 & 36 \\
+4. Bảng ghép tay & 8 & 8 & 96,3 & 99,5 & 13 \\
+Không khớp & 715 & 719 & -- & 0,5 chưa khớp & 502 \\
+\bottomrule
+\end{tabular}}\end{center}
+\note{[S153] Tổng 6.190 cặp (bang, thành phố) và 19.177 zip. Phần không khớp phần lớn là quận, huyện không phải đô thị. Đây là kết quả chính của việc tích hợp.}
+\end{frame}
+
+\begin{frame}{Ngưỡng fuzzy 95 vì từ 95 trở lên mọi cặp đúng, còn 90--94 đã có ghép sai như boa vista de minas $\rightarrow$ Bela Vista de Minas}
+\muc{5.2 · Thu thập từ API}
+\begin{columns}[T]\begin{column}{0.42\textwidth}
+\begin{itemize}
+  \item sao thome das letras $\rightarrow$ São Tomé das Letras (97,4)
+  \item santana do livramento $\rightarrow$ Sant'Ana do Livramento (97,7)
+  \item boa vista de minas $\rightarrow$ Bela Vista de Minas (92): \textbf{sai}, bị loại
+  \item Chỉ nhận khi ứng viên thứ hai thấp hơn $\ge$ 10 điểm
+\end{itemize}
+\end{column}\begin{column}{0.56\textwidth}
+\begin{center}\anh[0.74\textheight]{5-2_ty_le_khop_theo_tang.png}\end{center}
+\end{column}\end{columns}
+\note{[S154] Ngưỡng chọn bằng cách đọc các ứng viên. Trả lời câu hỏi fuzzy có ghép sai không: ở ngưỡng 95 đã kiểm tay các cặp được nhận.}
+\end{frame}
+
+\begin{frame}{Kho được làm giàu không đổi khoá: 7 cột mới ở chiều địa lý, 4 cột ở chiều ngày và một fact bang theo năm với 81 dòng}
+\muc{5.2 · Thu thập từ API}
+\begin{itemize}
+  \item \texttt{dim\_geography}: mã IBGE, microrregião, mesorregião, dân số 2016--2018, tầng ghép (5.473 đô thị)
+  \item \texttt{dim\_date}: \texttt{usd\_brl}, \texttt{ipca\_index}, \texttt{is\_holiday\_official}, tên ngày lễ
+  \item \texttt{fact\_state\_year}: bang $\times$ năm, 27 $\times$ 3 = 81 dòng; $\Sigma$ GMV = 13.494.400,74
+  \item \texttt{mart\_market}: 7 view cho dashboard D8
+  \item DB1--DB4 vẫn đúng số cũ
+\end{itemize}
+\note{[S155] Cột mới thêm cuối bảng, cập nhật bằng UPDATE. Phân cấp khái niệm mới: vùng, bang, mesorregião, microrregião, đô thị, zip.}
+\end{frame}
+
+\begin{frame}{20 phép kiểm thử SQL mới và bộ pytest đều đạt: tổng số phép của pipeline tăng từ 136 lên 156}
+\muc{5.2 · Thu thập từ API}
+\begin{itemize}
+  \item Tỷ giá có đủ 1.827 ngày và không thiếu ngày làm việc nào; IPCA đủ 60 tháng, trùng chỉ số IBGE (chênh 0,000)
+  \item Mã IBGE hợp lệ, cùng bang; không zip nào gán hai đô thị; $\ge$ 95\% zip có mã (thực tế 96,3\%)
+  \item \texttt{fact\_state\_year} khớp GMV, số đơn 98.199 và dân số Brazil 2017 = 207.660.929
+  \item \texttt{pytest}: 18 test, chạy offline
+\end{itemize}
+\note{[S156] Test mới nằm trong sql/90\_tests/050\_api\_tests.sql; khi chưa nạp API các phép này đạt trống.}
+\end{frame}
+
+\begin{frame}{Theo đầu người, Rio de Janeiro dẫn đầu với 53,90 BRL trên 1.000 dân; Distrito Federal từ hạng 9 theo GMV lên hạng 3}
+\muc{5.2 · Thu thập từ API}
+\begin{columns}[T]\begin{column}{0.42\textwidth}
+\begin{itemize}
+  \item 2017: RJ 53,90; SP 48,58; DF 43,95; thấp nhất AM 2,58
+  \item Spearman giữa hai thứ hạng là 0,78
+  \item MA tụt từ hạng 15 xuống 24; PA 13 $\rightarrow$ 22; TO lên 23 $\rightarrow$ 12
+\end{itemize}
+\end{column}\begin{column}{0.56\textwidth}
+\begin{center}\anh[0.78\textheight]{5-2_gmv_dau_nguoi_theo_bang.png}\end{center}
+\end{column}\end{columns}
+\note{[S121] Dân số là ước tính IBGE 2017, GMV theo bang của khách. Cả nước 29,42 BRL trên 1.000 dân năm 2017 và 35,21 năm 2018.}
+\end{frame}
+
+\begin{frame}{GMV tháng 1--8 tăng 138,3\% danh nghĩa nhưng chỉ 130,9\% theo giá thực và 116,7\% khi quy USD}
+\muc{5.2 · Thu thập từ API}
+\begin{columns}[T]\begin{column}{0.42\textwidth}
+\begin{itemize}
+  \item Lạm phát IPCA 08/2017 $\rightarrow$ 08/2018: 4,2\%
+  \item Tỷ giá bình quân gia quyền theo GMV: 3,17 (01/2017) $\rightarrow$ 3,84 (08/2018)
+  \item GMV thực = GMV chia chỉ số IPCA, giá 01/2016
+\end{itemize}
+\end{column}\begin{column}{0.56\textwidth}
+\begin{center}\anh[0.74\textheight]{5-2_danh_nghia_so_voi_thuc.png}\end{center}
+\end{column}\end{columns}
+\note{[S157] Mức tăng lớn chủ yếu do dữ liệu 2017 còn đang lớn dần; lạm phát và tỷ giá làm giảm mức tăng 7,4 và 21,6 điểm phần trăm.}
+\end{frame}
+
+\begin{frame}{Thư viện ngày lễ thiếu 19 ngày so với BrasilAPI; ngày thường có lễ quốc gia ít hơn 27,9\% số đơn}
+\muc{5.2 · Thu thập từ API}
+\begin{columns}[T]\begin{column}{0.42\textwidth}
+\begin{itemize}
+  \item BrasilAPI 64 ngày lễ; \texttt{holidays} 45 ngày; 19 ngày chỉ có ở BrasilAPI (Carnaval, Phục sinh, Corpus Christi)
+  \item Ngày thường có lễ: 124,7 đơn; không lễ: 172,9 đơn
+\end{itemize}
+\end{column}\begin{column}{0.56\textwidth}
+\begin{center}\anh[0.74\textheight]{5-2_ngay_le_va_don.png}\end{center}
+\end{column}\end{columns}
+\note{[S158] Ngày lễ 01/2017--08/2018, bỏ Black Friday.}
+\end{frame}
+
+\begin{frame}{(Tuỳ chọn) Mưa càng nhiều thì giao trễ càng nhiều: từ 5,45\% lúc không mưa lên 9,55\% khi mưa từ 20 mm}
+\muc{5.2 · Thu thập từ API}
+\begin{columns}[T]\begin{column}{0.42\textwidth}
+\begin{itemize}
+  \item Mưa ngày giao tại thủ phủ bang của khách
+  \item Liên hệ thống kê; mưa đo ở thủ phủ, không ở nơi khách ở
+\end{itemize}
+\end{column}\begin{column}{0.56\textwidth}
+\begin{center}\anh[0.74\textheight]{5-2_mua_va_giao_tre.png}\end{center}
+\end{column}\end{columns}
+\note{[S159] Nguồn tuỳ chọn Open-Meteo (CC BY 4.0; ghi nguồn Weather data by Open-Meteo.com).}
 \end{frame}
 
 \begin{frame}{[P10] DB1 trên Superset: cùng số liệu với Power BI, đọc từ tầng Gold của lakehouse}

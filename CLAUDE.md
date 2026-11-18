@@ -42,6 +42,7 @@ seeds/*.csv                     # state_region, category_group, category_transla
 sql/00_init/                    # schemas, extensions, etl_log
 sql/10_source/                  # DDL oltp + crm (có PK/FK)
 sql/20_staging/                 # DDL stg_*
+sql/25_api/                     # P9: staging schema api (stg_api_*)
 sql/30_ods/                     # DDL + procedure làm sạch
 sql/40_dw/                      # DDL dim/fact + procedure nạp
 sql/50_mart/                    # view mart_*
@@ -49,6 +50,7 @@ sql/60_olap_examples/           # truy vấn minh hoạ roll-up, drill-down, sli
 sql/70_geo/                     # phần mở rộng địa lý: haversine SQL (khoảng cách seller → khách)
 sql/90_tests/                   # truy vấn kiểm thử chất lượng
 etl/                            # package Python: config, db, setup_db, log, load_source, simulate_increment, extract, run_pipeline, run_tests
+api_ingest/                     # P9: collector API (collect, http, stage, ods, match, run), README.md; tests/ = pytest
 scripts/                        # report_stats.py, export_samples.py, export_powerbi.py, eda/*.py, benchmark.py
 powerbi/                        # measures.md (DAX), model.md (quan hệ, phân cấp), theme.json – nhóm dùng để dựng trong Power BI
 powerbi/olist_base/             # dự án Power BI dạng PBIP (TMDL + PBIR) sinh sẵn bằng scripts/gen_pbip.py; README.md hướng dẫn mở, Refresh, lưu .pbix
@@ -101,6 +103,7 @@ figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 - `python -m etl.setup_db` – tạo database, extension, schema, etl_log (chạy các file trong sql/00_init, sql/10_source)
 - `python -m etl.load_source --initial` – nạp nguồn ban đầu (đến 2017-12-31) vào oltp/crm
 - `python -m etl.run_pipeline [--mode full|incremental] [--no-export]` – chạy staging → ods → dim → fact → tests → snapshot → export Power BI
+- `python -m api_ingest.run --source all|ibge|bcb|holidays|weather [--offline] [--fetch-only]` – P9: gọi API công khai (IBGE, Banco Central, BrasilAPI, Open-Meteo) → landing zone `data/raw/api/` → staging `api` → ODS → ghép đô thị; `python -m etl.run_pipeline --with-api [--api-offline]` đưa vào kho (`dim_geography`, `dim_date`, `fact_state_year`, `mart_market`); `python scripts/p9_results.py` – số liệu, bảng, hình chương 5.2 → `handoff/2026-11-18-P9-results.md`, `report/tables/p9_*.tex`, `figures/5-2_*.png`; `python -m pytest tests -q` – kiểm thử collector
 - `python -m etl.simulate_increment [--until 2018-01-31]` – chèn thêm dữ liệu mới vào nguồn (mặc định +1 tháng)
 - `python scripts/replay_increments.py` – lặp simulate + `run_pipeline --mode incremental` tới hết dữ liệu nguồn (in bảng các đợt)
 - `python scripts/compare_databases.py --a olist_dw --b <db full> [--keys]` – so sánh hai database kho (số dòng, tổng tiền, checksum; `--keys` so cả giá trị khoá thay thế, chỉ dùng cho hai bản dựng cùng code và cùng đường nạp)

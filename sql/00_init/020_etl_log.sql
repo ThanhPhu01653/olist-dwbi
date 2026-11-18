@@ -108,3 +108,32 @@ FROM etl_log.dq_check GROUP BY batch_id;
 CREATE OR REPLACE VIEW etl_log.v_rejected_summary AS
 SELECT batch_id, job_name, source_table, reason, count(*) AS row_count, max(logged_at) AS last_logged_at
 FROM etl_log.rejected_rows GROUP BY batch_id, job_name, source_table, reason;
+
+-- P9: one row per API call made by the collector (api_ingest): what was called, when, how big, where the raw JSON was stored.
+CREATE TABLE IF NOT EXISTS etl_log.api_call (
+    call_id       bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    batch_id      bigint,
+    source        text        NOT NULL,         -- ibge | bcb | holidays | weather
+    name          text        NOT NULL,         -- logical name of the call (e.g. municipios, sgs_1)
+    url           text        NOT NULL,
+    called_at     timestamptz NOT NULL DEFAULT now(),
+    http_status   int,
+    records       bigint,
+    bytes         bigint,
+    sha256        text,
+    seconds       numeric(8,2),
+    attempts      int,
+    landing_path  text,
+    error         text
+);
+CREATE INDEX IF NOT EXISTS ix_api_call_batch ON etl_log.api_call (batch_id);
+
+-- P9: how many Olist (state, city) pairs and zip codes each matching tier assigned to an IBGE municipality (recomputed on every run).
+CREATE TABLE IF NOT EXISTS etl_log.api_match_stat (
+    batch_id      bigint      NOT NULL,
+    method        text        NOT NULL,         -- exact | normalized | fuzzy | override | unmatched
+    city_pairs    int         NOT NULL,
+    zips          int         NOT NULL,
+    logged_at     timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY (batch_id, method)
+);

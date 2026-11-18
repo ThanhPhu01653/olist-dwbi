@@ -1,0 +1,46 @@
+/// Mart thị trường (D8): ngày lễ khác nhau giữa BrasilAPI và thư viện holidays
+table v_holiday_diff
+
+	column full_date
+		dataType: dateTime
+		formatString: yyyy-MM-dd
+		sourceColumn: full_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column day_name
+		dataType: string
+		sourceColumn: day_name
+
+	column is_holiday_official
+		dataType: boolean
+		sourceColumn: is_holiday_official
+
+	column holiday_name_official
+		dataType: string
+		sourceColumn: holiday_name_official
+
+	column is_holiday_br
+		dataType: boolean
+		sourceColumn: is_holiday_br
+
+	column holiday_name_lib
+		dataType: string
+		sourceColumn: holiday_name_lib
+
+	column agreement
+		dataType: string
+		sourceColumn: agreement
+
+	partition v_holiday_diff = m
+		mode: import
+		source =
+				let
+				    Source = fnCsv("v_holiday_diff.csv", {
+				            {"full_date", type date}, {"day_name", type text}, {"is_holiday_official", type logical}, {"holiday_name_official", type text},
+				            {"is_holiday_br", type logical}, {"holiday_name_lib", type text}, {"agreement", type text}
+				        })
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

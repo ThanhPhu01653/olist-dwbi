@@ -1,0 +1,10 @@
+\begin{table}[htbp]\centering\scriptsize\caption{Thu thập API: số lời gọi, bản ghi, dung lượng JSON và thời gian}\label{tab:api-calls}
+\begin{tabular}{lrrrrr}\toprule
+\textbf{Nguồn} & \textbf{Lời gọi} & \textbf{Bản ghi} & \textbf{JSON (MB)} & \textbf{Thời gian gọi (giây)} & \textbf{Lỗi} \\\midrule
+IBGE (Localidades, SIDRA) & 8 & 16.794 & 4,02 & 5,9 & 0 \\
+Banco Central (SGS) & 2 & 1.336 & 0,05 & 7,8 & 0 \\
+BrasilAPI & 5 & 65 & 0,01 & 2,8 & 0 \\
+Open-Meteo & 54 & 29.821 & 0,59 & 43,6 & 0 \\
+Tổng & 69 & 48.016 & 4,66 & 60,0 & 0 \\
+\bottomrule\end{tabular}\\[2pt]{\footnotesize Lấy từ các file \code{manifest.json} trong landing zone; thời gian là tổng thời gian chờ phản hồi (đã gồm thử lại); bản ghi là số dòng hoặc số điểm dữ liệu trong JSON.}
+\end{table}

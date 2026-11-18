@@ -1,4 +1,4 @@
-# 04 – 47 câu giảng viên có thể hỏi (kèm trả lời có số liệu)
+# 04 – 52 câu giảng viên có thể hỏi (kèm trả lời có số liệu)
 
 *Số liệu từ `olist_dw` ở trạng thái cuối (99.441 đơn, GMV 13.494.400,74 BRL). Mỗi câu trả lời 2–4 câu để nói được trong 30–60 giây; phần "Xem thêm" chỉ nơi có bằng chứng.*
 
@@ -152,3 +152,22 @@ Hiện trạng: marketplace, hệ thống đơn hàng, thanh toán, vận chuy�
 
 **47. Vì sao hình kiến trúc vẽ theo lớp mà không vẽ thành luồng?**
 Kiến trúc trả lời "hệ thống gồm những thành phần nào, công nghệ nào, bao nhiêu bảng" nên các khối xếp tầng (nguồn, staging, ODS, kho, mart, BI) và mỗi lớp liệt kê thành phần, logo công nghệ (PostgreSQL, Python, Power BI, GitHub), số bảng, số dòng và tần suất. Còn "dữ liệu đi từ đâu đến đâu" thể hiện ở hai hình khác: sơ đồ data flow và sơ đồ các job của pipeline (sinh từ `etl_log.job_run`). Tách hai hình giúp người xem nắm được từng thông tin mà không phải đọc một sơ đồ vừa có cấu trúc vừa có luồng.
+
+## I. Mở rộng thu thập dữ liệu API (P9): 5 câu
+*Số liệu từ `handoff/2026-11-18-P9-results.md` và `docs/THU_THAP_API.md`.*
+
+**48. Vì sao chọn các API này?**
+Mỗi API trả lời một câu hỏi mà Olist không tự trả lời được: IBGE cho dân số, PIB và phân cấp đô thị chính thức (bang nào mua nhiều theo đầu người); Banco Central cho tỷ giá USD/BRL và lạm phát IPCA (GMV quy USD và GMV thực); BrasilAPI cho ngày lễ chính thức (cờ ngày lễ hiện có thiếu 19 ngày); Open-Meteo (tuỳ chọn) cho mưa. Tất cả công khai, không cần khoá, có giấy phép dùng lại (IBGE và BCB dữ liệu mở, Open-Meteo CC BY 4.0). Mã bảng và mã chuỗi được đối chiếu với metadata của API; chuỗi 433 của BCB trùng biến IPCA của IBGE cả 60 tháng.
+
+**49. Tên thành phố lệch được xử lý thế nào?**
+Ghép (bang, thành phố) với đô thị IBGE qua bốn tầng và đếm tỉ lệ sau mỗi tầng: khớp đúng (54,0% GMV), sau `unaccent` và chuẩn hoá ký tự (luỹ kế 99,4% GMV, 96,1% zip), fuzzy bằng `rapidfuzz` (9 cặp), bảng ghép tay (8 cặp). Kết quả cuối: 96,3% số zip (18.458 zip, 5.473 đô thị) và 99,5% GMV. 715 cặp không khớp (0,5% GMV), phần lớn là quận hoặc khu dân cư không phải đô thị, được ghi `etl_log.rejected_rows` kèm lý do.
+
+**50. Fuzzy có ghép sai không?**
+Có thể, nên nhóm chỉ nhận khi điểm từ 95 trở lên và ứng viên thứ hai thấp hơn ít nhất 10 điểm, chỉ trong cùng bang. Ngưỡng chọn bằng cách đọc ứng viên: mọi cặp từ 95 là biến thể chính tả đúng; ở 90–94 đã có ghép sai (ví dụ *boa vista de minas* thành *Bela Vista de Minas*, điểm 92), nên bị loại. Vì vậy tầng fuzzy chỉ gán 9 cặp; thêm 8 cặp ở tầng bảng ghép tay đã kiểm từng dòng.
+
+**51. API lỗi thì sao?**
+Collector thử lại tối đa 5 lần với thời gian chờ tăng dần (1,5 đến 12 giây) khi lỗi mạng hoặc HTTP 429, 5xx; lỗi 404 không thử lại. Mọi lời gọi (kể cả lỗi) ghi vào `etl_log.api_call`; một nguồn lỗi không chặn nguồn khác và không làm hỏng pipeline chính, các cột mới của kho giữ NULL nên DB1–DB4 vẫn đúng số cũ. Dữ liệu đã thu nằm trong landing zone nên dựng lại kho không cần mạng.
+
+**52. Tần suất cập nhật dữ liệu API là bao nhiêu và chạy lại có nhân đôi dữ liệu không?**
+Đề xuất: tỷ giá hằng ngày, IPCA hằng tháng, dân số và PIB hằng năm, ngày lễ hằng năm, danh mục đô thị khi IBGE cập nhật. Không nhân đôi: cùng ngày ghi đè cùng tệp JSON, staging nạp bằng `TRUNCATE + COPY` hoặc upsert theo khoá tự nhiên, chuỗi Banco Central chỉ xin phần sau watermark; có test chạy lại không tăng số dòng.
+

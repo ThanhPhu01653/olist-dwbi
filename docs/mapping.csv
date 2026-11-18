@@ -187,3 +187,16 @@ ods → dw,(tính),"late_orders, delivered_orders",dw.fact_seller_monthly,late_r
 ods → dw,dw.fact_review,review_score,dw.fact_seller_monthly,avg_review_score,avg theo review của các đơn trong tháng; NULL nếu không có
 ods → dw,(tính),orders,dw.fact_seller_monthly,is_active,1 nếu orders > 0
 ods → dw,(tính),month_date_key,dw.fact_seller_monthly,months_since_first_sale,Số tháng kể từ tháng của dim_seller.first_sale_date (đơn đầu không Failed); âm nếu tháng đó chỉ có đơn Failed; NULL nếu seller chưa có đơn bán được
+ods → dw,ods.city_ibge_match,ibge_code,dw.dim_geography,ibge_municipio_code,"Ghép (bang, thành phố) với đô thị IBGE qua 4 tầng (đúng, chuẩn hoá, fuzzy >= 95, bảng ghép tay); NULL nếu không ghép được"
+ods → dw,ods.ibge_municipio,"microrregiao, mesorregiao",dw.dim_geography,microrregiao / mesorregiao,Giữ nguyên theo đô thị đã ghép
+ods → dw,ods.ibge_population,population,dw.dim_geography,populacao_2016 / 2017 / 2018,"Dân số của đô thị đã ghép, năm tương ứng (lặp lại cho mọi zip của đô thị)"
+ods → dw,ods.city_ibge_match,method,dw.dim_geography,match_method,exact | normalized | fuzzy | override; 'unmatched' nếu không ghép; NULL nếu chưa nạp API
+ods → dw,ods.fx_usd_brl,usd_brl,dw.dim_date,usd_brl,Tỷ giá theo full_date; ngày không giao dịch đã điền ở ODS bằng giá ngày làm việc gần nhất trước đó
+ods → dw,ods.ipca_month,ipca_index,dw.dim_date,ipca_index,Chỉ số IPCA của tháng chứa full_date (tháng 2016-01 = 100)
+ods → dw,ods.holiday_official,"holiday_date, name",dw.dim_date,is_holiday_official / holiday_name_official,true nếu full_date có trong BrasilAPI; tên ngày lễ nối bằng ' / ' nếu có nhiều
+ods → dw,(tính),dim_date.year,dw.fact_state_year,year_date_key,date_key của ngày 1/1 của năm (2016..2018)
+ods → dw,ods.ref_state_region,"state_code, state_name, region",dw.fact_state_year,state_code / state_name / region,27 bang x mỗi năm có đơn
+ods → dw,ods.ibge_population,population,dw.fact_state_year,population,"Σ dân số các đô thị của bang, năm tương ứng"
+ods → dw,ods.ibge_gdp,gdp_thousand_brl,dw.fact_state_year,gdp_thousand_brl,"Σ PIB các đô thị của bang, năm tương ứng"
+ods → dw,dw.fact_order_item,"price, order_id, customer_key",dw.fact_state_year,gmv / orders / customers,"Đơn không Failed, theo bang của khách (customer_geography_key) và năm mua; customers = count distinct customer_unique_id"
+ods → dw,dw.fact_order_item,seller_key,dw.fact_state_year,sellers,"count distinct seller có đơn không Failed, theo bang của seller (seller_geography_key)"

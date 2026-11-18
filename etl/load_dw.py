@@ -16,6 +16,8 @@ DIM_PROCS = [
     ("dw.load_dim_lead_origin", "dw.dim_lead_origin"),
     ("dw.load_dim_lead_profile", "dw.dim_lead_profile"),
     ("dw.load_dim_sales_rep", "dw.dim_sales_rep"),
+    ("dw.enrich_dim_geography", "dw.dim_geography"),  # P9: IBGE code, population, match method (columns stay NULL without API data)
+    ("dw.enrich_dim_date", "dw.dim_date"),            # P9: USD/BRL, IPCA index, official holidays
 ]
 
 # order matters: order_item -> payment -> fulfillment -> review (needs fulfillment.is_late) -> seller.first_sale_date -> funnel -> seller monthly
@@ -27,6 +29,7 @@ FACT_PROCS = [
     ("dw.load_dim_seller_first_sale", "dw.dim_seller"),
     ("dw.load_fact_lead_funnel", "dw.fact_lead_funnel"),
     ("dw.load_fact_seller_monthly", "dw.fact_seller_monthly"),
+    ("dw.load_fact_state_year", "dw.fact_state_year"),   # P9: state x year (population and GDP from IBGE)
 ]
 
 
