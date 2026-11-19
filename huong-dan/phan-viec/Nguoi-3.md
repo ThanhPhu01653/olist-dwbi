@@ -104,9 +104,9 @@ Tách lớp giúp **đối soát**: nguồn = staging = ODS + dòng bị loại,
 | ODS | 18 bảng, 678.183 dòng | `2026-11-05-P2.md` | S52 |
 | Before/after | 6 bảng nguồn; geolocation 1.000.163 → 19.178 | `handoff/before-after-samples.md` | S70–S73 |
 | Đối soát | nguồn = staging = ODS + loại; tổng tiền khớp từng đồng | `2026-11-05-P5.md`; `rebuild-report.md` | S74 |
-| Nạp tăng dần | 11 đợt; 286.144 bản ghi; 21–28 giây; 16/16 bảng khớp | `handoff/2026-11-14-P8-etl.md`; `2026-11-14-P8b.md` | S77–S80 |
-| Kiểm thử | 136 phép đạt 100%, 6/6 đối chiếu EDA | `handoff/2026-11-14-P8-etl.md` | S82 |
-| Dựng lại | 443 giây | `handoff/rebuild-report.md` | S110 |
+| Nạp tăng dần | 11 đợt; 286.144 bản ghi; **lõi 22–28 giây** (đo lại không có API: 22,3–27,5, trung bình 24,7) / **có API 26–43 giây** (trung bình 30,7); 16/16 bảng khớp | `handoff/2026-11-14-P8-etl.md` (mục "Tách thời gian"); `2026-11-19-etl-loi-va-api.md` | S77–S80 |
+| Kiểm thử | **136 phép của kho** đạt 100%, 6/6 đối chiếu EDA (= 142) / có API thêm 20 phép = 156/156 | `handoff/2026-11-14-P8-etl.md`; `2026-11-19-etl-loi-va-api.md` | S82 |
+| Dựng lại | **lõi 397 giây** (không API) / **có API 500 giây** (cùng điều kiện: bỏ nạp `olist_full`; lần có API còn gồm xuất 45 CSV); 443 giây là số cũ trước P9, gồm nạp `olist_full` và xuất 37 CSV | `handoff/rebuild-report.md`; `2026-11-19-etl-loi-va-api.md` | S110 |
 | Ba công cụ ETL | 8.011 → 5.968 thành phố | `powerbi/power-query-vi-du.md` | S138 |
 | Chiều | 10 bảng; số giá trị từng cấp | `handoff/2026-11-14-P8-dimensions.md` | S57, S58, S139 |
 | Fact | 6 bảng, 3 loại | `handoff/stats.md` mục fact | S62–S65 |
@@ -187,7 +187,7 @@ Hình có sẵn (bản nháp): `figures/3-2_kien_truc_cac_lop.png`, `3-3_etl_job
 | K18 | Sơ đồ phân cấp: 5 năm → 20 quý → 60 tháng → 1.827 ngày; 5 vùng → 27 bang → 6.190 thành phố | sơ đồ cây các cấp của từng chiều kèm số giá trị | sơ đồ vẽ draw.io | `handoff/2026-11-14-P8-dimensions.md` | cần làm |
 | K19 | Một đơn thật đi qua các lớp: nguồn → staging → ODS → kho | ví dụ minh hoạ ETL ("bổ sung ví dụ") | bảng một đơn qua từng lớp | `huong-dan/01-pipeline-bang-loi.md` | kiểm tra đã có chưa |
 | K20 | Power Query cho cùng kết quả làm sạch: 8.011 → 5.968 thành phố (S138) | ảnh before/after chụp từ Power BI | `3-3_power_query_before_after.png` | `powerbi/power-query-vi-du.md` | cần ảnh (việc riêng) |
-| K21 | Sửa S78 "Mỗi đợt chạy 20–26 giây": số thật là 21,3–27,6 giây (S105 đã ghi 21–28) | đồng bộ số | – | `handoff/2026-11-14-P8b.md` | sửa tiêu đề |
+| K21 | Sửa số ở bốn slide (từ P9 mỗi lô có thêm bước API của chương 5; chương 3 chỉ nói phần lõi, ghi kèm số có API): **S78** "Mỗi đợt chạy 20–26 giây" → lõi 22–28 giây (có API 26–43 giây); **S82** giữ 136 phép của kho + 6 đối chiếu EDA (nếu nói tổng thì 156 gồm 20 phép API); **S105** "21–28 giây, 136 test" → lõi 22–28 giây, 136 test (có API 26–43 giây, 156 test); **S110** "443 giây" → lõi 397 giây (có API 500 giây). Đoạn tóm tắt ETL phía trên và câu Q22 cũng còn số cũ (21–28 giây, 443 giây) | đồng bộ số | – | `handoff/2026-11-19-etl-loi-va-api.md`; `handoff/2026-11-14-P8-etl.md` | sửa tiêu đề |
 
 Khối lượng: 49 slide đang có + K1–K21 (K3–K11 là 9 trang, K12–K17 là 6 trang) ≈ 19 slide mới = **khoảng 68 slide** trong file của bạn; mỗi chiều và mỗi fact một trang là slide chi tiết (không nói hết trên lớp). **Chọn 9 slide để nói** (khoảng 11 phút):
 
