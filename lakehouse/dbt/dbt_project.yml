@@ -14,9 +14,6 @@ clean-targets: [target, dbt_packages]
 models:
   olist_lakehouse:
     +on_table_exists: replace
-    staging:
-      +materialized: view
-      +schema: silver
     gold:
       +materialized: table
       +schema: gold

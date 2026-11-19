@@ -244,6 +244,41 @@ Bước 2 đã chạy thử: image này lên, qua healthcheck, tạo được bu
 
 **Đối soát cuối Bước 4** (sau khi phát lại xong): `silver.orders` 99.441, `customers` 99.441, `order_items` 112.650, `order_payments` 103.886, `order_reviews` 99.224, `products` 32.951, `sellers` 3.095, `mql` 8.000, `closed_deals` 842, `geolocation_zip` 19.015: **bằng bảng nguồn trong `olist_src` và bằng bảng `ods.*` của `olist_dw`** ở cả 10 bảng; các bảng `*_rejected` của luồng có 0 dòng; `order_status_history` 310.725 dòng.
 
+### 3.9 Gold bằng dbt và đối soát với kho chương 3 (Bước 5 và 6)
+
+**Gold (dbt-core 1.10.23 + dbt-trino 1.10, Trino 477).** `lakehouse/dbt`: 10 dimension, 6 fact (đúng tên bảng và tên cột của `DW_DESIGN.md`, dòng Unknown khoá −1), 4 bảng mart cho Superset (`mart_sales_daily`, `mart_sales_category_month`, `mart_sales_state_month`, `mart_category_pareto`, cùng cột với `mart_sales` của kho). Dùng lại 6 seed của thư mục `seeds/` của kho (`seed-paths`) và lịch `dim_date_base` sinh từ chính `etl.build_dim_date.build_frame()`. Dimension địa lý và ngày đã được làm giàu bằng dữ liệu API (IBGE, Banco Central, BrasilAPI) như ở chương 3. Chạy 20 model: **70 giây**; 71 phép kiểm thử dbt (`unique`, `not_null`, `relationships`, `accepted_values`, kiểm thử tự viết `unique_combination` cho grain của fact, và ba kiểm thử riêng: Σ price và số dòng của `fact_order_item` bằng Silver, số đơn và Σ order_value bằng Silver, các phiên bản SCD2 của một khách không chồng nhau) đều đạt. Ảnh lineage: `figures/5-1_dbt_lineage.png` (vẽ từ `manifest.json`; có thể thay bằng ảnh chụp của `dbt docs serve`).
+
+**Đối soát (`lakehouse/scripts/reconcile.py`).** Cùng một câu SQL được chạy trên PostgreSQL (`olist_dw.dw.*`) và Trino (`iceberg.gold.*`). Với mỗi bảng: số dòng, tổng các số đo, checksum md5 của khoá tự nhiên đã sắp xếp, và checksum md5 của **toàn bộ nội dung nghiệp vụ** từng dòng. Khoá thay thế khác nhau giữa hai hệ thống (đánh số theo thứ tự nạp), nên mọi khoá ngoại được dịch ngược về giá trị tự nhiên của dòng dimension mà nó trỏ tới (khách = `customer_unique_id` + `effective_from`, sản phẩm = `product_id`, ...): một dòng fact chỉ khớp khi trỏ đúng cùng các dòng dimension. Kết quả ghi vào `iceberg.ops.reconciliation`.
+
+| Bảng | Số dòng kho | Số dòng Gold | Tổng tiền kho | Tổng tiền Gold | Tổng các số đo | Checksum khoá | Checksum nội dung |
+| --- | ---: | ---: | ---: | ---: | :---: | :---: | :---: |
+| `dim_date` | 1.828 | 1.828 | – | – | khớp | khớp | khớp |
+| `dim_geography` | 19.178 | 19.178 | – | – | khớp | khớp | khớp (trừ cột `city` của 2 zip, xem dưới) |
+| `dim_customer` | 96.339 | 96.339 | – | – | khớp | khớp | khớp |
+| `dim_seller` | 3.558 | 3.558 | – | – | khớp | khớp | khớp |
+| `dim_product` | 32.952 | 32.952 | – | – | khớp | khớp | khớp |
+| `dim_order_status` | 9 | 9 | – | – | khớp | khớp | khớp |
+| `dim_payment_type` | 6 | 6 | – | – | khớp | khớp | khớp |
+| `dim_lead_origin` | 11 | 11 | – | – | khớp | khớp | khớp |
+| `dim_lead_profile` | 503 | 503 | – | – | khớp | khớp | khớp |
+| `dim_sales_rep` | 55 | 55 | – | – | khớp | khớp | khớp |
+| `fact_order_item` | 112.650 | 112.650 | 13591643.70 | 13591643.70 | khớp | khớp | khớp |
+| `fact_payment` | 103.886 | 103.886 | 16008872.12 | 16008872.12 | khớp | khớp | khớp |
+| `fact_order_fulfillment` | 99.441 | 99.441 | 13591643.70 | 13591643.70 | khớp | khớp | khớp |
+| `fact_review` | 99.224 | 99.224 | – | – | khớp | khớp | khớp |
+| `fact_lead_funnel` | 8.000 | 8.000 | – | – | khớp | khớp | khớp |
+| `fact_seller_monthly` | 36.583 | 36.583 | 13494400.74 | 13494400.74 | khớp | khớp | khớp |
+
+Ngoại lệ có giải thích, `dim_geography`: mode() of the city over the points of the zip is an exact tie (97 vs 97 points: 'mogi-guacu' / 'mogi guacu', and the same for pingo-d'agua / pingo-d agua). PostgreSQL breaks the tie with the sort order of its locale (hyphen before space), Spark with the code point order (space before hyphen). Not reproducible without copying the collation of the Windows PostgreSQL; chapter 3 is not changed.
+
+GMV (Σ price của dòng hàng thuộc đơn không phải Failed): kho 13494400.74, Gold 13494400.74: khớp.
+
+**Hai lỗi do đối soát tìm ra (của Gold hoặc của cách so sánh, không phải của kho):**
+1. `fact_review.has_comment_message` và `comment_length` lệch (40.950 so với 40.968; 2.800.913 so với 2.804.417): `trim()` của Trino bỏ cả xuống dòng và tab, còn `trim()` của PostgreSQL chỉ bỏ dấu cách; 18 review chỉ có ký tự xuống dòng bị tính là "không có bình luận". Đã sửa model để chỉ bỏ dấu cách ở hai đầu.
+2. `fact_seller_monthly` và `dim_geography` lệch ở phép so sánh: số cùng giá trị nhưng khác số chữ số 0 cuối (`1018.1426` và `1018.142600…`), và toạ độ số thực làm tròn khác nhau 1e-6 ở vài zip. Đã sửa phép so sánh (định dạng 4 chữ số thập phân cố định; cắt `floor(x·10^6)` giống nhau ở hai bên).
+
+**Một ngoại lệ có giải thích.** `dim_geography.city` khác ở đúng 2 zip (13848 và 35348, tức 0,01% số dòng): hai cách viết của tên thành phố có số điểm bằng nhau (97 và 97). `mode()` của PostgreSQL chọn theo thứ tự collation của locale (dấu gạch ngang trước dấu cách), Spark chọn theo thứ tự mã ký tự (dấu cách trước). Không tái hiện được nếu không sao chép collation của PostgreSQL trên Windows và không thể đổi chương 3. Phép đối soát vẫn chặt: mọi cột khác của hai zip này khớp, và mọi dòng còn lại khớp cả cột `city`.
+
 ## 4. Bảng Bronze, Silver, Gold
 
 Ký hiệu cách ghi: **append** (chỉ thêm), **MERGE** (cập nhật hoặc thêm theo khoá, giữ bản `ts_ms` mới nhất), **thay bảng** (`CREATE OR REPLACE` / ghi đè toàn bảng, dbt `table`).
@@ -323,4 +358,6 @@ WHERE order_id = :id AND valid_from <= TIMESTAMP :t AND (valid_to IS NULL OR val
 | 2 | Hạ tầng: Compose, healthcheck, `check_health.py` | xong (mục 3.5, handoff P10) |
 | 3 | Thu nhận: nạp nguồn, Debezium, replay, API → MinIO → Bronze | xong (mục 3.6) |
 | 4 | Bronze → Silver (luồng) | xong (mục 3.7 và 3.8): Silver = nguồn = ODS của kho chương 3 ở mọi bảng |
-| 5–13 | Gold, đối soát, tính năng, vận hành, đo, Superset, kiểm thử, tài liệu | chưa làm |
+| 5 | Silver → Gold bằng dbt | xong (mục 3.9): 20 model, 71 phép kiểm thử dbt đạt |
+| 6 | Đối soát Gold với kho chương 3 | xong (mục 3.9): 16/16 bảng khớp, một ngoại lệ có giải thích; **chờ Phú duyệt trước khi làm tiếp** |
+| 7–13 | Time travel, vận hành, đo, Superset, kiểm thử, tài liệu | chưa làm |
