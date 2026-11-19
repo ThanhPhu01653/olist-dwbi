@@ -208,6 +208,13 @@ Bước 2 đã chạy thử: image này lên, qua healthcheck, tạo được bu
 - **Đường ghi và đọc đầy đủ:** Spark (`local[2]`) tạo bảng `ops.smoke` bằng Iceberg qua REST, ghi 2 dòng thành 2 tệp Parquet và 2 tệp metadata trong `s3://lakehouse/warehouse/ops/smoke/`; Trino đọc lại đúng 2 dòng; `snapshots` ghi nhận 1 snapshot kiểu `append`.
 - **Bộ nhớ khi nhàn rỗi** (`docker stats`): Trino 820 MB, Connect 455 MB, Kafka 380 MB, REST 240 MB, MinIO 175 MB, Spark 122 MB, PostgreSQL 58 MB; cộng khoảng 2,25 GB, thấp hơn dự toán ở mục 0.5.
 
+### 3.6 Kết quả chạy thử thu nhận (Bước 3)
+
+- **Nguồn:** `etl.load_source --initial` (chính mã của dự án, trỏ biến môi trường `DB_HOST/DB_PORT/DB_USER/DB_PASSWORD` sang container, cổng 5433) nạp 1.273.620 dòng vào `oltp` và `crm` trong 11,1 giây; số dòng từng bảng trùng với lô đầu của kho chương 3. `olist_dw` không bị đụng tới.
+- **Debezium:** connector `olist-source` (PostgreSQL, `pgoutput`, slot `olist_slot`, publication `olist_pub`) chụp snapshot 11 bảng trong khoảng 35 giây (hơn 30.000 sự kiện mỗi giây); 11 topic `olist.<schema>.<bảng>`, mỗi topic một partition. Số sự kiện mỗi topic **bằng đúng số dòng nguồn**: geolocation 1.000.163, order_items 51.234, order_payments 47.871, order_reviews 45.370, customers 45.430, orders 45.430, products 32.951, sellers 3.095, mql 2.002, product_category_name_translation 71, closed_deals 3 (tổng 1.273.620). Cách mã hoá: `timestamp` thành micro giây từ epoch, `date` thành số ngày từ epoch, `numeric` thành chuỗi (`decimal.handling.mode=string`).
+- **Phát lại 11 tháng** (`lakehouse/scripts/replay_events.py`): 446.935 sự kiện cho 54.011 đơn mới, thời gian mô phỏng 01/01/2018 → 14/11/2018: 54.011 INSERT đơn, 160.791 UPDATE đơn (đi qua các mốc duyệt, giao vận chuyển, giao khách, huỷ…), cùng khách, dòng hàng, thanh toán, review, 5.998 MQL và 839 deal. Chạy thử 3.000 sự kiện đầu: khoảng 5.000 sự kiện mỗi giây vào PostgreSQL; các UPDATE xuất hiện trên topic `olist.oltp.orders` với `op=u` và ảnh `after` đầy đủ. Tiến độ lưu ở `public.replay_state` (cùng giao dịch với sự kiện, không bị Debezium bắt) nên chạy lại không áp sự kiện hai lần.
+- **API:** collector `api_ingest/` giữ nguyên; `upload_landing.py` chép 73 tệp (4,92 MB) từ `data/raw/api/` lên `s3://lakehouse/landing/api/...`. Spark (`spark/bronze_api.py`, đọc bằng `s3a://`) tạo 4 bảng `bronze.api_*` với 73 dòng (9 + 3 + 6 + 55), JSON giữ nguyên; chạy lại thêm 0 dòng.
+
 ## 4. Bảng Bronze, Silver, Gold
 
 Ký hiệu cách ghi: **append** (chỉ thêm), **MERGE** (cập nhật hoặc thêm theo khoá, giữ bản `ts_ms` mới nhất), **thay bảng** (`CREATE OR REPLACE` / ghi đè toàn bảng, dbt `table`).
@@ -220,7 +227,7 @@ Cấu trúc chung: `key`, `payload` (JSON), `op` (c / u / d / r), `ts_ms`, `sour
 | --- | --- | --- | --- |
 | `bronze.oltp_customers`, `oltp_geolocation`, `oltp_orders`, `oltp_order_items`, `oltp_order_payments`, `oltp_order_reviews`, `oltp_products`, `oltp_sellers`, `oltp_product_category_name_translation` | topic Debezium của 9 bảng `oltp` | 1 dòng = 1 sự kiện thay đổi | append |
 | `bronze.crm_mql`, `bronze.crm_closed_deals` | topic của 2 bảng `crm` | 1 dòng = 1 sự kiện | append |
-| `bronze.api_ibge_estados`, `api_ibge_municipios`, `api_ibge_populacao`, `api_ibge_pib`, `api_ibge_ipca`, `api_bcb_sgs`, `api_brasilapi_feriados`, `api_openmeteo_geocoding`, `api_openmeteo_weather` | JSON trong `landing/api/<nguồn>/<ngày>/` | 1 dòng = 1 tệp JSON của một lần gọi (schema-on-read, JSON giữ nguyên) | append |
+| `bronze.api_ibge`, `bronze.api_bcb`, `bronze.api_holidays`, `bronze.api_weather` | JSON trong `s3://lakehouse/landing/api/<nguồn>/<ngày>/` | 1 dòng = 1 tệp JSON (kể cả `manifest.json`) với các cột `source`, `run_date`, `file_name`, `payload` (JSON nguyên văn), `payload_bytes`, `sha256`, `ingested_at` (schema-on-read) | append; tệp đã có (cùng `sha256`) bị bỏ qua |
 
 ### 4.2 Silver (`silver`): làm sạch theo quy tắc ODS, có khoá
 
@@ -285,4 +292,5 @@ WHERE order_id = :id AND valid_from <= TIMESTAMP :t AND (valid_to IS NULL OR val
 | 0 | Kiểm tra máy, chọn cấu hình | xong (mục 0); commit limit đã xử lý (mục 0.4) |
 | 1 | Thiết kế | xong (tài liệu này) |
 | 2 | Hạ tầng: Compose, healthcheck, `check_health.py` | xong (mục 3.5, handoff P10) |
-| 3–13 | Thu nhận, Silver, Gold, đối soát, tính năng, vận hành, đo, Superset, kiểm thử, tài liệu | chưa làm |
+| 3 | Thu nhận: nạp nguồn, Debezium, replay, API → MinIO → Bronze | xong (mục 3.6) |
+| 4–13 | Bronze → Silver (luồng), Gold, đối soát, tính năng, vận hành, đo, Superset, kiểm thử, tài liệu | chưa làm |
