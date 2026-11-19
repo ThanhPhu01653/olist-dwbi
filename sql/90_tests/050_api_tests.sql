@@ -68,5 +68,5 @@ UNION ALL SELECT 'mart_market.v_gmv_usd_month: sum(gmv_brl) = GMV', 'mart_market
 UNION ALL SELECT 'mart_market.v_gmv_per_capita_city: sum(gmv) = GMV of the zips matched to a municipality', 'mart_market.v_gmv_per_capita_city',
        (SELECT sum(f.price)::text FROM dw.fact_order_item f JOIN dw.dim_order_status s ON s.order_status_key = f.order_status_key AND s.status_group <> 'Failed'
         JOIN dw.dim_geography x ON x.geography_key = f.customer_geography_key WHERE x.ibge_municipio_code IS NOT NULL), sum(gmv)::text,
-       sum(gmv) = (SELECT sum(f.price) FROM dw.fact_order_item f JOIN dw.dim_order_status s ON s.order_status_key = f.order_status_key AND s.status_group <> 'Failed'
+       (SELECT NOT loaded FROM apiflag) OR sum(gmv) = (SELECT sum(f.price) FROM dw.fact_order_item f JOIN dw.dim_order_status s ON s.order_status_key = f.order_status_key AND s.status_group <> 'Failed'
                    JOIN dw.dim_geography x ON x.geography_key = f.customer_geography_key WHERE x.ibge_municipio_code IS NOT NULL) FROM mart_market.v_gmv_per_capita_city
