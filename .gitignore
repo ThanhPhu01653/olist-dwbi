@@ -66,3 +66,9 @@ exports/huong-dan-ca-nhan/
 lakehouse/.env
 lakehouse/data/
 lakehouse/.ivy/
+
+# dbt run artefacts
+lakehouse/dbt/logs/
+lakehouse/dbt/target/
+lakehouse/dbt/.user.yml
+lakehouse/dbt/dbt_packages/
