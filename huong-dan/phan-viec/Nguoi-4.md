@@ -82,7 +82,7 @@ Giám sát chất lượng dữ liệu và ETL **không còn là dashboard**: l�
 | --- | --- | --- | --- |
 | Bốn dashboard, ma trận checklist | 4 dashboard × 11 mục | `huong-dan/dashboards/README.md` | S89, S143 |
 | Thống kê bộ dashboard (số **thiết kế**) | 10 trang chính, 4 tooltip, 68 visual, 23 slicer, 56 measure | `report/tables/p8b_dashboard_stats.tex`; thay bằng số thật sau khi dựng | báo cáo 4.1.5 |
-| Mô hình Power BI | 38 bảng, 32 quan hệ, 65 measure | `powerbi/olist_base/README.md`; `handoff/2026-11-14-P8c.md` | S90 |
+| Mô hình Power BI | 46 bảng, 33 quan hệ, 76 measure (gồm cả bảng của D8) | `powerbi/olist_base/README.md`; `handoff/2026-11-14-P8c.md` | S90 |
 | Kỳ vọng từng dashboard | bảng giá trị mục 9 của `DB1.md` … `DB4.md` | `huong-dan/dashboards/` | đối chiếu |
 | Insight từng dashboard | mục 8 của `DB1.md` … `DB4.md` | `huong-dan/dashboards/` | slide DB1–DB4 |
 | Funnel (DB4) | 8.000 → 842 → 379; chốt TB 48,5 ngày; đến đơn đầu 51,9 ngày | `DB4.md` mục 8 | S103–S104, S147 |
@@ -134,7 +134,7 @@ Hình: ảnh chụp dashboard `4_DBx_<mô-tả>.png` (nhóm chụp), `figures/2-
 | D3 | Tình huống DB2: Olist hứa 24,4 ngày nhưng giao 12,6 ngày, vậy khách có hài lòng? | như trên | – | `DB2.md` mục 2, 8 | cần làm |
 | D4 | Tình huống DB3: phí vận chuyển nặng ở vùng xa, ai chịu? | như trên | – | `DB3.md` mục 2, 8 | cần làm |
 | D5 | Tình huống DB4: 8.000 MQL chỉ ra 379 seller bán được, kênh nào đáng đầu tư? | như trên | – | `DB4.md` mục 2, 8 | cần làm |
-| D6 | Trang kỹ thuật dùng: mô hình 38 bảng, 32 quan hệ, 65 measure (sửa S90 "16 bảng") | số liệu mô hình hiện tại | – | `powerbi/olist_base/README.md` | sửa slide có sẵn |
+| D6 | Trang kỹ thuật dùng: mô hình 46 bảng, 33 quan hệ, 76 measure, gồm cả bảng của D8 (sửa S90 "16 bảng") | số liệu mô hình hiện tại | – | `powerbi/olist_base/README.md` | sửa slide có sẵn |
 | D7 | Bài học về quy trình, kiến thức, công cụ của cả nhóm (mỗi bài học: vấn đề → con số → xử lý) | 3 slide tổng kết sau khi gom bài học | bảng | mục 8 của file này | cần làm (sau 26/11) |
 | D8 | Mã QR: quét để xem 4 dashboard công khai (S106) | link public và QR | `figures/4_qr_dashboard.png` | sau khi publish | cần ảnh QR |
 
@@ -154,7 +154,7 @@ Khối lượng: 23 slide đang có + 8 slide thêm (D1–D8) = **khoảng 31 sl
 
 Quy ước chung (màu, font, xuất PNG): `README.md` mục 5.
 
-- **Phải thể hiện:** bốn khối DB1–DB4; mỗi khối ghi **loại** (dòng thời gian, thống kê, OLAP, vận hành), **câu hỏi chính**, **KPI chính** (ví dụ DB1: GMV 13,49 triệu BRL; DB2: On-time rate 93,2%; DB3: Freight ratio 16,6%; DB4: MQL to won rate 10,5%), người dùng và số trang; các **liên kết giữa dashboard** (drill-through DB3 → trang Chi tiết bang, DB4 → trang Chi tiết seller; dùng chung một mô hình 38 bảng, 65 measure) và **điểm checklist** của từng dashboard (dự báo ở DB1, Key Influencers ở DB2, drill-down ở DB3…). Dạng sơ đồ cấu trúc (khối và liên kết), không vẽ thành luồng dữ liệu.
+- **Phải thể hiện:** bốn khối DB1–DB4; mỗi khối ghi **loại** (dòng thời gian, thống kê, OLAP, vận hành), **câu hỏi chính**, **KPI chính** (ví dụ DB1: GMV 13,49 triệu BRL; DB2: On-time rate 93,2%; DB3: Freight ratio 16,6%; DB4: MQL to won rate 10,5%), người dùng và số trang; các **liên kết giữa dashboard** (drill-through DB3 → trang Chi tiết bang, DB4 → trang Chi tiết seller; dùng chung một mô hình 46 bảng, 76 measure) và **điểm checklist** của từng dashboard (dự báo ở DB1, Key Influencers ở DB2, drill-down ở DB3…). Dạng sơ đồ cấu trúc (khối và liên kết), không vẽ thành luồng dữ liệu.
 - **Bản nháp:** chưa có; vẽ mới. Tài liệu nguồn: `huong-dan/dashboards/README.md` (bảng loại và ma trận), `DB1.md` … `DB4.md` (câu hỏi, KPI).
 - **Màu:** dùng bảng màu chung ở `README.md` mục 5; mỗi dashboard một màu phụ (xanh dương, cam, xanh lá, tím) và nhắc lại đúng quy ước **đỏ chỉ để cảnh báo** (không dùng đỏ cho khối).
 - **Lỗi thầy hay bắt:** không có menu/điều hướng, không thấy mối liên hệ giữa các dashboard; không nêu loại phân tích (dòng thời gian, OLAP…).

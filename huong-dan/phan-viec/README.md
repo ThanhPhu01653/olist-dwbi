@@ -41,7 +41,7 @@ Báo cáo (`report/chapters/`) đã chia theo file cho từng người: `01-tong
 
 | Thư mục | Nội dung |
 | --- | --- |
-| `01_pBI_data` | 37 file CSV cho Power BI (không đổi tên file); `olist_geolocation_dataset.csv` (file nguồn Kaggle, chỉ Người 3 cần) |
+| `01_pBI_data` | 45 file CSV cho Power BI (không đổi tên file); `olist_geolocation_dataset.csv` (file nguồn Kaggle, chỉ Người 3 cần) |
 | `02_Dashboard` | `olist_base.pbix` (file gốc); file riêng `DBx_<tên>.pbix`; ảnh `4_DBx_<mô-tả>.png` |
 | `03_drawio` | file `.drawio` và PNG xuất ra |
 | `04_Docs` | `slides_overleaf.zip` (bộ slide để tạo project Overleaf); `slides.pdf` (bản biên dịch hiện tại, để xem); `report_overleaf.zip` (báo cáo, dùng ở giai đoạn 2); `tex-nop/` (nộp file `.tex`, hình mới ở `tex-nop/figures/`); `tham-khao/` (slide nhóm 6) |
@@ -56,9 +56,9 @@ Quy tắc đặt tên:
 
 ## 3. Power BI
 
-Dữ liệu (37 file CSV ở `01_pBI_data`) lấy từ kho ở trạng thái cuối: 99.441 đơn, GMV 13.494.400,74 BRL. Mọi người dựng trên **cùng một mô hình** (38 bảng, 32 quan hệ, 65 measure), nên số liệu phải giống nhau giữa bốn dashboard.
+Dữ liệu (45 file CSV ở `01_pBI_data`) lấy từ kho ở trạng thái cuối: 99.441 đơn, GMV 13.494.400,74 BRL. Mọi người dựng trên **cùng một mô hình** (46 bảng, 33 quan hệ, 76 measure, gồm cả các bảng của dashboard D8 ở chương 5), nên số liệu phải giống nhau giữa bốn dashboard.
 
-1. **Tải về và mở file gốc.** Tải thư mục `01_pBI_data` (37 file CSV) về một thư mục cố định, ví dụ `D:\Olist\01_pBI_data`; tải `olist_base.pbix` ở `02_Dashboard` về `D:\Olist`. Mở `olist_base.pbix` bằng Power BI Desktop (chỉ có cho Windows).
+1. **Tải về và mở file gốc.** Tải thư mục `01_pBI_data` (45 file CSV) về một thư mục cố định, ví dụ `D:\Olist\01_pBI_data`; tải `olist_base.pbix` ở `02_Dashboard` về `D:\Olist`. Mở `olist_base.pbix` bằng Power BI Desktop (chỉ có cho Windows).
 2. **Lưu thành file của mình trước khi dựng:** *File → Save as* → `DBx_<tên>.pbix` (mục 2). Giữ nguyên `olist_base.pbix` để bốn dashboard dùng chung một mô hình và ghép lại được.
 3. **Đổi `DataFolder` khi cần Refresh.** *Home → Transform data → Edit parameters* → `DataFolder` = đường dẫn thư mục chứa các file CSV trên máy, không có dấu `\` ở cuối (ví dụ `D:\Olist\01_pBI_data`) → *OK*, rồi *Home → Refresh*. Nếu báo `DataSource.NotFound`: đường dẫn sai hoặc còn dấu `\` ở cuối. Hướng dẫn đầy đủ và bảng lỗi thường gặp: `powerbi/olist_base/README.md` mục 3, 7 và `powerbi/model.md` mục 10–11.
 4. **Lấy measure trong thư mục measure.** Measure nằm trong bảng `_Measures`, xếp theo thư mục hiển thị: `DB1 Tổng quan và doanh thu`, `DB2 Giao hàng và trải nghiệm khách`, `DB3 Địa lý và phí vận chuyển`, `DB4 Thu hút và hiệu quả seller`, `Cảnh báo màu` (các measure `Color …` cho định dạng có điều kiện), `Giám sát ETL`. Kéo measure vào visual; **không viết lại measure**. Định nghĩa DAX: `powerbi/measures.md`.

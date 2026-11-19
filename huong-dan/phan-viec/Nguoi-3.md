@@ -252,7 +252,7 @@ Hướng dẫn đầy đủ: [`../dashboards/DB3.md`](../dashboards/DB3.md). Cá
 ## 8. Việc riêng: Power Query (mã M) và ảnh before/after
 
 Hướng dẫn: `powerbi/power-query-vi-du.md`. Quy tắc làm sạch tên thành phố và mã bưu chính của bảng toạ độ viết bằng M. Các bước:
-1. Lấy file nguồn `olist_geolocation_dataset.csv` trên Drive, thư mục `01_pBI_data` (file nguồn Kaggle, khoảng 61 MB, không nằm trong 37 file CSV của Power BI) và đặt vào thư mục `DataFolder`.
+1. Lấy file nguồn `olist_geolocation_dataset.csv` trên Drive, thư mục `01_pBI_data` (file nguồn Kaggle, khoảng 61 MB, không nằm trong các file CSV của Power BI) và đặt vào thư mục `DataFolder`.
 2. *Home → Transform data*; dán mã M vào truy vấn trống (bước `Nguon` đến `KieuText` cho `geolocation_raw`, rồi bước làm sạch cho `geolocation_clean`).
 3. Bật *View → Column quality, Column distribution, Column profile*; chụp trước (8.011 tên thành phố khác nhau, mã bưu chính bắt đầu bằng 0) và sau (5.968 tên; mã đủ 5 ký tự).
 4. Ghép ảnh trước/sau, đặt tên `3-3_power_query_before_after.png`, đưa vào `04_Docs/tex-nop/figures/` và dùng ở K20/S138.

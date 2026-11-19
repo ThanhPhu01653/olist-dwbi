@@ -56,7 +56,7 @@ Không được chép câu chữ, số liệu hay hình của nhóm 6.
 | Tổng quan dự án | 1,56 triệu dòng nguồn → 6 fact, 17 view mart, 4 dashboard | `handoff/00-TONG-QUAN.md` |
 | Kết quả kiểm thử | 136 phép đạt 100%, 6/6 đối chiếu EDA | `handoff/2026-11-14-P8-etl.md` |
 | Dựng lại toàn bộ | 443 giây, kết quả giống hệt | `handoff/rebuild-report.md` |
-| Mô hình Power BI | 38 bảng, 32 quan hệ, 65 measure | `powerbi/olist_base/README.md`; `handoff/2026-11-14-P8c.md` |
+| Mô hình Power BI | 46 bảng, 33 quan hệ, 76 measure (sau P9) | `powerbi/olist_base/README.md`; `handoff/2026-11-14-P8c.md` |
 | Hạn chế | danh sách | `handoff/00-TONG-QUAN.md` mục 9 |
 | Mở rộng (P9, P10) | chưa chạy; điền sau khi làm | `docs/prompts/P9-thu-thap-api.md`; `P10-lakehouse.md` |
 
@@ -119,7 +119,7 @@ Trước khi nộp slide: số liệu trong slide mở đầu khớp `handoff/00
 
 ### 7.1 Power BI: file gốc, D8, ghép file tổng, publish, QR
 - [ ] **File gốc:** mở `powerbi/olist_base/olist_base.pbip` bằng Power BI Desktop, Refresh, đối chiếu số với bảng ở `powerbi/olist_base/README.md` mục 4, rồi lưu `olist_base.pbix`. *Thư mục `powerbi/olist_base/` hiện có thay đổi chưa commit do Power BI Desktop lưu lại (gồm tham số `DataFolder` trỏ vào đường dẫn máy của bạn): trước khi commit, đặt lại `DataFolder` về giá trị mặc định hoặc không commit `expressions.tmdl`.*
-- [ ] **Đóng gói:** `olist_base.pbix` lên `02_Dashboard`; 37 file CSV và `olist_geolocation_dataset.csv` lên `01_pBI_data`. Quy tắc: mọi người lưu thành `DBx_<tên>.pbix` trước khi dựng, **không sửa file gốc**.
+- [ ] **Đóng gói:** `olist_base.pbix` lên `02_Dashboard`; 45 file CSV và `olist_geolocation_dataset.csv` lên `01_pBI_data`. Quy tắc: mọi người lưu thành `DBx_<tên>.pbix` trước khi dựng, **không sửa file gốc**.
 - [ ] **Measure mới:** nếu ai cần measure chưa có, thêm vào `powerbi/measures.md` và `olist_base`, rồi chạy `python scripts/gen_pbip.py` (ghi đè `powerbi/olist_base/` nên chỉ chạy khi chưa ai dựng trên bản mới) hoặc thêm tay trong file gốc. Không để mỗi người tạo measure riêng trong file riêng, vì khi ghép sẽ mất.
 - [ ] **D8 Thị trường Brazil:** sau P9, dựng bằng Power BI từ dữ liệu API; hướng dẫn `huong-dan/dashboards/D8.md` (do P9 viết). Không sửa DB1–DB4 của nhóm.
 - [ ] **Ghép file tổng** (4 file `DBx_<tên>.pbix` → `Olist_DW_BI.pbix`), cách làm gợi ý (chưa thử):
@@ -142,7 +142,7 @@ Trước khi nộp slide: số liệu trong slide mở đầu khớp `handoff/00
 - [ ] **Chương 5** theo kiến trúc → triển khai → minh chứng → kết quả (mục 5).
 - [ ] **Kết luận** (`05-tong-ket.tex`): số kết quả, 3 bài học chính từ Người 4, hạn chế.
 - [ ] **Ghép slide:** nhận `.tex` và hình từ `04_Docs/tex-nop/` (hạn 27/11); chép vào `slides/sections/` và `slides/figures/` (đúng tên file); biên dịch `latexmk -lualatex main.tex`; kiểm tra số trang (hiện 167), không còn khung đỏ (`khungchen`), không còn `[nhóm xác nhận]`; chạy `python scripts/make_slides_zip.py`.
-- [ ] **Số liệu cần đồng bộ trước khi ghép:** S78 ghi "20–26 giây", số thật 21,3–27,6 giây (S105 đã ghi 21–28); S90 ghi "16 bảng", mô hình hiện có 38 bảng; S47 "380/842" và các slide dashboard "379" cùng tồn tại (khác phạm vi đơn, có ghi chú); kiểm tra các số khác khi slide đã sửa.
+- [ ] **Số liệu cần đồng bộ trước khi ghép:** S78 ghi "20–26 giây", số thật 21,3–27,6 giây (S105 đã ghi 21–28); S90 ghi "16 bảng", mô hình hiện có 46 bảng; S47 "380/842" và các slide dashboard "379" cùng tồn tại (khác phạm vi đơn, có ghi chú); kiểm tra các số khác khi slide đã sửa.
 
 ### 7.4 Tổng duyệt (28–29/11)
 - [ ] Chạy thử toàn bộ theo thứ tự: Phú → Người 1 → Người 2 → Người 3 → Người 4 → Phú; bấm giờ từng người (giả định ở các file `Nguoi-x.md`); điều chỉnh số slide nói khi có thời lượng chính thức.
