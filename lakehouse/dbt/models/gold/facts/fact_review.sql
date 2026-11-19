@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('dim_date') }}
 {# transaction fact, grain = (review, order); delivered_late comes from fact_order_fulfillment.
    'Has a comment' = something left after removing SPACES at both ends, as PostgreSQL trim() does; Trino trim() also removes line breaks and tabs, which
    made 18 reviews that contain only a line break count as 'no comment' (found by reconcile.py). #}

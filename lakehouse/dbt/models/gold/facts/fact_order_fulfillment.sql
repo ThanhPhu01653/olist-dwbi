@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('dim_date') }}
 {# accumulating snapshot, grain = order. Intervals come from the original timestamps; a negative value (source error) becomes NULL and is counted in
    dq_flag_count on top of the flags Silver already set. Hours and days are rounded in integer arithmetic (half away from zero, like PostgreSQL numeric). #}
 with o as (

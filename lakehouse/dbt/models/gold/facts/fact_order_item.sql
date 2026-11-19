@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('dim_date') }}
 {# transaction fact, grain = order item; same lookups and Unknown member (-1) as dw.load_fact_order_item #}
 select i.order_id, i.order_item_id,
        {{ date_key(ts('o.order_purchase_timestamp')) }} as purchase_date_key,

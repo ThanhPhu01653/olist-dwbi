@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('dim_date') }}
 {# transaction fact, grain = payment of an order #}
 select p.order_id, p.payment_sequential, {{ date_key(ts('o.order_purchase_timestamp')) }} as purchase_date_key,
        coalesce(dc.customer_key, -1) as customer_key, coalesce(pt.payment_type_key, -1) as payment_type_key,
