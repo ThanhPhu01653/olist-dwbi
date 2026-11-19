@@ -1,0 +1,14 @@
+
+    
+    
+    
+    create table "iceberg"."silver"."city_ibge_override" ("state_code" VARCHAR,"city" VARCHAR,"ibge_code" INTEGER,"note" VARCHAR) 
+  ;
+    -- dbt seed --
+    
+          insert into "iceberg"."silver"."city_ibge_override" ("state_code", "city", "ibge_code", "note") values
+          (?,?,?,?),(?,?,?,?),(?,?,?,?),(?,?,?,?),(?,?,?,?),(?,?,?,?),(?,?,?,?),(?,?,?,?)
+      
+
+;
+  

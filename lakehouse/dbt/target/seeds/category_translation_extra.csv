@@ -1,0 +1,14 @@
+
+    
+    
+    
+    create table "iceberg"."silver"."category_translation_extra" ("product_category_name" VARCHAR,"product_category_name_english" VARCHAR) 
+  ;
+    -- dbt seed --
+    
+          insert into "iceberg"."silver"."category_translation_extra" ("product_category_name", "product_category_name_english") values
+          (?,?),(?,?)
+      
+
+;
+  

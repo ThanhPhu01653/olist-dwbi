@@ -1,0 +1,27 @@
+version: 2
+sources:
+  - name: silver
+    description: Silver tables written by Spark (stream_bronze_silver.py and silver_batch.py)
+    database: iceberg
+    schema: silver
+    tables:
+      - name: customers
+      - name: orders
+      - name: order_items
+      - name: order_payments
+      - name: order_reviews
+      - name: products
+      - name: sellers
+      - name: category_translation
+      - name: mql
+      - name: closed_deals
+      - name: geolocation_zip
+      - name: customer_address_scd2
+      - name: order_status_history
+      - name: ibge_municipio
+      - name: ibge_population
+      - name: ibge_gdp
+      - name: fx_usd_brl
+      - name: ipca_month
+      - name: holiday_official
+      - name: city_ibge_match

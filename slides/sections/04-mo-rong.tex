@@ -13,6 +13,29 @@
 \note{[S116] Khung: triển khai lakehouse (P10).}
 \end{frame}
 
+\begin{frame}{Đối soát với nguồn bắt được lỗi mà log không thấy: Silver chỉ có 24.765 trên 45.971 đơn, sau sửa khớp 100\%}
+\muc{5.1 · Lakehouse}
+\begin{columns}[T]\begin{column}{0.5\textwidth}
+\begin{itemize}
+  \item \textbf{Hiện tượng:} luồng chạy xong, không lỗi, Bronze đủ (1.276.620 sự kiện = tổng offset Kafka), nhưng Silver chỉ có 24.765 đơn
+  \item \textbf{Nguyên nhân:} đơn có thể đến trước khách hàng vài lô nên được giữ ở bảng \texttt{orders\_rejected} để thử lại; sau khi xoá orphan cũ, Spark tính lại DataFrame đã cache và mất đúng phần orphan đang chờ
+  \item \textbf{Sửa:} \texttt{localCheckpoint()} thay cho \texttt{persist()} (cắt lineage với bảng)
+  \item \textbf{Bài học:} đối soát với nguồn bắt được lỗi mà log không thấy
+\end{itemize}
+\end{column}\begin{column}{0.46\textwidth}
+{\small\begin{tabular}{lrr}
+\hline
+ & \textbf{Trước sửa} & \textbf{Sau sửa} \\\hline
+Bronze & 1.276.620 & 1.276.620 \\
+Silver \texttt{orders} & 24.765 & 45.971 \\
+Nguồn \texttt{orders} & 45.971 & 45.971 \\
+Orphan còn lại & 0 & 0 \\
+Silver = nguồn & \textbf{sai} & \textbf{đúng} \\\hline
+\end{tabular}}
+\end{column}\end{columns}
+\note{[P10-bài học] Số liệu: handoff P10, mục 3.7 của docs/LAKEHOUSE.md. Hai lần chạy đầu cùng sai; log từng lô chỉ cho thấy tổng đơn hợp lệ cộng orphan bằng số sự kiện mới, không phải lỗi. Đây là lý do test Silver = nguồn là bắt buộc.}
+\end{frame}
+
 \begin{frame}{[P10] Kết quả lakehouse: số liệu đo được so với kho PostgreSQL}
 \muc{5.1 · Lakehouse}
 \khungchen[0.5\textheight]{P10 điền: bảng kết quả và hình}

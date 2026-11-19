@@ -1,0 +1,41 @@
+name: olist_lakehouse
+version: "1.0.0"
+config-version: 2
+profile: olist_lakehouse
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+# the reference seeds of the warehouse are reused as they are (seeds/ of the repository) plus the calendar built by gen_dim_date_seed.py
+seed-paths: ["../../seeds", "seeds"]
+target-path: target
+clean-targets: [target, dbt_packages]
+
+models:
+  olist_lakehouse:
+    +on_table_exists: replace
+    staging:
+      +materialized: view
+      +schema: silver
+    gold:
+      +materialized: table
+      +schema: gold
+
+seeds:
+  olist_lakehouse:
+    +schema: silver          # reference tables next to the Silver tables (like ods.ref_* in the warehouse)
+    dim_date_base:
+      +column_types:
+        date_key: integer
+        full_date: date
+        day_of_month: integer
+        day_of_week: integer
+        week_of_year: integer
+        month: integer
+        quarter: integer
+        year: integer
+        is_weekend: boolean
+        is_holiday_br: boolean
+        is_black_friday: boolean
+    order_status:
+      +column_types: {is_final: boolean}

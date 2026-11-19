@@ -227,6 +227,23 @@ Bước 2 đã chạy thử: image này lên, qua healthcheck, tạo được bu
 1. *Orphan tạm thời.* Các topic được Spark đọc theo tỉ lệ, nên đơn có thể đến trước khách hàng của nó vài lô. Giống ODS, dòng mồ côi vào `silver.<bảng>_rejected` (mã `orphan`) và được thử lại ở mọi lô; khi cha đến thì dòng tự rời bảng loại. Ở lô đầu có tới khoảng 8.000 đơn chờ cùng lúc; đến lô cuối còn 0.
 2. *Mất dữ liệu âm thầm khi thử lại orphan.* Bản đầu chỉ `persist()` tập ứng viên, nhưng sau khi `DELETE` các orphan cũ trong bảng `*_rejected`, Spark tính lại mọi DataFrame đã cache có phụ thuộc vào bảng vừa đổi, nên tập ứng viên mất đúng phần orphan đang chờ. Hai lần chạy đầu Silver chỉ có 24.765 trên 45.971 đơn (Bronze vẫn đủ), và log từng lô có tổng đơn hợp lệ + orphan đúng bằng số sự kiện mới, không phải số ứng viên. Sửa bằng `localCheckpoint()` (sao chép dữ liệu ra khỏi bảng, cắt lineage). Phát hiện nhờ đối chiếu Silver với nguồn, không phải nhờ log lỗi: đây là lý do bài kiểm thử "Silver = nguồn" là bắt buộc (Bước 12).
 
+### 3.8 Phát lại 11 tháng, Silver địa lý, SCD2 khách và Silver API (Bước 4, phần còn lại)
+
+**Mốc cắt giữa nạp bù và phát lại.** Nạp ban đầu (`etl.load_source --initial`) gồm mọi bản ghi có mốc thời gian đến hết **31/12/2017** (đơn theo `order_purchase_timestamp`, MQL theo `first_contact_date`, deal theo `won_date`; bảng tham chiếu nạp đủ). Phần phát lại (`replay_events.py`) là mọi thứ từ **01/01/2018**, thời gian mô phỏng từ 01/01/2018 đến 14/11/2018 (mốc cuối của dữ liệu). Các con số Silver ở mục 3.7 (45.971 đơn, 3 deal) là trạng thái **tại mốc này cộng 3.000 sự kiện phát lại thử** (đến 01/01/2018 18:35, 541 đơn đầu tiên của năm 2018): 45.430 + 541 = 45.971; không phải chỉ đến 31/12/2017.
+
+**Phát lại.** 446.935 sự kiện cho 54.011 đơn mới: 54.011 INSERT đơn, **160.791 UPDATE đơn** (trạng thái đi qua các mốc duyệt, giao vận chuyển, giao khách, huỷ…), 54.011 khách, 61.416 dòng hàng, 56.015 thanh toán, 53.854 review, 5.998 MQL, 839 deal. Chạy với `--speed 30000` (30.000 giây mô phỏng mỗi giây thật), 200 sự kiện mỗi giao dịch nguồn: **947,5 giây (15,8 phút), 471,7 sự kiện mỗi giây**, trong lúc luồng Spark chạy liên tục (micro-batch 30 giây, tối đa 100.000 sự kiện mỗi lô). Kafka có 1.720.555 sự kiện, bằng đúng 1.273.620 của snapshot + 446.935 của phát lại; Bronze có cùng số dòng.
+
+*Hai lỗi của `replay_events.py` đã sửa:* (1) danh sách sự kiện từng phụ thuộc trạng thái database (bỏ các đơn đã chèn), nên số thứ tự sự kiện đổi giữa các lần chạy và lần chạy lại bỏ sót sự kiện, vi phạm khoá ngoại; nay sinh chỉ từ CSV, nên tiến độ `last_seq` đáng tin; (2) UPDATE nay có điều kiện chỉ đi tiến (không đưa đơn về trạng thái trước), nên chạy lại với `--restart` an toàn.
+
+**Bộ nhớ khi chạy liên tục** (lấy mẫu mỗi 30 giây, 46 mẫu, đỉnh MiB): Spark 1.534 trên giới hạn 1.536 (chạm giới hạn nhưng không bị kill), Trino 857, Connect 408, Kafka 339, MinIO 183, PostgreSQL 169, REST 152; cộng các đỉnh khoảng 3,6 GB, dưới trần WSL 4 GB.
+
+**Silver còn lại (`silver_batch.py`, Spark batch, chạy sau khi luồng dừng):**
+- `silver.geolocation_zip`: 19.015 dòng (bằng `ods.geolocation_zip`), `silver.geolocation_rejected`: 42 dòng toạ độ ngoài khung Brazil.
+- `silver.customer_address_scd2`: 96.338 phiên bản của 96.096 khách (96.096 phiên bản hiện hành), ghi bằng MERGE trên (customer_unique_id, effective_from); khớp `dim_customer` của kho (96.339 dòng gồm 1 dòng Unknown).
+- Silver API (đọc từ `bronze.api_*`): 5.571 đô thị, 16.710 dòng dân số và 16.710 dòng PIB, 1.827 ngày tỷ giá, 60 tháng IPCA, 65 ngày lễ, 27 trạm, 29.592 ngày thời tiết. Ghép (bang, thành phố) với đô thị IBGE qua 4 tầng: exact 3.124 cặp (9.006 zip), normalized 2.334 cặp (9.428 zip), fuzzy 9 cặp (16 zip), override 8 cặp (8 zip), chưa khớp 715 cặp (719 zip): **trùng từng số với P9**.
+
+**Đối soát cuối Bước 4** (sau khi phát lại xong): `silver.orders` 99.441, `customers` 99.441, `order_items` 112.650, `order_payments` 103.886, `order_reviews` 99.224, `products` 32.951, `sellers` 3.095, `mql` 8.000, `closed_deals` 842, `geolocation_zip` 19.015: **bằng bảng nguồn trong `olist_src` và bằng bảng `ods.*` của `olist_dw`** ở cả 10 bảng; các bảng `*_rejected` của luồng có 0 dòng; `order_status_history` 310.725 dòng.
+
 ## 4. Bảng Bronze, Silver, Gold
 
 Ký hiệu cách ghi: **append** (chỉ thêm), **MERGE** (cập nhật hoặc thêm theo khoá, giữ bản `ts_ms` mới nhất), **thay bảng** (`CREATE OR REPLACE` / ghi đè toàn bảng, dbt `table`).
@@ -305,5 +322,5 @@ WHERE order_id = :id AND valid_from <= TIMESTAMP :t AND (valid_to IS NULL OR val
 | 1 | Thiết kế | xong (tài liệu này) |
 | 2 | Hạ tầng: Compose, healthcheck, `check_health.py` | xong (mục 3.5, handoff P10) |
 | 3 | Thu nhận: nạp nguồn, Debezium, replay, API → MinIO → Bronze | xong (mục 3.6) |
-| 4 | Bronze → Silver (luồng) | đang làm: luồng Kafka → Bronze → Silver chạy đúng (mục 3.7); còn Silver địa lý theo mã bưu chính, SCD2 địa chỉ khách, Silver của API |
+| 4 | Bronze → Silver (luồng) | xong (mục 3.7 và 3.8): Silver = nguồn = ODS của kho chương 3 ở mọi bảng |
 | 5–13 | Gold, đối soát, tính năng, vận hành, đo, Superset, kiểm thử, tài liệu | chưa làm |

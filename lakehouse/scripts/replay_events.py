@@ -36,6 +36,8 @@ MKT = ROOT / "data" / "raw" / "marketing"
 CUTOFF = pd.Timestamp("2018-01-01")            # first instant that is not in the initial load
 
 INSERT_ORDER = ["oltp.customers", "oltp.orders", "oltp.order_items", "oltp.order_payments", "oltp.order_reviews", "crm.mql", "crm.closed_deals"]
+PREVIOUS = {"approved": ["created"], "shipped": ["created", "approved"], "delivered": ["created", "approved", "shipped"],
+            "final": ["created", "approved", "shipped"]}      # statuses an order may have before the update (a re-run never moves it backwards)
 TS_COLS = {"approved": "order_approved_at", "shipped": "order_delivered_carrier_date", "delivered": "order_delivered_customer_date"}
 
 
@@ -47,12 +49,10 @@ def none(v):
     return None if v == "" or v is pd.NaT else v
 
 
-def build_events(cur) -> tuple[list, dict]:
-    """All events after the initial load, sorted by (simulated time, sequence). Event = (time, seq, op, table, payload)."""
-    have = {}
-    for t, col in [("oltp.orders", "order_id"), ("crm.mql", "mql_id"), ("crm.closed_deals", "mql_id")]:
-        cur.execute(f"SELECT {col} FROM {t}")
-        have[t] = {r[0] for r in cur.fetchall()}
+def build_events() -> tuple[list, dict]:
+    """All events after the initial load, sorted by (simulated time, sequence). Event = (time, seq, op, table, payload).
+    Built from the CSV files ONLY (never from the state of the database), so the sequence numbers are the same in every run and
+    public.replay_state.last_seq can be trusted. (An earlier version skipped orders already inserted: numbering moved, events were lost.)"""
     ev: list = []
     seq = 0
 
@@ -63,7 +63,7 @@ def build_events(cur) -> tuple[list, dict]:
 
     orders = rd(ECOM / "olist_orders_dataset.csv")
     ptime = pd.to_datetime(orders["order_purchase_timestamp"], errors="coerce")
-    orders = orders[(ptime >= CUTOFF) & ~orders["order_id"].isin(have["oltp.orders"]) & ptime.notna()].copy()
+    orders = orders[(ptime >= CUTOFF) & ptime.notna()].copy()
     orders["_p"] = pd.to_datetime(orders["order_purchase_timestamp"])
     for k, c in TS_COLS.items():                    # parse once (vectorised); per-row parsing was 100 s
         orders["_" + k] = pd.to_datetime(orders[c], errors="coerce")
@@ -122,10 +122,9 @@ def build_events(cur) -> tuple[list, dict]:
     # marketing funnel
     mql = rd(MKT / "olist_marketing_qualified_leads_dataset.csv")
     deals = rd(MKT / "olist_closed_deals_dataset.csv")
-    new_deals = deals[~deals["mql_id"].isin(have["crm.closed_deals"])].copy()
-    new_deals = new_deals[pd.to_datetime(new_deals["won_date"], errors="coerce") >= CUTOFF]
+    new_deals = deals[pd.to_datetime(deals["won_date"], errors="coerce") >= CUTOFF].copy()
     won = dict(zip(new_deals["mql_id"], pd.to_datetime(new_deals["won_date"])))
-    new_mql = mql[~mql["mql_id"].isin(have["crm.mql"])]
+    new_mql = mql[pd.to_datetime(mql["first_contact_date"], errors="coerce") >= CUTOFF]
     for d in new_mql.to_dict("records"):
         t = pd.to_datetime(d["first_contact_date"], errors="coerce")
         if d["mql_id"] in won:
@@ -162,7 +161,9 @@ def apply_batch(cur, batch: list, cols: dict) -> None:
     for _t, _s, op, table, payload in batch:
         if op == "u":
             sets = payload["set"]
-            cur.execute(f"UPDATE {table} SET " + ", ".join(f"{k} = %s" for k in sets) + " WHERE order_id = %s", [none(v) for v in sets.values()] + [payload["order_id"]])
+            earlier = PREVIOUS.get(sets["order_status"], PREVIOUS["final"])
+            cur.execute(f"UPDATE {table} SET " + ", ".join(f"{k} = %s" for k in sets) + " WHERE order_id = %s AND order_status = ANY(%s)",
+                        [none(v) for v in sets.values()] + [payload["order_id"], earlier])
 
 
 def main() -> None:
@@ -172,18 +173,22 @@ def main() -> None:
     ap.add_argument("--until")
     ap.add_argument("--limit-events", type=int)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--restart", action="store_true", help="forget the stored progress and apply the events again from the first one (safe: inserts are ON CONFLICT DO NOTHING, updates never go backwards)")
     a = ap.parse_args()
     env = load_env()
     conn = psycopg2.connect(host="127.0.0.1", port=int(env["LH_PG_PORT"]), user=env["LH_PG_USER"], password=env["LH_PG_PASSWORD"], dbname=env["LH_PG_DB"])
     cur = conn.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS public.replay_state (k text PRIMARY KEY, v text NOT NULL, updated_at timestamptz NOT NULL DEFAULT now())")
     conn.commit()
+    if a.restart:
+        cur.execute("DELETE FROM public.replay_state WHERE k = 'last_seq'")
+        conn.commit()
     cur.execute("SELECT v FROM public.replay_state WHERE k = 'last_seq'")
     row = cur.fetchone()
     last_seq = int(row[0]) if row else 0
 
     t0 = time.perf_counter()
-    events, stats = build_events(cur)
+    events, stats = build_events()
     conn.rollback()
     print(f"built {stats['events']:,} events for {stats['orders']:,} new orders in {time.perf_counter() - t0:.1f}s; "
           f"simulated period {events[0][0]:%Y-%m-%d} .. {events[-1][0]:%Y-%m-%d}; already applied up to seq {last_seq}", flush=True)

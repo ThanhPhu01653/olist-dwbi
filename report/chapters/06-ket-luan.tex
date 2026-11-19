@@ -8,6 +8,7 @@
   \item Định nghĩa KPI một lần (GMV loại đơn Failed) và đối chiếu bằng SQL để tránh số lệch giữa các dashboard.
   \item Mô hình chiều không phải lúc nào cũng nhanh hơn trên dữ liệu nhỏ; giá trị nằm ở sự nhất quán, còn tốc độ đến từ materialized view và chỉ mục.
   \item Kiểm thử tái lập (dựng lại toàn bộ từ đầu) phát hiện sớm sự phụ thuộc ngầm giữa các bước.
+  \item Đối soát với nguồn bắt được lỗi mà log không thấy: ở lakehouse, tầng Silver từng thiếu gần một nửa số đơn (24.765 trên 45.971) mà luồng vẫn chạy xong không báo lỗi; chỉ phép so Silver với bảng nguồn mới làm lộ ra.
 \end{itemize}
 \todo{Nhóm bổ sung bài học về làm việc nhóm, phân công, công cụ (Git, Power BI) và khó khăn thực tế.}
 

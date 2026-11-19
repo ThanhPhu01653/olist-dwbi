@@ -1,0 +1,91 @@
+version: 2
+
+models:
+  - name: dim_date
+    columns:
+      - {name: date_key, tests: [unique, not_null]}
+      - name: is_weekend
+  - name: dim_geography
+    columns:
+      - {name: geography_key, tests: [unique, not_null]}
+      - name: zip_code_prefix
+        tests: [unique]
+  - name: dim_customer
+    description: SCD type 2 (one row per version of the address of a customer_unique_id)
+    columns:
+      - {name: customer_key, tests: [unique, not_null]}
+      - name: geography_key
+        tests: [{relationships: {to: ref('dim_geography'), field: geography_key}}]
+    tests:
+      - unique_combination: {columns: [customer_unique_id, effective_from]}
+  - name: dim_seller
+    columns:
+      - {name: seller_key, tests: [unique, not_null]}
+      - {name: seller_id, tests: [unique, not_null]}
+      - name: geography_key
+        tests: [{relationships: {to: ref('dim_geography'), field: geography_key}}]
+  - name: dim_product
+    columns:
+      - {name: product_key, tests: [unique, not_null]}
+      - {name: product_id, tests: [unique, not_null]}
+      - name: size_class
+        tests: [{accepted_values: {values: ['S', 'M', 'L', 'XL', 'Unknown']}}]
+  - name: dim_order_status
+    columns:
+      - {name: order_status_key, tests: [unique, not_null]}
+      - name: status_group
+        tests: [{accepted_values: {values: ['Completed', 'In progress', 'Failed', 'Unknown']}}]
+  - name: dim_payment_type
+    columns:
+      - {name: payment_type_key, tests: [unique, not_null]}
+      - name: payment_group
+        tests: [{accepted_values: {values: ['Card', 'Bank slip', 'Voucher', 'Unknown']}}]
+  - name: dim_lead_origin
+    columns:
+      - {name: lead_origin_key, tests: [unique, not_null]}
+  - name: dim_lead_profile
+    columns:
+      - {name: lead_profile_key, tests: [unique, not_null]}
+  - name: dim_sales_rep
+    columns:
+      - {name: sales_rep_key, tests: [unique, not_null]}
+
+  - name: fact_order_item
+    tests:
+      - unique_combination: {columns: [order_id, order_item_id]}
+    columns:
+      - {name: customer_key, tests: [not_null, {relationships: {to: ref('dim_customer'), field: customer_key}}]}
+      - {name: seller_key, tests: [not_null, {relationships: {to: ref('dim_seller'), field: seller_key}}]}
+      - {name: product_key, tests: [not_null, {relationships: {to: ref('dim_product'), field: product_key}}]}
+      - {name: order_status_key, tests: [not_null, {relationships: {to: ref('dim_order_status'), field: order_status_key}}]}
+      - {name: purchase_date_key, tests: [not_null, {relationships: {to: ref('dim_date'), field: date_key}}]}
+      - {name: customer_geography_key, tests: [{relationships: {to: ref('dim_geography'), field: geography_key}}]}
+      - {name: seller_geography_key, tests: [{relationships: {to: ref('dim_geography'), field: geography_key}}]}
+  - name: fact_payment
+    tests:
+      - unique_combination: {columns: [order_id, payment_sequential]}
+    columns:
+      - {name: customer_key, tests: [not_null, {relationships: {to: ref('dim_customer'), field: customer_key}}]}
+      - {name: payment_type_key, tests: [not_null, {relationships: {to: ref('dim_payment_type'), field: payment_type_key}}]}
+  - name: fact_order_fulfillment
+    columns:
+      - {name: order_id, tests: [unique, not_null]}
+      - {name: customer_key, tests: [not_null, {relationships: {to: ref('dim_customer'), field: customer_key}}]}
+      - {name: order_status_key, tests: [not_null, {relationships: {to: ref('dim_order_status'), field: order_status_key}}]}
+      - name: is_delivered
+        tests: [{accepted_values: {values: [0, 1], quote: false}}]
+  - name: fact_review
+    tests:
+      - unique_combination: {columns: [review_id, order_id]}
+    columns:
+      - {name: customer_key, tests: [not_null, {relationships: {to: ref('dim_customer'), field: customer_key}}]}
+  - name: fact_lead_funnel
+    columns:
+      - {name: mql_id, tests: [unique, not_null]}
+      - {name: lead_origin_key, tests: [not_null, {relationships: {to: ref('dim_lead_origin'), field: lead_origin_key}}]}
+      - {name: seller_key, tests: [not_null, {relationships: {to: ref('dim_seller'), field: seller_key}}]}
+  - name: fact_seller_monthly
+    tests:
+      - unique_combination: {columns: [month_date_key, seller_key]}
+    columns:
+      - {name: seller_key, tests: [not_null, {relationships: {to: ref('dim_seller'), field: seller_key}}]}
