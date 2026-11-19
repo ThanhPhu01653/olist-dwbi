@@ -107,7 +107,7 @@ if rows:
                     ("e2e_visible", "Tổng: nguồn → đọc được qua Trino")):
         v = [r[k] for r in rows]
         out(f"| {name} | {min(v):.1f} | {statistics.mean(v):.1f} | {max(v):.1f} |")
-    out(f"\n{len(rows)} lần thử, trigger 30 giây. Chặng "Kafka → Bronze" gồm thời gian chờ đến lần kích hoạt kế tiếp của micro-batch (0 đến 30 giây, trung bình kỳ vọng 15 giây); chặng "Bronze → Silver" là thời gian xử lý của lô (MERGE vào Iceberg). Chặng PostgreSQL → Kafka (Debezium) dưới 1 giây.")
+    out(f"\n{len(rows)} lần thử, trigger 30 giây. Chặng 'Kafka → Bronze' gồm thời gian chờ đến lần kích hoạt kế tiếp của micro-batch (0 đến 30 giây, trung bình kỳ vọng 15 giây); chặng 'Bronze → Silver' là thời gian xử lý của lô (MERGE vào Iceberg). Chặng PostgreSQL → Kafka (Debezium) dưới 1 giây.")
 
 # ------------------------------------------------------------------ burst
 burst = None
