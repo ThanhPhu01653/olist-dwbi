@@ -215,6 +215,18 @@ Bước 2 đã chạy thử: image này lên, qua healthcheck, tạo được bu
 - **Phát lại 11 tháng** (`lakehouse/scripts/replay_events.py`): 446.935 sự kiện cho 54.011 đơn mới, thời gian mô phỏng 01/01/2018 → 14/11/2018: 54.011 INSERT đơn, 160.791 UPDATE đơn (đi qua các mốc duyệt, giao vận chuyển, giao khách, huỷ…), cùng khách, dòng hàng, thanh toán, review, 5.998 MQL và 839 deal. Chạy thử 3.000 sự kiện đầu: khoảng 5.000 sự kiện mỗi giây vào PostgreSQL; các UPDATE xuất hiện trên topic `olist.oltp.orders` với `op=u` và ảnh `after` đầy đủ. Tiến độ lưu ở `public.replay_state` (cùng giao dịch với sự kiện, không bị Debezium bắt) nên chạy lại không áp sự kiện hai lần.
 - **API:** collector `api_ingest/` giữ nguyên; `upload_landing.py` chép 73 tệp (4,92 MB) từ `data/raw/api/` lên `s3://lakehouse/landing/api/...`. Spark (`spark/bronze_api.py`, đọc bằng `s3a://`) tạo 4 bảng `bronze.api_*` với 73 dòng (9 + 3 + 6 + 55), JSON giữ nguyên; chạy lại thêm 0 dòng.
 
+### 3.7 Kết quả chạy thử luồng Bronze → Silver (Bước 4, phần đã xong)
+
+`lakehouse/spark/stream_bronze_silver.py`: một ứng dụng Spark Structured Streaming (Kafka → Bronze → Silver), micro-batch có tham số `--trigger-seconds` (mặc định 30) và `--max-offsets` (số sự kiện tối đa mỗi lô, mặc định 100.000). Silver áp lại quy tắc làm sạch của ODS (`sql/30_ods/020_ods_procs.sql`) và ghi bằng MERGE theo khoá chính; một sự kiện chỉ thay dòng có sẵn khi `ts_ms` không cũ hơn.
+
+**Nạp bù toàn bộ Kafka (lô đầu):** 13 micro-batch, 1.276.620 sự kiện (1.273.620 của snapshot + 3.000 sự kiện phát lại thử), khoảng 10 phút, trung bình khoảng 2.100 sự kiện mỗi giây. Lô đầu 99.995 sự kiện: Bronze 12,9 giây, Silver 28,2 giây; các lô sau Bronze 6–13 giây, Silver 29–50 giây (geolocation chiếm khoảng 78% sự kiện và chỉ vào Bronze).
+
+**Kết quả đối chiếu:** Bronze có 1.276.620 dòng, bằng đúng tổng offset của 11 topic Kafka. Silver bằng đúng bảng nguồn: orders 45.971, customers 45.971, order_items 51.834, order_payments 48.443, order_reviews 45.370, products 32.951, sellers 3.095, mql 2.116, closed_deals 3, category_translation 71; các bảng `*_rejected` còn 0 dòng; `silver.order_status_history` 97.096 dòng.
+
+**Hai lỗi đã gặp và cách sửa (ghi lại vì dễ lặp lại):**
+1. *Orphan tạm thời.* Các topic được Spark đọc theo tỉ lệ, nên đơn có thể đến trước khách hàng của nó vài lô. Giống ODS, dòng mồ côi vào `silver.<bảng>_rejected` (mã `orphan`) và được thử lại ở mọi lô; khi cha đến thì dòng tự rời bảng loại. Ở lô đầu có tới khoảng 8.000 đơn chờ cùng lúc; đến lô cuối còn 0.
+2. *Mất dữ liệu âm thầm khi thử lại orphan.* Bản đầu chỉ `persist()` tập ứng viên, nhưng sau khi `DELETE` các orphan cũ trong bảng `*_rejected`, Spark tính lại mọi DataFrame đã cache có phụ thuộc vào bảng vừa đổi, nên tập ứng viên mất đúng phần orphan đang chờ. Hai lần chạy đầu Silver chỉ có 24.765 trên 45.971 đơn (Bronze vẫn đủ), và log từng lô có tổng đơn hợp lệ + orphan đúng bằng số sự kiện mới, không phải số ứng viên. Sửa bằng `localCheckpoint()` (sao chép dữ liệu ra khỏi bảng, cắt lineage). Phát hiện nhờ đối chiếu Silver với nguồn, không phải nhờ log lỗi: đây là lý do bài kiểm thử "Silver = nguồn" là bắt buộc (Bước 12).
+
 ## 4. Bảng Bronze, Silver, Gold
 
 Ký hiệu cách ghi: **append** (chỉ thêm), **MERGE** (cập nhật hoặc thêm theo khoá, giữ bản `ts_ms` mới nhất), **thay bảng** (`CREATE OR REPLACE` / ghi đè toàn bảng, dbt `table`).
@@ -293,4 +305,5 @@ WHERE order_id = :id AND valid_from <= TIMESTAMP :t AND (valid_to IS NULL OR val
 | 1 | Thiết kế | xong (tài liệu này) |
 | 2 | Hạ tầng: Compose, healthcheck, `check_health.py` | xong (mục 3.5, handoff P10) |
 | 3 | Thu nhận: nạp nguồn, Debezium, replay, API → MinIO → Bronze | xong (mục 3.6) |
-| 4–13 | Bronze → Silver (luồng), Gold, đối soát, tính năng, vận hành, đo, Superset, kiểm thử, tài liệu | chưa làm |
+| 4 | Bronze → Silver (luồng) | đang làm: luồng Kafka → Bronze → Silver chạy đúng (mục 3.7); còn Silver địa lý theo mã bưu chính, SCD2 địa chỉ khách, Silver của API |
+| 5–13 | Gold, đối soát, tính năng, vận hành, đo, Superset, kiểm thử, tài liệu | chưa làm |

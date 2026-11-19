@@ -150,6 +150,7 @@ services:
       - ./spark:/opt/lakehouse/spark:ro
       - ../seeds:/opt/lakehouse/seeds:ro
       - spark-ivy:/root/.ivy2
+      - ./data/logs:/opt/lakehouse/logs        # job logs readable from Windows (lakehouse/data is not committed)
     mem_limit: 1536m
     healthcheck:
       test: ["CMD-SHELL", "test -x /opt/spark/bin/spark-submit"]
