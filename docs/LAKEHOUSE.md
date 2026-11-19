@@ -137,7 +137,7 @@ Ngân sách bộ nhớ dự kiến của `lite` (giới hạn `mem_limit` mỗi 
 | Nguồn API | `api_ingest/` (P9) | JSON thô → landing zone trên MinIO | dùng lại, không viết lại | Python 3.11 (image dựng riêng) |
 | Thu nhận | Debezium (Kafka Connect) | đọc WAL, mỗi bảng một topic | chuẩn de facto cho CDC PostgreSQL | `quay.io/debezium/connect:3.2.0.Final` |
 | Bus sự kiện | Apache Kafka, KRaft | lưu sự kiện, phát lại | không cần ZooKeeper, ít bộ nhớ hơn | `apache/kafka:3.9.1` |
-| Lưu trữ | MinIO (S3) | object storage cho bucket `lakehouse` | API S3 chuẩn; xem 3.4 về nguồn image | `bitnamilegacy/minio:2025.7.23-debian-12-r5` |
+| Lưu trữ | MinIO (S3) | object storage cho bucket `lakehouse` | API S3 chuẩn; xem 3.4 về nguồn image | `bitnamilegacy/minio:2025.4.22-debian-12-r1` |
 | Định dạng bảng | Apache Iceberg (spec v2) | ACID, time travel, MERGE, đổi schema | thầy yêu cầu table format có ACID; mở, nhiều engine đọc được | thư viện 1.10.0 |
 | Catalog | Iceberg REST catalog, backend JDBC trên PostgreSQL | tên bảng → vị trí metadata, bền sau khi khởi động lại | REST là giao thức chung của Spark và Trino | `apache/iceberg-rest-fixture:1.10.0` + driver `postgresql-42.7.4` (image dựng riêng `olist-lakehouse/iceberg-rest:1.10.0-pg42.7.4`, xem 3.5) |
 | Xử lý | Spark Structured Streaming + Spark batch | Kafka → Bronze → Silver (luồng); SCD2 (lô) | đọc Kafka và ghi Iceberg trong cùng engine; MERGE | `apache/spark:3.5.6` + `iceberg-spark-runtime-3.5_2.12:1.10.0` + `spark-sql-kafka-0-10_2.12:3.5.6` |
@@ -198,7 +198,9 @@ PNG: `figures/5-1_kien_truc_lakehouse.png` (bản nháp, nhóm vẽ lại bằng
 
 ### 3.4 Về image MinIO
 
-Kho image chính thức của MinIO (`minio/minio` trên Docker Hub, `quay.io/minio/minio`) **không còn tải được** vào ngày 19/11/2026 (`docker manifest inspect` báo "denied" và "object not found"; MinIO ngừng phát hành image bản cộng đồng từ cuối 2025). Dùng `bitnamilegacy/minio:2025.7.23-debian-12-r5`, vẫn là chương trình MinIO, tag bị đóng băng tại 2025.7.23 và không còn bản vá bảo mật. Chấp nhận được cho đồ án chạy trên laptop; dịch vụ chỉ lộ cổng ra `localhost`. Vì mọi thành phần chỉ dùng API S3, có thể đổi sang SeaweedFS hoặc Garage bằng cách thay một service và hai biến môi trường (`S3_ENDPOINT`, khoá truy cập).
+Kho image chính thức của MinIO (`minio/minio` trên Docker Hub, `quay.io/minio/minio`) **không còn tải được** vào ngày 19/11/2026 (`docker manifest inspect` báo "denied" và "object not found"; MinIO ngừng phát hành image bản cộng đồng từ cuối 2025). Dùng `bitnamilegacy/minio:2025.4.22-debian-12-r1`, vẫn là chương trình MinIO, tag bị đóng băng tại 2025.7.23 và không còn bản vá bảo mật. Chấp nhận được cho đồ án chạy trên laptop; dịch vụ chỉ lộ cổng ra `localhost`. Vì mọi thành phần chỉ dùng API S3, có thể đổi sang SeaweedFS hoặc Garage bằng cách thay một service và hai biến môi trường (`S3_ENDPOINT`, khoá truy cập).
+
+**Console của MinIO (cập nhật 19/11/2026).** Bản `2025.7.23` mở API ở cổng 9000 nhưng **không phục vụ giao diện web** ở cổng 9001 (build mới của MinIO không còn đóng gói console; log không có dòng `WebUI`, cổng không lắng nghe). Đã chuyển sang `2025.4.22-debian-12-r1` (bản cuối còn console); dữ liệu cũ đọc được nguyên vẹn (kiểm tra trước trên một bản sao của volume: bucket `lakehouse` 334 MiB, 5.331 object, giống hệt; Trino vẫn đọc được các bảng Iceberg). Mở `http://127.0.0.1:9001`, tài khoản `lakehouse`, mật khẩu là `LH_MINIO_PASSWORD` trong `lakehouse/.env`.
 
 Bước 2 đã chạy thử: image này lên, qua healthcheck, tạo được bucket `lakehouse` và Spark/Trino ghi và đọc được qua S3. Phương án dự phòng nếu sau này lỗi: `chrislusf/seaweedfs:3.97` (có tag ghim, được duy trì).
 

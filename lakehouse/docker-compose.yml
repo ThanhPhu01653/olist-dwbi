@@ -88,7 +88,7 @@ services:
       start_period: 30s
 
   minio:
-    image: bitnamilegacy/minio:2025.7.23-debian-12-r5
+    image: bitnamilegacy/minio:2025.4.22-debian-12-r1
     profiles: [lite, demo, full]
     container_name: lh-minio
     environment:
