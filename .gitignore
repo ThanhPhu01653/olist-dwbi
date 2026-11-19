@@ -59,3 +59,5 @@ attach/
 *.pbix
 **/.pbi/cache.abf
 **/.pbi/localSettings.json
+
+exports/huong-dan-ca-nhan/
