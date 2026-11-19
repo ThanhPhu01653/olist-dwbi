@@ -74,6 +74,8 @@ Hai việc cho Phú, cần quyền quản trị, làm một trong hai (làm cả
 
 Chưa làm một trong hai việc này thì stack `lite` có thể chạy được từng phần nhưng vẫn có nguy cơ lặp lại lỗi hết bộ nhớ.
 
+**Cập nhật 19/11/2026 (chiều):** Phú đã tăng file phân trang lên 15.000 MB cố định. Đo lại sau khi khởi động lại máy và chạy cả stack `lite` (nhàn rỗi): commit limit 28,5 GB, đã cấp 16,1 GB (57%); RAM còn trống 1,7 GB. Giới hạn bộ nhớ ảo không còn là nút thắt; nút thắt còn lại là RAM vật lý, nên Spark và Trino không nên cùng chạy nặng ở mức `memory=4GB` (mục 0.5).
+
 ### 0.5 Hai profile và những gì khác nhau
 
 | | `lite` (chọn) | `full` (không chọn) |
@@ -137,7 +139,7 @@ Ngân sách bộ nhớ dự kiến của `lite` (giới hạn `mem_limit` mỗi 
 | Bus sự kiện | Apache Kafka, KRaft | lưu sự kiện, phát lại | không cần ZooKeeper, ít bộ nhớ hơn | `apache/kafka:3.9.1` |
 | Lưu trữ | MinIO (S3) | object storage cho bucket `lakehouse` | API S3 chuẩn; xem 3.4 về nguồn image | `bitnamilegacy/minio:2025.7.23-debian-12-r5` |
 | Định dạng bảng | Apache Iceberg (spec v2) | ACID, time travel, MERGE, đổi schema | thầy yêu cầu table format có ACID; mở, nhiều engine đọc được | thư viện 1.10.0 |
-| Catalog | Iceberg REST catalog, backend JDBC trên PostgreSQL | tên bảng → vị trí metadata, bền sau khi khởi động lại | REST là giao thức chung của Spark và Trino | `apache/iceberg-rest-fixture:1.10.0` |
+| Catalog | Iceberg REST catalog, backend JDBC trên PostgreSQL | tên bảng → vị trí metadata, bền sau khi khởi động lại | REST là giao thức chung của Spark và Trino | `apache/iceberg-rest-fixture:1.10.0` + driver `postgresql-42.7.4` (image dựng riêng `olist-lakehouse/iceberg-rest:1.10.0-pg42.7.4`, xem 3.5) |
 | Xử lý | Spark Structured Streaming + Spark batch | Kafka → Bronze → Silver (luồng); SCD2 (lô) | đọc Kafka và ghi Iceberg trong cùng engine; MERGE | `apache/spark:3.5.6` + `iceberg-spark-runtime-3.5_2.12:1.10.0` + `spark-sql-kafka-0-10_2.12:3.5.6` |
 | Mô hình hoá | dbt + adapter dbt-trino | Silver → Gold, test, tài liệu, lineage | cùng tên bảng/cột của kho; test khai báo | `dbt-core` và `dbt-trino` 1.10.x (ghim ở bước 5) |
 | Truy vấn | Trino, connector Iceberg | SQL phân tán trên Gold; user `bi_viewer` chỉ đọc `gold` | đọc Iceberg qua REST; phân quyền theo schema | `trinodb/trino:477` |
@@ -198,7 +200,13 @@ PNG: `figures/5-1_kien_truc_lakehouse.png` (bản nháp, nhóm vẽ lại bằng
 
 Kho image chính thức của MinIO (`minio/minio` trên Docker Hub, `quay.io/minio/minio`) **không còn tải được** vào ngày 19/11/2026 (`docker manifest inspect` báo "denied" và "object not found"; MinIO ngừng phát hành image bản cộng đồng từ cuối 2025). Dùng `bitnamilegacy/minio:2025.7.23-debian-12-r5`, vẫn là chương trình MinIO, tag bị đóng băng tại 2025.7.23 và không còn bản vá bảo mật. Chấp nhận được cho đồ án chạy trên laptop; dịch vụ chỉ lộ cổng ra `localhost`. Vì mọi thành phần chỉ dùng API S3, có thể đổi sang SeaweedFS hoặc Garage bằng cách thay một service và hai biến môi trường (`S3_ENDPOINT`, khoá truy cập).
 
-Nếu bước 2 phát hiện image này không chạy, phương án dự phòng là `chrislusf/seaweedfs:3.97` (có tag ghim, được duy trì).
+Bước 2 đã chạy thử: image này lên, qua healthcheck, tạo được bucket `lakehouse` và Spark/Trino ghi và đọc được qua S3. Phương án dự phòng nếu sau này lỗi: `chrislusf/seaweedfs:3.97` (có tag ghim, được duy trì).
+
+### 3.5 Kết quả chạy thử hạ tầng (Bước 2)
+
+- **Image REST phải dựng thêm.** Image `apache/iceberg-rest-fixture:1.10.0` chỉ có driver SQLite (kiểm tra bằng cách mở jar: không có `org/postgresql/Driver`), nên catalog sẽ nằm trong tệp bên trong container và mất khi container bị tạo lại. `lakehouse/iceberg-rest/Dockerfile` thêm `postgresql-42.7.4.jar` và khởi động cùng jar bằng `java -cp` (lệnh `java -jar` bỏ qua `-cp`). Kiểm chứng: tạo 4 namespace, khởi động lại container REST, danh sách namespace vẫn còn đủ; bảng `iceberg_namespace_properties` trong database `iceberg_catalog` của PostgreSQL có 4 dòng.
+- **Đường ghi và đọc đầy đủ:** Spark (`local[2]`) tạo bảng `ops.smoke` bằng Iceberg qua REST, ghi 2 dòng thành 2 tệp Parquet và 2 tệp metadata trong `s3://lakehouse/warehouse/ops/smoke/`; Trino đọc lại đúng 2 dòng; `snapshots` ghi nhận 1 snapshot kiểu `append`.
+- **Bộ nhớ khi nhàn rỗi** (`docker stats`): Trino 820 MB, Connect 455 MB, Kafka 380 MB, REST 240 MB, MinIO 175 MB, Spark 122 MB, PostgreSQL 58 MB; cộng khoảng 2,25 GB, thấp hơn dự toán ở mục 0.5.
 
 ## 4. Bảng Bronze, Silver, Gold
 
@@ -274,6 +282,7 @@ WHERE order_id = :id AND valid_from <= TIMESTAMP :t AND (valid_to IS NULL OR val
 
 | Bước | Nội dung | Trạng thái |
 | --- | --- | --- |
-| 0 | Kiểm tra máy, chọn cấu hình | xong (mục 0); đang chờ Phú xử lý commit limit (mục 0.4) trước khi chạy stack |
+| 0 | Kiểm tra máy, chọn cấu hình | xong (mục 0); commit limit đã xử lý (mục 0.4) |
 | 1 | Thiết kế | xong (tài liệu này) |
-| 2–13 | Hạ tầng, thu nhận, Silver, Gold, đối soát, tính năng, vận hành, đo, Superset, kiểm thử, tài liệu | chưa làm |
+| 2 | Hạ tầng: Compose, healthcheck, `check_health.py` | xong (mục 3.5, handoff P10) |
+| 3–13 | Thu nhận, Silver, Gold, đối soát, tính năng, vận hành, đo, Superset, kiểm thử, tài liệu | chưa làm |

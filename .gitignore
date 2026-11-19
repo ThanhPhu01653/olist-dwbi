@@ -61,3 +61,8 @@ attach/
 **/.pbi/localSettings.json
 
 exports/huong-dan-ca-nhan/
+
+# P10 Lakehouse: secrets and local data
+lakehouse/.env
+lakehouse/data/
+lakehouse/.ivy/
