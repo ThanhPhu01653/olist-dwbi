@@ -1,0 +1,35 @@
+%% Lakehouse architecture (P10); same text as docs/LAKEHOUSE.md section 3.3
+%% Render: https://mermaid.live  (or mmdc -i docs/lakehouse.mmd -o figures/5-1_kien_truc_lakehouse.png -s 2)
+flowchart LR
+    csv[("CSV Kaggle")]
+    api["API công khai (P9)<br/>IBGE, Banco Central,<br/>BrasilAPI, Open-Meteo"]
+    subgraph SRC["Nguồn nghiệp vụ"]
+        pg[("PostgreSQL nguồn :5433<br/>oltp + crm<br/>wal_level=logical")]
+    end
+    replay["replay_events.py<br/>INSERT / UPDATE theo thời gian"]
+    dbz["Debezium<br/>(Kafka Connect)"]
+    kafka[["Kafka KRaft<br/>mỗi bảng một topic"]]
+    subgraph LAKE["MinIO + Iceberg (REST catalog)"]
+        land["landing/api<br/>JSON thô"]
+        br["bronze<br/>append sự kiện"]
+        si["silver<br/>làm sạch, MERGE,<br/>order_status_history, SCD2"]
+        go["gold<br/>10 dim + 6 fact<br/>mart_sales"]
+        ops["ops<br/>dq_results"]
+    end
+    spark["Spark Structured Streaming<br/>+ Spark batch"]
+    dbt["dbt (dbt-trino)"]
+    trino["Trino<br/>user bi_viewer"]
+    sup["Superset<br/>dashboard DB1"]
+    rec["reconcile.py<br/>đối soát"]
+    dw[("PostgreSQL olist_dw<br/>kho chương 3")]
+
+    csv --> pg
+    replay --> pg
+    pg --> dbz --> kafka --> spark
+    api -->|"collector api_ingest"| land --> spark
+    spark --> br --> si
+    si --> dbt --> go
+    go --> trino --> sup
+    trino --> rec
+    dw --> rec
+    rec --> ops

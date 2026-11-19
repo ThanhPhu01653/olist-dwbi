@@ -44,6 +44,7 @@
 | 18/11 | Bảng mới `dw.fact_state_year`: periodic snapshot, grain bang × năm (27 bang × 3 năm = 81 dòng): dân số, PIB (IBGE), GMV, đơn, khách, seller của Olist | Σ gmv khớp GMV 13.494.400,74; thêm vào bus matrix và `etl.run_pipeline` (sau `fact_seller_monthly`) |
 | 18/11 | Schema `mart_market` (7 view): `v_gmv_per_capita_state`, `v_gmv_per_capita_city`, `v_gmv_usd_month`, `v_gmv_real_month`, `v_holiday_effect`, `v_holiday_diff`, `v_late_by_rain` | Nguồn cho dashboard D8 (chương 5); D8 không thuộc bộ DB1–DB4 và các cột mới không làm đổi số của DB1–DB4 |
 | 18/11 | `etl.run_pipeline --with-api [--api-offline]`; `rebuild_all.py` dùng landing zone (không cần mạng); layer `api` và `api_ods` trong `etl_log.job_run` | Hai layer mới không nằm trong các cột của `v_run_summary`; ba job mới ở layer `dw` (`enrich_dim_geography`, `enrich_dim_date`, `load_fact_state_year`) làm tăng nhẹ số dòng chèn và cập nhật của lớp kho; 20 phép kiểm thử mới (tổng 156) |
+| 19/11 | P10 (mở rộng 1): Data Lakehouse song song với kho chương 3 (CDC Debezium → Kafka → Spark → Bronze/Silver trên MinIO + Iceberg → dbt-trino → Gold → Trino → Superset). Thiết kế: `docs/LAKEHOUSE.md`; profile `lite`, WSL 4 GB | Kho chương 3 và `olist_dw` không đổi; Gold dựng lại đúng 10 dim + 6 fact theo tên bảng/cột của tài liệu này và phải đối soát khớp từng số (GMV 13.494.400,74); không dùng SQLite/DuckDB thay Lakehouse |
 
 ---
 
