@@ -171,3 +171,9 @@ Còn lỗi khác: xem dòng báo lỗi đầu tiên trong *Logs and output files
 - **Font:** Segoe UI (hoặc Arial); cỡ chữ trong khối ≥ 12 để đọc được trên slide; mũi tên dùng nét liền, nối đúng khối.
 - **Xuất PNG giữ đúng tên file cũ:** *File → Export as → PNG*, chọn *Zoom* sao cho chiều rộng ảnh khoảng 2000 px trở lên (tương đương 200 dpi cho khổ 10 inch; nếu hộp thoại có ô DPI thì chọn 200), bật *Include a copy of my diagram* để mở lại sửa được, nền trắng. Đặt tên theo bảng phân công (ví dụ `3-2_kien_truc_cac_lop.png`).
 - **Nộp:** file `.drawio` (ghi đè file cũ trong `03_drawio`) và PNG (cùng thư mục). PNG dùng trong slide thì đặt thêm vào `04_Docs/tex-nop/figures/`. Lỗi thầy hay bắt của từng sơ đồ ghi ở file của người phụ trách.
+
+## Trình bày slide
+Slide được chiếu bằng máy chiếu trong phòng học, nên có quy tắc riêng:
+- Quy tắc và sáu mẫu slide: [`slides/QUY-TAC-TRINH-BAY.md`](../../slides/QUY-TAC-TRINH-BAY.md); macro bố cục: `slides/bocuc.sty`; frame mẫu đã biên dịch: `slides/mau/mau-bo-cuc.tex`.
+- Mỗi slide một ý, người xem hiểu trong 5 giây; tiêu đề là câu kết luận có số (tối đa 80 ký tự); chữ giải thích để trong `\note{}`.
+- Trước khi gửi hoặc commit file slide, chạy `python scripts/kiem_tra_slide.py --strict slides/sections/<file>.tex` (0 LỖI) và xem ảnh bằng `python scripts/kiem_tra_slide.py --anh slides/main.pdf <trang đầu>-<trang cuối>`.

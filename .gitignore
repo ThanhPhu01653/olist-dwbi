@@ -36,6 +36,7 @@ report/build.log
 
 # Beamer slides: build files, PDFs and the Overleaf package are not committed
 slides_overleaf.zip
+slides/_xem_truoc/
 slides/*.pdf
 slides/*.aux
 slides/*.log

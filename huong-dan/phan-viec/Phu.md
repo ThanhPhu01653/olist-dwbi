@@ -67,9 +67,9 @@ Không được chép câu chữ, số liệu hay hình của nhóm 6.
 <!-- SLIDES:00-mo-dau.tex -->
 | STT | S | Tiêu đề (câu kết luận) | Nội dung chính | Hình / bảng | Trạng thái |
 | ---: | ---: | --- | --- | --- | --- |
-| 1 | 1 | Xây kho dữ liệu và BI cho 99.441 đơn hàng thương mại điện tử Olist | Học phần MI4214 – Kho dữ liệu và Kinh doanh thông minh; nhóm ...; giảng viên ... | `3-3-4_constellation.png` | đã có |
-| 2 | 2 | Bài trình bày gồm năm phần theo thứ tự khảo sát, phân tích thiết kế, dashboard, mở rộng và tổng kết | 2 Khảo sát (nghiệp vụ, yêu cầu, KPI, dữ liệu nguồn, ERD) 3 Phân tích và thiết kế (khám phá dữ liệu, kiến trúc, ETL, chiều khái niệm, data model) 4 Das | – | đã có |
-| 3 | 3 | Dự án trong một trang: 1,56 triệu dòng nguồn thành 6 fact, 17 view mart và 4 dashboard | 2 hệ thống nguồn → staging → ODS → kho (10 chiều + 6 fact) → 4 data mart → Power BI | `3-4-1_pipeline.png` | đã có |
+| 1 | 1 | Kho dữ liệu và BI cho 99.441 đơn hàng thương mại điện tử Olist |  | – | đã có |
+| 2 | 2 | Bài trình bày đi qua năm phần, từ khảo sát đến tổng kết | 2 Khảo sát: nghiệp vụ, yêu cầu, KPI, dữ liệu nguồn, ERD; 3 Phân tích và thiết kế: khám phá dữ liệu, kiến trúc, ETL, chiều khái niệm, data model | – | đã có |
+| 3 | 3 | Từ 1,56 triệu dòng nguồn đến 6 fact, 17 view mart và 4 dashboard |  | – | đã có |
 
 *3 frame trong `00-mo-dau.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
 <!-- /SLIDES -->
@@ -79,50 +79,32 @@ Không được chép câu chữ, số liệu hay hình của nhóm 6.
 <!-- SLIDES:04-mo-rong.tex,05-tong-ket.tex -->
 | STT | S | Tiêu đề (câu kết luận) | Nội dung chính | Hình / bảng | Trạng thái |
 | ---: | ---: | --- | --- | --- | --- |
-| 1 | – | Lakehouse thêm đường thứ hai cho cùng dữ liệu: Debezium, Kafka, Iceberg, dbt | Mỗi thay đổi ở PostgreSQL được bắt từ log (CDC), qua Bronze, Silver, Gold; Gold có đúng mô hình hình sao của chương 3; Bảng Iceberg nằm trên object st | `5-1_kien_truc_lakehouse.png` | đã có |
-| 2 | – | Bảy dịch vụ chạy trong 4 GB RAM của WSL, vận hành bằng script, không cần Airflow | Máy 13,9 GB; WSL giới hạn 4 GB để Windows và PostgreSQL của chương 3 còn 9,9 GB; Tổng đỉnh đo được khoảng 3,6 GB, dưới trần | bảng | đã có |
-| 3 | – | Bước 1 hạ tầng: bảy container có healthcheck, image Iceberg REST tự dựng | docker compose –profile lite up -d: mỗi dịch vụ có healthcheck và giới hạn bộ nhớ riêng; Catalog Iceberg dùng REST (apache/iceberg-rest-fixture) lưu m | – | đã có |
-| 4 | – | Minh chứng hạ tầng: kiểm tra bằng truy vấn thật, cả bảy dịch vụ khoẻ | Bên phải: MinIO console, bucket lakehouse có bốn thư mục bronze, silver, gold, ops | `5-1_minio_console.png` | đã có |
-| 5 | – | Bước 2 nguồn và CDC: Debezium chụp snapshot rồi bắt từng thay đổi từ log | Nguồn: mã nạp của chương 3 (etl.load_source –initial) nạp 1.273.620 dòng vào oltp và crm trong 11,1 giây; kho PostgreSQL của chương 3 không bị đụng tớ | – | đã có |
-| 6 | – | Minh chứng CDC: topic bằng đúng số dòng nguồn, và đủ 1.720.555 sau phát lại | orders sau phát lại: 99.441 INSERT cộng 160.791 UPDATE trạng thái đơn = 260.232 sự kiện | bảng | đã có |
-| 7 | – | Phát lại 11 tháng: hai lần áp dụng, tách rõ để khớp 1.720.555 sự kiện | Nhịp phát 468,5 sự kiện/giây (443.935 trong 947,5 giây): do script phát quyết định; Năng lực xử lý đo ở lần nạp bù: khoảng 2.100 sự kiện/giây, cao gấp | bảng | đã có |
-| 8 | – | Bước 3 Bronze: Spark ghi nguyên văn từng sự kiện vào bảng Iceberg chỉ-thêm | Một ứng dụng Spark đọc 11 topic, micro-batch 30 giây, tối đa 100.000 sự kiện mỗi lô để giữ bộ nhớ; Bronze bronze.<schema>_<bảng>: khoá, payload (JSON  | – | đã có |
-| 9 | – | Minh chứng Bronze và Silver: bảng Iceberg là Parquet cộng metadata trên MinIO | Ví dụ silver/customers: thư mục data (Parquet) và metadata (mỗi lần ghi là một tệp *.metadata.json, nền tảng của time travel) | `5-1_minio_iceberg.png` | đã có |
-| 10 | – | Bước 4 Silver: MERGE theo khoá, giữ dòng mồ côi để thử lại, SCD2 địa chỉ khách | Silver ghi bằng MERGE theo khoá chính; một sự kiện chỉ thay dòng có sẵn khi ts_ms không cũ hơn, nên giao trùng và sai thứ tự đều an toàn; Dòng mồ côi  | – | đã có |
-| 11 | – | Minh chứng Silver: 10 bảng bằng nguồn về số dòng và checksum khoá | Kiểm tra: số dòng và md5 của khoá chính đã sắp xếp, ở PostgreSQL nguồn và ở Trino; 10/10 bảng khớp; sáu bảng *_rejected đều rỗng | bảng | đã có |
-| 12 | – | Bước 5 Gold: dbt dựng 20 model từ Silver, giữ nguyên tên bảng, cột của đặc tả | dbt-trino: 10 dimension, 6 fact và 4 bảng mart (mart_sales_*) cho Superset; dòng Unknown khoá -1 như kho; lịch dim_date sinh từ chính hàm của chương 3 | – | đã có |
-| 13 | – | Minh chứng Gold: lineage bốn tầng Silver, dimension, fact, mart | 18 nguồn Silver → 10 dimension → 6 fact → 4 mart, 77 cạnh phụ thuộc | `5-1_dbt_lineage.png` | đã có |
-| 14 | – | Minh chứng Gold: 71 phép kiểm thử dbt đều đạt | dbt test: PASS=71, ERROR=0; chạy lại trong bộ pytest bằng tham số –run-slow | `5-1_dbt_test_1.png`, `5-1_dbt_test_2.png` | đã có |
-| 15 | – | Đối soát Gold với kho: 16/16 bảng khớp, hai zip lệch tên thành phố (có giải thích) | Cùng một câu SQL chạy trên PostgreSQL (dw.*) và Trino (gold.*); mỗi bảng so số dòng, tổng các số đo, md5 khoá tự nhiên, md5 nội dung từng dòng; GMV 13 | `5-1_reconcile.png` | đã có |
-| 16 | – | Dung sai và ngoại lệ duy nhất: hai zip hoà điểm tên thành phố | late_rate, avg_review_score: làm tròn 4 chữ số thập phân ở cả hai phía; Toạ độ: cắt floor(x 10^6), tức dưới 1e-6 độ (khoảng 0,11 m) | – | đã có |
-| 17 | – | Lỗi 1: Silver chỉ có 24.765 trên 45.971 đơn, log không báo, đối soát mới thấy | Hiện tượng: luồng chạy xong, không lỗi, Bronze đủ (1.276.620 sự kiện = tổng offset Kafka), nhưng Silver chỉ có 24.765 đơn; Nguyên nhân: đơn có thể đến | bảng | đã có |
-| 18 | – | Lỗi 2: trim() của Trino khác PostgreSQL, 18 review bị tính là không có bình luận | Hiện tượng: fact_review lệch ở hai cột, dù các bảng khác khớp; Nguyên nhân: trim() của Trino bỏ cả xuống dòng và tab, còn của PostgreSQL chỉ bỏ dấu cá | bảng | đã có |
-| 19 | – | Độ trễ nguồn đến Silver trung bình 22,6 giây, chủ yếu là chờ micro-batch 30 giây | 6 lần thử ở pha ngẫu nhiên so với trigger; đổi một cột của một đơn rồi hoàn nguyên, Silver trở lại bằng nguồn | `5-1_latency.png` | đã có |
-| 20 | – | Minh chứng luồng chạy liên tục: Spark UI ghi lại 41 lô, lô dồn việc hơn một phút | Trái: thống kê của query; phải: dòng thời gian các job Spark | `5-1_spark_ui_streaming_crop.png`, `5-1_spark_ui_jobs.png` | đã có |
-| 21 | – | Thông lượng: nạp bù 2.100 sự kiện/giây, UPDATE qua MERGE 241, RAM đỉnh 3,6 GB | Nạp bù nhanh vì phần lớn là geolocation chỉ ghi Bronze; MERGE ghi lại tệp Iceberg nên chậm hơn; Spark chạm giới hạn nhưng không bị kill | bảng | đã có |
-| 22 | – | Time travel: đọc phiên bản cũ dưới 0,2 giây, rollback sửa nhầm trong 0,09 giây | FOR VERSION AS OF và FOR TIMESTAMP AS OF đọc đúng phiên bản, không đụng dữ liệu hiện tại; UPDATE nhầm 97.103 đơn thành canceled; bản cũ vẫn đọc được ( | bảng | đã có |
-| 23 | – | DB1 trên Superset: dashboard đọc từ tầng Gold của lakehouse qua Trino |  | khung chờ | cần ảnh: Chờ ảnh chụp DB1 trên Superset (Bước 10) |
-| 24 | – | Kiểm thử ba lớp: 18 phép pytest, 71 phép dbt và đối soát 16 bảng | pytest nhanh (18 phép): Silver = nguồn cho 10 bảng (số dòng và md5 khoá), 6 bảng loại rỗng, Bronze = offset Kafka của 11 topic, Silver địa lý = ODS củ | – | đã có |
-| 25 | – | Tổng kết 5.1: cùng số liệu với kho chương 3, thêm sự kiện và time travel | 1.720.555 sự kiện đi qua Kafka vào Bronze không mất, không trùng; Silver bằng nguồn ở 10 bảng; Gold bằng kho ở 16/16 bảng | – | đã có |
-| 26 | 118 | Olist là ảnh chụp tĩnh nên cần dữ liệu công khai của Brazil để trả lời năm câu hỏi mà bán hàng một mình không trả lời được | bảng | bảng | đã có |
-| 27 | 119 | Kiến trúc: collector, landing zone, staging, ODS, kho và mart; lỗi API không làm hỏng pipeline chính | Dựng lại toàn bộ (rebuild) dùng landing zone, không cần mạng | `5-2_kien_truc_api.png` | đã có |
-| 28 | 150 | Bốn nguồn API công khai, mã bảng và mã chuỗi đều được đối chiếu với metadata của chính API | bảng | bảng | đã có |
-| 29 | 151 | Collector thử lại tối đa 5 lần với chờ tăng dần, có timeout, giữ khoảng cách giữa các lời gọi và dùng User-Agent chung | Lỗi mạng, HTTP 429 và 5xx: chờ 1,5 → 3 → 6 → 12 giây giữa các lần thử; Banco Central chỉ xin phần sau watermark; cửa sổ ngày 10 năm theo quy định mới  | – | đã có |
-| 30 | 120 | Landing zone giữ JSON nguyên văn kèm manifest: 69 lời gọi, 4,66 MB, 48.016 bản ghi, không lỗi | bảng | bảng | đã có |
-| 31 | 152 | Staging giữ nguyên giá trị API; ODS ép kiểu, điền tỷ giá cho ngày nghỉ và nối chỉ số IPCA | bảng | bảng | đã có |
-| 32 | 153 | Ghép thành phố Olist với đô thị IBGE qua bốn tầng: hai tầng đầu gán 96,1% số zip, bốn tầng gán 96,3% zip và 99,5% GMV | bảng | bảng | đã có |
-| 33 | 154 | Ngưỡng fuzzy 95 vì từ 95 trở lên mọi cặp đúng, còn 90–94 đã có ghép sai như boa vista de minas → Bela Vista de Minas | sao thome das letras → São Tomé das Letras (97,4); santana do livramento → Sant'Ana do Livramento (97,7) | `5-2_ty_le_khop_theo_tang.png` | đã có |
-| 34 | 155 | Kho được làm giàu không đổi khoá: 7 cột mới ở chiều địa lý, 4 cột ở chiều ngày và một fact bang theo năm với 81 dòng | dim_geography: mã IBGE, microrregião, mesorregião, dân số 2016–2018, tầng ghép (5.473 đô thị); dim_date: usd_brl, ipca_index, is_holiday_official, tên | – | đã có |
-| 35 | 156 | 20 phép kiểm thử SQL mới và bộ pytest đều đạt: tổng số phép của pipeline tăng từ 136 lên 156 | Tỷ giá có đủ 1.827 ngày và không thiếu ngày làm việc nào; IPCA đủ 60 tháng, trùng chỉ số IBGE (chênh 0,000); Mã IBGE hợp lệ, cùng bang; không zip nào  | – | đã có |
-| 36 | 121 | Theo đầu người, Rio de Janeiro dẫn đầu với 53,90 BRL trên 1.000 dân; Distrito Federal từ hạng 9 theo GMV lên hạng 3 | 2017: RJ 53,90; SP 48,58; DF 43,95; thấp nhất AM 2,58; Spearman giữa hai thứ hạng là 0,78 | `5-2_gmv_dau_nguoi_theo_bang.png` | đã có |
-| 37 | 157 | GMV tháng 1–8 tăng 138,3% danh nghĩa nhưng chỉ 130,9% theo giá thực và 116,7% khi quy USD | Lạm phát IPCA 08/2017 → 08/2018: 4,2%; Tỷ giá bình quân gia quyền theo GMV: 3,17 (01/2017) → 3,84 (08/2018) | `5-2_danh_nghia_so_voi_thuc.png` | đã có |
-| 38 | 158 | Thư viện ngày lễ thiếu 19 ngày so với BrasilAPI; ngày thường có lễ quốc gia ít hơn 27,9% số đơn | BrasilAPI 64 ngày lễ; holidays 45 ngày; 19 ngày chỉ có ở BrasilAPI (Carnaval, Phục sinh, Corpus Christi); Ngày thường có lễ: 124,7 đơn; không lễ: 172, | `5-2_ngay_le_va_don.png` | đã có |
-| 39 | 159 | (Tuỳ chọn) Mưa càng nhiều thì giao trễ càng nhiều: từ 5,45% lúc không mưa lên 9,55% khi mưa từ 20 mm | Mưa ngày giao tại thủ phủ bang của khách; Liên hệ thống kê; mưa đo ở thủ phủ, không ở nơi khách ở | `5-2_mua_va_giao_tre.png` | đã có |
-| 40 | 149 | [P9] Dashboard D8 Thị trường Brazil dựng từ dữ liệu API thu thập thực tế |  | khung chờ | cần ảnh: P9 điền: ảnh chụp D8 |
-| 41 | 111 | Kết quả: một kho dữ liệu chạy được từ đầu đến cuối với 136 kiểm thử đạt và bốn dashboard | 10 chiều, 6 fact, 17 view mart; 99.441 đơn; GMV 13,49 triệu BRL | `3-3-4_constellation.png` | đã có |
-| 42 | 113 | Hạn chế và hướng phát triển: trạng thái trung gian của đơn, PostGIS, lịch chạy tự động | Mô phỏng cập nhật chỉ thêm bản ghi mới; cơ chế thử lại mồ côi mới được chứng minh bằng test | – | đã có |
+| 1 | – | Lakehouse thêm đường thứ hai: từ CDC qua Bronze, Silver đến Gold |  | – | đã có |
+| 2 | – | Bảy dịch vụ chạy trong 4 GB RAM, vận hành bằng script, không cần Airflow |  | – | đã có |
+| 3 | – | CDC: Debezium chụp snapshot 1.273.620 dòng rồi bắt từng thay đổi từ log | Nạp nguồn đến 31/12/2017 bằng mã chương 3: 1.273.620 dòng trong 11,1 giây; Debezium chụp snapshot 11 bảng (khoảng 35 giây), rồi đọc log của PostgreSQL | – | đã có |
+| 4 | – | Kafka giữ đủ 1.720.555 sự kiện, bằng đúng số dòng Bronze |  | – | đã có |
+| 5 | – | Bronze giữ nguyên văn sự kiện, Silver áp quy tắc ODS bằng MERGE | Bronze: Spark đọc 11 topic, ghi nguyên văn vào bảng Iceberg chỉ-thêm (micro-batch 30 giây); Silver: MERGE theo khoá, chỉ thay dòng khi ts_ms không cũ  | – | đã có |
+| 6 | – | Silver bằng nguồn ở 10/10 bảng: cùng số dòng và cùng checksum khoá |  | – | đã có |
+| 7 | – | Gold: dbt dựng 20 model trong 70 giây, giữ nguyên tên bảng và cột của đặc tả | 10 dimension, 6 fact, 4 mart cho Superset; dòng Unknown khoá -1 như kho; Dùng lại seed của chương 3; lịch dim_date sinh từ chính hàm của chương 3 | – | đã có |
+| 8 | – | Lineage bốn tầng: 18 nguồn Silver, 10 dimension, 6 fact, 4 mart |  | – | đã có |
+| 9 | – | Đối soát Gold với kho: 16/16 bảng khớp, GMV bằng nhau đến từng xu |  | – | đã có |
+| 10 | – | Lỗi 1: Silver chỉ có 24.765 trên 45.971 đơn, log không báo gì | Nguyên nhân: Spark tính lại dữ liệu đã cache sau khi xoá đơn chờ cũ; Sửa: localCheckpoint() thay cho persist() | – | đã có |
+| 11 | – | Lỗi 2: trim() của Trino khác PostgreSQL, 18 review bị tính nhầm | trim() của Trino bỏ cả xuống dòng và tab, của PostgreSQL chỉ bỏ dấu cách; Sửa: model chỉ bỏ dấu cách hai đầu (regexp_replace) | – | đã có |
+| 12 | – | Độ trễ nguồn đến Silver trung bình 22,6 giây, chủ yếu là chờ micro-batch |  | – | đã có |
+| 13 | – | Time travel: rollback một thao tác sửa nhầm trong 0,09 giây | silver.orders có 31 snapshot; đọc lại bản đầu có 307 đơn, bản mới nhất 99.441; Đọc phiên bản cũ mất 0,11 đến 0,16 giây | – | đã có |
+| 14 | – | DB1 trên Superset: dashboard đọc từ tầng Gold của lakehouse qua Trino |  | khung chờ | cần ảnh: Chờ ảnh chụp DB1 trên Superset (Bước 10) |
+| 15 | – | Tổng kết 5.1: cùng số liệu với kho chương 3, thêm sự kiện và time travel | Hai lỗi chỉ lộ ra nhờ đối soát: thiếu đơn ở Silver, trim() khác nhau ở Gold; Hạn chế: 7 dịch vụ trong 4 GB RAM; vận hành bằng script, chưa có Airflow | – | đã có |
+| 16 | 118 | Năm câu hỏi mà bán hàng một mình không trả lời được cần dữ liệu công khai |  | – | đã có |
+| 17 | 119 | Kiến trúc API: lỗi gọi API không làm hỏng pipeline chính |  | – | đã có |
+| 18 | 153 | Bốn tầng ghép đô thị gán 96,3% số zip và 99,5% GMV |  | – | đã có |
+| 19 | – | Kho được làm giàu không đổi khoá; phép kiểm thử tăng từ 136 lên 156 | fact_state_year: 27 bang 3 năm; GMV = 13.494.400,74; 20 phép kiểm thử SQL mới đều đạt; DB1–DB4 vẫn đúng số cũ | – | đã có |
+| 20 | 121 | Theo đầu người, Rio de Janeiro dẫn đầu: 53,90 BRL trên 1.000 dân | Distrito Federal: hạng 9 theo GMV, hạng 3 theo đầu người; Maranhão tụt từ hạng 15 xuống 24 | – | đã có |
+| 21 | 157 | GMV tháng 1–8 tăng 138,3% danh nghĩa, 130,9% theo giá thực, 116,7% theo USD |  | – | đã có |
+| 22 | 149 | Dashboard D8 Thị trường Brazil dựng từ dữ liệu API thu thập thực tế |  | khung chờ | cần ảnh: P9 điền: ảnh chụp D8 |
+| 23 | 111 | Kết quả: kho chạy được từ đầu đến cuối, 136 kiểm thử đạt, bốn dashboard | 10 chiều, 6 fact, 17 view mart; GMV 13,49 triệu BRL | – | đã có |
+| 24 | 113 | Hạn chế còn lại và ba hướng phát triển: trạng thái đơn, PostGIS, lịch chạy | Hạn chế: mô phỏng cập nhật chỉ thêm bản ghi mới; cơ chế thử lại mồ côi mới được chứng minh bằng test; Hướng phát triển: lưu trạng thái trung gian của  | – | đã có |
 
-*42 frame trong `04-mo-rong.tex`, `05-tong-ket.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
+*24 frame trong `04-mo-rong.tex`, `05-tong-ket.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
 <!-- /SLIDES -->
 
 **Slide cần thêm** (theo `docs/doi-chieu-nhom6.md`: xen kẽ slide triển khai và slide minh chứng):
