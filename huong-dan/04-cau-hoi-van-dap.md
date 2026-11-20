@@ -1,4 +1,4 @@
-# 04 – 52 câu giảng viên có thể hỏi (kèm trả lời có số liệu)
+# 04 – 61 câu giảng viên có thể hỏi (kèm trả lời có số liệu)
 
 *Số liệu từ `olist_dw` ở trạng thái cuối (99.441 đơn, GMV 13.494.400,74 BRL). Mỗi câu trả lời 2–4 câu để nói được trong 30–60 giây; phần "Xem thêm" chỉ nơi có bằng chứng.*
 
@@ -171,3 +171,32 @@ Collector thử lại tối đa 5 lần với thời gian chờ tăng dần (1,5
 **52. Tần suất cập nhật dữ liệu API là bao nhiêu và chạy lại có nhân đôi dữ liệu không?**
 Đề xuất: tỷ giá hằng ngày, IPCA hằng tháng, dân số và PIB hằng năm, ngày lễ hằng năm, danh mục đô thị khi IBGE cập nhật. Không nhân đôi: cùng ngày ghi đè cùng tệp JSON, staging nạp bằng `TRUNCATE + COPY` hoặc upsert theo khoá tự nhiên, chuỗi Banco Central chỉ xin phần sau watermark; có test chạy lại không tăng số dòng.
 
+## J. Data lakehouse (P10): 9 câu
+*Số liệu từ `docs/LAKEHOUSE.md`, `handoff/2026-11-19-P10-*.md`; đối soát và kiểm thử ở `lakehouse/tests`.*
+
+**53. Lakehouse khác kho dữ liệu PostgreSQL của chương 3 ở điểm nào, và vì sao làm thêm?**
+Kho chương 3 nạp theo lô từ CSV rồi chạy procedure SQL; lakehouse nhận từng thay đổi của hệ thống nguồn (CDC) qua Kafka, giữ nguyên văn ở Bronze, làm sạch ở Silver, dựng đúng mô hình hình sao ở Gold, trên object storage ở dạng bảng Iceberg. Làm thêm để có dòng sự kiện gần thời gian thực (trễ nguồn đến Silver trung bình 22,6 giây) và đọc được lịch sử (time travel), còn số liệu vẫn phải khớp kho: 16/16 bảng Gold khớp.
+
+**54. Iceberg đảm bảo ACID như thế nào?**
+Mỗi lần ghi tạo một snapshot mới gồm tệp Parquet mới và tệp metadata mới; bản ghi được công nhận khi catalog (ở đây là REST catalog lưu trên PostgreSQL) đổi con trỏ sang metadata mới trong một thao tác nguyên tử. Người đọc luôn thấy một snapshot nguyên vẹn, không thấy nửa chừng. `silver.orders` có 31 snapshot; đọc lại bản cũ bằng `FOR VERSION AS OF` mất 0,11 đến 0,16 giây, rollback một thao tác sửa nhầm mất 0,09 giây vì chỉ đổi con trỏ.
+
+**55. Debezium giao ít nhất một lần thì sự kiện trùng hoặc sai thứ tự xử lý ra sao?**
+Silver ghi bằng `MERGE` theo khoá chính và chỉ thay dòng có sẵn khi `ts_ms` của sự kiện không cũ hơn dòng đó, nên sự kiện giao lại hoặc đến muộn không làm hỏng dữ liệu. Dòng mồ côi (đơn đến trước khách hàng) vào bảng `*_rejected` với mã `orphan`, được thử lại ở mọi lô và rời đi khi cha đến; cuối lần chạy còn 0.
+
+**56. SCD2 ở Silver khác snapshot của kho thế nào?**
+`silver.customer_address_scd2` giữ mọi phiên bản địa chỉ của khách (96.338 phiên bản, khớp `dim_customer` của kho); `silver.order_status_history` giữ mọi trạng thái của đơn với `valid_from`/`valid_to`, trả lời "đơn này ở trạng thái nào lúc T". Fact snapshot tích luỹ của kho chỉ giữ trạng thái và mốc thời gian mới nhất của mỗi đơn.
+
+**57. Vì sao không dùng SQLite hoặc DuckDB thay cho Kafka, Spark và Iceberg cho gọn?**
+Hai engine đó chạy trong một tiến trình, không có CDC, hàng đợi hay catalog; làm vậy chỉ mô phỏng bảng chứ không chứng minh được luồng sự kiện, MERGE trên bảng Iceberg và time travel. Nhóm chọn đúng các thành phần của kiến trúc lakehouse và thu gọn xuống profile lite (7 container, 4 GB RAM của WSL, đỉnh đo được khoảng 3,6 GB).
+
+**58. Làm sao biết lakehouse không mất hay sai dữ liệu?**
+Ba lớp kiểm tra: (1) Bronze bằng tổng offset Kafka (1.720.555 sự kiện) và Silver bằng bảng nguồn ở 10 bảng (số dòng và md5 khoá), 18 phép pytest; (2) 71 phép kiểm thử dbt ở Gold; (3) đối soát Gold với kho chương 3 bằng cùng một câu SQL ở hai bên: số dòng, tổng, md5 khoá và md5 nội dung từng dòng, 16/16 bảng khớp, ngoại lệ duy nhất là cột `city` của 2 zip do quy tắc chọn khi hoà điểm. Đối soát đã bắt được hai lỗi mà log không thấy: Silver thiếu một nửa số đơn (Spark tính lại cache sau khi xoá orphan) và `trim()` của Trino khác PostgreSQL.
+
+**59. Độ trễ bao nhiêu, có đúng "gần thời gian thực" không?**
+Đo 6 lần: từ COMMIT ở nguồn đến khi Silver ghi xong trung bình 22,6 giây (10,9 đến 37,8), đến khi đọc được qua Trino trung bình 29,9 giây. Phần lớn là chờ chu kỳ micro-batch 30 giây; Debezium chỉ mất dưới 1 giây. Giảm chu kỳ trigger thì giảm độ trễ nhưng tăng số lô nhỏ. Cần phân biệt nhịp phát của nguồn (468,5 sự kiện/giây khi phát lại) với năng lực xử lý (khoảng 2.100 sự kiện/giây khi nạp bù; 241 sự kiện/giây khi toàn bộ là UPDATE phải MERGE).
+
+**60. Vì sao lineage của `fact_order_item` trong dbt không có `dim_date`, trong khi bảng có khoá ngày?**
+Model tính `purchase_date_key` thẳng từ mốc thời gian (giống ETL của kho), không join sang `dim_date`, nên dbt không có `ref('dim_date')` để vẽ cạnh; quan hệ chỉ nằm trong phép kiểm thử `relationships`, mà lineage không vẽ test. Nhóm thêm chú thích `-- depends_on: {{ ref('dim_date') }}` cho 4 fact để lineage đúng với thực tế và dbt dựng `dim_date` trước.
+
+**61. Time travel dùng vào việc gì trong dự án?**
+Ba việc: đọc lại bảng ở một thời điểm cũ để kiểm tra (ví dụ `silver.orders` tại snapshot đầu có 307 đơn, snapshot cuối 99.441); hoàn tác một thao tác sửa nhầm (thử trên bản sao: `UPDATE` nhầm 97.103 đơn thành `canceled`, rollback trong 0,09 giây, khác bảng gốc 0 dòng); và dựng lại một số liệu báo cáo đã công bố. Thêm hoặc bớt cột không viết lại Parquet vì Iceberg theo dõi cột bằng ID.

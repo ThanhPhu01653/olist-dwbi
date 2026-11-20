@@ -59,3 +59,14 @@ cd ..
 python lakehouse\scripts\reconcile.py --md handoff\2026-11-19-P10-reconcile.md
 ```
 Phát lại 11 tháng: `python lakehouse\scripts\replay_events.py --speed 30000` (tiến độ lưu trong nguồn, `--restart` để chạy lại từ đầu).
+
+## Kiểm thử, time travel và đo
+```powershell
+python -m pytest lakehouse\tests -q              # 18 phép nhanh: Silver = nguồn, Bronze = Kafka (cần stack chạy, luồng đã dừng)
+python -m pytest lakehouse\tests -q --run-slow   # thêm dbt test (71 phép) và reconcile.py (16 bảng), khoảng 2 phút
+python lakehouse\scripts\time_travel.py --md handoff\2026-11-19-P10-timetravel.md
+# đo độ trễ: bật luồng Spark liên tục (có thể thêm --conf spark.ui.enabled=true để mở cổng 4040), rồi
+python lakehouse\scripts\latency_probe.py --probes 6 --burst 20000 --md handoff\2026-11-19-P10-latency.md --png figures\5-1_latency.png
+```
+`latency_probe.py` đổi một cột của một đơn rồi hoàn nguyên; `time_travel.py` chỉ thay đổi bản sao `ops.orders_tt`.
+Giao diện MinIO: `http://127.0.0.1:9001` (tài khoản `lakehouse`, mật khẩu `LH_MINIO_PASSWORD` trong `lakehouse/.env`).

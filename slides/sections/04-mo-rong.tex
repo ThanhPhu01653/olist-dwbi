@@ -1,19 +1,255 @@
 \section[Mở rộng]{Mở rộng}
 
 \subsection{5.1 Data lakehouse}
-\begin{frame}{[P10] Kiến trúc lakehouse: lớp lưu trữ, định dạng bảng và engine truy vấn nằm cạnh kho PostgreSQL}
+\begin{frame}{Lakehouse thêm đường thứ hai cho cùng dữ liệu: Debezium, Kafka, Iceberg, dbt}
 \muc{5.1 · Lakehouse}
-\khungchen[0.5\textheight]{P10 điền: sơ đồ kiến trúc lakehouse}
-\note{[S115] Khung: kiến trúc lakehouse (nội dung sẽ điền ở P10).}
+\begin{center}\anh[0.5\textheight]{5-1_kien_truc_lakehouse.png}\end{center}
+\begin{itemize}
+  \item Mỗi thay đổi ở PostgreSQL được bắt từ log (CDC), qua Bronze, Silver, Gold; Gold có đúng mô hình hình sao của chương 3
+  \item Bảng Iceberg nằm trên object storage, truy vấn bằng Trino
+\end{itemize}
+\note{[P10-kiến trúc] Hình: docs/LAKEHOUSE.md mục 3.3. Lakehouse không thay kho chương 3 mà là đường thứ hai; đối soát ở phần kết quả chứng minh hai đường cho cùng số liệu.}
 \end{frame}
 
-\begin{frame}{[P10] Triển khai lakehouse: nạp, phân lớp và truy vấn mẫu}
+\begin{frame}{Bảy dịch vụ chạy trong 4 GB RAM của WSL, vận hành bằng script, không cần Airflow}
 \muc{5.1 · Lakehouse}
-\khungchen[0.5\textheight]{P10 điền: các bước triển khai}
-\note{[S116] Khung: triển khai lakehouse (P10).}
+\begin{columns}[T]\begin{column}{0.5\textwidth}
+{\scriptsize\begin{tabular}{lll}
+\hline
+\textbf{Thành phần} & \textbf{Vai trò} & \textbf{Giới hạn RAM} \\\hline
+PostgreSQL (nguồn) & nguồn CDC & 384 MiB \\
+Kafka (KRaft) & hàng đợi, 11 topic & 512 MiB \\
+Connect + Debezium & bắt thay đổi & 768 MiB \\
+MinIO & object storage S3 & 256 MiB \\
+Iceberg REST & danh mục bảng & 384 MiB \\
+Spark 3.5 & luồng Bronze, Silver & 1.536 MiB \\
+Trino 477 & SQL, dbt, đối soát & 1.280 MiB \\\hline
+\end{tabular}}
+\end{column}\begin{column}{0.48\textwidth}
+{\small\begin{itemize}
+  \item Máy 13,9 GB; WSL giới hạn 4 GB để Windows và PostgreSQL của chương 3 còn 9,9 GB
+  \item Tổng đỉnh đo được khoảng 3,6 GB, dưới trần
+  \item Vận hành bằng script: \texttt{docker compose}, \texttt{check\_health}, \texttt{replay\_events}, \texttt{wait\_log} (chờ có giới hạn 10 phút)
+  \item Không dùng Airflow: lịch chạy hằng ngày là một script
+\end{itemize}}
+\end{column}\end{columns}
+\note{[P10-profile] Số RAM: docs/LAKEHOUSE.md mục 0 và 3.5 (đỉnh docker stats khi phát lại liên tục). Profile lite chỉ có bảy dịch vụ; Superset thêm ở profile demo, Airflow không dựng trên máy này.}
 \end{frame}
 
-\begin{frame}{Đối soát với nguồn bắt được lỗi mà log không thấy: Silver chỉ có 24.765 trên 45.971 đơn, sau sửa khớp 100\%}
+\begin{frame}{Bước 1 hạ tầng: bảy container có healthcheck, image Iceberg REST tự dựng}
+\muc{5.1 · Lakehouse}
+\begin{itemize}
+  \item \texttt{docker compose --profile lite up -d}: mỗi dịch vụ có healthcheck và giới hạn bộ nhớ riêng
+  \item Catalog Iceberg dùng REST (\texttt{apache/iceberg-rest-fixture}) lưu metadata vào PostgreSQL; image gốc thiếu driver nên dựng thêm lớp \texttt{postgresql-42.7.4}
+  \item Image MinIO chính thức không tải được ngày 19/11/2026, dùng \texttt{bitnamilegacy/minio}; bản mới (2025.7.23) không có giao diện web nên ghim bản \texttt{2025.4.22}
+  \item Một script \texttt{check\_health.py} kiểm tra từng dịch vụ bằng truy vấn thật (không chỉ trạng thái container)
+\end{itemize}
+\note{[P10-bước 1] Cấu hình: lakehouse/docker-compose.yml. Lưu ý với người nghe: MinIO bản mới nhất bỏ giao diện web nên phải ghim phiên bản.}
+\end{frame}
+
+\begin{frame}{Minh chứng hạ tầng: kiểm tra bằng truy vấn thật, cả bảy dịch vụ khoẻ}
+\muc{5.1 · Lakehouse}
+\begin{columns}[T]\begin{column}{0.54\textwidth}
+{\scriptsize\begin{tabular}{lll}
+\hline
+\textbf{Dịch vụ} & \textbf{Trạng thái} & \textbf{Kiểm tra} \\\hline
+pg & healthy & \texttt{wal\_level=logical}, 2/2 database \\
+kafka & healthy & container chạy \\
+connect & healthy & REST ok, 1 connector \\
+minio & healthy & bucket \texttt{lakehouse} có \\
+iceberg-rest & healthy & HTTP 200 \\
+spark & healthy & Spark 3.5.6 \\
+trino & healthy & phiên bản 477 \\\hline
+\end{tabular}}
+\end{column}\begin{column}{0.44\textwidth}
+\anh[0.5\textheight]{5-1_minio_console.png}
+\end{column}\end{columns}
+\begin{itemize}
+  \item Bên phải: MinIO console, bucket \texttt{lakehouse} có bốn thư mục \texttt{bronze}, \texttt{silver}, \texttt{gold}, \texttt{ops}
+\end{itemize}
+\note{[P10-bước 1] Bảng lấy từ python lakehouse/scripts/check\_health.py. Ảnh: figures/5-1\_minio\_console.png.}
+\end{frame}
+
+\begin{frame}{Bước 2 nguồn và CDC: Debezium chụp snapshot rồi bắt từng thay đổi từ log}
+\muc{5.1 · Lakehouse}
+\begin{itemize}
+  \item Nguồn: mã nạp của chương 3 (\texttt{etl.load\_source --initial}) nạp 1.273.620 dòng vào \texttt{oltp} và \texttt{crm} trong 11,1 giây; kho PostgreSQL của chương 3 không bị đụng tới
+  \item Debezium (connector \texttt{olist-source}, plugin \texttt{pgoutput}) chụp snapshot 11 bảng trong khoảng 35 giây rồi chuyển sang đọc log
+  \item Mỗi bảng là một topic Kafka \texttt{olist.<schema>.<bảng>}; mã hoá: timestamp thành micro giây, date thành số ngày, numeric thành chuỗi
+  \item Mốc cắt: nạp ban đầu gồm mọi bản ghi đến \textbf{31/12/2017}; từ \textbf{01/01/2018 đến 14/11/2018} được phát lại như dữ liệu đến sau
+\end{itemize}
+\note{[P10-bước 2] docs/LAKEHOUSE.md mục 3.6. Debezium giao ít nhất một lần (at-least-once) nên Silver phải chịu được sự kiện trùng.}
+\end{frame}
+
+\begin{frame}{Minh chứng CDC: topic bằng đúng số dòng nguồn, và đủ 1.720.555 sau phát lại}
+\muc{5.1 · Lakehouse}
+{\scriptsize\begin{tabular}{lrr}
+\hline
+\textbf{Topic} & \textbf{Snapshot} & \textbf{Sau phát lại} \\\hline
+\texttt{oltp.geolocation} & 1.000.163 & 1.000.163 \\
+\texttt{oltp.orders} & 45.430 & 260.232 \\
+\texttt{oltp.customers} & 45.430 & 99.441 \\
+\texttt{oltp.order\_items} & 51.234 & 112.650 \\
+\texttt{oltp.order\_payments} & 47.871 & 103.886 \\
+\texttt{oltp.order\_reviews} & 45.370 & 99.224 \\
+\texttt{oltp.products} & 32.951 & 32.951 \\
+\texttt{oltp.sellers} & 3.095 & 3.095 \\
+\texttt{crm.mql} & 2.002 & 8.000 \\
+\texttt{crm.closed\_deals} & 3 & 842 \\
+\texttt{oltp.product\_category\_name\_translation} & 71 & 71 \\\hline
+\textbf{Tổng} & \textbf{1.273.620} & \textbf{1.720.555} \\\hline
+\end{tabular}}
+\begin{itemize}
+  \item \texttt{orders} sau phát lại: 99.441 INSERT cộng 160.791 UPDATE trạng thái đơn = 260.232 sự kiện
+\end{itemize}
+\note{[P10-bước 2] Offset đọc bằng kafka-get-offsets trong container; kiểm thử tự động tests/test\_silver\_equals\_source.py::test\_bronze\_equals\_kafka.}
+\end{frame}
+
+\begin{frame}{Phát lại 11 tháng: hai lần áp dụng, tách rõ để khớp 1.720.555 sự kiện}
+\muc{5.1 · Lakehouse}
+\begin{columns}[T]\begin{column}{0.56\textwidth}
+{\scriptsize\begin{tabular}{lrr}
+\hline
+\textbf{Phần} & \textbf{Sự kiện} & \textbf{Đơn mới} \\\hline
+Snapshot (đến 31/12/2017) & 1.273.620 & 45.430 (có sẵn) \\
+Chạy thử (3.000 sự kiện đầu) & 3.000 & 541 \\
+\textbf{Lần chạy tính giờ} & \textbf{443.935} & 53.470 \\\hline
+\textbf{Tổng trong Kafka và Bronze} & \textbf{1.720.555} & 99.441 \\\hline
+\end{tabular}}
+\end{column}\begin{column}{0.42\textwidth}
+\begin{itemize}
+  \item Nhịp phát \textbf{468,5 sự kiện/giây} (443.935 trong 947,5 giây): do script phát quyết định
+  \item Năng lực xử lý đo ở lần nạp bù: khoảng \textbf{2.100 sự kiện/giây}, cao gấp 4,5 lần nhịp phát
+\end{itemize}
+\end{column}\end{columns}
+\begin{itemize}
+  \item Danh sách sự kiện sinh chỉ từ CSV (không từ trạng thái database), UPDATE không đưa đơn về trạng thái trước, nên chạy lại an toàn
+\end{itemize}
+\note{[P10-phát lại] docs/LAKEHOUSE.md mục 3.8. Số cũ 471,7 chia cả 3.000 sự kiện đã áp dụng từ lần chạy thử; số đúng là 468,5. Nhịp phát và năng lực xử lý là hai con số khác nhau.}
+\end{frame}
+
+\begin{frame}{Bước 3 Bronze: Spark ghi nguyên văn từng sự kiện vào bảng Iceberg chỉ-thêm}
+\muc{5.1 · Lakehouse}
+\begin{itemize}
+  \item Một ứng dụng Spark đọc 11 topic, micro-batch 30 giây, tối đa 100.000 sự kiện mỗi lô để giữ bộ nhớ
+  \item Bronze \texttt{bronze.<schema>\_<bảng>}: khoá, \texttt{payload} (JSON của Debezium), \texttt{op}, \texttt{ts\_ms}, partition và offset Kafka, \texttt{ingested\_at}; chỉ thêm, không sửa
+  \item Dữ liệu API (IBGE, Banco Central, BrasilAPI, Open-Meteo) đi đường khác: tệp JSON lên \texttt{s3://lakehouse/landing/}, Spark tạo bốn bảng \texttt{bronze.api\_*} (73 dòng), chạy lại thêm 0 dòng
+  \item Điểm kiểm: Bronze phải bằng tổng offset của topic
+\end{itemize}
+\note{[P10-bước 3] lakehouse/spark/stream\_bronze\_silver.py và bronze\_api.py. Giữ nguyên văn để có thể dựng lại Silver bất cứ lúc nào.}
+\end{frame}
+
+\begin{frame}{Minh chứng Bronze và Silver: bảng Iceberg là Parquet cộng metadata trên MinIO}
+\muc{5.1 · Lakehouse}
+\begin{center}\anh[0.6\textheight]{5-1_minio_iceberg.png}\end{center}
+\begin{itemize}
+  \item Ví dụ \texttt{silver/customers}: thư mục \texttt{data} (Parquet) và \texttt{metadata} (mỗi lần ghi là một tệp \texttt{*.metadata.json}, nền tảng của time travel)
+\end{itemize}
+\note{[P10-bước 3] Ảnh Phú chụp: figures/5-1\_minio\_iceberg.png. Bronze = Kafka được kiểm bằng pytest (test\_bronze\_equals\_kafka).}
+\end{frame}
+
+\begin{frame}{Bước 4 Silver: MERGE theo khoá, giữ dòng mồ côi để thử lại, SCD2 địa chỉ khách}
+\muc{5.1 · Lakehouse}
+\begin{itemize}
+  \item Silver ghi bằng \texttt{MERGE} theo khoá chính; một sự kiện chỉ thay dòng có sẵn khi \texttt{ts\_ms} không cũ hơn, nên giao trùng và sai thứ tự đều an toàn
+  \item Dòng mồ côi (đơn đến trước khách vài lô) vào \texttt{silver.<bảng>\_rejected} với mã \texttt{orphan}, thử lại ở mọi lô và tự rời đi khi cha đến; cuối chạy còn 0
+  \item \texttt{silver.order\_status\_history} (SCD2 theo trạng thái) và \texttt{customer\_address\_scd2}: 96.338 phiên bản, khớp \texttt{dim\_customer} của kho
+  \item Silver địa lý 19.015 zip (42 điểm bị loại, có ghi lý do) và Silver API cùng bốn tầng ghép đô thị trùng từng số với P9
+\end{itemize}
+\note{[P10-bước 4] lakehouse/spark/stream\_bronze\_silver.py, silver\_batch.py. Silver áp quy tắc của sql/30\_ods/020\_ods\_procs.sql.}
+\end{frame}
+
+\begin{frame}{Minh chứng Silver: 10 bảng bằng nguồn về số dòng và checksum khoá}
+\muc{5.1 · Lakehouse}
+\begin{columns}[T]\begin{column}{0.4\textwidth}
+{\scriptsize\begin{tabular}{lr}
+\hline
+\textbf{Bảng Silver} & \textbf{Số dòng = nguồn} \\\hline
+\texttt{orders} & 99.441 \\
+\texttt{customers} & 99.441 \\
+\texttt{order\_items} & 112.650 \\
+\texttt{order\_payments} & 103.886 \\
+\texttt{order\_reviews} & 99.224 \\
+\texttt{products} & 32.951 \\
+\texttt{sellers} & 3.095 \\
+\texttt{mql} & 8.000 \\
+\texttt{closed\_deals} & 842 \\
+\texttt{category\_translation} & 71 \\\hline
+\end{tabular}}
+\end{column}\begin{column}{0.58\textwidth}
+\begin{itemize}
+  \item Kiểm tra: số dòng và md5 của khoá chính đã sắp xếp, ở PostgreSQL nguồn và ở Trino
+  \item 10/10 bảng khớp; sáu bảng \texttt{*\_rejected} đều rỗng
+  \item Silver địa lý (19.015 zip) bằng \texttt{ods.geolocation\_zip} của kho
+\end{itemize}
+\end{column}\end{columns}
+\note{[P10-bước 4] Kiểm thử: lakehouse/tests/test\_silver\_equals\_source.py (16 phép, đều đạt). Ảnh: figures/5-1\_spark\_ui\_streaming.png do Phú chụp.}
+\end{frame}
+
+\begin{frame}{Bước 5 Gold: dbt dựng 20 model từ Silver, giữ nguyên tên bảng, cột của đặc tả}
+\muc{5.1 · Lakehouse}
+\begin{itemize}
+  \item \texttt{dbt-trino}: 10 dimension, 6 fact và 4 bảng mart (\texttt{mart\_sales\_*}) cho Superset; dòng Unknown khoá $-1$ như kho; lịch \texttt{dim\_date} sinh từ chính hàm của chương 3
+  \item Làm giàu địa lý và ngày bằng dữ liệu API như ở chương 3; chạy cả 20 model trong 70 giây
+  \item Khoá thay thế đánh số khác kho (theo thứ tự nạp), nên đối soát dịch ngược mọi khoá ngoại về giá trị tự nhiên
+  \item 71 phép kiểm thử dbt: \texttt{unique}, \texttt{not\_null}, \texttt{relationships}, \texttt{accepted\_values}, grain của fact, và ba phép riêng (Gold = Silver về tiền và số dòng, SCD2 không chồng thời gian)
+\end{itemize}
+\note{[P10-bước 5] lakehouse/dbt. Thiết kế giữ trùng DW\_DESIGN.md để Power BI hoặc Superset đọc cùng một mô hình.}
+\end{frame}
+
+\begin{frame}{Minh chứng Gold: lineage bốn tầng Silver, dimension, fact, mart}
+\muc{5.1 · Lakehouse}
+\begin{center}\anh[0.58\textheight]{5-1_dbt_lineage.png}\end{center}
+\begin{itemize}
+  \item 18 nguồn Silver $\rightarrow$ 10 dimension $\rightarrow$ 6 fact $\rightarrow$ 4 mart, 77 cạnh phụ thuộc
+\end{itemize}
+\note{[P10-bước 5] Hình vẽ bằng lakehouse/scripts/gen\_lineage.py từ dbt/target/manifest.json. Fact chỉ nối tới dim\_date qua depends\_on vì khoá ngày tính từ mốc thời gian, không join.}
+\end{frame}
+
+\begin{frame}{Minh chứng Gold: 71 phép kiểm thử dbt đều đạt}
+\muc{5.1 · Lakehouse}
+\begin{columns}[T]\begin{column}{0.49\textwidth}
+\anh[0.62\textheight]{5-1_dbt_test_1.png}
+\end{column}\begin{column}{0.49\textwidth}
+\anh[0.62\textheight]{5-1_dbt_test_2.png}
+\end{column}\end{columns}
+\begin{itemize}
+  \item \texttt{dbt test}: PASS=71, ERROR=0; chạy lại trong bộ pytest bằng tham số \texttt{--run-slow}
+\end{itemize}
+\note{[P10-bước 5] Hai ảnh Phú chụp (đầu và cuối đầu ra dbt test): figures/5-1\_dbt\_test\_1.png, 5-1\_dbt\_test\_2.png.}
+\end{frame}
+
+\begin{frame}{Đối soát Gold với kho: 16/16 bảng khớp, hai zip lệch tên thành phố (có giải thích)}
+\muc{5.1 · Lakehouse}
+\begin{center}\anh[0.32\textheight]{5-1_reconcile.png}\end{center}
+{\small\begin{itemize}
+  \item Cùng một câu SQL chạy trên PostgreSQL (\texttt{dw.*}) và Trino (\texttt{gold.*}); mỗi bảng so số dòng, tổng các số đo, md5 khoá tự nhiên, md5 nội dung từng dòng
+  \item GMV 13.494.400,74 BRL ở cả hai phía; ngoại lệ duy nhất: cột \texttt{city} của 2 zip (13848, 35348) trong \texttt{dim\_geography}
+\end{itemize}}
+\note{[P10-đối soát] Ảnh Phú chụp từ python lakehouse/scripts/reconcile.py. Nói 16/16 bảng khớp, 2 zip lệch tên thành phố do quy tắc chọn khi hoà điểm (có giải thích); không nói khớp 100\%.}
+\end{frame}
+
+\begin{frame}{Dung sai và ngoại lệ duy nhất: hai zip hoà điểm tên thành phố}
+\muc{5.1 · Lakehouse}
+\begin{columns}[T]\begin{column}{0.5\textwidth}
+\textbf{Dung sai (mọi chỗ khác là bằng nhau tuyệt đối)}
+\begin{itemize}
+  \item \texttt{late\_rate}, \texttt{avg\_review\_score}: làm tròn 4 chữ số thập phân ở cả hai phía
+  \item Toạ độ: cắt \texttt{floor(x $\cdot$ 10$^6$)}, tức dưới 1e-6 độ (khoảng 0,11 m)
+  \item Số tiền không nới
+\end{itemize}
+\end{column}\begin{column}{0.48\textwidth}
+\textbf{Ngoại lệ có giải thích}
+\begin{itemize}
+  \item \texttt{city} của zip 13848 và 35348 (0,01\% số dòng): hai cách viết có điểm bằng nhau, 97 và 97
+  \item PostgreSQL chọn theo thứ tự collation của locale, Spark theo thứ tự mã ký tự
+  \item Mọi cột khác của hai zip này và mọi zip còn lại đều khớp
+\end{itemize}
+\end{column}\end{columns}
+\note{[P10-đối soát] docs/LAKEHOUSE.md mục 3.9. Chương 3 không đổi nên không thể sao chép collation Windows của PostgreSQL vào Spark.}
+\end{frame}
+
+\begin{frame}{Lỗi 1: Silver chỉ có 24.765 trên 45.971 đơn, log không báo, đối soát mới thấy}
 \muc{5.1 · Lakehouse}
 \begin{columns}[T]\begin{column}{0.5\textwidth}
 \begin{itemize}
@@ -36,10 +272,151 @@ Silver = nguồn & \textbf{sai} & \textbf{đúng} \\\hline
 \note{[P10-bài học] Số liệu: handoff P10, mục 3.7 của docs/LAKEHOUSE.md. Hai lần chạy đầu cùng sai; log từng lô chỉ cho thấy tổng đơn hợp lệ cộng orphan bằng số sự kiện mới, không phải lỗi. Đây là lý do test Silver = nguồn là bắt buộc.}
 \end{frame}
 
-\begin{frame}{[P10] Kết quả lakehouse: số liệu đo được so với kho PostgreSQL}
+\begin{frame}{Lỗi 2: trim() của Trino khác PostgreSQL, 18 review bị tính là không có bình luận}
 \muc{5.1 · Lakehouse}
-\khungchen[0.5\textheight]{P10 điền: bảng kết quả và hình}
-\note{[S117] Khung: kết quả lakehouse (P10).}
+\begin{columns}[T]\begin{column}{0.5\textwidth}
+\begin{itemize}
+  \item \textbf{Hiện tượng:} \texttt{fact\_review} lệch ở hai cột, dù các bảng khác khớp
+  \item \textbf{Nguyên nhân:} \texttt{trim()} của Trino bỏ cả xuống dòng và tab, còn của PostgreSQL chỉ bỏ dấu cách
+  \item \textbf{Sửa:} model chỉ bỏ dấu cách hai đầu (\texttt{regexp\_replace})
+  \item \textbf{Bài học:} cùng câu hỏi, hai engine, khác ngữ nghĩa nhỏ; chỉ so từng giá trị mới thấy
+\end{itemize}
+\end{column}\begin{column}{0.48\textwidth}
+{\scriptsize\begin{tabular}{lrr}
+\hline
+ & \textbf{Gold} & \textbf{Kho} \\\hline
+Có bình luận & 40.950 & 40.968 \\
+$\sum$ độ dài & 2.800.913 & 2.804.417 \\
+Sau sửa & \multicolumn{2}{c}{khớp} \\\hline
+\end{tabular}}
+\end{column}\end{columns}
+\note{[P10-bài học] Lỗi do Gold (không phải kho). Hai lỗi nhỏ khác là do cách so sánh (số chữ số 0 cuối, làm tròn số thực), đã sửa phép so. docs/LAKEHOUSE.md mục 3.9.}
+\end{frame}
+
+\begin{frame}{Độ trễ nguồn đến Silver trung bình 22,6 giây, chủ yếu là chờ micro-batch 30 giây}
+\muc{5.1 · Lakehouse}
+\begin{columns}[T]\begin{column}{0.5\textwidth}
+\anh[0.5\textheight]{5-1_latency.png}
+\end{column}\begin{column}{0.48\textwidth}
+{\scriptsize\begin{tabular}{lrrr}
+\hline
+\textbf{Chặng (giây)} & \textbf{min} & \textbf{TB} & \textbf{max} \\\hline
+PostgreSQL $\rightarrow$ Kafka & 0,4 & 0,5 & 0,8 \\
+Kafka $\rightarrow$ Bronze & 2,6 & 12,1 & 29,9 \\
+Bronze $\rightarrow$ Silver & 6,8 & 10,0 & 18,3 \\
+\textbf{Nguồn $\rightarrow$ Silver} & 10,9 & \textbf{22,6} & 37,8 \\
+Nguồn $\rightarrow$ Trino đọc được & 19,8 & 29,9 & 42,9 \\\hline
+\end{tabular}}
+\end{column}\end{columns}
+\begin{itemize}
+  \item 6 lần thử ở pha ngẫu nhiên so với trigger; đổi một cột của một đơn rồi hoàn nguyên, Silver trở lại bằng nguồn
+\end{itemize}
+\note{[P10-đo] handoff/2026-11-19-P10-latency.md; script lakehouse/scripts/latency\_probe.py. Chặng Kafka sang Bronze gồm chờ trigger kế tiếp (0 đến 30 giây); Debezium chỉ mất dưới 1 giây.}
+\end{frame}
+
+\begin{frame}{Minh chứng luồng chạy liên tục: Spark UI ghi lại 41 lô, lô dồn việc hơn một phút}
+\muc{5.1 · Lakehouse}
+\begin{columns}[T]\begin{column}{0.36\textwidth}
+\anh[0.66\textheight]{5-1_spark_ui_streaming_crop.png}
+\end{column}\begin{column}{0.62\textwidth}
+\anh[0.5\textheight]{5-1_spark_ui_jobs.png}
+\end{column}\end{columns}
+\begin{itemize}
+  \item Trái: thống kê của query; phải: dòng thời gian các job Spark
+\end{itemize}
+\note{[P10-đo] Ảnh Phú chụp từ Spark UI http://127.0.0.1:4040 khi luồng chạy liên tục; figures/5-1\_spark\_ui\_streaming.png (đã cắt phần trống) và 5-1\_spark\_ui\_jobs.png.}
+\end{frame}
+
+\begin{frame}{Thông lượng: nạp bù 2.100 sự kiện/giây, UPDATE qua MERGE 241, RAM đỉnh 3,6 GB}
+\muc{5.1 · Lakehouse}
+\begin{columns}[T]\begin{column}{0.5\textwidth}
+{\scriptsize\begin{tabular}{lr}
+\hline
+\textbf{Phép đo} & \textbf{Sự kiện/giây} \\\hline
+Nhịp phát của nguồn (phát lại) & 468,5 \\
+Nạp bù 1.276.620 sự kiện (13 lô, khoảng 10 phút) & $\approx$ 2.100 \\
+Dồn việc: 20.000 UPDATE một giao dịch & 241 \\\hline
+\end{tabular}}
+
+\vspace{4pt}
+{\scriptsize\begin{tabular}{lr}
+\hline
+\textbf{Container} & \textbf{Đỉnh (MiB)} \\\hline
+Spark (giới hạn 1.536) & 1.534 \\
+Trino & 857 \\
+Connect & 408 \\
+Kafka & 339 \\
+MinIO / PostgreSQL / REST & 183 / 169 / 152 \\\hline
+\end{tabular}}
+\end{column}\begin{column}{0.48\textwidth}
+\begin{itemize}
+  \item Nạp bù nhanh vì phần lớn là \texttt{geolocation} chỉ ghi Bronze; MERGE ghi lại tệp Iceberg nên chậm hơn
+  \item Spark chạm giới hạn nhưng không bị kill
+\end{itemize}
+\end{column}\end{columns}
+\note{[P10-đo] Phân biệt: nhịp phát là tốc độ nguồn tạo sự kiện; năng lực xử lý là tốc độ luồng tiêu thụ. Spark ghi cảnh báo lô bị chậm (78 giây trên trigger 30 giây) khi dồn việc.}
+\end{frame}
+
+\begin{frame}{Time travel: đọc phiên bản cũ dưới 0,2 giây, rollback sửa nhầm trong 0,09 giây}
+\muc{5.1 · Lakehouse}
+\begin{columns}[T]\begin{column}{0.5\textwidth}
+{\scriptsize\begin{tabular}{lrr}
+\hline
+\textbf{Snapshot của \texttt{silver.orders}} & \textbf{Đơn đọc được} & \textbf{Giây} \\\hline
+Đầu tiên (31 snapshot tất cả) & 307 & 0,16 \\
+Giữa & 49.721 & 0,13 \\
+Mới nhất & 99.441 & 0,11 \\\hline
+\end{tabular}}
+\begin{itemize}
+  \item \texttt{FOR VERSION AS OF} và \texttt{FOR TIMESTAMP AS OF} đọc đúng phiên bản, không đụng dữ liệu hiện tại
+\end{itemize}
+\end{column}\begin{column}{0.48\textwidth}
+\textbf{Sửa nhầm trên bản sao, rồi rollback}
+\begin{itemize}
+  \item \texttt{UPDATE} nhầm 97.103 đơn thành \texttt{canceled}; bản cũ vẫn đọc được (625 đơn)
+  \item \texttt{rollback\_to\_snapshot}: 0,09 giây, chỉ đổi con trỏ metadata; sau đó khác bảng gốc 0 dòng
+  \item Truy vấn “đơn ở trạng thái nào lúc T” trên \texttt{order\_status\_history}; thêm và bớt cột không viết lại Parquet
+\end{itemize}
+\end{column}\end{columns}
+\note{[P10-time travel] handoff/2026-11-19-P10-timetravel.md, lakehouse/scripts/time\_travel.py. Mọi thay đổi dữ liệu làm trên bản sao ops.orders\_tt; silver.orders không bị đụng.}
+\end{frame}
+
+\begin{frame}{DB1 trên Superset: dashboard đọc từ tầng Gold của lakehouse qua Trino}
+\muc{5.1 · Lakehouse}
+\khungchen[0.5\textheight]{Chờ ảnh chụp DB1 trên Superset (Bước 10)}
+\note{[P10-Superset] Khung chờ ảnh: figures/5-1\_superset\_db1.png, dựng ở Bước 10.}
+\end{frame}
+
+\begin{frame}{Kiểm thử ba lớp: 18 phép pytest, 71 phép dbt và đối soát 16 bảng}
+\muc{5.1 · Lakehouse}
+\begin{itemize}
+  \item \textbf{pytest nhanh (18 phép):} Silver = nguồn cho 10 bảng (số dòng và md5 khoá), 6 bảng loại rỗng, Bronze = offset Kafka của 11 topic, Silver địa lý = ODS của kho
+  \item \textbf{pytest chậm (\texttt{--run-slow}, hai phép):} chạy \texttt{dbt test} (71 phép) và \texttt{reconcile.py} (16 bảng)
+  \item Lần chạy ngày 20/11/2026: 18 phép nhanh đều đạt (36 giây); \texttt{dbt test} và \texttt{reconcile.py} đều đạt (135 giây)
+  \item Phép so Silver với nguồn sẽ báo ngay loại lỗi ở Lỗi 1: log không báo gì nhưng Silver thiếu một nửa số đơn
+\end{itemize}
+\note{[P10-kiểm thử] lakehouse/tests. Lần chạy gộp đầu tiên báo một phép Gold hỏng vì biểu thức đọc kết quả dbt của chính bộ kiểm thử (đã sửa); chạy lại hai phép Gold riêng đều đạt.}
+\end{frame}
+
+\begin{frame}{Tổng kết 5.1: cùng số liệu với kho chương 3, thêm sự kiện và time travel}
+\muc{5.1 · Lakehouse}
+\begin{columns}[T]\begin{column}{0.5\textwidth}
+\textbf{Kết quả}
+\begin{itemize}
+  \item 1.720.555 sự kiện đi qua Kafka vào Bronze không mất, không trùng
+  \item Silver bằng nguồn ở 10 bảng; Gold bằng kho ở 16/16 bảng
+  \item Độ trễ nguồn $\rightarrow$ Silver trung bình 22,6 giây; time travel và rollback trong dưới 0,2 giây
+\end{itemize}
+\end{column}\begin{column}{0.48\textwidth}
+\textbf{Hạn chế và bài học}
+\begin{itemize}
+  \item Bảy dịch vụ trong 4 GB RAM; Spark chạm giới hạn
+  \item Chưa so thời gian truy vấn với kho PostgreSQL ở quy mô này; đối soát chỉ xét tính đúng của số liệu
+  \item Vận hành bằng script (profile lite), không có Airflow
+  \item Phải đối soát với nguồn: log không đủ để biết dữ liệu đúng
+\end{itemize}
+\end{column}\end{columns}
+\note{[P10-tổng kết] Không có kết luận lakehouse tốt hơn kho; hai đường cho cùng số liệu, lakehouse thêm khả năng đọc lịch sử và sự kiện gần thời gian thực.}
 \end{frame}
 
 \subsection{5.2 Thu thập dữ liệu từ API}
@@ -235,12 +612,6 @@ Không khớp & 715 & 719 & -- & 0,5 chưa khớp & 502 \\
 \begin{center}\anh[0.74\textheight]{5-2_mua_va_giao_tre.png}\end{center}
 \end{column}\end{columns}
 \note{[S159] Nguồn tuỳ chọn Open-Meteo (CC BY 4.0; ghi nguồn Weather data by Open-Meteo.com).}
-\end{frame}
-
-\begin{frame}{[P10] DB1 trên Superset: cùng số liệu với Power BI, đọc từ tầng Gold của lakehouse}
-\muc{5.1 · Lakehouse}
-\khungchen[0.5\textheight]{P10 điền: ảnh chụp DB1 trên Superset}
-\note{[S148] Khung: DB1 trên Superset (P10).}
 \end{frame}
 
 \begin{frame}{[P9] Dashboard D8 Thị trường Brazil dựng từ dữ liệu API thu thập thực tế}

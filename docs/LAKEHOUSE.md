@@ -377,5 +377,11 @@ WHERE order_id = :id AND valid_from <= TIMESTAMP :t AND (valid_to IS NULL OR val
 | 3 | Thu nhận: nạp nguồn, Debezium, replay, API → MinIO → Bronze | xong (mục 3.6) |
 | 4 | Bronze → Silver (luồng) | xong (mục 3.7 và 3.8): Silver = nguồn = ODS của kho chương 3 ở mọi bảng |
 | 5 | Silver → Gold bằng dbt | xong (mục 3.9): 20 model, 71 phép kiểm thử dbt đạt |
-| 6 | Đối soát Gold với kho chương 3 | xong (mục 3.9): 16/16 bảng khớp, một ngoại lệ có giải thích; **chờ Phú duyệt trước khi làm tiếp** |
-| 7–13 | Time travel, vận hành, đo, Superset, kiểm thử, tài liệu | chưa làm |
+| 6 | Đối soát Gold với kho chương 3 | xong (mục 3.9): 16/16 bảng khớp, 2 zip lệch tên thành phố do quy tắc chọn khi hoà điểm (có giải thích); Phú đã duyệt |
+| 7 | Time travel Iceberg | xong: `lakehouse/scripts/time_travel.py`, `handoff/2026-11-19-P10-timetravel.md` |
+| 8 | Vận hành (Airflow) | **bỏ**: profile lite vận hành bằng script (docker compose, `check_health.py`, `replay_events.py`, `wait_log.py`) |
+| 9 | Đo độ trễ và thông lượng | xong: 6 lần thử + đợt dồn việc, `handoff/2026-11-19-P10-latency.md`, `figures/5-1_latency.png`; ảnh Spark UI do Phú chụp |
+| 10 | Superset DB1 | chưa làm (cần tải image Superset; làm ở mạng ổn định) |
+| 11 | Tính năng tuỳ chọn | **bỏ** |
+| 12 | Kiểm thử | xong: `lakehouse/tests` (18 phép nhanh: Silver = nguồn, Bronze = Kafka; `--run-slow` chạy thêm 71 phép dbt và đối soát 16 bảng) |
+| 13 | Slide, Q&A, handoff | slide 5.1 xong (25 trang, `slides/sections/04-mo-rong.tex`), Q&A 53–61, handoff; chương báo cáo `report/chapters/5-1-lakehouse.tex` chưa viết |

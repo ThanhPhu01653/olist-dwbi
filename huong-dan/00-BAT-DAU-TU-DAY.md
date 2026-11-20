@@ -14,7 +14,7 @@ Mọi thư mục và nhóm file của repo, theo thứ tự nên mở. Cột cu�
 
 | Ở đâu | Là gì | Dùng khi nào | Cách đọc |
 | --- | --- | --- | --- |
-| [`huong-dan/`](.) | Bộ hướng dẫn chung: lộ trình (file này), pipeline bằng ví dụ thật, thuật ngữ, từ điển dữ liệu, 52 câu hỏi đáp, nghiệp vụ (nháp), hướng dẫn DB1–DB4 | Bắt đầu mọi việc; dựng dashboard, viết báo cáo, làm slide | Đọc kỹ `01`, `02`; tra cứu `03`, `04`, `dashboards/` |
+| [`huong-dan/`](.) | Bộ hướng dẫn chung: lộ trình (file này), pipeline bằng ví dụ thật, thuật ngữ, từ điển dữ liệu, 61 câu hỏi đáp, nghiệp vụ (nháp), hướng dẫn DB1–DB4 | Bắt đầu mọi việc; dựng dashboard, viết báo cáo, làm slide | Đọc kỹ `01`, `02`; tra cứu `03`, `04`, `dashboards/` |
 | [`huong-dan/phan-viec/`](phan-viec/README.md) | Hướng dẫn cho từng người: `README.md` (phân công, lịch, Drive, Power BI, Overleaf, draw.io, cách hỏi Phú) và `Nguoi-1.md` … `Nguoi-4.md`, `Phu.md` (phần của mình, barem, kiến thức, số liệu và hình, danh sách slide, sơ đồ, dashboard, câu hỏi có thể bị hỏi, mốc hạn) | Bắt đầu phần việc của mình: mở **một file** của mình | Đọc kỹ file của mình và `README.md` |
 | [`handoff/00-TONG-QUAN.md`](../handoff/00-TONG-QUAN.md) | Trang tổng quan số liệu và phát hiện: các bảng, KPI, 7 phát hiện, bảng "mục báo cáo → file nguồn → hình" | Cần toàn cảnh hoặc tìm file nguồn cho một mục báo cáo | Đọc kỹ |
 | [`handoff/2026-11-05-P*.md`](../handoff/README.md) | Nhật ký kỹ thuật từng phase P0–P7: đã làm gì, số liệu, đoạn nháp báo cáo, gợi ý slide, SQL tiêu biểu | Viết một mục báo cáo hoặc làm slide của phase tương ứng | Tra cứu (đọc kỹ file của phase mình viết) |
@@ -56,7 +56,7 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | 4 | [`05-nghiep-vu-nhap.md`](05-nghiep-vu-nhap.md) | viết mục 2.1–2.3 (nghiệp vụ, BPMN, canvas, yêu cầu, KPI) – **bản nháp cần sửa** | 20 phút |
 | 5 | Các file `handoff/2026-11-05-P*.md` theo bảng mục báo cáo: mỗi file có **đoạn nháp tiếng Việt** sẵn | viết từng mục | 10–15 phút mỗi file |
 | 6 | [`dashboards/DB1.md` … `DB4.md`](dashboards/) mục "Insight gợi ý" | viết mục phân tích dashboard | 5 phút mỗi file |
-| 7 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | kiểm tra bài viết đã trả lời được 52 câu | 30 phút |
+| 7 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | kiểm tra bài viết đã trả lời được 61 câu | 30 phút |
 | 8 | [`03-tu-dien-du-lieu.md`](03-tu-dien-du-lieu.md) | bảng mô tả cột cho phụ lục | tra cứu |
 
 ### C. Làm slide
@@ -75,7 +75,7 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | 2 | [`02-thuat-ngu.md`](02-thuat-ngu.md) | thuật ngữ (grain, SCD, role-playing, materialized view…) kèm ví dụ trong dự án | 20 phút |
 | 3 | [`handoff/2026-11-05-P2.md`](../handoff/2026-11-05-P2.md) đến [`P5.md`](../handoff/2026-11-05-P5.md) | làm sạch ODS, dimension, fact, nạp tăng dần | 10–15 phút mỗi file |
 | 4 | [`03-tu-dien-du-lieu.md`](03-tu-dien-du-lieu.md) | tra từng bảng và cột của kho | tra cứu |
-| 5 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | kiểm tra mức hiểu bằng 52 câu hỏi đáp | 30 phút |
+| 5 | [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | kiểm tra mức hiểu bằng 61 câu hỏi đáp | 30 phút |
 
 ## 3. Các file trong `huong-dan/`
 | File | Nội dung |
@@ -84,7 +84,7 @@ Thời gian là thời gian **đọc** (chưa tính thời gian làm).
 | [`01-pipeline-bang-loi.md`](01-pipeline-bang-loi.md) | giải thích các lớp; đi theo **một đơn hàng thật** và **một MQL thật** qua từng bảng |
 | [`02-thuat-ngu.md`](02-thuat-ngu.md) | thuật ngữ DW/BI, mỗi thuật ngữ có ví dụ ngay trong dự án |
 | [`03-tu-dien-du-lieu.md`](03-tu-dien-du-lieu.md) | từ điển mọi bảng `dw` và `mart_*` (sinh tự động): grain, số dòng, từng cột |
-| [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | 52 câu giảng viên có thể hỏi + trả lời có số liệu |
+| [`04-cau-hoi-van-dap.md`](04-cau-hoi-van-dap.md) | 61 câu giảng viên có thể hỏi + trả lời có số liệu |
 | [`05-nghiep-vu-nhap.md`](05-nghiep-vu-nhap.md) | **bản nháp** BPMN, Business Model Canvas, cây nghiệp vụ / yêu cầu / phân tích |
 | [`06-tu-dien-du-lieu-nguon.md`](06-tu-dien-du-lieu-nguon.md) | từ điển 11 bảng nguồn (oltp, crm): kiểu, miền giá trị, % rỗng, vai trò trong kho (P8, sinh tự động) |
 | [`dashboards/README.md`](dashboards/README.md) | checklist chung của dashboard (định dạng số, tiêu đề câu hỏi, drill-through, tooltip, dự báo, QR) và ma trận mục checklist × DB1–DB4 |
