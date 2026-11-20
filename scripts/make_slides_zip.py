@@ -10,7 +10,7 @@ skip = {".aux", ".log", ".toc", ".nav", ".snm", ".out", ".xdv", ".fls", ".fdb_la
 with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
     for p in sorted(SL.rglob("*")):
         rel = p.relative_to(SL).parts
-        if p.is_dir() or p.suffix in skip or p.name in {"README.md", "slide-script.md", "QUY-TAC-TRINH-BAY.md"} or p.name.startswith("build") or rel[0] in {"mau", "_xem_truoc"}:
+        if p.is_dir() or p.suffix in skip or p.name in {"README.md", "slide-script.md"} or p.name.startswith("build") or rel[0] in {"mau", "_xem_truoc"}:
             continue
         z.write(p, p.relative_to(SL).as_posix())
 print(f"{out.name}: {out.stat().st_size / 1024 / 1024:.1f} MB, {len(zipfile.ZipFile(out).namelist())} files")

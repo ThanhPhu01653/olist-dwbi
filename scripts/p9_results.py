@@ -38,7 +38,7 @@ if SLIDE:                                   # P11: same data and drawing code, p
 
     plt.rcParams.update({"font.size": 18, "xtick.labelsize": 18, "ytick.labelsize": 18})
     _subplots = plt.subplots
-    plt.subplots = lambda *a, **k: _subplots(*a, **{**k, "figsize": (14, 8.6) if k.get("figsize", (0, 0))[1] > 6.5 else (14, 4.3)})
+    plt.subplots = lambda *a, **k: _subplots(*a, **{**k, "figsize": (14, 3.0) if k.get("figsize", (0, 0))[1] > 6.5 else (14, 4.3)})
     _ax.Axes.set_title = lambda self, *a, **k: None
     _text = _ax.Axes.text
     _ax.Axes.text = lambda self, x, y, s, *a, **k: _text(self, x, y, s, *a, **{**k, "fontsize": max(k.get("fontsize", 16), 16)})
@@ -50,7 +50,7 @@ if SLIDE:                                   # P11: same data and drawing code, p
     _ax.Axes.set_xticklabels = lambda self, l, *a, **k: _xt(self, [_tw.fill(str(t), 15) for t in l], *a, **{**k, "fontsize": 18})
     _sy = _ax.Axes.set_ylim
     _ax.Axes.set_ylim = lambda self, *a, **k: _sy(self, 40, 104) if a == (80, 102) else _sy(self, *a, **k)   # tier chart: show the 47-54% of tier 1 instead of cutting it off
-    _ax.Axes.legend = lambda self, *a, **k: _lg(self, *a, **{**k, "fontsize": 16, **({"loc": "lower center", "bbox_to_anchor": (0.5, 1.0), "ncol": 3, "frameon": False} if "luỹ kế" in self.get_ylabel() else {})})
+    _ax.Axes.legend = lambda self, *a, **k: _lg(self, *a, **{**k, "fontsize": 16, **({"loc": "lower center", "bbox_to_anchor": (0.5, 1.0), "ncol": 5, "frameon": False} if "1.000 dân" in self.get_ylabel() else {}), **({"loc": "lower center", "bbox_to_anchor": (0.5, 1.0), "ncol": 3, "frameon": False} if "luỹ kế" in self.get_ylabel() else {})})
 
 
 def q(sql, **p) -> pd.DataFrame:
@@ -210,10 +210,22 @@ md += ["", f"Spearman giữa GMV/1.000 dân và GMV tuyệt đối (27 bang, 201
 fig, ax = plt.subplots(figsize=(7.6, 7.2))
 dd = d17.sort_values("gmv_per_1000_pop")
 colors = [{"Sudeste": BLUE_D, "Sul": GREEN_D, "Nordeste": ORANGE_D, "Norte": "#9B5DE5", "Centro-Oeste": "#00A6A6"}[r] for r in dd.region]
-ax.barh(dd.state_code, dd.gmv_per_1000_pop, color=colors)
-for yi, (v, rg, ra) in enumerate(zip(dd.gmv_per_1000_pop, dd.rank_gmv, dd.rank_per_capita)):
-    ax.text(v + 0.6, yi, f"{v:.1f}  (hạng GMV {rg})", va="center", fontsize=7)
-ax.set_xlabel("BRL GMV trên 1.000 dân (2017)")
+if SLIDE:                                   # projector variant: 27 vertical bars, rank by GMV printed under each state code
+    dd, colors = dd.iloc[::-1], colors[::-1]
+    xs_ = list(range(len(dd)))
+    ax.bar(xs_, dd.gmv_per_1000_pop, color=colors)
+    ax.set_xticks(xs_, labels=[f"{c}\n{r}" for c, r in zip(dd.state_code, dd.rank_gmv)])
+    for xi, v in zip(xs_, dd.gmv_per_1000_pop):
+        ax.text(xi, v + 0.8, f"{v:.1f}", ha="center", va="bottom", rotation=90, fontsize=16)
+    ax.set_ylabel("BRL / 1.000 dân")
+    ax.set_xlabel("số dưới mã bang = hạng theo GMV (năm 2017)")
+    ax.tick_params(axis="x", labelsize=15)
+    ax.set_ylim(0, 70)
+else:
+    ax.barh(dd.state_code, dd.gmv_per_1000_pop, color=colors)
+    for yi, (v, rg, ra) in enumerate(zip(dd.gmv_per_1000_pop, dd.rank_gmv, dd.rank_per_capita)):
+        ax.text(v + 0.6, yi, f"{v:.1f}  (hạng GMV {rg})", va="center", fontsize=7)
+    ax.set_xlabel("BRL GMV trên 1.000 dân (2017)")
 ax.set_title("Bang nào mua nhiều nhất theo đầu người?", fontsize=11)
 from matplotlib.patches import Patch
 ax.legend(handles=[Patch(color=c, label=l) for l, c in (("Sudeste", BLUE_D), ("Sul", GREEN_D), ("Nordeste", ORANGE_D), ("Norte", "#9B5DE5"), ("Centro-Oeste", "#00A6A6"))], fontsize=8, loc="lower right")

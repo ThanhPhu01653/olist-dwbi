@@ -30,13 +30,13 @@ Trino 477 & SQL, dbt, đối soát & 1.280 MiB \\
 % (F) CDC làm
 \begin{frame}{CDC: Debezium chụp snapshot 1.273.620 dòng rồi bắt từng thay đổi từ log}
 \muc{5.1 · Lakehouse}
+\HangSo[3]{\So{1.273.620}{dòng snapshot}\hfill\So{11}{topic Kafka}\hfill\So{$\approx$35 s}{chụp snapshot}}
 \begin{itemize}
-  \item Nạp nguồn đến 31/12/2017 bằng mã chương 3: 1.273.620 dòng trong 11,1 giây
-  \item Debezium chụp snapshot 11 bảng (khoảng 35 giây), rồi đọc log của PostgreSQL
-  \item Mỗi bảng là một topic Kafka \texttt{olist.<schema>.<bảng>}
+  \item Nạp nguồn đến 31/12/2017 bằng mã chương 3, trong 11,1 giây
+  \item Debezium chụp snapshot 11 bảng rồi đọc log của PostgreSQL
   \item Từ 01/01/2018 đến 14/11/2018: dữ liệu phát lại như đến sau
 \end{itemize}
-\note{[P10-bước 2] docs/LAKEHOUSE.md mục 3.6 và 3.8. Kho PostgreSQL của chương 3 không bị đụng tới. Connector olist-source, plugin pgoutput. Mã hoá: timestamp thành micro giây, date thành số ngày, numeric thành chuỗi. Mốc cắt: nạp ban đầu gồm mọi bản ghi đến 31/12/2017; phần phát lại bắt đầu 01/01/2018. Debezium giao ít nhất một lần (at-least-once) nên Silver phải chịu được sự kiện trùng.}
+\note{[P10-bước 2] docs/LAKEHOUSE.md mục 3.6 và 3.8. Kho PostgreSQL của chương 3 không bị đụng tới. Connector olist-source, plugin pgoutput. Mã hoá: timestamp thành micro giây, date thành số ngày, numeric thành chuỗi. Mốc cắt: nạp ban đầu gồm mọi bản ghi đến 31/12/2017; phần phát lại bắt đầu 01/01/2018. Debezium giao ít nhất một lần (at-least-once) nên Silver phải chịu được sự kiện trùng. Mỗi bảng là một topic Kafka olist.<schema>.<bảng>.}
 \end{frame}
 
 % (D) CDC minh chứng
@@ -58,13 +58,13 @@ CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
 % (F) Bronze + Silver làm
 \begin{frame}{Bronze giữ nguyên văn sự kiện, Silver áp quy tắc ODS bằng MERGE}
 \muc{5.1 · Lakehouse}
+\HangSo[3]{\So{1,72 triệu}{dòng Bronze = Kafka}\hfill\So{30 s}{micro-batch}\hfill\So{96.338}{phiên bản SCD2 khách}}
 \begin{itemize}
-  \item Bronze: Spark đọc 11 topic, ghi nguyên văn vào bảng Iceberg chỉ-thêm (micro-batch 30 giây)
-  \item Silver: MERGE theo khoá, chỉ thay dòng khi \texttt{ts\_ms} không cũ hơn; sự kiện giao trùng vẫn an toàn
-  \item Đơn đến trước khách vào bảng \texttt{*\_rejected}, thử lại mỗi lô; cuối chạy còn 0
-  \item SCD2 địa chỉ khách: 96.338 phiên bản, khớp \texttt{dim\_customer} của kho
+  \item Bronze: Spark ghi nguyên văn từng sự kiện vào bảng Iceberg chỉ-thêm
+  \item Silver: MERGE theo khoá, chỉ thay dòng khi \texttt{ts\_ms} không cũ hơn
+  \item Đơn đến trước khách vào \texttt{*\_rejected}, thử lại mỗi lô; cuối chạy còn 0
 \end{itemize}
-\note{[P10-bước 3 và 4] lakehouse/spark/stream\_bronze\_silver.py, silver\_batch.py. Bronze: khoá, payload (JSON của Debezium), op, ts\_ms, partition và offset Kafka, ingested\_at; tối đa 100.000 sự kiện mỗi lô để giữ bộ nhớ. Dữ liệu API đi đường khác: tệp JSON lên s3://lakehouse/landing/, Spark tạo bốn bảng bronze.api\_* (73 dòng, chạy lại thêm 0 dòng). Silver áp quy tắc của sql/30\_ods/020\_ods\_procs.sql; silver.order\_status\_history là SCD2 theo trạng thái. Silver địa lý 19.015 zip (42 điểm bị loại, có ghi lý do); Silver API cùng bốn tầng ghép đô thị trùng từng số với P9.}
+\note{[P10-bước 3 và 4] lakehouse/spark/stream\_bronze\_silver.py, silver\_batch.py. Bronze: khoá, payload (JSON của Debezium), op, ts\_ms, partition và offset Kafka, ingested\_at; tối đa 100.000 sự kiện mỗi lô để giữ bộ nhớ. Dữ liệu API đi đường khác: tệp JSON lên s3://lakehouse/landing/, Spark tạo bốn bảng bronze.api\_* (73 dòng, chạy lại thêm 0 dòng). Silver áp quy tắc của sql/30\_ods/020\_ods\_procs.sql; silver.order\_status\_history là SCD2 theo trạng thái. Silver địa lý 19.015 zip (42 điểm bị loại, có ghi lý do); Silver API cùng bốn tầng ghép đô thị trùng từng số với P9. SCD2 địa chỉ khách: 96.338 phiên bản, khớp dim\_customer của kho.}
 \end{frame}
 
 % (D) Silver minh chứng
@@ -85,21 +85,21 @@ CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
 % (F) Gold làm
 \begin{frame}{Gold: dbt dựng 20 model trong 70 giây, giữ nguyên tên bảng và cột của đặc tả}
 \muc{5.1 · Lakehouse}
+\HangSo[3]{\So{20}{model dbt}\hfill\So{70 s}{dựng toàn bộ}\hfill\So{71}{phép kiểm thử đạt}}
 \begin{itemize}
-  \item 10 dimension, 6 fact, 4 mart cho Superset; dòng Unknown khoá $-1$ như kho
-  \item Dùng lại seed của chương 3; lịch \texttt{dim\_date} sinh từ chính hàm của chương 3
-  \item Địa lý và ngày được làm giàu bằng dữ liệu API như ở chương 3
-  \item Khoá thay thế đánh số khác kho, nên đối soát dịch khoá ngoại về giá trị tự nhiên
+  \item 10 dimension, 6 fact, 4 mart; dòng Unknown khoá $-1$ như kho
+  \item Dùng lại seed và lịch \texttt{dim\_date} của chương 3; làm giàu bằng dữ liệu API
+  \item Khoá thay thế khác kho, nên đối soát dịch khoá ngoại về giá trị tự nhiên
 \end{itemize}
 \note{[P10-bước 5] lakehouse/dbt (dbt-trino). Bốn bảng mart: mart\_sales\_daily, mart\_sales\_category\_month, mart\_sales\_state\_month, mart\_category\_pareto, cùng cột với mart\_sales của kho. 71 phép kiểm thử dbt: unique, not\_null, relationships, accepted\_values, grain của fact (unique\_combination) và ba phép riêng (Gold = Silver về tiền và số dòng, SCD2 không chồng thời gian).}
 \end{frame}
 
 % (A) lineage
-\begin{frame}{Lineage bốn tầng: 18 nguồn Silver, 10 dimension, 6 fact, 4 mart}
+\begin{frame}{Lineage của fact\_order\_item: 13 nguồn Silver qua 5 dimension}
 \muc{5.1 · Lakehouse}
-\HinhLon[0.54\textheight]{5-1_dbt_lineage.png}
+\AnhChup[0.52\textheight]{5-1_dbt_lineage_fact_tc.png}
 \KetLuan{71/71 phép kiểm thử dbt đạt, gồm 3 phép riêng về tiền, số dòng và SCD2}
-\note{[P10-bước 5] Hình vẽ bằng lakehouse/scripts/gen\_lineage.py từ dbt/target/manifest.json, 77 cạnh phụ thuộc. Fact nối tới dim\_date qua depends\_on vì khoá ngày tính từ mốc thời gian, không join. Ảnh dbt test: slide dự phòng chương 5.}
+\note{[P10-bước 5] Ảnh Phú chụp từ dbt docs (figures/5-1\_dbt\_lineage\_fact.png, đã cắt: 5-1\_dbt\_lineage\_fact\_tc.png): 13 nguồn Silver, 5 dimension nối tới fact\_order\_item. Ảnh chụp trước khi thêm depends\_on nên chưa vẽ dim\_date; fact nối tới dim\_date qua khoá ngày tính từ mốc thời gian, không join. Hình bốn tầng đầy đủ (18 nguồn Silver, 10 dimension, 6 fact, 4 mart) ở slide dự phòng chương 5. Ảnh dbt test: slide dự phòng chương 5.}
 \end{frame}
 
 % (B) đối soát
@@ -234,14 +234,9 @@ Không khớp & 719 & -- & 0,5 chưa khớp \\
 % (A/H) theo đầu người
 \begin{frame}{Theo đầu người, Rio de Janeiro dẫn đầu: 53,90 BRL trên 1.000 dân}
 \muc{5.2 · Thu thập từ API}
-\HinhChu[0.56\textheight]{5-2_gmv_dau_nguoi_theo_bang_sl.png}{%
-\begin{itemize}
-  \item Distrito Federal: hạng 9 theo GMV, hạng 3 theo đầu người
-  \item Maranhão tụt từ hạng 15 xuống 24
-  \item Spearman giữa hai thứ hạng: 0,78
-\end{itemize}}
-\KetLuan{Xếp theo đầu người đổi thứ hạng nhiều bang so với xếp theo GMV}
-\note{[S121] Dân số là ước tính IBGE 2017, GMV theo bang của khách. 2017: RJ 53,90; SP 48,58; DF 43,95; thấp nhất AM 2,58. MA tụt từ hạng 15 xuống 24; PA 13 sang 22; TO lên 23 sang 12. Cả nước 29,42 BRL trên 1.000 dân năm 2017 và 35,21 năm 2018.}
+\HinhLon[0.54\textheight]{5-2_gmv_dau_nguoi_theo_bang_sl.png}
+\KetLuan{RJ 53,90 dẫn đầu; DF hạng 9 theo GMV lên hạng 3; MA tụt từ hạng 15 xuống 24}
+\note{[S121] Dân số là ước tính IBGE 2017, GMV theo bang của khách. 2017: RJ 53,90; SP 48,58; DF 43,95; thấp nhất AM 2,58. MA tụt từ hạng 15 xuống 24; PA 13 sang 22; TO lên 23 sang 12. Cả nước 29,42 BRL trên 1.000 dân năm 2017 và 35,21 năm 2018. Distrito Federal: hạng 9 theo GMV, hạng 3 theo đầu người. Maranhão tụt từ hạng 15 xuống 24. Spearman giữa hai thứ hạng: 0,78. Số dưới mã bang trên hình là hạng theo GMV.}
 \end{frame}
 
 % (A) danh nghĩa so với thực
