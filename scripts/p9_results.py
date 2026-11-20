@@ -1,7 +1,7 @@
 """P9 results: numbers, tables and figures for chapter 5.2 from the warehouse (olist_dw) and the landing zone manifests.
 
     python scripts/p9_results.py            # everything below
-    python scripts/p9_results.py --slide    # P11: only the charts for the projector, written as figures/5-2_*_sl.png (12 x 6 in, text >= 13 pt, no title);
+    python scripts/p9_results.py --slide    # P11: only the charts for the projector, written as figures/5-2_*_sl.png (14 x 4.3 in, axis text 18 pt, labels 16 pt, no title);
                                             # the handoff, the report tables and the diagram are NOT written; numbers are the same
 Writes:  handoff/2026-11-18-P9-results.md (all numbers, generated; do not edit by hand)
          report/tables/p9_*.tex   figures/5-2_*.png   docs/diagrams/api-kien-truc.drawio + figures/5-2_kien_truc_api.png (draft)
@@ -36,21 +36,21 @@ SLIDE = "--slide" in sys.argv
 if SLIDE:                                   # P11: same data and drawing code, projector sizes (slides/QUY-TAC-TRINH-BAY.md section 6)
     import matplotlib.axes as _ax
 
-    plt.rcParams.update({"font.size": 14, "xtick.labelsize": 14, "ytick.labelsize": 14})
+    plt.rcParams.update({"font.size": 18, "xtick.labelsize": 18, "ytick.labelsize": 18})
     _subplots = plt.subplots
-    plt.subplots = lambda *a, **k: _subplots(*a, **{**k, "figsize": (12, 7.6) if k.get("figsize", (0, 0))[1] > 6.5 else (12, 6)})
+    plt.subplots = lambda *a, **k: _subplots(*a, **{**k, "figsize": (14, 8.6) if k.get("figsize", (0, 0))[1] > 6.5 else (14, 4.3)})
     _ax.Axes.set_title = lambda self, *a, **k: None
     _text = _ax.Axes.text
-    _ax.Axes.text = lambda self, x, y, s, *a, **k: _text(self, x, y, s, *a, **{**k, "fontsize": max(k.get("fontsize", 13), 13)})
+    _ax.Axes.text = lambda self, x, y, s, *a, **k: _text(self, x, y, s, *a, **{**k, "fontsize": max(k.get("fontsize", 16), 16)})
     _xl, _yl, _xt, _lg = _ax.Axes.set_xlabel, _ax.Axes.set_ylabel, _ax.Axes.set_xticklabels, _ax.Axes.legend
-    _ax.Axes.set_xlabel = lambda self, s, *a, **k: _xl(self, s, *a, **{**k, "fontsize": 14})
-    _ax.Axes.set_ylabel = lambda self, s, *a, **k: _yl(self, s, *a, **{**k, "fontsize": 14})
+    _ax.Axes.set_xlabel = lambda self, s, *a, **k: _xl(self, s, *a, **{**k, "fontsize": 18})
+    _ax.Axes.set_ylabel = lambda self, s, *a, **k: _yl(self, s, *a, **{**k, "fontsize": 18})
     import textwrap as _tw
 
-    _ax.Axes.set_xticklabels = lambda self, l, *a, **k: _xt(self, [_tw.fill(str(t), 16) for t in l], *a, **{**k, "fontsize": 14})
+    _ax.Axes.set_xticklabels = lambda self, l, *a, **k: _xt(self, [_tw.fill(str(t), 15) for t in l], *a, **{**k, "fontsize": 18})
     _sy = _ax.Axes.set_ylim
     _ax.Axes.set_ylim = lambda self, *a, **k: _sy(self, 40, 104) if a == (80, 102) else _sy(self, *a, **k)   # tier chart: show the 47-54% of tier 1 instead of cutting it off
-    _ax.Axes.legend = lambda self, *a, **k: _lg(self, *a, **{**k, "fontsize": 13, **({"loc": "upper left"} if "luỹ kế" in self.get_ylabel() else {})})
+    _ax.Axes.legend = lambda self, *a, **k: _lg(self, *a, **{**k, "fontsize": 16, **({"loc": "lower center", "bbox_to_anchor": (0.5, 1.0), "ncol": 3, "frameon": False} if "luỹ kế" in self.get_ylabel() else {})})
 
 
 def q(sql, **p) -> pd.DataFrame:
