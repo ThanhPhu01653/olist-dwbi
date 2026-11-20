@@ -67,9 +67,9 @@ Không được chép câu chữ, số liệu hay hình của nhóm 6.
 <!-- SLIDES:00-mo-dau.tex -->
 | STT | S | Tiêu đề (câu kết luận) | Nội dung chính | Hình / bảng | Trạng thái |
 | ---: | ---: | --- | --- | --- | --- |
-| 1 | 1 | Xây kho dữ liệu và BI cho 99.441 đơn hàng thương mại điện tử Olist | Học phần MI4214 – Kho dữ liệu và Kinh doanh thông minh; nhóm ...; giảng viên ... | `3-3-4_constellation.png` | đã có |
-| 2 | 2 | Bài trình bày gồm năm phần theo thứ tự khảo sát, phân tích thiết kế, dashboard, mở rộng và tổng kết | 2 Khảo sát (nghiệp vụ, yêu cầu, KPI, dữ liệu nguồn, ERD) 3 Phân tích và thiết kế (khám phá dữ liệu, kiến trúc, ETL, chiều khái niệm, data model) 4 Das | – | đã có |
-| 3 | 3 | Dự án trong một trang: 1,56 triệu dòng nguồn thành 6 fact, 17 view mart và 4 dashboard | 2 hệ thống nguồn → staging → ODS → kho (10 chiều + 6 fact) → 4 data mart → Power BI | `3-4-1_pipeline.png` | đã có |
+| 1 | 1 | Kho dữ liệu và BI cho 99.441 đơn hàng thương mại điện tử Olist |  | – | đã có |
+| 2 | 2 | Bài trình bày đi qua năm phần, từ khảo sát đến tổng kết | 2 Khảo sát: nghiệp vụ, yêu cầu, KPI, dữ liệu nguồn, ERD; 3 Phân tích và thiết kế: khám phá dữ liệu, kiến trúc, ETL, chiều khái niệm, data model | – | đã có |
+| 3 | 3 | Từ 1,56 triệu dòng nguồn đến 6 fact, 17 view mart và 4 dashboard |  | – | đã có |
 
 *3 frame trong `00-mo-dau.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
 <!-- /SLIDES -->
@@ -79,19 +79,32 @@ Không được chép câu chữ, số liệu hay hình của nhóm 6.
 <!-- SLIDES:04-mo-rong.tex,05-tong-ket.tex -->
 | STT | S | Tiêu đề (câu kết luận) | Nội dung chính | Hình / bảng | Trạng thái |
 | ---: | ---: | --- | --- | --- | --- |
-| 1 | 115 | [P10] Kiến trúc lakehouse: lớp lưu trữ, định dạng bảng và engine truy vấn nằm cạnh kho PostgreSQL |  | khung chờ | cần ảnh: P10 điền: sơ đồ kiến trúc lakehouse |
-| 2 | 116 | [P10] Triển khai lakehouse: nạp, phân lớp và truy vấn mẫu |  | khung chờ | cần ảnh: P10 điền: các bước triển khai |
-| 3 | 117 | [P10] Kết quả lakehouse: số liệu đo được so với kho PostgreSQL |  | khung chờ | cần ảnh: P10 điền: bảng kết quả và hình |
-| 4 | 118 | [P9] Bài toán: dữ liệu Olist là ảnh chụp tĩnh nên cần nguồn thực tế bổ sung qua API |  | khung chờ | cần ảnh: P9 điền: bài toán |
-| 5 | 119 | [P9] Kiến trúc thu thập: từ API đến staging, tần suất gọi và xử lý lỗi |  | khung chờ | cần ảnh: P9 điền: sơ đồ kiến trúc |
-| 6 | 120 | [P9] Triển khai thu thập: mã Python, bảng đích và lịch chạy |  | khung chờ | cần ảnh: P9 điền: mã và lược đồ |
-| 7 | 121 | [P9] Kết quả thu thập: số dòng thu được và ví dụ phân tích |  | khung chờ | cần ảnh: P9 điền: số liệu và hình |
-| 8 | 148 | [P10] DB1 trên Superset: cùng số liệu với Power BI, đọc từ tầng Gold của lakehouse |  | khung chờ | cần ảnh: P10 điền: ảnh chụp DB1 trên Superset |
-| 9 | 149 | [P9] Dashboard D8 Thị trường Brazil dựng từ dữ liệu API thu thập thực tế |  | khung chờ | cần ảnh: P9 điền: ảnh chụp D8 |
-| 10 | 111 | Kết quả: một kho dữ liệu chạy được từ đầu đến cuối với 136 kiểm thử đạt và bốn dashboard | 10 chiều, 6 fact, 17 view mart; 99.441 đơn; GMV 13,49 triệu BRL | `3-3-4_constellation.png` | đã có |
-| 11 | 113 | Hạn chế và hướng phát triển: trạng thái trung gian của đơn, PostGIS, lịch chạy tự động | Mô phỏng cập nhật chỉ thêm bản ghi mới; cơ chế thử lại mồ côi mới được chứng minh bằng test | – | đã có |
+| 1 | – | Lakehouse thêm đường thứ hai: từ CDC qua Bronze, Silver đến Gold |  | – | đã có |
+| 2 | – | Bảy dịch vụ chạy trong 4 GB RAM, vận hành bằng script, không cần Airflow |  | – | đã có |
+| 3 | – | CDC: Debezium chụp snapshot 1.273.620 dòng rồi bắt từng thay đổi từ log | Nạp nguồn đến 31/12/2017 bằng mã chương 3: 1.273.620 dòng trong 11,1 giây; Debezium chụp snapshot 11 bảng (khoảng 35 giây), rồi đọc log của PostgreSQL | – | đã có |
+| 4 | – | Kafka giữ đủ 1.720.555 sự kiện, bằng đúng số dòng Bronze |  | – | đã có |
+| 5 | – | Bronze giữ nguyên văn sự kiện, Silver áp quy tắc ODS bằng MERGE | Bronze: Spark đọc 11 topic, ghi nguyên văn vào bảng Iceberg chỉ-thêm (micro-batch 30 giây); Silver: MERGE theo khoá, chỉ thay dòng khi ts_ms không cũ  | – | đã có |
+| 6 | – | Silver bằng nguồn ở 10/10 bảng: cùng số dòng và cùng checksum khoá |  | – | đã có |
+| 7 | – | Gold: dbt dựng 20 model trong 70 giây, giữ nguyên tên bảng và cột của đặc tả | 10 dimension, 6 fact, 4 mart cho Superset; dòng Unknown khoá -1 như kho; Dùng lại seed của chương 3; lịch dim_date sinh từ chính hàm của chương 3 | – | đã có |
+| 8 | – | Lineage bốn tầng: 18 nguồn Silver, 10 dimension, 6 fact, 4 mart |  | – | đã có |
+| 9 | – | Đối soát Gold với kho: 16/16 bảng khớp, GMV bằng nhau đến từng xu |  | – | đã có |
+| 10 | – | Lỗi 1: Silver chỉ có 24.765 trên 45.971 đơn, log không báo gì | Nguyên nhân: Spark tính lại dữ liệu đã cache sau khi xoá đơn chờ cũ; Sửa: localCheckpoint() thay cho persist() | – | đã có |
+| 11 | – | Lỗi 2: trim() của Trino khác PostgreSQL, 18 review bị tính nhầm | trim() của Trino bỏ cả xuống dòng và tab, của PostgreSQL chỉ bỏ dấu cách; Sửa: model chỉ bỏ dấu cách hai đầu (regexp_replace) | – | đã có |
+| 12 | – | Độ trễ nguồn đến Silver trung bình 22,6 giây, chủ yếu là chờ micro-batch |  | – | đã có |
+| 13 | – | Time travel: rollback một thao tác sửa nhầm trong 0,09 giây | silver.orders có 31 snapshot; đọc lại bản đầu có 307 đơn, bản mới nhất 99.441; Đọc phiên bản cũ mất 0,11 đến 0,16 giây | – | đã có |
+| 14 | – | DB1 trên Superset: dashboard đọc từ tầng Gold của lakehouse qua Trino |  | khung chờ | cần ảnh: Chờ ảnh chụp DB1 trên Superset (Bước 10) |
+| 15 | – | Tổng kết 5.1: cùng số liệu với kho chương 3, thêm sự kiện và time travel | Hai lỗi chỉ lộ ra nhờ đối soát: thiếu đơn ở Silver, trim() khác nhau ở Gold; Hạn chế: 7 dịch vụ trong 4 GB RAM; vận hành bằng script, chưa có Airflow | – | đã có |
+| 16 | 118 | Năm câu hỏi mà bán hàng một mình không trả lời được cần dữ liệu công khai |  | – | đã có |
+| 17 | 119 | Kiến trúc API: lỗi gọi API không làm hỏng pipeline chính |  | – | đã có |
+| 18 | 153 | Bốn tầng ghép đô thị gán 96,3% số zip và 99,5% GMV |  | – | đã có |
+| 19 | – | Kho được làm giàu không đổi khoá; phép kiểm thử tăng từ 136 lên 156 | fact_state_year: 27 bang 3 năm; GMV = 13.494.400,74; 20 phép kiểm thử SQL mới đều đạt; DB1–DB4 vẫn đúng số cũ | – | đã có |
+| 20 | 121 | Theo đầu người, Rio de Janeiro dẫn đầu: 53,90 BRL trên 1.000 dân | Distrito Federal: hạng 9 theo GMV, hạng 3 theo đầu người; Maranhão tụt từ hạng 15 xuống 24 | – | đã có |
+| 21 | 157 | GMV tháng 1–8 tăng 138,3% danh nghĩa, 130,9% theo giá thực, 116,7% theo USD |  | – | đã có |
+| 22 | 149 | Dashboard D8 Thị trường Brazil dựng từ dữ liệu API thu thập thực tế |  | khung chờ | cần ảnh: P9 điền: ảnh chụp D8 |
+| 23 | 111 | Kết quả: kho chạy được từ đầu đến cuối, 136 kiểm thử đạt, bốn dashboard | 10 chiều, 6 fact, 17 view mart; GMV 13,49 triệu BRL | – | đã có |
+| 24 | 113 | Hạn chế còn lại và ba hướng phát triển: trạng thái đơn, PostGIS, lịch chạy | Hạn chế: mô phỏng cập nhật chỉ thêm bản ghi mới; cơ chế thử lại mồ côi mới được chứng minh bằng test; Hướng phát triển: lưu trạng thái trung gian của  | – | đã có |
 
-*11 frame trong `04-mo-rong.tex`, `05-tong-ket.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
+*24 frame trong `04-mo-rong.tex`, `05-tong-ket.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
 <!-- /SLIDES -->
 
 **Slide cần thêm** (theo `docs/doi-chieu-nhom6.md`: xen kẽ slide triển khai và slide minh chứng):
@@ -193,7 +206,7 @@ Xem Q40 ở trên: đơn đổi trạng thái giữa chừng, PostGIS cho truy v
 
 ## 10. Giai đoạn 2 (sau thuyết trình): viết báo cáo
 
-Số trang hiện tại: <!-- PAGES:5.1,5.2,6.1,6.2,6.3 -->mục 5.1: trang 80 (1 trang); mục 5.2: trang 81 (1 trang); mục 6.1: trang 82 (1 trang); mục 6.2: trang 82 (1 trang); mục 6.3: trang 83 (1 trang); tổng 5 trang<!-- /PAGES -->. Phần `00-*` (bìa, lời mở đầu, đánh giá, từ viết tắt) và phụ lục nằm ngoài mục lục theo số chương.
+Số trang hiện tại: <!-- PAGES:5.1,5.2,6.1,6.2,6.3 -->mục 5.1: trang 80 (1 trang); mục 5.2: trang 81–87 (7 trang); mục 6.1: trang 88 (1 trang); mục 6.2: trang 88 (1 trang); mục 6.3: trang 89 (1 trang); tổng 11 trang<!-- /PAGES -->. Phần `00-*` (bìa, lời mở đầu, đánh giá, từ viết tắt) và phụ lục nằm ngoài mục lục theo số chương.
 
 Các `\todo` hiện có (đếm từ mã nguồn):
 
@@ -206,9 +219,9 @@ Các `\todo` hiện có (đếm từ mã nguồn):
 | `report/chapters/00-tu-danh-gia.tex` | 1 | 1. Nhóm điền cột "Đạt" và ghi chú khi hoàn thiện báo cáo. |
 | `report/chapters/00-viet-tat.tex` | 1 | 1. Bổ sung các từ viết tắt khác xuất hiện trong báo cáo. |
 | `report/chapters/5-1-lakehouse.tex` | 4 | 1. P10 điền: kiến trúc lakehouse (lớp lưu trữ, định dạng bảng, engine truy vấn, quan hệ với kho PostgreSQL hiện có); nêu lý do chọn công nghệ và so sánh với kho quan hệ.<br>2. P10 điền: các bước dựng lakehouse (nạp dữ liệu nguồn, phân lớp dữ liệu, truy vấn mẫu), kèm mã và lệnh chạy.<br>3. P10 điền: số liệu đo được (số bảng, số dòng, thời gian truy vấn so với PostgreSQL), hình minh hoạ, hạn chế.<br>4. P10 điền: dựng lại dashboard DB1 (tổng quan và doanh thu) trên Apache Superset, đọc tầng Gold của lakehouse qua Trino; so sánh với DB1 trên Power BI (cùng số liệu, khác công cụ); ảnh chụp figures/5-1_superset_d… |
-| `report/chapters/5-2-thu-thap-api.tex` | 5 | 1. P9 điền: dữ liệu Olist là ảnh chụp tĩnh; bài toán là bổ sung dữ liệu thực tế (nguồn API nào, bổ sung cho câu hỏi phân tích nào của chương 2).<br>2. P9 điền: sơ đồ luồng từ API đến staging, tần suất gọi, xử lý lỗi và giới hạn tốc độ; nối với kiến trúc các lớp ở mục sec:kien-truc.<br>3. P9 điền: mã thu thập (Python), lược đồ bảng đích, lịch chạy, cách đưa vào pipeline.<br>4. P9 điền: số dòng thu được, ví dụ phân tích dùng dữ liệu mới, hạn chế.<br>5. P9 điền: dashboard D8 (thị trường Brazil, dữ liệu API) thuộc chương 5, dựng bằng Power BI từ dữ liệu thu thập qua API; hướng dẫn ở huong-dan/dashboards/D8.md; ảnh chụp đặt tên theo quy ước của chương 5. |
+| `report/chapters/5-2-thu-thap-api.tex` | 1 | 1. Phú dựng D8 trên Power BI, chụp ảnh đặt tên 4_D8_….png vào figures/ và chèn vào đây; đối chiếu số với bảng giá trị kỳ vọng của D8.md. |
 | `report/chapters/06-ket-luan.tex` | 3 | 1. Viết lại bằng lời của nhóm. Gợi ý các ý đã có số liệu: kho dữ liệu hình sao với 10 bảng chiều và 6 bảng fact thuộc cả ba loại; hai hệ thống nguồn và 1,56 triệu dòng; pipeline chạy lại từ đầu bằng một lệnh trong…<br>2. Nhóm bổ sung bài học về làm việc nhóm, phân công, công cụ (Git, Power BI) và khó khăn thực tế.<br>3. Chỉnh danh sách hạn chế theo thực tế sau khi dựng dashboard. |
-| **Tổng** | **17** | |
+| **Tổng** | **13** | |
 <!-- /TODOS -->
 
 ## 11. Mốc hạn

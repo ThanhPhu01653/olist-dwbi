@@ -66,6 +66,7 @@ figures/                        # hình xuất ra cho báo cáo (png, 200 dpi)
 - Schema theo lớp: `oltp`, `crm`, `staging`, `ods`, `dw`, `mart_sales`, `mart_fulfillment`, `mart_cx`, `mart_acquisition`, `etl_log`
 - snake_case; tiền tố `stg_`, `dim_`, `fact_`, `v_`; surrogate key `<tên>_key`; `date_key` = int `yyyymmdd`; dòng Unknown key `-1`
 - Tiền: `numeric(12,2)`; zip: `char(5)` zero-padded
+- Slide: theo `slides/QUY-TAC-TRINH-BAY.md`; trước khi commit slide chạy `python scripts/kiem_tra_slide.py --strict` (0 LỖI) và xem ảnh `--anh`.
 - File SQL đánh số thứ tự chạy (`010_...sql`), idempotent (`CREATE ... IF NOT EXISTS`, `CREATE OR REPLACE`), chạy lại không lỗi
 - Mỗi job ETL ghi `etl_log.job_run`; dòng bị loại ghi `etl_log.rejected_rows` kèm lý do — **không bao giờ âm thầm bỏ dữ liệu**
 - Comment SQL/Python bằng tiếng Anh ngắn gọn; `handoff/`, `README.md`, `powerbi/*.md` viết bằng **tiếng Việt**

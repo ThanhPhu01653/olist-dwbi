@@ -247,7 +247,7 @@ Hướng dẫn đầy đủ: [`../dashboards/DB3.md`](../dashboards/DB3.md). Cá
 2. Phí vận chuyển nặng ở vùng xa: Norte 22,7% và Nordeste 21,7% giá hàng so với 15,2% ở Sudeste.
 3. Khoảng cách tăng từ dưới 100 km lên trên 1.000 km làm phí vận chuyển TB tăng 11,75 → 31,65 BRL và lead time 6,5 → 19,0 ngày (`handoff/geo-distance.md`). Ghi chú: 555 dòng hàng (0,49%) thiếu toạ độ nên không tính được khoảng cách.
 
-**Ảnh cần chụp:** `4_DB3_trang1_dia_ly.png`, `4_DB3_drill_down.png` (chuỗi thao tác vùng → bang → thành phố), `4_DB3_chi_tiet_bang.png`, `4_DB3_tooltip.png`; kèm 3–5 câu nhận xét có số cho mỗi ảnh gửi Người 4 (hạn 25/11).
+**Ảnh cần chụp:** `4_DB3_trang1_dia_ly.png`, `4_DB3_drill_down.png` (chuỗi thao tác vùng → bang → thành phố), `4_DB3_chi_tiet_bang.png`, `4_DB3_tooltip.png`; kèm 3–5 câu nhận xét có số cho mỗi ảnh gửi Người 4.
 
 ## 8. Việc riêng: Power Query (mã M) và ảnh before/after
 

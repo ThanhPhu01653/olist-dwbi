@@ -1,0 +1,5 @@
+
+# P10: scripts mounted into Linux containers must keep LF
+lakehouse/**/*.sh text eol=lf
+lakehouse/**/*.properties text eol=lf
+lakehouse/**/*.config text eol=lf

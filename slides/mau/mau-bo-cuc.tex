@@ -1,0 +1,95 @@
+% Mẫu bố cục: 8 frame minh hoạ các mẫu A–F và AnhKhoanh, HinhChu trong slides/QUY-TAC-TRINH-BAY.md.
+% Chỉ để tham khảo, không \input vào main.tex. Ảnh *_tc.png là bản cắt thử, tạo lại bằng scripts/cat_anh.py.
+\section[Mở rộng]{Mở rộng}
+\subsection{5.1 Data lakehouse}
+
+% (A) Một hình lớn + kết luận
+\begin{frame}{Lakehouse: đường thứ hai cho cùng dữ liệu, từ CDC đến Gold}
+\muc{5.1 · Lakehouse}
+\HinhLon{5-1_kien_truc_lakehouse.png}
+\KetLuan{CDC $\rightarrow$ Kafka $\rightarrow$ Bronze $\rightarrow$ Silver $\rightarrow$ Gold; Gold giữ đúng mô hình sao chương 3}
+\end{frame}
+
+% (D) Bảng trình chiếu + (B) ảnh chụp, tách bằng overlay thay vì đặt cạnh nhau
+\begin{frame}{Minh chứng hạ tầng: bảy dịch vụ khoẻ, kiểm bằng truy vấn thật}
+\muc{5.1 · Lakehouse}
+\only<1>{%
+\begin{BangTC}{lX}
+\textbf{Dịch vụ} & \textbf{Kiểm tra (đều đạt)} \\ \midrule
+PostgreSQL, Kafka & \texttt{wal\_level=logical}; broker chạy \\
+Kafka Connect & REST trả lời, 1 connector Debezium \\
+MinIO, Iceberg REST & có bucket \texttt{lakehouse}; HTTP 200 \\
+Spark 3.5.6, Trino 477 & chạy được truy vấn thử \\
+\end{BangTC}
+\KetLuan{7/7 dịch vụ khoẻ trong giới hạn 4 GB RAM của WSL}}
+\only<2>{%
+\AnhChup{5-1_minio_console_tc.png}
+\KetLuan{MinIO: bucket \texttt{lakehouse} có đủ bronze, silver, gold, ops}}
+\end{frame}
+
+% (D) Bảng tối đa 7 dòng: gom topic nhỏ
+\begin{frame}{Minh chứng CDC: số sự kiện trong Kafka bằng đúng số dòng nguồn}
+\muc{5.1 · Lakehouse}
+\begin{BangTC}{Xrr}
+\textbf{Topic} & \textbf{Snapshot} & \textbf{Sau phát lại} \\ \midrule
+\texttt{geolocation} & 1.000.163 & 1.000.163 \\
+\texttt{orders} (gồm 160.791 cập nhật trạng thái) & 45.430 & 260.232 \\
+\texttt{order\_items}, \texttt{payments}, \texttt{reviews} & 144.475 & 315.760 \\
+\texttt{customers}, \texttt{products}, \texttt{sellers} & 81.476 & 135.487 \\
+CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
+\DongNhan\textbf{Tổng (= số dòng Bronze)} & \textbf{1.273.620} & \textbf{1.720.555} \\
+\end{BangTC}
+\KetLuan{Không mất, không trùng sự kiện: Kafka = Bronze = 1.720.555}
+\end{frame}
+
+% (B) Ảnh chụp có khoanh vùng + nhãn
+\begin{frame}{Đối soát Gold với kho: 16/16 bảng khớp, GMV bằng nhau đến từng xu}
+\muc{5.1 · Lakehouse}
+\begin{AnhKhoanh}{5-1_reconcile_tc.png}
+  \khoanh{0.0}{0.005}{0.84}{0.125}
+  \nhan{0.55}{0.30}{RESULT: all tables match}
+\end{AnhKhoanh}
+\KetLuan{Cùng câu SQL trên hai hệ thống: 16/16 bảng khớp, 2 zip lệch tên (có giải thích)}
+\end{frame}
+
+% (E) Trước / sau
+\begin{frame}{Lỗi 1: log không báo gì, đối soát với nguồn mới thấy thiếu đơn}
+\muc{5.1 · Lakehouse}
+\TruocSau{Trước khi sửa}{Silver \texttt{orders}: \textbf{24.765}\\ nguồn: 45.971}{Sau khi sửa}{Silver \texttt{orders}: \textbf{45.971}\\ bằng nguồn}
+\vspace{4pt}
+\begin{itemize}
+  \item Nguyên nhân: Spark tính lại dữ liệu đã cache sau khi xoá đơn chờ cũ
+  \item Sửa: \texttt{localCheckpoint()} thay cho \texttt{persist()}
+\end{itemize}
+\KetLuan{Bài học: phải đối soát với nguồn, log chạy xong không có nghĩa là đúng}
+\end{frame}
+
+% (B) Hai ảnh chụp: lần lượt bằng overlay, không đặt cạnh nhau
+\begin{frame}{Minh chứng luồng liên tục: Spark UI ghi lại 41 lô, lô dồn việc hơn một phút}
+\muc{5.1 · Lakehouse}
+\only<1>{\AnhChup{5-1_spark_ui_streaming_tc.png}
+\KetLuan{20.000 cập nhật trong một giao dịch: lô kéo dài khoảng 78 giây}}
+\only<2>{\AnhChup{5-1_spark_ui_jobs.png}
+\KetLuan{Dòng thời gian job: mỗi micro-batch 30 giây là một cụm job}}
+\end{frame}
+
+% (C) Hàng số lớn
+\begin{frame}{Tổng kết 5.1: cùng số liệu với kho chương 3, thêm sự kiện và time travel}
+\muc{5.1 · Lakehouse}
+\HangSo[4]{\So{1,72 triệu}{sự kiện qua Kafka}\hfill\So{16/16}{bảng khớp kho}\hfill\So{22,6 s}{độ trễ nguồn $\rightarrow$ Silver}\hfill\So{0,09 s}{rollback sửa nhầm}}
+\begin{itemize}
+  \item Hai lỗi chỉ lộ ra nhờ đối soát: thiếu đơn ở Silver, \texttt{trim()} khác nhau ở Gold
+  \item Hạn chế: 7 dịch vụ trong 4 GB RAM; vận hành bằng script, chưa có Airflow
+\end{itemize}
+\end{frame}
+
+% (H) Hình + chữ: chỉ khi hình là biểu đồ, hình bên trái rộng hơn
+\begin{frame}{Theo đầu người, Rio de Janeiro dẫn đầu: 53,90 BRL trên 1.000 dân}
+\muc{5.2 · Thu thập từ API}
+\HinhChu{5-2_gmv_dau_nguoi_theo_bang.png}{%
+\begin{itemize}
+  \item Distrito Federal: hạng 9 theo GMV, hạng 3 theo đầu người
+  \item Maranhão tụt từ hạng 15 xuống 24
+\end{itemize}}
+\KetLuan{Xếp theo đầu người đổi thứ hạng nhiều bang so với xếp theo GMV}
+\end{frame}

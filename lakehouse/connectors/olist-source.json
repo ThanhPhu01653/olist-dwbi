@@ -1,0 +1,28 @@
+{
+  "name": "olist-source",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "plugin.name": "pgoutput",
+    "database.hostname": "pg",
+    "database.port": "5432",
+    "database.user": "${LH_PG_USER}",
+    "database.password": "${LH_PG_PASSWORD}",
+    "database.dbname": "${LH_PG_DB}",
+    "topic.prefix": "olist",
+    "schema.include.list": "oltp,crm",
+    "slot.name": "olist_slot",
+    "publication.name": "olist_pub",
+    "publication.autocreate.mode": "filtered",
+    "snapshot.mode": "initial",
+    "snapshot.fetch.size": "10240",
+    "max.batch.size": "4096",
+    "max.queue.size": "16384",
+    "decimal.handling.mode": "string",
+    "tombstones.on.delete": "false",
+    "heartbeat.interval.ms": "10000",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "false",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false"
+  }
+}

@@ -199,7 +199,7 @@ Hướng dẫn đầy đủ: [`../dashboards/DB2.md`](../dashboards/DB2.md). Cá
 2. Điểm review tụt theo mức trễ: 4,29 (giao sớm) → 3,29 (trễ 1–3 ngày) → 2,10 (4–7 ngày) → 1,70 (trên 7 ngày); đơn trễ chỉ 6,5% số review nhưng tạo 27,4% review tiêu cực.
 3. Key Influencers: giao trễ là yếu tố đứng đầu đi kèm review tiêu cực (kỳ vọng từ EDA; **xác nhận lại bằng kết quả thật của visual trước khi nói**).
 
-**Ảnh cần chụp:** `4_DB2_trang1_giao_hang.png`, `4_DB2_trang2_trai_nghiem.png`, `4_DB2_key_influencers.png`, `4_DB2_tooltip.png`; kèm 3–5 câu nhận xét có số cho mỗi ảnh gửi Người 4 (hạn 25/11).
+**Ảnh cần chụp:** `4_DB2_trang1_giao_hang.png`, `4_DB2_trang2_trai_nghiem.png`, `4_DB2_key_influencers.png`, `4_DB2_tooltip.png`; kèm 3–5 câu nhận xét có số cho mỗi ảnh gửi Người 4.
 
 ## 8. Việc riêng: Excel ToolPak
 

@@ -3,7 +3,7 @@
   \item Đơn đi qua nhiều mốc; một dòng, cập nhật theo mốc; lead time tính sẵn (approval 10,3 giờ, handling 2,9 ngày, transit 9,3 ngày)
   \item Slide chính liên quan: S63
 \end{itemize}
-\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{ll}\toprule
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\small\renewcommand{\arraystretch}{1.15}\begin{tabular}{ll}\toprule
 \textbf{Cột của fact\_order\_fulfillment (đơn 19c36691…)} & \textbf{Giá trị} \\\midrule
 approval\_hours & 36,61 \\
 handling\_days & 0,71 \\
@@ -24,7 +24,7 @@ payment\_total & 88,30 \\
   \item PostgreSQL không có khối đa chiều, dữ liệu nhỏ, kho luôn tươi, Power BI là lớp ngữ nghĩa
   \item Slide chính liên quan: S11, S87
 \end{itemize}
-\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{llll}\toprule
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\small\renewcommand{\arraystretch}{1.15}\begin{tabular}{llll}\toprule
 \textbf{Tiêu chí} & \textbf{MOLAP} & \textbf{ROLAP} & \textbf{HOLAP} \\\midrule
 Lưu trữ & khối đa chiều riêng & bảng quan hệ (lược đồ sao) & kết hợp hai cách \\
 Tốc độ truy vấn & rất nhanh (tính sẵn) & phụ thuộc chỉ mục, materialized view & cân bằng \\
@@ -41,7 +41,7 @@ Nhóm chọn & -- & \ding{51} ROLAP & -- \\
   \item Mỗi lần zip đổi mở phiên bản mới; 96.096 khách $\rightarrow$ 96.339 dòng; fact tra theo ngày mua
   \item Slide chính liên quan: S59, S75
 \end{itemize}
-\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{llllllll}\toprule
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\small\renewcommand{\arraystretch}{1.15}\begin{tabular}{llllllll}\toprule
 \textbf{customer\_key} & \textbf{khách thật} & \textbf{zip} & \textbf{thành phố} & \textbf{effective\_from} & \textbf{effective\_to} & \textbf{is\_current} & \textbf{version} \\\midrule
 15081 & 570eb70f… & 31930 & belo horizonte & 1900-01-01 & 2017-11-08 & không & 1 \\
 15082 & 570eb70f… & 31130 & belo horizonte & 2017-11-09 & 9999-12-31 & có & 2 \\
@@ -134,7 +134,7 @@ Nhóm chọn & -- & \ding{51} ROLAP & -- \\
 \begin{itemize}
   \item Nhóm chọn hướng Kimball: bus matrix, conformed dimension
 \end{itemize}
-\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\small\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
 \textbf{Tiêu chí} & \textbf{Kimball} & \textbf{Inmon} \\\midrule
 Cách xây & từ data mart theo quy trình nghiệp vụ, chiều dùng chung & kho doanh nghiệp chuẩn hóa 3NF, rồi tách data mart \\
 Mô hình & chiều (lược đồ sao) & chuẩn hóa \\
@@ -161,7 +161,7 @@ Nhóm chọn & \ding{51} (bus matrix, \texttt{dim\_seller} dùng chung) & -- \\
 \begin{itemize}
   \item Transaction $\cdot$ periodic snapshot $\cdot$ accumulating snapshot; SCD1 (ghi đè) và SCD2 (giữ lịch sử)
 \end{itemize}
-\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\small\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
 \textbf{Loại} & \textbf{Một dòng là} & \textbf{Ví dụ trong dự án} \\\midrule
 Transaction & một sự kiện đã xảy ra & \texttt{fact\_order\_item}, \texttt{fact\_payment}, \texttt{fact\_review} \\
 Periodic snapshot & trạng thái của một kỳ & \texttt{fact\_seller\_monthly} (36.583 dòng, dày đặc) \\
@@ -188,7 +188,7 @@ SCD1 / SCD2 & ghi đè / giữ lịch sử & \texttt{dim\_seller} / \texttt{dim\
 \begin{itemize}
   \item Roll-up, drill-down, slice, dice, pivot
 \end{itemize}
-\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\small\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
 \textbf{Thao tác} & \textbf{SQL} & \textbf{Ví dụ trong dự án} \\\midrule
 Roll-up & \texttt{ROLLUP} & quý $\rightarrow$ năm $\rightarrow$ tổng \\
 Drill-down & thêm cấp vào \texttt{GROUP BY} & 2017 $\rightarrow$ Q4 $\rightarrow$ 11/2017 $\rightarrow$ ngày \\
@@ -204,7 +204,7 @@ Pivot & \texttt{FILTER} & vùng $\times$ năm \\
 \begin{itemize}
   \item Lý do: PostgreSQL không có khối đa chiều, dữ liệu 112.650 dòng hàng trả lời dưới 1 giây, kho luôn cập nhật sau mỗi lần nạp
 \end{itemize}
-\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{llll}\toprule
+\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\small\renewcommand{\arraystretch}{1.15}\begin{tabular}{llll}\toprule
 \textbf{Tiêu chí} & \textbf{MOLAP} & \textbf{ROLAP} & \textbf{HOLAP} \\\midrule
 Lưu trữ & khối đa chiều riêng & bảng quan hệ (lược đồ sao) & kết hợp hai cách \\
 Tốc độ truy vấn & rất nhanh (tính sẵn) & phụ thuộc chỉ mục, materialized view & cân bằng \\
@@ -223,4 +223,202 @@ Nhóm chọn & -- & \ding{51} ROLAP & -- \\
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: sơ đồ chuỗi dữ liệu $\rightarrow$ kho $\rightarrow$ mô hình $\rightarrow$ dashboard (vẽ)}
 
 \note{[S12] Mọi KPI được định nghĩa một lần bằng DAX và đối chiếu với giá trị tính bằng SQL.}
+\end{frame}
+
+% ============================================================================================================
+% P11: chương 5 - trang chi tiết (dự phòng), chuyển từ sections/04-mo-rong.tex; chỉ dùng khi được hỏi. Theo QUY-TAC-TRINH-BAY.md.
+% ============================================================================================================
+
+% --- 5.1 Lakehouse ---
+\begin{frame}[noprogressbar,noframenumbering]{Hạ tầng: bảy container có healthcheck, image Iceberg REST tự dựng}
+\begin{itemize}
+  \item \texttt{docker compose --profile lite up -d}: mỗi dịch vụ có healthcheck và giới hạn bộ nhớ riêng
+  \item Catalog Iceberg dùng REST, lưu metadata vào PostgreSQL; image gốc thiếu driver nên dựng thêm lớp
+  \item MinIO chính thức không tải được ngày 19/11/2026: dùng \texttt{bitnamilegacy/minio}, ghim bản 2025.4.22
+  \item \texttt{check\_health.py} kiểm tra từng dịch vụ bằng truy vấn thật, không chỉ trạng thái container
+\end{itemize}
+\note{[P11-dự phòng 5.1] lakehouse/docker-compose.yml. Catalog dùng apache/iceberg-rest-fixture cộng driver postgresql-42.7.4. Bản MinIO 2025.7.23 không có giao diện web nên ghim bản 2025.4.22 (đã kiểm tra dữ liệu cũ đọc được nguyên vẹn).}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Minh chứng hạ tầng: 7/7 dịch vụ khoẻ, kiểm bằng truy vấn thật}
+\only<1>{%
+\begin{BangTC}{lX}
+\textbf{Dịch vụ} & \textbf{Kiểm tra (đều đạt)} \\ \midrule
+PostgreSQL, Kafka & \texttt{wal\_level=logical}, 2/2 database; broker chạy \\
+Kafka Connect & REST trả lời, 1 connector Debezium \\
+MinIO, Iceberg REST & có bucket \texttt{lakehouse}; HTTP 200 \\
+Spark 3.5.6, Trino 477 & chạy được truy vấn thử \\
+\end{BangTC}
+\KetLuan{7/7 dịch vụ khoẻ trong giới hạn 4 GB RAM của WSL}}
+\only<2>{%
+\AnhChup{5-1_minio_console_tc.png}
+\KetLuan{MinIO: bucket \texttt{lakehouse} có đủ bronze, silver, gold, ops}}
+\note{[P11-dự phòng 5.1] Bảng lấy từ python lakehouse/scripts/check\_health.py. Ảnh Phú chụp: figures/5-1\_minio\_console.png (đã cắt: 5-1\_minio\_console\_tc.png).}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Mỗi bảng Iceberg là các tệp Parquet cộng metadata JSON trên MinIO}
+\AnhChup{5-1_minio_iceberg_tc.png}
+\KetLuan{\texttt{silver/customers}: thư mục \texttt{data} (Parquet) và \texttt{metadata} (mỗi lần ghi một tệp)}
+\note{[P11-dự phòng 5.1] Ảnh Phú chụp: figures/5-1\_minio\_iceberg.png (đã cắt). Tệp *.metadata.json là nền tảng của time travel. Bronze = Kafka được kiểm bằng pytest.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Phát lại 11 tháng: 443.935 sự kiện của lần chạy tính giờ, 468,5 sự kiện/giây}
+\begin{BangTC}{Xrr}
+\textbf{Phần} & \textbf{Sự kiện} & \textbf{Đơn mới} \\ \midrule
+Snapshot (đến 31/12/2017) & 1.273.620 & 45.430 (có sẵn) \\
+Chạy thử (3.000 sự kiện đầu) & 3.000 & 541 \\
+\DongNhan Lần chạy tính giờ & 443.935 & 53.470 \\
+\textbf{Tổng trong Kafka và Bronze} & \textbf{1.720.555} & 99.441 \\
+\end{BangTC}
+\KetLuan{Nhịp phát 468,5 sự kiện/giây; năng lực xử lý khoảng 2.100 sự kiện/giây}
+\note{[P11-dự phòng 5.1] docs/LAKEHOUSE.md mục 3.8. Lịch phát lại gồm 446.935 sự kiện cho 54.011 đơn mới (160.791 UPDATE trạng thái), áp thành hai lần; 3.000 sự kiện đầu bị bỏ qua ở lần chạy tính giờ vì đã áp dụng (không đổi dòng nào nên Debezium không phát gì). Số cũ 471,7 chia cả phần bỏ qua; số đúng 443.935 / 947,5 giây = 468,5. Nhịp phát do script quyết định; năng lực xử lý đo ở lần nạp bù (13 lô, 1.276.620 sự kiện, khoảng 10 phút). Danh sách sự kiện sinh chỉ từ CSV, UPDATE không đưa đơn về trạng thái trước nên chạy lại an toàn.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Spark UI ghi lại hai lô dồn việc 20.000 dòng và 448 job}
+\only<1>{\AnhChup{5-1_spark_ui_streaming_tc.png}
+\KetLuan{41 lô đã xong; Input Rows 20.000 ở hai lô (cập nhật và hoàn nguyên)}}
+\only<2>{\AnhChup{5-1_spark_ui_jobs_tc.png}
+\KetLuan{448 job Spark đã xong; mỗi micro-batch 30 giây là một cụm job}}
+\note{[P11-dự phòng 5.1] Ảnh Phú chụp từ Spark UI http://127.0.0.1:4040 khi luồng chạy liên tục (figures/5-1\_spark\_ui\_streaming.png và 5-1\_spark\_ui\_jobs.png, đã cắt). Spark ghi cảnh báo lô bị chậm (78 giây trên trigger 30 giây) khi dồn việc.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{dbt test: 71/71 phép kiểm thử đạt trong 20,38 giây}
+\begin{AnhKhoanh}{5-1_dbt_test_tc.png}
+  \khoanh{0.0}{0.0}{0.72}{0.2}
+  \nhan{0.60}{0.40}{PASS=71 ERROR=0}
+\end{AnhKhoanh}
+\KetLuan{PASS=71 WARN=0 ERROR=0: không phép nào lỗi hay bị bỏ qua}
+\note{[P11-dự phòng 5.1] Ảnh Phú chụp (nửa cuối đầu ra dbt test): figures/5-1\_dbt\_test\_2.png, đã cắt. Chạy lại trong bộ pytest bằng tham số --run-slow.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Dung sai: hai chỗ được nới và một ngoại lệ có giải thích}
+\begin{itemize}
+  \item \texttt{late\_rate}, \texttt{avg\_review\_score}: làm tròn 4 chữ số thập phân ở cả hai phía
+  \item Toạ độ: cắt \texttt{floor(x $\cdot$ 10$^6$)}, dưới 1e-6 độ (khoảng 0,11 m); số tiền không nới
+  \item Ngoại lệ: \texttt{city} của zip 13848 và 35348 (0,01\% số dòng), hai cách viết cùng 97 điểm
+  \item PostgreSQL chọn theo thứ tự collation của locale, Spark theo thứ tự mã ký tự
+\end{itemize}
+\note{[P11-dự phòng 5.1] docs/LAKEHOUSE.md mục 3.9. Mọi chỗ khác là bằng nhau tuyệt đối. Mọi cột khác của hai zip này và mọi zip còn lại đều khớp. Chương 3 không đổi nên không thể sao chép collation Windows của PostgreSQL vào Spark.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Thông lượng: nạp bù 2.100 sự kiện/giây, UPDATE qua MERGE chỉ 241}
+\begin{BangTC}{Xr}
+\textbf{Phép đo} & \textbf{Sự kiện/giây} \\ \midrule
+Nhịp phát của nguồn (phát lại) & 468,5 \\
+Nạp bù 1.276.620 sự kiện (13 lô, khoảng 10 phút) & $\approx$ 2.100 \\
+Dồn việc: 20.000 UPDATE trong một giao dịch & 241 \\
+\end{BangTC}
+\KetLuan{Nạp bù nhanh vì phần lớn là geolocation chỉ ghi Bronze; MERGE ghi lại tệp}
+\note{[P11-dự phòng 5.1] handoff/2026-11-19-P10-latency.md. Dồn việc 20.000 UPDATE: Silver thấy đủ sau 82,9 giây (đã gồm chu kỳ chờ trigger); Spark báo lô bị chậm 78 giây trên trigger 30 giây.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{RAM đỉnh khi chạy liên tục: Spark 1.534 MiB trên giới hạn 1.536}
+\begin{BangTC}{Xr}
+\textbf{Container} & \textbf{Đỉnh (MiB)} \\ \midrule
+Spark (giới hạn 1.536) & 1.534 \\
+Trino & 857 \\
+Connect & 408 \\
+Kafka & 339 \\
+MinIO & 183 \\
+PostgreSQL, Iceberg REST & 169 / 152 \\
+\end{BangTC}
+\KetLuan{Tổng các đỉnh khoảng 3,6 GB; Spark chạm giới hạn nhưng không bị kill}
+\note{[P11-dự phòng 5.1] docker stats lấy mẫu mỗi 30 giây khi phát lại liên tục (46 mẫu). docs/LAKEHOUSE.md mục 3.8.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Kiểm thử ba lớp: 18 phép pytest, 71 phép dbt và đối soát 16 bảng}
+\begin{itemize}
+  \item pytest nhanh (18 phép): Silver = nguồn cho 10 bảng, 6 bảng loại rỗng, Bronze = offset Kafka
+  \item pytest chậm (\texttt{--run-slow}): chạy \texttt{dbt test} (71 phép) và \texttt{reconcile.py} (16 bảng)
+  \item Lần chạy ngày 20/11/2026: 18 phép nhanh đạt trong 36 giây; hai phép chậm đạt trong 135 giây
+  \item Phép so Silver với nguồn sẽ báo ngay loại lỗi ở Lỗi 1
+\end{itemize}
+\note{[P11-dự phòng 5.1] lakehouse/tests. Phép nhanh gồm Silver địa lý = ODS của kho. Lần chạy gộp đầu tiên báo một phép Gold hỏng vì biểu thức đọc kết quả dbt của chính bộ kiểm thử (đã sửa); chạy lại hai phép Gold riêng đều đạt.}
+\end{frame}
+
+% --- 5.2 Thu thập từ API ---
+\begin{frame}[noprogressbar,noframenumbering]{Bốn nguồn API công khai, mã bảng và mã chuỗi đối chiếu với chính API}
+\begin{BangTC}{lXX}
+\textbf{Nguồn} & \textbf{Dữ liệu} & \textbf{Mã kiểm tra} \\ \midrule
+IBGE Localidades & 27 bang, 5.571 đô thị & /estados, /municipios \\
+IBGE SIDRA & dân số, PIB đô thị 2016--2018 & bảng 6579 và 5938 \\
+Banco Central SGS & USD/BRL ngày; IPCA tháng & chuỗi 1 và 433 \\
+BrasilAPI & ngày lễ quốc gia & /feriados/v1/<năm> \\
+Open-Meteo & mưa ngày, 27 thủ phủ & geocoding + archive \\
+\end{BangTC}
+\KetLuan{Chuỗi 433 của Banco Central trùng IBGE 1737 ở cả 60/60 tháng}
+\note{[S150] Mỗi endpoint được gọi thử thật trước khi viết mã. Tần suất đề xuất: IBGE khi đổi, SIDRA hằng năm, Banco Central hằng ngày và hằng tháng, BrasilAPI hằng năm, Open-Meteo hằng tuần (CC BY 4.0). SIDRA: bảng 6579 (biến 9324), 5938 (biến 37). BCB không có trang mô tả cho chuỗi 433 nên được xác nhận bằng cách so với biến IPCA của IBGE.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Collector thử lại tối đa 5 lần, chờ tăng dần từ 1,5 đến 12 giây}
+\begin{itemize}
+  \item Lỗi mạng, HTTP 429 và 5xx: chờ 1,5 $\rightarrow$ 3 $\rightarrow$ 6 $\rightarrow$ 12 giây giữa các lần thử
+  \item Banco Central chỉ xin phần sau watermark; cửa sổ ngày $\le$ 10 năm
+  \item Một nguồn lỗi không chặn nguồn khác; mọi lời gọi ghi vào \texttt{etl\_log.api\_call}
+  \item \texttt{pytest}: thử lại có backoff, lỗi 404 không thử lại, chạy lại không nhân đôi
+\end{itemize}
+\note{[S151] Collector trong api\_ingest/collect.py và http.py; có timeout, giữ khoảng cách giữa các lời gọi và dùng User-Agent chung (không dùng email cá nhân). Pytest chạy offline bằng session giả; kiểm thử watermark.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Landing zone giữ JSON nguyên văn: 69 lời gọi, 48.016 bản ghi, không lỗi}
+\begin{BangTC}{Xrrr}
+\textbf{Nguồn} & \textbf{Lời gọi} & \textbf{Bản ghi} & \textbf{JSON (MB)} \\ \midrule
+IBGE & 8 & 16.794 & 4,02 \\
+Banco Central, BrasilAPI & 7 & 1.401 & 0,06 \\
+Open-Meteo & 54 & 29.821 & 0,59 \\
+\DongNhan\textbf{Tổng} & \textbf{69} & \textbf{48.016} & \textbf{4,66} \\
+\end{BangTC}
+\KetLuan{Mỗi lời gọi có URL, thời điểm, HTTP, số bản ghi, byte và sha256 trong manifest}
+\note{[S120] Số liệu lấy từ manifest.json của landing zone. Banco Central 2 lời gọi 1.336 bản ghi 0,05 MB; BrasilAPI 5 lời gọi 65 bản ghi 0,01 MB (gộp thành một dòng cho gọn); thời gian gọi tổng 60,0 giây.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Staging giữ nguyên giá trị API; ODS ép kiểu và ghi dòng bị loại}
+\begin{BangTC}{lrX}
+\textbf{Bảng staging} & \textbf{Dòng} & \textbf{ODS làm gì} \\ \midrule
+\texttt{ibge\_municipio} & 5.571 & chuẩn hoá tên; 1 đô thị mới lập \\
+\texttt{ibge\_populacao} & 16.713 & ép số; 3 giá trị ``...'' bị loại \\
+\texttt{ibge\_pib} & 16.710 & ép số; 5.570 đô thị \\
+\texttt{bcb\_serie} & 1.336 & 1.827 ngày tỷ giá; 60 tháng IPCA \\
+\texttt{holiday}, \texttt{weather\_daily} & 65 / 29.592 & 64 ngày lễ; mưa ngày 27 thủ phủ \\
+\end{BangTC}
+\KetLuan{Dòng không dùng được ghi vào \texttt{etl\_log.rejected\_rows}, không bỏ âm thầm}
+\note{[S152] Bảng staging thuộc schema api (stg\_api\_*). Tỷ giá điền cho ngày nghỉ; IPCA nối chỉ số, tháng đầu = 100.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Ngưỡng fuzzy 95: từ 95 trở lên mọi cặp đúng, 90--94 đã có ghép sai}
+\begin{itemize}
+  \item sao thome das letras $\rightarrow$ São Tomé das Letras (97,4)
+  \item santana do livramento $\rightarrow$ Sant'Ana do Livramento (97,7)
+  \item boa vista de minas $\rightarrow$ Bela Vista de Minas (92): \textbf{sai}, bị loại
+  \item Chỉ nhận khi ứng viên thứ hai thấp hơn $\ge$ 10 điểm
+\end{itemize}
+\note{[S154] Ngưỡng chọn bằng cách đọc các ứng viên. Trả lời câu hỏi fuzzy có ghép sai không: ở ngưỡng 95 đã kiểm tay các cặp được nhận.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Tỉ lệ ghép luỹ kế: zip lên 96,3\% và GMV lên 99,5\% sau bốn tầng}
+\HinhLon{5-2_ty_le_khop_theo_tang_sl.png}
+\KetLuan{Tầng 2 (unaccent, chuẩn hoá) đưa zip từ 47,0\% lên 96,1\%}
+\note{[P11-dự phòng 5.2] Biểu đồ vẽ lại cho máy chiếu bằng python scripts/p9\_results.py --slide (cùng số liệu; trục bắt đầu từ 40\% để thấy tầng 1).}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Thư viện ngày lễ thiếu 19 ngày so với BrasilAPI; ngày có lễ ít hơn 27,9\% đơn}
+\HinhLon{5-2_ngay_le_va_don_sl.png}
+\KetLuan{Ngày thường có lễ: 124,7 đơn; không lễ: 172,9 đơn}
+\note{[S158] BrasilAPI 64 ngày lễ; thư viện holidays 45 ngày; 19 ngày chỉ có ở BrasilAPI (Carnaval, Phục sinh, Corpus Christi). Ngày lễ 01/2017--08/2018, bỏ Black Friday.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{(Tuỳ chọn) Giao trễ tăng từ 5,45\% lúc không mưa lên 9,55\% khi mưa từ 20 mm}
+\HinhLon{5-2_mua_va_giao_tre_sl.png}
+\KetLuan{Liên hệ thống kê; mưa đo ở thủ phủ bang, không ở nơi khách ở}
+\note{[S159] Mưa ngày giao tại thủ phủ bang của khách. Nguồn tuỳ chọn Open-Meteo (CC BY 4.0; ghi nguồn Weather data by Open-Meteo.com).}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{20 phép kiểm thử SQL mới và 18 test pytest đều đạt}
+\begin{itemize}
+  \item Tỷ giá có đủ 1.827 ngày; IPCA đủ 60 tháng, trùng chỉ số IBGE (chênh 0,000)
+  \item Mã IBGE hợp lệ, cùng bang; không zip nào gán hai đô thị; 96,3\% zip có mã (ngưỡng 95\%)
+  \item \texttt{fact\_state\_year} khớp GMV, số đơn 98.199 và dân số Brazil 2017 = 207.660.929
+  \item Tổng số phép của pipeline tăng từ 136 lên 156
+\end{itemize}
+\note{[S156] Test mới nằm trong sql/90\_tests/050\_api\_tests.sql; khi chưa nạp API các phép này đạt trống. pytest chạy offline.}
 \end{frame}

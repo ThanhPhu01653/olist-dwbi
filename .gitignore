@@ -36,6 +36,7 @@ report/build.log
 
 # Beamer slides: build files, PDFs and the Overleaf package are not committed
 slides_overleaf.zip
+slides/_xem_truoc/
 slides/*.pdf
 slides/*.aux
 slides/*.log
@@ -61,3 +62,14 @@ attach/
 **/.pbi/localSettings.json
 
 exports/huong-dan-ca-nhan/
+
+# P10 Lakehouse: secrets and local data
+lakehouse/.env
+lakehouse/data/
+lakehouse/.ivy/
+
+# dbt run artefacts
+lakehouse/dbt/logs/
+lakehouse/dbt/target/
+lakehouse/dbt/.user.yml
+lakehouse/dbt/dbt_packages/

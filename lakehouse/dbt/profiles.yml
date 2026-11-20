@@ -1,0 +1,15 @@
+# Trino of the Lakehouse (docker compose, port 8080). No password: Trino listens on 127.0.0.1 only. The read-only BI user is set up in step 10.
+olist_lakehouse:
+  target: dev
+  outputs:
+    dev:
+      type: trino
+      method: none
+      user: dbt
+      host: 127.0.0.1
+      port: 8080
+      database: iceberg
+      schema: gold
+      threads: 1
+      timezone: UTC
+      http_scheme: http
