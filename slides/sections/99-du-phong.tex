@@ -291,6 +291,12 @@ Chạy thử (3.000 sự kiện đầu) & 3.000 & 541 \\
 \note{[P11-dự phòng 5.1] Ảnh Phú chụp (nửa cuối đầu ra dbt test): figures/5-1\_dbt\_test\_2.png, đã cắt. Chạy lại trong bộ pytest bằng tham số --run-slow.}
 \end{frame}
 
+\begin{frame}[noprogressbar,noframenumbering]{Lineage bốn tầng: 18 nguồn Silver, 10 dimension, 6 fact, 4 mart}
+\HinhLon[0.54\textheight]{5-1_dbt_lineage.png}
+\KetLuan{77 cạnh phụ thuộc; 71/71 phép kiểm thử dbt đạt}
+\note{[P11-dự phòng 5.1] Hình vẽ bằng lakehouse/scripts/gen\_lineage.py từ dbt/target/manifest.json. Fact nối tới dim\_date qua depends\_on vì khoá ngày tính từ mốc thời gian, không join.}
+\end{frame}
+
 \begin{frame}[noprogressbar,noframenumbering]{Dung sai: hai chỗ được nới và một ngoại lệ có giải thích}
 \begin{itemize}
   \item \texttt{late\_rate}, \texttt{avg\_review\_score}: làm tròn 4 chữ số thập phân ở cả hai phía

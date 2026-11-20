@@ -52,25 +52,26 @@ def save(fig, name):
     print("written", name)
 
 
-# ------------------------------------------------------------------ Lakehouse architecture (8 blocks)
-W, H = 12.2, 4.5
+# ------------------------------------------------------------------ Lakehouse architecture (8 blocks, about 3:1 so that it fills the slide width)
+NL_ = chr(10)
+W, H = 14.0, 4.1
 fig, ax = canvas(W, H)
-bw, bh, gap, y0 = 1.72, 1.25, 0.36, 2.95
-xs = [0.05 + i * (bw + gap) for i in range(6)]
-names = [("PostgreSQL\nnguồn", GREY), ("Debezium\n+ Kafka", BLUE), ("Bronze\nSpark", BRONZE), ("Silver\nSpark", SILVER), ("Gold\ndbt", GOLD), ("Trino +\nSuperset", GREEN)]
+bw, bh = 1.95, 1.2
+gap = (W - 0.2 - 6 * bw) / 5
+xs = [0.1 + i * (bw + gap) for i in range(6)]
+y0 = 2.8
+names = [("PostgreSQL%snguồn", GREY), ("Debezium%s+ Kafka", BLUE), ("Bronze%sSpark", BRONZE), ("Silver%sSpark", SILVER), ("Gold%sdbt", GOLD), ("Trino +%sSuperset", GREEN)]
 for x, (t, c) in zip(xs, names):
-    block(ax, x, y0, bw, bh, t, c)
+    block(ax, x, y0, bw, bh, t.replace("%s", NL_), c, fs=17)
 for i in range(5):
     arrow(ax, (xs[i] + bw, y0 + bh / 2), (xs[i + 1], y0 + bh / 2))
-# storage band under Bronze..Gold
 bx0, bx1 = xs[2], xs[4] + bw
-block(ax, bx0, 1.45, bx1 - bx0, 0.85, "MinIO + Iceberg (Parquet)", "#FFFFFF", fs=17, dashed=True)
+block(ax, bx0, 1.4, bx1 - bx0, 0.85, "MinIO + Iceberg (Parquet)", "#FFFFFF", fs=18, dashed=True)
 for k in (2, 3, 4):
-    ax.plot([xs[k] + bw / 2] * 2, [y0, 2.3], color=EDGE, lw=1.6, ls=":")
-# chapter 3 warehouse + reconciliation
-block(ax, xs[5] - 0.05, 0.25, bw + 0.1, 1.0, "Kho\nchương 3", GREY, fs=18, dashed=True)
-arrow(ax, (xs[4] + bw / 2 + 0.2, 1.45), (xs[5] - 0.02, 0.8), "", color=RED, rad=0.25)
-ax.text(xs[4] + 0.2, 0.62, "đối soát\n16/16 bảng", fontsize=16, color=RED, fontweight="bold", ha="center", va="center")
+    ax.plot([xs[k] + bw / 2] * 2, [y0, 2.25], color=EDGE, lw=1.8, ls=":")
+block(ax, xs[5], 0.1, bw, 1.0, "Kho%schương 3".replace("%s", NL_), GREY, fs=17, dashed=True)
+arrow(ax, (xs[4] + bw - 0.3, 1.4), (xs[5], 0.6), "", color=RED, rad=0.25)
+ax.text(xs[4] - 0.2, 0.55, "đối soát 16/16 bảng", fontsize=18, color=RED, fontweight="bold", ha="center", va="center")
 save(fig, "5-1_kien_truc_lakehouse_sl.png")
 
 # ------------------------------------------------------------------ API architecture (7 blocks)
