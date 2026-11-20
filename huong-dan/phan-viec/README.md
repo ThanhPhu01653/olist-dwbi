@@ -176,4 +176,5 @@ Còn lỗi khác: xem dòng báo lỗi đầu tiên trong *Logs and output files
 Slide được chiếu bằng máy chiếu trong phòng học, nên có quy tắc riêng:
 - Quy tắc và sáu mẫu slide: [`slides/QUY-TAC-TRINH-BAY.md`](../../slides/QUY-TAC-TRINH-BAY.md); macro bố cục: `slides/bocuc.sty`; frame mẫu đã biên dịch: `slides/mau/mau-bo-cuc.tex`.
 - Mỗi slide một ý, người xem hiểu trong 5 giây; tiêu đề là câu kết luận có số (tối đa 80 ký tự); chữ giải thích để trong `\note{}`.
-- Trước khi gửi hoặc commit file slide, chạy `python scripts/kiem_tra_slide.py --strict slides/sections/<file>.tex` (0 LỖI) và xem ảnh bằng `python scripts/kiem_tra_slide.py --anh slides/main.pdf <trang đầu>-<trang cuối>`.
+- Trên Overleaf: ưu tiên nội dung và số liệu đúng; nếu tiện thì dùng các macro mẫu (`\HinhLon`, `\AnhChup`, `\BangTC`, `\KetLuan`, `\HangSo`, `\TruocSau`), mỗi slide một hình, không dùng chữ `\scriptsize`.
+- Phần kiểm tra tự động (`scripts/kiem_tra_slide.py`) và dàn trang thống nhất được làm khi ghép bộ slide, nên không cần tự chạy.

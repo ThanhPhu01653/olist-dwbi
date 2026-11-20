@@ -229,7 +229,23 @@ else:
 ax.set_title("Bang nào mua nhiều nhất theo đầu người?", fontsize=11)
 from matplotlib.patches import Patch
 ax.legend(handles=[Patch(color=c, label=l) for l, c in (("Sudeste", BLUE_D), ("Sul", GREEN_D), ("Nordeste", ORANGE_D), ("Norte", "#9B5DE5"), ("Centro-Oeste", "#00A6A6"))], fontsize=8, loc="lower right")
-save(fig, "5-2_gmv_dau_nguoi_theo_bang.png")
+if SLIDE:
+    save(fig, "5-2_gmv_dau_nguoi_theo_bang_full.png")        # all 27 states -> backup slide (written as *_full_sl.png)
+    fig, ax = plt.subplots(figsize=(7.6, 7.2))               # projector main figure: the 10 highest and the 5 lowest states
+    pick = list(range(10)) + list(range(len(dd) - 5, len(dd)))
+    xs_ = list(range(10)) + [11 + i for i in range(5)]
+    ax.bar(xs_, dd.gmv_per_1000_pop.iloc[pick], color=[colors[i] for i in pick])
+    ax.set_xticks(xs_, labels=[f"{dd.state_code.iloc[i]}\n{dd.rank_gmv.iloc[i]}" for i in pick])
+    for xi, i in zip(xs_, pick):
+        ax.text(xi, dd.gmv_per_1000_pop.iloc[i] + 0.8, f"{dd.gmv_per_1000_pop.iloc[i]:.1f}", ha="center", va="bottom", fontsize=17)
+    ax.text(10, 30, "12 bang khác\n(đủ 27 bang ở\nslide dự phòng)", ha="center", va="bottom", fontsize=16)
+    ax.set_ylabel("BRL / 1.000 dân")
+    ax.set_xlabel("số dưới mã bang = hạng theo GMV (năm 2017)")
+    ax.set_ylim(0, 70)
+    ax.legend(handles=[Patch(color=c, label=l) for l, c in (("Sudeste", BLUE_D), ("Sul", GREEN_D), ("Nordeste", ORANGE_D), ("Norte", "#9B5DE5"), ("Centro-Oeste", "#00A6A6"))])
+    save(fig, "5-2_gmv_dau_nguoi_theo_bang.png")
+else:
+    save(fig, "5-2_gmv_dau_nguoi_theo_bang.png")
 
 city = q("SELECT * FROM mart_market.v_gmv_per_capita_city WHERE year = 2017 AND population >= 100000 ORDER BY gmv_per_1000_pop DESC")
 md += ["", "### Đô thị từ 100 nghìn dân, 2017: 8 đô thị cao nhất theo GMV/1.000 dân", "", "| Đô thị | Bang | Dân số | GMV | GMV / 1.000 dân | Hạng GMV |", "| --- | --- | ---: | ---: | ---: | ---: |"]
