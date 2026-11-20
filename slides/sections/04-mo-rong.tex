@@ -97,9 +97,9 @@ CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
 % (A) lineage
 \begin{frame}{Lineage của fact\_order\_item: 13 nguồn Silver qua 5 dimension}
 \muc{5.1 · Lakehouse}
-\AnhChup[0.52\textheight]{5-1_dbt_lineage_fact_tc.png}
-\KetLuan{71/71 phép kiểm thử dbt đạt, gồm 3 phép riêng về tiền, số dòng và SCD2}
-\note{[P10-bước 5] Ảnh Phú chụp từ dbt docs (figures/5-1\_dbt\_lineage\_fact.png, đã cắt: 5-1\_dbt\_lineage\_fact\_tc.png): 13 nguồn Silver, 5 dimension nối tới fact\_order\_item. Ảnh chụp trước khi thêm depends\_on nên chưa vẽ dim\_date; fact nối tới dim\_date qua khoá ngày tính từ mốc thời gian, không join. Hình bốn tầng đầy đủ (18 nguồn Silver, 10 dimension, 6 fact, 4 mart) ở slide dự phòng chương 5. Ảnh dbt test: slide dự phòng chương 5.}
+% cho-phep: R7 ảnh lineage dùng hết chiều cao khung, không có thanh kết luận; kết quả 71/71 test nằm trong ghi chú và slide dự phòng
+\AnhChup[\dimexpr\VungCao-24pt\relax]{5-1_dbt_lineage_fact_tc.png}
+\note{[P10-bước 5] 71/71 phép kiểm thử dbt đạt, gồm 3 phép riêng về tiền, số dòng và SCD2. Ảnh Phú chụp từ dbt docs (figures/5-1\_dbt\_lineage\_fact.png, đã cắt: 5-1\_dbt\_lineage\_fact\_tc.png): 13 nguồn Silver, 5 dimension nối tới fact\_order\_item. Ảnh chụp trước khi thêm depends\_on nên chưa vẽ dim\_date; fact nối tới dim\_date qua khoá ngày tính từ mốc thời gian, không join. Hình bốn tầng đầy đủ (18 nguồn Silver, 10 dimension, 6 fact, 4 mart) ở slide dự phòng chương 5. Ảnh dbt test: slide dự phòng chương 5.}
 \end{frame}
 
 % (B) đối soát
@@ -236,7 +236,7 @@ Không khớp & 719 & -- & 0,5 chưa khớp \\
 \muc{5.2 · Thu thập từ API}
 \HinhLon[0.54\textheight]{5-2_gmv_dau_nguoi_theo_bang_sl.png}
 \KetLuan{RJ 53,90 dẫn đầu; DF hạng 9 theo GMV lên hạng 3; MA tụt từ hạng 15 xuống 24}
-\note{[S121] Dân số là ước tính IBGE 2017, GMV theo bang của khách. 2017: RJ 53,90; SP 48,58; DF 43,95; thấp nhất AM 2,58. MA tụt từ hạng 15 xuống 24; PA 13 sang 22; TO lên 23 sang 12. Cả nước 29,42 BRL trên 1.000 dân năm 2017 và 35,21 năm 2018. Distrito Federal: hạng 9 theo GMV, hạng 3 theo đầu người. Maranhão tụt từ hạng 15 xuống 24. Spearman giữa hai thứ hạng: 0,78. Số dưới mã bang trên hình là hạng theo GMV.}
+\note{[S121] Dân số là ước tính IBGE 2017, GMV theo bang của khách. 2017: RJ 53,90; SP 48,58; DF 43,95; thấp nhất AM 2,58. MA tụt từ hạng 15 xuống 24; PA 13 sang 22; TO lên 23 sang 12. Cả nước 29,42 BRL trên 1.000 dân năm 2017 và 35,21 năm 2018. Distrito Federal: hạng 9 theo GMV, hạng 3 theo đầu người. Maranhão tụt từ hạng 15 xuống 24. Spearman giữa hai thứ hạng: 0,78. Số dưới mã bang trên hình là hạng theo GMV. Hình chỉ vẽ 10 bang cao nhất và 5 bang thấp nhất; đủ 27 bang ở slide dự phòng chương 5.}
 \end{frame}
 
 % (A) danh nghĩa so với thực
