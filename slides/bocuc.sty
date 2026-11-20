@@ -1,0 +1,119 @@
+%% bocuc.sty -- Bố cục slide để chiếu (máy chiếu, phòng học).
+%% Quy tắc dùng: slides/QUY-TAC-TRINH-BAY.md. Kiểm tra tự động: python scripts/kiem_tra_slide.py
+%% Mọi macro ở đây dùng màu của theme HUST (hustmain, hustorange, hustred, hustblack).
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bocuc}[2026/11/20 Bo cuc slide trinh chieu]
+\RequirePackage{tikz}
+\RequirePackage{tabularx}
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{colortbl}
+\usetikzlibrary{arrows.meta,positioning}
+
+%% ---------------------------------------------------------------------------
+%% Chiều cao vùng nội dung nhìn thấy (dưới thanh tiêu đề, trên chân trang), đo trên bản render:
+%% theme HUST 16:9 nhìn thấy khoảng 0,8\textheight (khung chữ của theme dài quá chân trang).
+%% Đổi một chỗ ở đây nếu theme thay đổi.
+%% \VungCao: hình không kèm thanh kết luận. \HinhCao: hình có thanh kết luận bên dưới.
+\newlength{\VungCao}
+\setlength{\VungCao}{0.76\textheight}
+%% Chiều cao ảnh khi có thanh kết luận bên dưới
+\newlength{\HinhCao}
+\setlength{\HinhCao}{0.56\textheight}
+
+%% Cỡ chữ chuẩn khi chiếu: thân bài \normalsize, bảng \small; KHÔNG dùng \scriptsize, \tiny cho nội dung.
+
+%% ---------------------------------------------------------------------------
+%% 1. Một hình lớn (sơ đồ, biểu đồ). [chiều cao] mặc định \HinhCao.
+%%    \HinhLon{5-1_kien_truc_lakehouse.png}
+%%    \HinhLon[0.75\textheight]{...}  (khi không có thanh kết luận)
+\newcommand{\HinhLon}[2][\HinhCao]{%
+  \par\vspace{2pt}{\centering\includegraphics[width=\linewidth,height=#1,keepaspectratio]{#2}\par}}
+
+%% 2. Ảnh chụp màn hình (minh chứng): có viền xám mảnh để tách khỏi nền trắng.
+%%    \AnhChup{5-1_minio_console.png}
+\newcommand{\AnhChup}[2][\HinhCao]{%
+  \par\vspace{2pt}{\centering\fboxsep=0pt\fboxrule=0.6pt%
+  \fcolorbox{black!35}{white}{\includegraphics[width=\dimexpr\linewidth-2pt\relax,height=#1,keepaspectratio]{#2}}\par}}
+
+%% 3. Ảnh chụp có khoanh vùng: toạ độ tương đối 0..1 tính từ góc DƯỚI-TRÁI của ảnh.
+%%    \begin{AnhKhoanh}{5-1_reconcile.png}
+%%      \khoanh{0.02}{0.10}{0.60}{0.35}          % hình chữ nhật đỏ
+%%      \nhan{0.62}{0.30}{16/16 bảng khớp}         % nhãn chú thích cạnh vùng khoanh
+%%    \end{AnhKhoanh}
+\newenvironment{AnhKhoanh}[2][\HinhCao]{%
+  \par\vspace{2pt}\centering
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0,draw=black!35,line width=0.6pt] (anh)
+      {\includegraphics[width=\linewidth,height=#1,keepaspectratio]{#2}};
+    \begin{scope}[x={(anh.south east)},y={(anh.north west)}]
+}{%
+    \end{scope}
+  \end{tikzpicture}\par}
+\newcommand{\khoanh}[4]{\draw[hustred,line width=1.6pt,rounded corners=2pt] (#1,#2) rectangle (#3,#4);}
+\newcommand{\nhan}[3]{\node[anchor=west,fill=hustred,text=white,font=\small\bfseries,
+  inner sep=3pt,rounded corners=2pt] at (#1,#2) {#3};}
+
+%% 4. Thanh kết luận ngay dưới hình/bảng: MỘT câu, MỘT dòng (<= 90 ký tự), có số.
+%%    Không dùng \vfill: khung chữ của theme dài quá chân trang, \vfill đẩy thanh xuống dưới chân trang.
+%%    \KetLuan{Gold khớp kho ở 16/16 bảng; GMV 13.494.400,74 BRL ở cả hai phía}
+\newcommand{\KetLuan}[1]{%
+  \par\vspace{6pt}\noindent
+  \begin{tikzpicture}
+    \node[fill=hustmain!10,draw=hustmain,line width=0.8pt,rounded corners=3pt,
+      text width=\dimexpr\linewidth-14pt\relax,inner sep=5pt,align=center,
+      font=\normalsize\bfseries,text=hustblack] {#1};
+  \end{tikzpicture}\par}
+
+%% 5. Hàng số lớn (2-4 thẻ). Mỗi thẻ: số to + nhãn ngắn (<= 5 từ).
+%%    \HangSo[3]{\So{1.720.555}{sự kiện qua Kafka}\hfill\So{16/16}{bảng khớp kho}\hfill\So{22,6 s}{độ trễ TB}}
+%%    [n] = số thẻ (2-4); 4 thẻ thì số nhỏ hơn. Số dài quá 9 ký tự: viết gọn (1,72 triệu).
+\newcommand{\So}[2]{%
+  \begin{tikzpicture}
+    \node[fill=hustmain!7,rounded corners=4pt,minimum width=\SoRong,minimum height=1.55cm,
+      align=center,text width=\dimexpr\SoRong-8pt\relax,inner sep=4pt]
+      {{\fontsize{\SoCo}{\SoCo}\selectfont\bfseries\color{hustmain}#1}\\[3pt]{\small\color{hustblack}#2}};
+  \end{tikzpicture}}
+\newlength{\SoRong}
+\def\SoCo{22}
+\newcommand{\HangSo}[2][3]{%
+  \par\vspace{4pt}\setlength{\SoRong}{\dimexpr(\linewidth-#1\dimexpr8pt\relax)/#1\relax}%
+  \ifnum#1>3 \def\SoCo{17}\else\def\SoCo{22}\fi
+  {\centering #2\par}\vspace{4pt}}
+
+%% 6. Trước / sau (hai ô cạnh nhau, mũi tên ở giữa). Nội dung mỗi ô: 2-4 dòng ngắn.
+%%    \TruocSau{Trước khi sửa}{Silver có 24.765 đơn}{Sau khi sửa}{45.971 đơn, bằng nguồn}
+\newcommand{\TruocSau}[4]{%
+  \par\vspace{4pt}\noindent
+  \begin{tikzpicture}
+    \node[draw=hustred,line width=1pt,fill=hustred!6,rounded corners=4pt,
+      text width=0.40\linewidth,minimum height=2.6cm,align=center,inner sep=6pt] (a)
+      {{\bfseries\color{hustred}#1}\\[4pt]\normalsize #2};
+    \node[draw=hustmain,line width=1pt,fill=hustmain!6,rounded corners=4pt,
+      text width=0.40\linewidth,minimum height=2.6cm,align=center,inner sep=6pt,
+      right=0.09\linewidth of a] (b)
+      {{\bfseries\color{hustmain}#3}\\[4pt]\normalsize #4};
+    \draw[-{Stealth[length=8pt]},line width=2pt,hustmain] (a.east) -- (b.west);
+  \end{tikzpicture}\par}
+
+%% 7. Bảng trình chiếu: chữ \small, dòng thoáng, rộng hết khung. Tối đa 7 dòng x 5 cột.
+%%    \begin{BangTC}{lXrr} \textbf{A} & ... \\ \midrule ... \end{BangTC}
+%%    Dòng quan trọng: \DongNhan (tô nền) đặt ở đầu dòng.
+\newenvironment{BangTC}[1]{%
+  \par\vspace{2pt}\small\renewcommand{\arraystretch}{1.32}\setlength{\tabcolsep}{6pt}%
+  \tabularx{\linewidth}{#1}\toprule}{\bottomrule\endtabularx\par}
+\newcommand{\DongNhan}{\rowcolor{hustmain!10}}
+
+%% 8. Hai cột hình + chữ: CHỈ khi hình là biểu đồ đọc được ở 58% chiều rộng
+%%    và chữ <= 3 ý ngắn. Hình luôn ở bên TRÁI, rộng hơn.
+%%    \HinhChu{5-2_gmv_dau_nguoi_theo_bang.png}{\begin{itemize}\item ...\end{itemize}}
+\newcommand{\HinhChu}[3][\HinhCao]{%
+  \par\vspace{2pt}\noindent
+  \begin{minipage}[c]{0.60\linewidth}\centering
+    \includegraphics[width=\linewidth,height=#1,keepaspectratio]{#2}\end{minipage}\hfill
+  \begin{minipage}[c]{0.37\linewidth}\normalsize #3\end{minipage}\par}
+
+%% 9. Ghi nguồn nhỏ ở cuối (chỉ chỗ này được dùng chữ nhỏ).
+\newcommand{\Nguon}[1]{\par\vspace{2pt}{\scriptsize\color{black!55}Nguồn: #1}\par}
+
+\endinput

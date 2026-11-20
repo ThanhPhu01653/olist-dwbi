@@ -126,7 +126,7 @@ Hình: `figures/3-2-1_bpmn_don_hang.png`, `3-2-2_bpmn_thu_hut_seller.png`, `3-2-
 | N3 | Giao hàng và đánh giá (A4–A6): vận chuyển 9,3 ngày, review 4,09, hủy 1,24% | bước dài nhất và bước tạo điểm review | BPMN riêng bước này, dấu A4–A6 | `DB2.md` mục 8–9 | cần làm |
 | N4 | Yêu cầu phi chức năng: làm mới hằng ngày, truy vấn mart nhanh, ẩn dữ liệu định danh | thời gian làm mới (lô hằng ngày, xem S127), thời gian phản hồi (materialized view làm mới 2 giây, xem S84), ẩn dữ liệu định danh | bảng yêu cầu | `handoff/2026-11-05-P6.md`, `P7-perf.md`; phần ẩn định danh: *nhóm bổ sung* | cần làm |
 | N5 | Năm giới hạn của dữ liệu: vấn đề → cách xử lý (sửa slide S126) | GMV hai cách đo (13,49 so với 13,59 triệu BRL); Orders 98.199 so với Orders placed 99.441; 380 so với 379 seller; 2016 thưa và 09/2018 bị cắt; đơn có nhiều review | bảng vấn đề → cách xử lý | `huong-dan/05-nghiep-vu-nhap.md` mục 13 | sửa slide có sẵn |
-| N6 | DB1 trang 1: GMV tăng 52,1% ở 11/2017 và có đường dự báo 3 tháng | tình huống trước dashboard: ban điều hành cần biết doanh thu tăng hay giảm | ảnh `4_DB1_trang1_tong_quan.png` (gửi Người 4 dùng ở `03-dashboard.tex`) | `DB1.md` mục 8 | gửi ảnh và 3–5 câu cho Người 4 hạn 25/11 |
+| N6 | DB1 trang 1: GMV tăng 52,1% ở 11/2017 và có đường dự báo 3 tháng | tình huống trước dashboard: ban điều hành cần biết doanh thu tăng hay giảm | ảnh `4_DB1_trang1_tong_quan.png` (gửi Người 4 dùng ở `03-dashboard.tex`) | `DB1.md` mục 8 | gửi ảnh và 3–5 câu cho Người 4 |
 
 Khối lượng: 24 slide đang có + 5 slide thêm (N1–N5) = **29 slide** trong file của bạn, cộng 2 slide lý thuyết ở `00b-ly-thuyet-rut-gon.tex`. **Chọn 6–7 slide để nói** trong khoảng 7 phút, còn lại là slide chi tiết để trả lời câu hỏi và để báo cáo dùng lại:
 
@@ -186,7 +186,7 @@ Hướng dẫn đầy đủ: [`../dashboards/DB1.md`](../dashboards/DB1.md). Cá
 2. Thị trường tập trung: Sudeste 65,4% GMV, Norte 2,5%; 18/74 danh mục tạo 80% GMV.
 3. Giao đúng hạn 93,2% nhưng tụt còn 87,6% ở tháng Black Friday: tải cao làm giao chậm.
 
-**Ảnh cần chụp (gửi Người 4 và `02_Dashboard`):** `4_DB1_trang1_tong_quan.png`, `4_DB1_trang2_san_pham.png`, `4_DB1_du_bao.png` (đường GMV có vùng dự báo), `4_DB1_tooltip.png`. Kèm 3–5 câu nhận xét có số cho mỗi ảnh (hạn 25/11).
+**Ảnh cần chụp (gửi Người 4 và `02_Dashboard`):** `4_DB1_trang1_tong_quan.png`, `4_DB1_trang2_san_pham.png`, `4_DB1_du_bao.png` (đường GMV có vùng dự báo), `4_DB1_tooltip.png`. Kèm 3–5 câu nhận xét có số cho mỗi ảnh.
 
 ## 8. Việc riêng
 Không có việc riêng ngoài các mục trên. Hai việc dễ bỏ sót: (1) vẽ lại hoặc kiểm tra bốn cây phân tích `2-3_cay_phan_tich_DB1…DB4.png` (báo cáo 2.3 có `\todo` yêu cầu); (2) viết hai slide lý thuyết rút gọn ở phần mở đầu, chỉ giữ phần phục vụ các chương sau (barem không có mục lý thuyết).
