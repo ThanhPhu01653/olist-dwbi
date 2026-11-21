@@ -2,42 +2,37 @@
 
 \begin{frame}{Phạm vi: dữ liệu 01/2017–08/2018 chiếm 99,6\% số đơn nên được dùng cho xu hướng}
 \muc{2.4 · Dữ liệu nguồn}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item 2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-3-1_orders_per_month.png}\end{center}
-\end{column}\end{columns}
-
+\HinhLon{3-3-1_orders_per_month.png}
+\KetLuan{2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn}
 \note{[S32] Bộ lọc InWindow trong Power BI cố định cửa sổ này cho DB1–DB4.}
 \end{frame}
 
 \begin{frame}{Hai hệ thống nguồn có 11 bảng, 121 MB và 1.559.764 dòng}
 \muc{2.4 · Dữ liệu nguồn}
-\begin{itemize}
-  \item oltp 9 bảng 1.550.922 dòng; crm 2 bảng 8.842 dòng
-\end{itemize}
-\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\begin{tabular}{llrrr}
-\toprule
-\textbf{Bảng nguồn} & \textbf{File CSV} & \textbf{Số dòng} & \textbf{Số cột} & \textbf{MB} \\
-\midrule
+\only<1>{%
+\begin{BangTC}{XXrrr}
+\textbf{Bảng nguồn} & \textbf{File CSV} & \textbf{Số dòng} & \textbf{Số cột} & \textbf{MB} \\ \midrule
 oltp.product\_category\_name\_translation & product\_category\_name\_translation.csv & 71 & 2 & 0,00 \\
 oltp.products & olist\_products\_dataset.csv & 32.951 & 9 & 2,27 \\
 oltp.sellers & olist\_sellers\_dataset.csv & 3.095 & 4 & 0,17 \\
 oltp.geolocation & olist\_geolocation\_dataset.csv & 1.000.163 & 6 & 58,44 \\
 oltp.customers & olist\_customers\_dataset.csv & 99.441 & 5 & 8,62 \\
+\end{BangTC}
+\KetLuan{oltp 9 bảng 1.550.922 dòng; crm 2 bảng 8.842 dòng}}
+\only<2>{%
+\begin{BangTC}{XXrrr}
+\textbf{Bảng nguồn} & \textbf{File CSV} & \textbf{Số dòng} & \textbf{Số cột} & \textbf{MB} \\ \midrule
 oltp.orders & olist\_orders\_dataset.csv & 99.441 & 8 & 16,84 \\
 oltp.order\_items & olist\_order\_items\_dataset.csv & 112.650 & 7 & 14,72 \\
 oltp.order\_payments & olist\_order\_payments\_dataset.csv & 103.886 & 5 & 5,51 \\
 oltp.order\_reviews & olist\_order\_reviews\_dataset.csv & 99.224 & 7 & 13,78 \\
 crm.mql & olist\_marketing\_qualified\_leads\_dataset.csv & 8.000 & 4 & 0,67 \\
 crm.closed\_deals & olist\_closed\_deals\_dataset.csv & 842 & 14 & 0,16 \\
-Tổng (11 bảng) &  & 1.559.764 &  & 121,18 \\
-\bottomrule
-\end{tabular}}\end{center}
-
-\note{[S33] Vượt tiêu chí kích thước dữ liệu của môn (trên 100 MB).}
+\DongNhan\textbf{Tổng (11 bảng)} &  & \textbf{1.559.764} &  & \textbf{121,18} \\
+\end{BangTC}
+\vspace{-6pt}
+\KetLuan{oltp 9 bảng 1.550.922 dòng; crm 2 bảng 8.842 dòng}}
+\note{[S33] Vượt tiêu chí kích thước dữ liệu của môn (trên 100 MB). Bảng chia hai phần (bấm để chuyển): phần 1 là 5 bảng đầu, phần 2 là 6 bảng còn lại và dòng tổng.}
 \end{frame}
 
 \begin{frame}{Bảng toạ độ chiếm 64\% số dòng nhưng chỉ đại diện 19.015 mã bưu chính}
@@ -52,85 +47,45 @@ Tổng (11 bảng) &  & 1.559.764 &  & 121,18 \\
 
 \begin{frame}{Luồng dữ liệu và tần suất cập nhật: nạp ban đầu 45.430 đơn rồi 11 đợt hằng tháng}
 \muc{2.4 · Dữ liệu nguồn}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item Tổng 286.144 bản ghi mới qua 11 đợt
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-4-1_pipeline.png}\end{center}
-\end{column}\end{columns}
-
+\HinhLon{3-4-1_pipeline.png}
+\KetLuan{Tổng 286.144 bản ghi mới qua 11 đợt}
 \note{[S37] Dữ liệu Kaggle là ảnh tĩnh nên nhóm mô phỏng cập nhật.}
 \end{frame}
 
-\begin{frame}{Trung bình 163 đơn mỗi ngày, đỉnh 1.176 đơn ngày Black Friday: lô hằng ngày là đủ}
+\begin{frame}{Trung bình 163 đơn/ngày, đỉnh 1.176 đơn ngày Black Friday: lô hằng ngày là đủ}
 \muc{2.4 · Dữ liệu nguồn}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item Cửa sổ 01/2017--08/2018: 163 đơn, 185 dòng hàng, 13 MQL, 1,3 deal mỗi ngày
-  \item Bảng tần suất đề xuất công nghệ: lô hằng ngày bằng procedure PostgreSQL; gần thời gian thực thì CDC + Kafka (chương 5)
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{2-4_tan_suat_cap_nhat.png}\end{center}
-\end{column}\end{columns}
-
-\note{[S127] Biểu đồ tần suất cập nhật theo thời gian và bảng công nghệ xử lý đề xuất.}
+\HinhLon{2-4_tan_suat_cap_nhat.png}
+\KetLuan{Cửa sổ 01/2017--08/2018: 163 đơn, 185 dòng hàng, 13 MQL, 1,3 deal mỗi ngày}
+\note{[S127] Biểu đồ tần suất cập nhật theo thời gian và bảng công nghệ xử lý đề xuất. Tiêu đề đầy đủ trước khi rút gọn: Trung bình 163 đơn mỗi ngày, đỉnh 1.176 đơn ngày Black Friday: lô hằng ngày là đủ Ý đã chuyển khỏi slide: Bảng tần suất đề xuất công nghệ: lô hằng ngày bằng procedure PostgreSQL; gần thời gian thực thì CDC + Kafka (chương 5).}
 \end{frame}
 
-\begin{frame}{Cây phân loại dữ liệu chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu}
+\begin{frame}{Cây phân loại chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu}
 \muc{2.4 · Dữ liệu nguồn}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item Mỗi bảng kèm hai cột tiêu biểu và giá trị thật
-  \item Phân loại thêm theo kiểu dữ liệu, độ nhạy cảm (định danh, vị trí) và tính biến động
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{2-4_data_taxonomy.png}\end{center}
-\end{column}\end{columns}
-
-\note{[S128] Data taxonomy của 11 bảng nguồn.}
+\HinhLon{2-4_data_taxonomy.png}
+\KetLuan{Mỗi bảng kèm hai cột tiêu biểu và giá trị thật}
+\note{[S128] Data taxonomy của 11 bảng nguồn. Tiêu đề đầy đủ trước khi rút gọn: Cây phân loại dữ liệu chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu Ý đã chuyển khỏi slide: Phân loại thêm theo kiểu dữ liệu, độ nhạy cảm (định danh, vị trí) và tính biến động.}
 \end{frame}
 
-\begin{frame}{Data flow hiện trạng: mũi tên ghi thông tin được truyền, hai hệ thống nguồn tách rời}
+\begin{frame}{Data flow hiện trạng: mũi tên ghi thông tin truyền, hai nguồn tách rời}
 \muc{2.4 · Dữ liệu nguồn}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item Thông tin đơn, trạng thái giao, thanh toán, điểm đánh giá, lead
-  \item Marketing funnel (SDR, SR) tách khỏi hệ thống bán hàng
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{2-4_data_flow_hien_trang.png}\end{center}
-\end{column}\end{columns}
-
-\note{[S129] Hiện trạng: luồng thông tin giữa các hệ thống CNTT (bản nháp, nhóm vẽ lại).}
+\HinhLon{2-4_data_flow_hien_trang.png}
+\KetLuan{Marketing funnel (SDR, SR) tách khỏi hệ thống bán hàng}
+\note{[S129] Hiện trạng: luồng thông tin giữa các hệ thống CNTT (bản nháp, nhóm vẽ lại). Tiêu đề đầy đủ trước khi rút gọn: Data flow hiện trạng: mũi tên ghi thông tin được truyền, hai hệ thống nguồn tách rời Ý đã chuyển khỏi slide: Thông tin đơn, trạng thái giao, thanh toán, điểm đánh giá, lead.}
 \end{frame}
 
 \begin{frame}{Data flow đề xuất: nguồn, staging, ODS, kho, mart và BI, có nhật ký ETL giám sát}
 \muc{2.4 · Dữ liệu nguồn}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item Bảng lớp, thành phần, công nghệ, tần suất, ghi chú ở báo cáo
-  \item Điều phối bằng một lệnh Python, biến đổi bằng PL/pgSQL
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{2-4_data_flow_de_xuat.png}\end{center}
-\end{column}\end{columns}
-
-\note{[S130] Đề xuất: luồng nguồn đến BI.}
+\HinhLon{2-4_data_flow_de_xuat.png}
+\KetLuan{Điều phối bằng một lệnh Python, biến đổi bằng PL/pgSQL}
+\note{[S130] Đề xuất: luồng nguồn đến BI. Ý đã chuyển khỏi slide: Bảng lớp, thành phần, công nghệ, tần suất, ghi chú ở báo cáo.}
 \end{frame}
 
 \subsection{2.5 ERD OLTP}
 
 \begin{frame}{ERD hệ thống bán hàng: chín bảng nối quanh đơn hàng}
 \muc{2.5 · ERD OLTP}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item orders $\rightarrow$ items, payments, reviews; customers, sellers, products
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-2-4_erd_oltp.png}\end{center}
-\end{column}\end{columns}
-
+\HinhLon{3-2-4_erd_oltp.png}
+\KetLuan{orders $\rightarrow$ items, payments, reviews; customers, sellers, products}
 \note{[S35] \texttt{customer\_\allowbreak{}id} được sinh riêng cho từng đơn nên cần \texttt{customer\_\allowbreak{}unique\_\allowbreak{}id} để nhận ra khách thật.}
 \end{frame}
 
@@ -144,31 +99,17 @@ Tổng (11 bảng) &  & 1.559.764 &  & 121,18 \\
 \note{[S36] Bảng mapping đầy đủ 108 dòng ODS $\rightarrow$ kho nằm ở phụ lục.}
 \end{frame}
 
-\begin{frame}{ERD tô màu theo nhóm dữ liệu: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP}
+\begin{frame}{ERD tô màu theo nhóm: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP}
 \muc{2.5 · ERD OLTP}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item Gạch chân suy ra từ bảng mapping nguồn $\rightarrow$ ODS $\rightarrow$ kho
-  \item 6 cột không dùng: geolocation.id, 3 thuộc tính sản phẩm, 2 thuộc tính khai báo của deal
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{2-5_erd_oltp_gach_chan.png}\end{center}
-\end{column}\end{columns}
-
-\note{[S131] ERD nháp tô màu và gạch chân cột dùng sang OLAP.}
+\HinhLon{2-5_erd_oltp_gach_chan.png}
+\KetLuan{Gạch chân suy ra từ bảng mapping nguồn $\rightarrow$ ODS $\rightarrow$ kho}
+\note{[S131] ERD nháp tô màu và gạch chân cột dùng sang OLAP. Tiêu đề đầy đủ trước khi rút gọn: ERD tô màu theo nhóm dữ liệu: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP Ý đã chuyển khỏi slide: 6 cột không dùng: geolocation.id, 3 thuộc tính sản phẩm, 2 thuộc tính khai báo của deal.}
 \end{frame}
 
 \begin{frame}{Luồng OLTP sang OLAP cho thấy bảng nguồn nào nuôi dimension nào và fact nào}
 \muc{2.5 · ERD OLTP}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item Bảng tổng hợp mapping theo bảng nguồn ở báo cáo mục 2.5
-  \item Mapping đầy đủ từng cột ở Phụ lục C
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{2-5_data_flow_oltp_olap.png}\end{center}
-\end{column}\end{columns}
-
-\note{[S132] Sơ đồ luồng dữ liệu OLTP sang OLAP.}
+\HinhLon{2-5_data_flow_oltp_olap.png}
+\KetLuan{Mapping đầy đủ từng cột ở Phụ lục C}
+\note{[S132] Sơ đồ luồng dữ liệu OLTP sang OLAP. Ý đã chuyển khỏi slide: Bảng tổng hợp mapping theo bảng nguồn ở báo cáo mục 2.5.}
 \end{frame}
 

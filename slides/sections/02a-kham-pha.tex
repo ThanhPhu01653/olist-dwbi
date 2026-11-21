@@ -4,224 +4,155 @@
 
 \begin{frame}{Khám phá dữ liệu đo được 45 loại lỗi cần xử lý ở ODS}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item Cột thiếu, mốc thời gian sai thứ tự, tên thành phố lệch dấu, trùng lặp
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-3-1_data_quality.png}\end{center}
-\end{column}\end{columns}
-
+\HinhLon{3-3-1_data_quality.png}
+\KetLuan{Cột thiếu, mốc thời gian sai thứ tự, tên thành phố lệch dấu, trùng lặp}
 \note{[S38] Không loại lỗi nào bằng cách xóa dữ liệu.}
 \end{frame}
 
 \begin{frame}{Tỷ lệ ô rỗng cho thấy cột nào cần điền unknown}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item Cột review và ngày giao có nhiều ô rỗng hợp lệ
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-3-1_null_heatmap.png}\end{center}
-\end{column}\end{columns}
-
+\HinhLon{3-3-1_null_heatmap.png}
+\KetLuan{Cột review và ngày giao có nhiều ô rỗng hợp lệ}
 \note{[S39] Ô rỗng của ngày giao đa phần là đơn chưa giao hoặc bị hủy.}
 \end{frame}
 
-\begin{frame}{Bảng toạ độ bẩn nhất: 93,5\% mã bưu chính có nhiều toạ độ, 26,2\% dòng trùng hoàn toàn}
+\begin{frame}{Toạ độ bẩn nhất: 93,5\% mã bưu chính nhiều toạ độ, 26,2\% dòng trùng hoàn toàn}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item 7,3\% tên thành phố lệch dấu; 42 điểm ngoài lãnh thổ Brazil
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-4-3_before_after_geolocation.png}\end{center}
-\end{column}\end{columns}
-
-\note{[S40] Giải pháp: lọc khung Brazil, lấy trung vị toạ độ và mode tên thành phố theo zip.}
+\HinhLon{3-4-3_before_after_geolocation.png}
+\KetLuan{7,3\% tên thành phố lệch dấu; 42 điểm ngoài lãnh thổ Brazil}
+\note{[S40] Giải pháp: lọc khung Brazil, lấy trung vị toạ độ và mode tên thành phố theo zip. Tiêu đề đầy đủ trước khi rút gọn: Bảng toạ độ bẩn nhất: 93,5\% mã bưu chính có nhiều toạ độ, 26,2\% dòng trùng hoàn toàn}
 \end{frame}
 
 \begin{frame}{Phân bố giá, phí vận chuyển và lead time đều lệch phải}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item Nhiều giá trị lớn bất thường ở phí vận chuyển
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-3-1_distributions_numeric.png}\end{center}
-\end{column}\end{columns}
-
+\HinhLon{3-3-1_distributions_numeric.png}
+\KetLuan{Nhiều giá trị lớn bất thường ở phí vận chuyển}
 \note{[S41] Vì vậy dùng trung vị và Spearman khi cần.}
 \end{frame}
 
 \begin{frame}{Dữ liệu đơn dùng được là 01/2017–08/2018, hai đầu rất thưa}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item 2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-3-1_orders_per_month.png}\end{center}
-\end{column}\end{columns}
-
+\HinhLon{3-3-1_orders_per_month.png}
+\KetLuan{2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn}
 \note{[S42] Quyết định lọc thời gian đưa vào Power BI.}
 \end{frame}
 
 \begin{frame}{18/74 danh mục (24,3\%) tạo 80\% GMV, dẫn đầu health\symbol{95}beauty 9,3\%}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item Quy luật Pareto theo danh mục
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-3-1_pareto_category.png}\end{center}
-\end{column}\end{columns}
-
+\HinhLon{3-3-1_pareto_category.png}
+\KetLuan{Quy luật Pareto theo danh mục}
 \note{[S43] Danh mục được gom thành 13 nhóm ngành hàng.}
 \end{frame}
 
 \begin{frame}{Seller thì phân tán hơn: 540 seller tạo 80\% GMV, 5 seller lớn nhất chỉ 7,7\%}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item Doanh thu không phụ thuộc vài seller
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-3-1_pareto_seller.png}\end{center}
-\end{column}\end{columns}
-
+\HinhLon{3-3-1_pareto_seller.png}
+\KetLuan{Doanh thu không phụ thuộc vài seller}
 \note{[S44] Khác với danh mục, rủi ro tập trung vào seller thấp.}
 \end{frame}
 
 \begin{frame}{Giao trễ làm điểm review rơi từ 4,29 xuống 1,70 và 79,2\% review tiêu cực}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item Đơn trễ chiếm 6,5\% số review nhưng tạo 27,4\% review tiêu cực
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-3-1_delay_vs_review.png}\end{center}
-\end{column}\end{columns}
-
+\HinhLon{3-3-1_delay_vs_review.png}
+\KetLuan{Đơn trễ chiếm 6,5\% số review nhưng tạo 27,4\% review tiêu cực}
 \note{[S45] Trung bình toàn sàn che mất nhóm nhỏ nhưng đau.}
 \end{frame}
 
 \begin{frame}{Trễ tập trung ở Bắc và Đông Bắc: Nordeste trễ 12,8\%, Norte lead time 22,6 ngày}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item Sudeste chỉ 6,1\% trễ, lead time 10,7 ngày
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-3-1_late_rate_by_state.png}\end{center}
-\end{column}\end{columns}
-
+\HinhLon{3-3-1_late_rate_by_state.png}
+\KetLuan{Sudeste chỉ 6,1\% trễ, lead time 10,7 ngày}
 \note{[S46] Địa lý quyết định trải nghiệm giao hàng.}
 \end{frame}
 
 \begin{frame}{Chỉ 380/842 deal (45,1\%) có đơn: funnel và bán hàng chỉ giao nhau một phần}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
-  \item 380 seller tạo 674.005 BRL, 4,99\% GMV
+\HinhChu{3-3-1_funnel_seller_overlap.png}{%
+\small\begin{itemize}
   \item 380 là số seller có đơn ở mọi trạng thái; kho chỉ tính đơn không bị huỷ nên có 379 seller (45,0\%)
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-3-1_funnel_seller_overlap.png}\end{center}
-\end{column}\end{columns}
-
-\note{[S47] Quyết định DB4 hiển thị cả nhóm "chốt nhưng chưa bán".}
+\end{itemize}}
+\KetLuan{380 seller tạo 674.005 BRL, 4,99\% GMV}
+\note{[S47] Quyết định DB4 hiển thị cả nhóm "chốt nhưng chưa bán". Ý đã chuyển khỏi slide: 380 seller tạo 674.005 BRL, 4,99\% GMV.}
 \end{frame}
 
 \begin{frame}{Sáu quyết định thiết kế đến từ khám phá dữ liệu}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{itemize}
-  \item SCD2 khách (0,26\% đổi zip); DB4 hai trang (cộng trang chi tiết); snapshot seller dày đặc; 13 nhóm ngành; zip thiếu toạ độ vẫn có dòng; mốc nạp 2017-12-31
-\end{itemize}
-\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\scriptsize\renewcommand{\arraystretch}{1.15}\begin{tabular}{lll}\toprule
-\textbf{Quyết định} & \textbf{Nội dung} & \textbf{Số liệu đi kèm} \\\midrule
+\begin{BangTC}{lXX}
+\textbf{Quyết định} & \textbf{Nội dung} & \textbf{Số liệu đi kèm} \\ \midrule
 Câu a & \texttt{dim\_customer} dùng SCD2 & chỉ 0,26\% khách đổi zip \\
 Câu b & DB4 hai trang & 380/842 deal có đơn \\
 Câu c & snapshot seller dày đặc & 36.583 so với 16.441 dòng \\
 Câu d & 13 nhóm ngành hàng & 73 danh mục \\
 Câu e & zip thiếu toạ độ vẫn có dòng & 167 zip, không mất đơn \\
 Câu f & mốc nạp đầu 2017-12-31 & 45.430 đơn, 11 đợt sau \\
-\bottomrule\end{tabular}}\end{center}
-
-\note{[S48] Mỗi quyết định có số liệu trong \texttt{handoff/design-questions.md}.}
+\end{BangTC}
+\KetLuan{Mỗi quyết định có số liệu trong \texttt{handoff/design-questions.md}}
+\note{[S48] Mỗi quyết định có số liệu trong \texttt{handoff/design-questions.md}. Ý đã chuyển khỏi slide: SCD2 khách (0,26\% đổi zip); DB4 hai trang (cộng trang chi tiết); snapshot seller dày đặc; 13 nhóm ngành; zip thiếu toạ độ vẫn có dòng; mốc nạp 2017-12-31.}
 \end{frame}
 
-\begin{frame}{Mở rộng địa lý: hàm haversine SQL thuần tính khoảng cách seller $\rightarrow$ khách cho 112.650 dòng hàng}
+\begin{frame}{Haversine SQL thuần tính khoảng cách seller $\rightarrow$ khách cho 112.650 dòng hàng}
 \muc{3.1 · Khám phá dữ liệu}
 \begin{itemize}
   \item 555 dòng (0,49\%) thiếu toạ độ vẫn được giữ lại với giá trị trống
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: đoạn SQL \texttt{dw.haversine\_\allowbreak{}km} (Phụ lục B)}
 
-\note{[S107] São Paulo – Rio tính ra 360,9 km, gần với thực tế.}
+\note{[S107] São Paulo – Rio tính ra 360,9 km, gần với thực tế. Tiêu đề đầy đủ trước khi rút gọn: Mở rộng địa lý: hàm haversine SQL thuần tính khoảng cách seller $\rightarrow$ khách cho 112.650 dòng hàng}
 \end{frame}
 
-\begin{frame}{Khoảng cách tăng từ dưới 100 km lên trên 1.000 km làm phí vận chuyển gấp 2,7 lần và lead time gấp 2,9 lần}
+\begin{frame}{Từ dưới 100 km lên trên 1.000 km: phí gấp 2,7 lần, lead time gấp 2,9 lần}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{itemize}
-  \item Phí 11,75 $\rightarrow$ 31,65 BRL; lead time 6,5 $\rightarrow$ 19,0 ngày; trễ 4,5\% $\rightarrow$ 10,3\%
-\end{itemize}
-\begin{columns}[c]\begin{column}{0.48\textwidth}\anh[0.46\textheight]{3-5-2_distance_vs_freight.png}\end{column}\begin{column}{0.48\textwidth}\anh[0.46\textheight]{3-5-2_distance_vs_leadtime.png}\end{column}\end{columns}
-
-\note{[S108] Tương quan Spearman 0,63 với phí và 0,54 với lead time; đó là tương quan, không phải nhân quả.}
+\only<1>{%
+\HinhLon{3-5-2_distance_vs_freight.png}
+\KetLuan{Phí 11,75 $\rightarrow$ 31,65 BRL; lead time 6,5 $\rightarrow$ 19,0 ngày; trễ 4,5\% $\rightarrow$ 10,3\%}}
+\only<2>{%
+\HinhLon{3-5-2_distance_vs_leadtime.png}
+\KetLuan{Phí 11,75 $\rightarrow$ 31,65 BRL; lead time 6,5 $\rightarrow$ 19,0 ngày; trễ 4,5\% $\rightarrow$ 10,3\%}}
+\note{[S108] Tương quan Spearman 0,63 với phí và 0,54 với lead time; đó là tương quan, không phải nhân quả. Tiêu đề đầy đủ trước khi rút gọn: Khoảng cách tăng từ dưới 100 km lên trên 1.000 km làm phí vận chuyển gấp 2,7 lần và lead time gấp 2,9 lần Bấm để chuyển giữa hai biểu đồ (phí vận chuyển, lead time). Ý đã chuyển khỏi slide: Phí 11,75 $\rightarrow$ 31,65 BRL; lead time 6,5 $\rightarrow$ 19,0 ngày; trễ 4,5\% $\rightarrow$ 10,3\%.}
 \end{frame}
 
-\begin{frame}{Haversine thuần đủ cho khoảng cách điểm–điểm; PostGIS cần khi truy vấn bán kính hoặc đa giác}
+\begin{frame}{Haversine đủ cho khoảng cách điểm–điểm; PostGIS khi cần bán kính hoặc đa giác}
 \muc{3.1 · Khám phá dữ liệu}
 \begin{itemize}
   \item GiST chỉ mục không gian; haversine sai số tối đa 0,5\%
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng so sánh (\texttt{report/chapters/3-1-kham-pha.tex})}
 
-\note{[S109] Nhóm không cài PostGIS nên chọn giải pháp thuần SQL.}
+\note{[S109] Nhóm không cài PostGIS nên chọn giải pháp thuần SQL. Tiêu đề đầy đủ trước khi rút gọn: Haversine thuần đủ cho khoảng cách điểm–điểm; PostGIS cần khi truy vấn bán kính hoặc đa giác}
 \end{frame}
 
-\begin{frame}{Hai phương pháp cùng đánh dấu 24.213 ngoại lai; nhóm giữ vì đó là ngoại lai hợp lệ}
+\begin{frame}{Hai phương pháp cùng đánh dấu 24.213 ngoại lai}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
+\HinhChu{3-1_outliers_boxplot.png}{%
+\small\begin{itemize}
   \item IQR đánh dấu 45.568, Isolation Forest (contamination 0,05, random\_state 42) 26.212
   \item Phí cao đi với hàng nặng (trung vị 5.700 g so với 700 g); 76,9\% đơn lead time ngoại lai là đơn trễ
   \item Chỉ 8 dòng cân nặng 0 g là lỗi dữ liệu
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-1_outliers_boxplot.png}\end{center}
-\end{column}\end{columns}
-
-\note{[S133] Ngoại lai bằng IQR và iForest trên 5 biến.}
+\end{itemize}}
+\KetLuan{Nhóm giữ vì đó là ngoại lai hợp lệ}
+\note{[S133] Ngoại lai bằng IQR và iForest trên 5 biến. Tiêu đề đầy đủ trước khi rút gọn: Hai phương pháp cùng đánh dấu 24.213 ngoại lai; nhóm giữ vì đó là ngoại lai hợp lệ}
 \end{frame}
 
-\begin{frame}{Cramér's V lớn nhất 0,403 (giao trễ và nhóm review); tỉ số tương quan review theo cờ trễ 0,392}
+\begin{frame}{Cramér's V lớn nhất 0,403 (giao trễ và nhóm review)}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
+\HinhChu{3-1_cramer_v_heatmap.png}{%
+\small\begin{itemize}
   \item V hiệu chỉnh Bergsma cho cặp biến phân loại; $\eta$ cho biến phân loại và biến số
   \item Vùng khách -- vùng seller V = 0,072: gần như độc lập
   \item Spearman ngày trễ -- review chỉ $-0{,}18$: ảnh hưởng mang tính ngưỡng
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-1_cramer_v_heatmap.png}\end{center}
-\end{column}\end{columns}
-
-\note{[S134] Công thức V, hiệu chỉnh Bergsma, tỉ số tương quan và thang đọc ở báo cáo mục 3.1.}
+\end{itemize}}
+\KetLuan{Tỉ số tương quan review theo cờ trễ 0,392}
+\note{[S134] Công thức V, hiệu chỉnh Bergsma, tỉ số tương quan và thang đọc ở báo cáo mục 3.1. Tiêu đề đầy đủ trước khi rút gọn: Cramér's V lớn nhất 0,403 (giao trễ và nhóm review); tỉ số tương quan review theo cờ trễ 0,392}
 \end{frame}
 
-\begin{frame}{STL: xu hướng mạnh 0,73, mùa vụ tuần 0,22; dưới 2 năm nên không kết luận mùa vụ theo năm}
+\begin{frame}{STL: xu hướng mạnh 0,73, mùa vụ tuần 0,22}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{columns}[T]\begin{column}{0.4\textwidth}
-\begin{itemize}
+\HinhChu{3-1_stl_daily.png}{%
+\small\begin{itemize}
   \item $F = \max(0, 1 - \mathrm{Var}(R)/\mathrm{Var}(S+R))$
   \item Black Friday 24/11/2017: 1.176 đơn, gấp 6,6 lần trung bình tháng 11
   \item Chu kỳ 12 tháng trên 20 điểm: $F_S = 0{,}80$ nhưng không đủ cơ sở
-\end{itemize}
-\end{column}\begin{column}{0.58\textwidth}
-\begin{center}\anh[0.74\textheight]{3-1_stl_daily.png}\end{center}
-\end{column}\end{columns}
-
-\note{[S135] Phân rã STL số đơn theo ngày.}
+\end{itemize}}
+\KetLuan{Dưới 2 năm nên không kết luận mùa vụ theo năm}
+\note{[S135] Phân rã STL số đơn theo ngày. Tiêu đề đầy đủ trước khi rút gọn: STL: xu hướng mạnh 0,73, mùa vụ tuần 0,22; dưới 2 năm nên không kết luận mùa vụ theo năm}
 \end{frame}

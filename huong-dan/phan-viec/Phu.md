@@ -81,24 +81,24 @@ Không được chép câu chữ, số liệu hay hình của nhóm 6.
 | ---: | ---: | --- | --- | --- | --- |
 | 1 | – | Lakehouse thêm đường thứ hai: từ CDC qua Bronze, Silver đến Gold |  | – | đã có |
 | 2 | – | Bảy dịch vụ chạy trong 4 GB RAM, vận hành bằng script, không cần Airflow |  | – | đã có |
-| 3 | – | CDC: Debezium chụp snapshot 1.273.620 dòng rồi bắt từng thay đổi từ log | Nạp nguồn đến 31/12/2017 bằng mã chương 3: 1.273.620 dòng trong 11,1 giây; Debezium chụp snapshot 11 bảng (khoảng 35 giây), rồi đọc log của PostgreSQL | – | đã có |
+| 3 | – | CDC: Debezium chụp snapshot 1.273.620 dòng rồi bắt từng thay đổi từ log | Nạp nguồn đến 31/12/2017 bằng mã chương 3, trong 11,1 giây; Debezium chụp snapshot 11 bảng rồi đọc log của PostgreSQL | – | đã có |
 | 4 | – | Kafka giữ đủ 1.720.555 sự kiện, bằng đúng số dòng Bronze |  | – | đã có |
-| 5 | – | Bronze giữ nguyên văn sự kiện, Silver áp quy tắc ODS bằng MERGE | Bronze: Spark đọc 11 topic, ghi nguyên văn vào bảng Iceberg chỉ-thêm (micro-batch 30 giây); Silver: MERGE theo khoá, chỉ thay dòng khi ts_ms không cũ  | – | đã có |
+| 5 | – | Bronze giữ nguyên văn sự kiện, Silver áp quy tắc ODS bằng MERGE | Bronze: Spark ghi nguyên văn từng sự kiện vào bảng Iceberg chỉ-thêm; Silver: MERGE theo khoá, chỉ thay dòng khi ts_ms không cũ hơn | – | đã có |
 | 6 | – | Silver bằng nguồn ở 10/10 bảng: cùng số dòng và cùng checksum khoá |  | – | đã có |
-| 7 | – | Gold: dbt dựng 20 model trong 70 giây, giữ nguyên tên bảng và cột của đặc tả | 10 dimension, 6 fact, 4 mart cho Superset; dòng Unknown khoá -1 như kho; Dùng lại seed của chương 3; lịch dim_date sinh từ chính hàm của chương 3 | – | đã có |
-| 8 | – | Lineage bốn tầng: 18 nguồn Silver, 10 dimension, 6 fact, 4 mart |  | – | đã có |
+| 7 | – | Gold: dbt dựng 20 model trong 70 giây, giữ nguyên tên bảng và cột của đặc tả | 10 dimension, 6 fact, 4 mart; dòng Unknown khoá -1 như kho; Dùng lại seed và lịch dim_date của chương 3; làm giàu bằng dữ liệu API | – | đã có |
+| 8 | – | Lineage của fact_order_item: 13 nguồn Silver qua 5 dimension |  | – | đã có |
 | 9 | – | Đối soát Gold với kho: 16/16 bảng khớp, GMV bằng nhau đến từng xu |  | – | đã có |
 | 10 | – | Lỗi 1: Silver chỉ có 24.765 trên 45.971 đơn, log không báo gì | Nguyên nhân: Spark tính lại dữ liệu đã cache sau khi xoá đơn chờ cũ; Sửa: localCheckpoint() thay cho persist() | – | đã có |
 | 11 | – | Lỗi 2: trim() của Trino khác PostgreSQL, 18 review bị tính nhầm | trim() của Trino bỏ cả xuống dòng và tab, của PostgreSQL chỉ bỏ dấu cách; Sửa: model chỉ bỏ dấu cách hai đầu (regexp_replace) | – | đã có |
 | 12 | – | Độ trễ nguồn đến Silver trung bình 22,6 giây, chủ yếu là chờ micro-batch |  | – | đã có |
 | 13 | – | Time travel: rollback một thao tác sửa nhầm trong 0,09 giây | silver.orders có 31 snapshot; đọc lại bản đầu có 307 đơn, bản mới nhất 99.441; Đọc phiên bản cũ mất 0,11 đến 0,16 giây | – | đã có |
-| 14 | – | DB1 trên Superset: dashboard đọc từ tầng Gold của lakehouse qua Trino |  | khung chờ | cần ảnh: Chờ ảnh chụp DB1 trên Superset (Bước 10) |
+| 14 | – | DB1 trên Superset: dashboard đọc từ tầng Gold của lakehouse qua Trino |  | – | đã có |
 | 15 | – | Tổng kết 5.1: cùng số liệu với kho chương 3, thêm sự kiện và time travel | Hai lỗi chỉ lộ ra nhờ đối soát: thiếu đơn ở Silver, trim() khác nhau ở Gold; Hạn chế: 7 dịch vụ trong 4 GB RAM; vận hành bằng script, chưa có Airflow | – | đã có |
 | 16 | 118 | Năm câu hỏi mà bán hàng một mình không trả lời được cần dữ liệu công khai |  | – | đã có |
 | 17 | 119 | Kiến trúc API: lỗi gọi API không làm hỏng pipeline chính |  | – | đã có |
 | 18 | 153 | Bốn tầng ghép đô thị gán 96,3% số zip và 99,5% GMV |  | – | đã có |
 | 19 | – | Kho được làm giàu không đổi khoá; phép kiểm thử tăng từ 136 lên 156 | fact_state_year: 27 bang 3 năm; GMV = 13.494.400,74; 20 phép kiểm thử SQL mới đều đạt; DB1–DB4 vẫn đúng số cũ | – | đã có |
-| 20 | 121 | Theo đầu người, Rio de Janeiro dẫn đầu: 53,90 BRL trên 1.000 dân | Distrito Federal: hạng 9 theo GMV, hạng 3 theo đầu người; Maranhão tụt từ hạng 15 xuống 24 | – | đã có |
+| 20 | 121 | Theo đầu người, Rio de Janeiro dẫn đầu: 53,90 BRL trên 1.000 dân |  | – | đã có |
 | 21 | 157 | GMV tháng 1–8 tăng 138,3% danh nghĩa, 130,9% theo giá thực, 116,7% theo USD |  | – | đã có |
 | 22 | 149 | Dashboard D8 Thị trường Brazil dựng từ dữ liệu API thu thập thực tế |  | khung chờ | cần ảnh: P9 điền: ảnh chụp D8 |
 | 23 | 111 | Kết quả: kho chạy được từ đầu đến cuối, 136 kiểm thử đạt, bốn dashboard | 10 chiều, 6 fact, 17 view mart; GMV 13,49 triệu BRL | – | đã có |
@@ -213,7 +213,7 @@ Các `\todo` hiện có (đếm từ mã nguồn):
 <!-- TODOS:00-bia.tex,00-loi-mo-dau.tex,00-danh-gia-thanh-vien.tex,00-tu-danh-gia.tex,00-viet-tat.tex,5-1-lakehouse.tex,5-2-thu-thap-api.tex,06-ket-luan.tex -->
 | File | Số `\todo` | Nội dung các `\todo` |
 | --- | ---: | --- |
-| `report/chapters/00-bia.tex` | 1 | 1. Điền tên giảng viên, lớp, nhóm, thành viên và MSSV ở bìa. |
+| `report/chapters/00-bia.tex` | 0 | – |
 | `report/chapters/00-loi-mo-dau.tex` | 1 | 1. Viết lời mở đầu (nửa trang đến một trang): bối cảnh (thương mại điện tử, nhu cầu phân tích dữ liệu), mục tiêu của bài tập lớn, phạm vi (hai bộ dữ liệu Olist, PostgreSQL, Power BI), bố cục báo cáo sáu chương, lờ… |
 | `report/chapters/00-danh-gia-thanh-vien.tex` | 1 | 1. Trưởng nhóm điền điểm sau khi cả nhóm thống nhất; in ra và ký. Mẫu theo bảng đánh giá thành viên của môn học (5 tiêu chí). |
 | `report/chapters/00-tu-danh-gia.tex` | 1 | 1. Nhóm điền cột "Đạt" và ghi chú khi hoàn thiện báo cáo. |
@@ -221,7 +221,7 @@ Các `\todo` hiện có (đếm từ mã nguồn):
 | `report/chapters/5-1-lakehouse.tex` | 4 | 1. P10 điền: kiến trúc lakehouse (lớp lưu trữ, định dạng bảng, engine truy vấn, quan hệ với kho PostgreSQL hiện có); nêu lý do chọn công nghệ và so sánh với kho quan hệ.<br>2. P10 điền: các bước dựng lakehouse (nạp dữ liệu nguồn, phân lớp dữ liệu, truy vấn mẫu), kèm mã và lệnh chạy.<br>3. P10 điền: số liệu đo được (số bảng, số dòng, thời gian truy vấn so với PostgreSQL), hình minh hoạ, hạn chế.<br>4. P10 điền: dựng lại dashboard DB1 (tổng quan và doanh thu) trên Apache Superset, đọc tầng Gold của lakehouse qua Trino; so sánh với DB1 trên Power BI (cùng số liệu, khác công cụ); ảnh chụp figures/5-1_superset_d… |
 | `report/chapters/5-2-thu-thap-api.tex` | 1 | 1. Phú dựng D8 trên Power BI, chụp ảnh đặt tên 4_D8_….png vào figures/ và chèn vào đây; đối chiếu số với bảng giá trị kỳ vọng của D8.md. |
 | `report/chapters/06-ket-luan.tex` | 3 | 1. Viết lại bằng lời của nhóm. Gợi ý các ý đã có số liệu: kho dữ liệu hình sao với 10 bảng chiều và 6 bảng fact thuộc cả ba loại; hai hệ thống nguồn và 1,56 triệu dòng; pipeline chạy lại từ đầu bằng một lệnh trong…<br>2. Nhóm bổ sung bài học về làm việc nhóm, phân công, công cụ (Git, Power BI) và khó khăn thực tế.<br>3. Chỉnh danh sách hạn chế theo thực tế sau khi dựng dashboard. |
-| **Tổng** | **13** | |
+| **Tổng** | **12** | |
 <!-- /TODOS -->
 
 ## 11. Mốc hạn
