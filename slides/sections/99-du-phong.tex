@@ -292,13 +292,13 @@ Chạy thử (3.000 sự kiện đầu) & 3.000 & 541 \\
 \end{frame}
 
 \begin{frame}[noprogressbar,noframenumbering]{Lineage bốn tầng: 18 nguồn Silver, 10 dimension, 6 fact, 4 mart}
-\HinhLon[0.54\textheight]{5-1_dbt_lineage.png}
+\HinhLon{5-1_dbt_lineage.png}
 \KetLuan{77 cạnh phụ thuộc; 71/71 phép kiểm thử dbt đạt}
 \note{[P11-dự phòng 5.1] Hình vẽ bằng lakehouse/scripts/gen\_lineage.py từ dbt/target/manifest.json. Fact nối tới dim\_date qua depends\_on vì khoá ngày tính từ mốc thời gian, không join.}
 \end{frame}
 
 \begin{frame}[noprogressbar,noframenumbering]{Đủ 27 bang: GMV trên 1.000 dân từ 53,90 (RJ) xuống 2,58 (AM)}
-\HinhLon[0.54\textheight]{5-2_gmv_dau_nguoi_theo_bang_full_sl.png}
+\HinhLon{5-2_gmv_dau_nguoi_theo_bang_full_sl.png}
 \KetLuan{Số dưới mã bang là hạng theo GMV; DF hạng 9 theo GMV, hạng 3 theo đầu người}
 \note{[P11-dự phòng 5.2] Bản đầy đủ 27 bang của biểu đồ ở slide GMV trên 1.000 dân (dân số là ước tính IBGE 2017). Spearman giữa hai thứ hạng: 0,78.}
 \end{frame}

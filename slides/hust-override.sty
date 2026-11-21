@@ -1,0 +1,16 @@
+%% hust-override.sty -- chỉnh nhỏ cho theme HUST mà KHÔNG sửa slides/hust-theme/ (nạp trong main.tex sau \usetheme).
+%% Bỏ dải tên các phần (Mở đầu, Khảo sát, ...) ở đầu mỗi slide, giữ thanh tiêu đề, nhãn mục ở góc và một thanh tiến độ mảnh
+%% (độ dài = số slide đã qua / tổng số slide). Theme không có tuỳ chọn riêng cho việc này (progressbar=off bỏ luôn cả thanh tiến độ).
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{hust-override}[2026/11/21 thanh tien do manh thay dai ten cac phan]
+\makeatletter
+\def\hust@prog@h{3pt}   % cao 3 pt thay vì 0,058 chiều cao trang (khoảng 14,8 pt)
+\renewcommand{\hust@render@progressbar}{%
+  \fill[hustgrayline!30] (current page.north west) rectangle ([yshift=-\hust@prog@h] current page.north east);
+  \ifnum\inserttotalframenumber>0\relax
+    \setlength{\hust@sec@w}{\dimexpr\paperwidth * \insertframenumber / \inserttotalframenumber\relax}%
+    \fill[hustmain] (current page.north west) rectangle ([xshift=\hust@sec@w, yshift=-\hust@prog@h] current page.north west);
+  \fi
+}
+\makeatother
+\endinput

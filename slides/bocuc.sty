@@ -11,15 +11,15 @@
 \usetikzlibrary{arrows.meta,positioning}
 
 %% ---------------------------------------------------------------------------
-%% Chiều cao vùng nội dung nhìn thấy (dưới thanh tiêu đề, trên chân trang), đo trên bản render:
-%% theme HUST 16:9 nhìn thấy khoảng 0,8\textheight (khung chữ của theme dài quá chân trang).
-%% Đổi một chỗ ở đây nếu theme thay đổi.
+%% Chiều cao vùng nội dung nhìn thấy (dưới thanh tiêu đề, trên đường kẻ chân trang), đo trên bản render (21/11/2026, 16:9, \textheight = 222,6 pt):
+%%   trước khi bỏ dải tên các phần: nội dung từ 53,5 pt đến 237,5 pt = 184 pt, \VungCao = 0,76 (169 pt), \HinhCao = 0,56 (125 pt);
+%%   sau khi bỏ dải (slides/hust-override.sty): nội dung từ 41,5 pt đến 237,5 pt = 196 pt; \VungCao và \HinhCao được chỉnh theo kết quả biên dịch
+%%   (không có \vbox tràn), vẫn chừa chỗ cho thanh \KetLuan một dòng (khoảng 34 pt). Đổi một chỗ ở đây nếu theme hoặc override thay đổi.
 %% \VungCao: hình không kèm thanh kết luận. \HinhCao: hình có thanh kết luận bên dưới.
 \newlength{\VungCao}
-\setlength{\VungCao}{0.76\textheight}
-%% Chiều cao ảnh khi có thanh kết luận bên dưới
+\setlength{\VungCao}{0.82\textheight}
 \newlength{\HinhCao}
-\setlength{\HinhCao}{0.56\textheight}
+\setlength{\HinhCao}{0.60\textheight}
 
 %% Cỡ chữ chuẩn khi chiếu: thân bài \normalsize, bảng \small; KHÔNG dùng \scriptsize, \tiny cho nội dung.
 

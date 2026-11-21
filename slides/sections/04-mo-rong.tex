@@ -6,7 +6,7 @@
 % (A) kiến trúc
 \begin{frame}{Lakehouse thêm đường thứ hai: từ CDC qua Bronze, Silver đến Gold}
 \muc{5.1 · Lakehouse}
-\HinhLon[0.56\textheight]{5-1_kien_truc_lakehouse_sl.png}
+\HinhLon{5-1_kien_truc_lakehouse_sl.png}
 \KetLuan{Gold giữ đúng mô hình sao chương 3; đối soát với kho khớp 16/16 bảng}
 \note{[P10-kiến trúc] Hình: docs/LAKEHOUSE.md mục 3.3. Nguồn vẫn là PostgreSQL; mỗi thay đổi được bắt từ log (CDC), qua Kafka vào Bronze, Silver, Gold trên object storage ở dạng bảng Iceberg (Parquet cộng metadata), truy vấn bằng Trino, dựng Gold bằng dbt. Lakehouse không thay kho chương 3 mà là đường thứ hai; phần kết quả chứng minh hai đường cho cùng số liệu. Sơ đồ chi tiết cũ (cho báo cáo): figures/5-1\_kien\_truc\_lakehouse.png.}
 \end{frame}
@@ -105,7 +105,7 @@ CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
 % (B) đối soát
 \begin{frame}{Đối soát Gold với kho: 16/16 bảng khớp, GMV bằng nhau đến từng xu}
 \muc{5.1 · Lakehouse}
-\begin{AnhKhoanh}[0.54\textheight]{5-1_reconcile_tc.png}
+\begin{AnhKhoanh}{5-1_reconcile_tc.png}
   \khoanh{0.0}{0.065}{0.98}{0.155}
   \nhan{0.45}{0.30}{RESULT: all tables match}
 \end{AnhKhoanh}
@@ -142,7 +142,7 @@ CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
 % (A) độ trễ
 \begin{frame}{Độ trễ nguồn đến Silver trung bình 22,6 giây, chủ yếu là chờ micro-batch}
 \muc{5.1 · Lakehouse}
-\HinhLon[0.56\textheight]{5-1_latency_sl.png}
+\HinhLon{5-1_latency_sl.png}
 \KetLuan{6 lần đo: 10,9 đến 37,8 giây; Debezium chỉ mất dưới 1 giây}
 \note{[P10-đo] handoff/2026-11-19-P10-latency.md; script lakehouse/scripts/latency\_probe.py (hình vẽ lại bằng scripts/p11\_figures.py từ chính 6 lần đo, không đo lại). Trung bình: PostgreSQL sang Kafka 0,5 giây, Kafka sang Bronze 12,1 giây (gồm chờ trigger 30 giây kế tiếp), Bronze sang Silver 10,0 giây; nguồn đến Silver 22,6 giây (10,9 đến 37,8); nguồn đến đọc được qua Trino 29,9 giây (19,8 đến 42,9). Mỗi lần thử đổi một cột của một đơn rồi hoàn nguyên, Silver trở lại bằng nguồn. Thông lượng và RAM: slide dự phòng chương 5.}
 \end{frame}
@@ -200,7 +200,7 @@ Ngày lễ có làm giảm đơn không? & ngày lễ quốc gia & BrasilAPI \\
 % (A) kiến trúc API
 \begin{frame}{Kiến trúc API: lỗi gọi API không làm hỏng pipeline chính}
 \muc{5.2 · Thu thập từ API}
-\HinhLon[0.56\textheight]{5-2_kien_truc_api_sl.png}
+\HinhLon{5-2_kien_truc_api_sl.png}
 \KetLuan{Dựng lại toàn bộ (rebuild) dùng landing zone, không cần mạng}
 \note{[S119] Sơ đồ rút gọn cho máy chiếu; sơ đồ chi tiết (cho báo cáo): figures/5-2\_kien\_truc\_api.png. Lỗi gọi API ghi vào etl\_log; các cột mới của kho giữ NULL và bốn dashboard DB1--DB4 không đổi số. Collector thử lại tối đa 5 lần, landing zone 69 lời gọi, 4,66 MB, 48.016 bản ghi: slide dự phòng chương 5.}
 \end{frame}
@@ -234,7 +234,7 @@ Không khớp & 719 & -- & 0,5 chưa khớp \\
 % (A/H) theo đầu người
 \begin{frame}{Theo đầu người, Rio de Janeiro dẫn đầu: 53,90 BRL trên 1.000 dân}
 \muc{5.2 · Thu thập từ API}
-\HinhLon[0.54\textheight]{5-2_gmv_dau_nguoi_theo_bang_sl.png}
+\HinhLon{5-2_gmv_dau_nguoi_theo_bang_sl.png}
 \KetLuan{RJ 53,90 dẫn đầu; DF hạng 9 theo GMV lên hạng 3; MA tụt từ hạng 15 xuống 24}
 \note{[S121] Dân số là ước tính IBGE 2017, GMV theo bang của khách. 2017: RJ 53,90; SP 48,58; DF 43,95; thấp nhất AM 2,58. MA tụt từ hạng 15 xuống 24; PA 13 sang 22; TO lên 23 sang 12. Cả nước 29,42 BRL trên 1.000 dân năm 2017 và 35,21 năm 2018. Distrito Federal: hạng 9 theo GMV, hạng 3 theo đầu người. Maranhão tụt từ hạng 15 xuống 24. Spearman giữa hai thứ hạng: 0,78. Số dưới mã bang trên hình là hạng theo GMV. Hình chỉ vẽ 10 bang cao nhất và 5 bang thấp nhất; đủ 27 bang ở slide dự phòng chương 5.}
 \end{frame}
@@ -242,7 +242,7 @@ Không khớp & 719 & -- & 0,5 chưa khớp \\
 % (A) danh nghĩa so với thực
 \begin{frame}{GMV tháng 1--8 tăng 138,3\% danh nghĩa, 130,9\% theo giá thực, 116,7\% theo USD}
 \muc{5.2 · Thu thập từ API}
-\HinhLon[0.56\textheight]{5-2_danh_nghia_so_voi_thuc_sl.png}
+\HinhLon{5-2_danh_nghia_so_voi_thuc_sl.png}
 \KetLuan{Lạm phát và tỷ giá làm giảm mức tăng 7,4 và 21,6 điểm phần trăm}
 \note{[S157] Lạm phát IPCA 08/2017 sang 08/2018: 4,2\%. Tỷ giá bình quân gia quyền theo GMV: 3,17 (01/2017) sang 3,84 (08/2018). GMV thực = GMV chia chỉ số IPCA, giá 01/2016. Mức tăng lớn chủ yếu do dữ liệu 2017 còn đang lớn dần.}
 \end{frame}
