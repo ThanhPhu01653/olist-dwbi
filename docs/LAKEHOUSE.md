@@ -297,6 +297,14 @@ GMV (Σ price của dòng hàng thuộc đơn không phải Failed): kho 1349440
 
 **Một ngoại lệ có giải thích.** `dim_geography.city` khác ở đúng 2 zip (13848 và 35348, tức 0,01% số dòng): hai cách viết của tên thành phố có số điểm bằng nhau (97 và 97). `mode()` của PostgreSQL chọn theo thứ tự collation của locale (dấu gạch ngang trước dấu cách), Spark chọn theo thứ tự mã ký tự (dấu cách trước). Không tái hiện được nếu không sao chép collation của PostgreSQL trên Windows và không thể đổi chương 3. Phép đối soát vẫn chặt: mọi cột khác của hai zip này khớp, và mọi dòng còn lại khớp cả cột `city`.
 
+### 3.10 Superset DB1 trên Gold (Bước 10)
+
+- **Dịch vụ:** `lh-superset` (profile `demo`, image dựng từ `apache/superset:4.1.2` cộng driver Trino và `psycopg2`; metadata lưu ở database `superset` trên `lh-pg`), cổng `http://127.0.0.1:8088`, giới hạn 1.280 MiB (lúc rảnh dùng khoảng 230 MiB). Chạy cùng Trino và PostgreSQL là đủ; Spark, Kafka và Connect có thể tắt để nhường RAM.
+- **Quyền chỉ đọc:** Trino bật kiểm soát truy cập theo tệp (`lakehouse/trino/rules.json`). User `bi_viewer` chỉ `SELECT` được `iceberg.gold` (và bảng metadata của `system` mà Superset cần để kiểm tra bảng), không đọc được `bronze`, `silver`, `ops`, không ghi hay xoá được gì; mọi user khác (dbt, đối soát, kiểm thử) giữ nguyên quyền. Kiểm thử: `lakehouse/tests/test_bi_viewer.py` (8 phép đạt).
+- **Dashboard:** `python lakehouse/scripts/superset_setup.py --export lakehouse/superset/db1_export.zip` tạo (chạy lại không nhân đôi) kết nối `trino://bi_viewer@trino:8080/iceberg/gold`, ba dataset (`mart_sales_daily`, `mart_sales_state_month`, `mart_sales_category_month`) và dashboard `db1-gold` gồm bốn biểu đồ: thẻ GMV tổng, GMV theo tháng (01/2017–08/2018), GMV theo bang, GMV theo 10 danh mục cao nhất. Tệp xuất: `lakehouse/superset/db1_export.zip`.
+- **Số liệu kiểm tra qua API của Superset (truy vấn thật qua Trino):** thẻ GMV 13.494.400,74 BRL (bằng kho chương 3); đường theo tháng 20 điểm, tháng đầu 120.098,27 BRL; theo bang 27 bang, SP đầu với 5.163.799,21 BRL; danh mục đầu `health_beauty` 1.255.695 BRL.
+- **Đăng nhập:** tài khoản `admin`, mật khẩu là `LH_SUPERSET_ADMIN_PASSWORD` trong `lakehouse/.env` (không commit).
+
 ## 4. Bảng Bronze, Silver, Gold
 
 Ký hiệu cách ghi: **append** (chỉ thêm), **MERGE** (cập nhật hoặc thêm theo khoá, giữ bản `ts_ms` mới nhất), **thay bảng** (`CREATE OR REPLACE` / ghi đè toàn bảng, dbt `table`).
@@ -381,7 +389,7 @@ WHERE order_id = :id AND valid_from <= TIMESTAMP :t AND (valid_to IS NULL OR val
 | 7 | Time travel Iceberg | xong: `lakehouse/scripts/time_travel.py`, `handoff/2026-11-19-P10-timetravel.md` |
 | 8 | Vận hành (Airflow) | **bỏ**: profile lite vận hành bằng script (docker compose, `check_health.py`, `replay_events.py`, `wait_log.py`) |
 | 9 | Đo độ trễ và thông lượng | xong: 6 lần thử + đợt dồn việc, `handoff/2026-11-19-P10-latency.md`, `figures/5-1_latency.png`; ảnh Spark UI do Phú chụp |
-| 10 | Superset DB1 | chưa làm (cần tải image Superset; làm ở mạng ổn định) |
+| 10 | Superset DB1 | xong phần dựng (mục 3.10): Superset 4.1.2 + driver Trino, user `bi_viewer` chỉ đọc `gold`, dashboard 4 biểu đồ; chờ Phú chụp `figures/5-1_superset_db1.png` |
 | 11 | Tính năng tuỳ chọn | **bỏ** |
 | 12 | Kiểm thử | xong: `lakehouse/tests` (18 phép nhanh: Silver = nguồn, Bronze = Kafka; `--run-slow` chạy thêm 71 phép dbt và đối soát 16 bảng) |
 | 13 | Slide, Q&A, handoff | slide 5.1 xong (25 trang, `slides/sections/04-mo-rong.tex`), Q&A 53–61, handoff; chương báo cáo `report/chapters/5-1-lakehouse.tex` chưa viết |

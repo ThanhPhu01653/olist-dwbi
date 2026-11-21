@@ -1,0 +1,18 @@
+{
+  "catalogs": [
+    {"user": "bi_viewer", "catalog": "iceberg", "allow": "read-only"},
+    {"user": "bi_viewer", "catalog": "system", "allow": "read-only"},
+    {"user": "bi_viewer", "allow": "none"},
+    {"allow": "all"}
+  ],
+  "schemas": [
+    {"user": "bi_viewer", "catalog": "iceberg", "schema": "gold", "owner": false},
+    {"user": "bi_viewer", "catalog": "system", "schema": "metadata", "owner": false},
+    {"user": "(?!bi_viewer$).*", "owner": true}
+  ],
+  "tables": [
+    {"user": "bi_viewer", "catalog": "iceberg", "schema": "gold", "privileges": ["SELECT"]},
+    {"user": "bi_viewer", "catalog": "system", "schema": "metadata", "privileges": ["SELECT"]},
+    {"user": "(?!bi_viewer$).*", "privileges": ["SELECT", "INSERT", "DELETE", "UPDATE", "OWNERSHIP", "GRANT_SELECT"]}
+  ]
+}
