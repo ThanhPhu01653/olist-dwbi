@@ -174,6 +174,8 @@ services:
       - ./trino/config.properties:/etc/trino/config.properties:ro
       - ./trino/jvm.config:/etc/trino/jvm.config:ro
       - ./trino/catalog:/etc/trino/catalog:ro
+      - ./trino/access-control.properties:/etc/trino/access-control.properties:ro
+      - ./trino/rules.json:/etc/trino/rules.json:ro
     mem_limit: 1280m
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:8080/v1/info | grep -q '\"starting\":false'"]
@@ -181,6 +183,31 @@ services:
       timeout: 10s
       retries: 20
       start_period: 40s
+
+  superset:
+    build: ./superset                          # apache/superset:4.1.2 + Trino driver
+    image: olist-lakehouse/superset:4.1.2-trino
+    profiles: [demo]
+    container_name: lh-superset
+    depends_on:
+      pg: {condition: service_healthy}
+      trino: {condition: service_healthy}
+    environment:
+      SUPERSET_SECRET_KEY: ${LH_SUPERSET_SECRET_KEY}
+      LH_PG_USER: ${LH_PG_USER}
+      LH_PG_PASSWORD: ${LH_PG_PASSWORD}
+      LH_SUPERSET_ADMIN_PASSWORD: ${LH_SUPERSET_ADMIN_PASSWORD}
+    ports: ["127.0.0.1:${LH_SUPERSET_PORT}:8088"]
+    volumes:
+      - ./superset/superset_config.py:/app/pythonpath/superset_config.py:ro
+    command: ["sh", "-c", "superset db upgrade && (superset fab create-admin --username admin --firstname Admin --lastname User --email admin@example.com --password \"$$LH_SUPERSET_ADMIN_PASSWORD\" || true) && superset init && /usr/bin/run-server.sh"]
+    mem_limit: 1280m
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8088/health > /dev/null"]
+      interval: 15s
+      timeout: 10s
+      retries: 30
+      start_period: 90s
 
 volumes:
   pg-data:

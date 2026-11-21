@@ -70,3 +70,14 @@ python lakehouse\scripts\latency_probe.py --probes 6 --burst 20000 --md handoff\
 ```
 `latency_probe.py` đổi một cột của một đơn rồi hoàn nguyên; `time_travel.py` chỉ thay đổi bản sao `ops.orders_tt`.
 Giao diện MinIO: `http://127.0.0.1:9001` (tài khoản `lakehouse`, mật khẩu `LH_MINIO_PASSWORD` trong `lakehouse/.env`).
+
+## Superset (profile demo)
+```powershell
+cd lakehouse
+docker compose --profile lite up -d pg minio iceberg-rest trino      # Spark, Kafka, Connect không cần cho dashboard
+docker compose --profile demo up -d --build superset                  # lần đầu: tải image khoảng 2 GB
+cd ..
+python lakehouse\scripts\superset_setup.py --export lakehouse\superset\db1_export.zip
+python -m pytest lakehouse\tests\test_bi_viewer.py -q                # bi_viewer chỉ đọc gold
+```
+Mở `http://127.0.0.1:8088/superset/dashboard/db1-gold/`, tài khoản `admin`, mật khẩu `LH_SUPERSET_ADMIN_PASSWORD` trong `lakehouse/.env`. Lần đầu cần tạo database metadata: `docker exec lh-pg psql -U <LH_PG_USER> -d postgres -c "create database superset"`.

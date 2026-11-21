@@ -3,3 +3,6 @@
 lakehouse/**/*.sh text eol=lf
 lakehouse/**/*.properties text eol=lf
 lakehouse/**/*.config text eol=lf
+lakehouse/**/Dockerfile text eol=lf
+lakehouse/superset/*.py text eol=lf
+lakehouse/trino/*.json text eol=lf
