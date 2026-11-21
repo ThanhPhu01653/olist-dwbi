@@ -83,7 +83,7 @@ CHARTS = [
          params={"x_axis": "state_code", "metrics": [GMV], "groupby": [], "adhoc_filters": [], "orientation": "vertical", "row_limit": 27, "x_axis_sort": "GMV (BRL)", "x_axis_sort_asc": False,
                  "show_legend": False, "y_axis_format": ",.0f", "time_range": "No filter", "show_value": False}),
     dict(name="DB1 · GMV theo danh mục (10 cao nhất)", ds="mart_sales_category_month", viz="echarts_timeseries_bar",
-         params={"x_axis": "category_name_en", "metrics": [GMV], "groupby": [], "adhoc_filters": [], "orientation": "horizontal", "row_limit": 10, "x_axis_sort": "GMV (BRL)", "x_axis_sort_asc": False,
+         params={"x_axis": "category_name_en", "metrics": [GMV], "groupby": [], "adhoc_filters": [], "orientation": "horizontal", "row_limit": 10, "x_axis_sort": "GMV (BRL)", "x_axis_sort_asc": True,   # horizontal bars start at the bottom: ascending puts the largest on top
                  "show_legend": False, "y_axis_format": ",.0f", "time_range": "No filter", "show_value": False}),
 ]
 chart_ids = []

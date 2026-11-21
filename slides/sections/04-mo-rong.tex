@@ -163,9 +163,9 @@ CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
 % (B) Superset - khung chờ ảnh
 \begin{frame}{DB1 trên Superset: dashboard đọc từ tầng Gold của lakehouse qua Trino}
 \muc{5.1 · Lakehouse}
-% cho-phep: R7 khung chờ ảnh, thay bằng \AnhChup khi có 5-1_superset_db1.png
-\khungchen[0.5\textheight]{Chờ ảnh chụp DB1 trên Superset (Bước 10)}
-\note{[P10-Superset] Khung chờ ảnh: figures/5-1\_superset\_db1.png, dựng ở Bước 10. Khi có ảnh: thay khung bằng \texttt{\textbackslash AnhChup\{5-1\_superset\_db1.png\}} và thêm \texttt{\textbackslash KetLuan}.}
+\AnhChup{5-1_superset_db1_tc.png}
+\KetLuan{GMV 13.494.400,74 BRL bằng kho chương 3, đọc qua bi\_viewer chỉ đọc gold}
+\note{[P10-Superset] Ảnh Phú chụp: figures/5-1\_superset\_db1.png (đã cắt: 5-1\_superset\_db1\_tc.png). Bốn biểu đồ: thẻ GMV tổng, GMV theo tháng (01/2017--08/2018), GMV theo bang, GMV theo 10 danh mục cao nhất; dựng bằng lakehouse/scripts/superset\_setup.py. Mọi truy vấn đi qua Trino bằng user bi\_viewer, chỉ SELECT được iceberg.gold (test: lakehouse/tests/test\_bi\_viewer.py). Thẻ GMV 13.494.400,74 BRL bằng kho chương 3.}
 \end{frame}
 
 % (C) tổng kết 5.1
