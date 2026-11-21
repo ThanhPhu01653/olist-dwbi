@@ -99,7 +99,7 @@ services:
       - "127.0.0.1:${LH_MINIO_PORT}:9000"
       - "127.0.0.1:${LH_MINIO_CONSOLE_PORT}:9001"
     volumes: [minio-data:/bitnami/minio/data]
-    mem_limit: 256m
+    mem_limit: 384m
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:9000/minio/health/live > /dev/null"]
       interval: 10s
