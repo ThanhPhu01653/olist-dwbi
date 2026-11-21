@@ -123,55 +123,55 @@ Hình có sẵn (bản nháp): `figures/3-2_kien_truc_cac_lop.png`, `3-3_etl_job
 <!-- SLIDES:02b-kien-truc-etl-model.tex -->
 | STT | S | Tiêu đề (câu kết luận) | Nội dung chính | Hình / bảng | Trạng thái |
 | ---: | ---: | --- | --- | --- | --- |
-| 1 | 49 | Kiến trúc sáu lớp từ hai hệ thống nguồn đến bốn dashboard | oltp/crm → staging → ODS → kho → data mart → Power BI; etl_log giám sát | `3-4-1_pipeline.png` | đã có |
+| 1 | 49 | Kiến trúc sáu lớp từ hai hệ thống nguồn đến bốn dashboard |  | – | đã có |
 | 2 | 50 | Tách lớp giúp đối soát: staging = ODS + dòng bị loại cho mọi bảng | Chỗ nào hỏng biết ngay lớp nào | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng đối soát (handoff P2) |
 | 3 | 51 | Công nghệ: PostgreSQL 18, Python 3.11, SQL procedure, Power BI, Git | Không Docker, không PostGIS; điều phối bằng một lệnh | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: logo công nghệ (chèn) |
-| 4 | 136 | Kiến trúc theo lớp: sáu tầng từ nguồn đến BI, mỗi tầng có thành phần, công nghệ, số dòng | PostgreSQL, Python, Power BI, GitHub; số bảng và số dòng từng lớp; Giám sát etl_log 6 bảng; điều phối bằng một lệnh Python | `3-2_kien_truc_cac_lop.png` | đã có |
-| 5 | 52 | ODS là lớp làm sạch trung gian: 18 bảng, 678.183 dòng, mọi lỗi có cờ hoặc lý do | Zip thành 5 chữ số, thành phố bỏ dấu, NULL thành unknown, khử trùng review | bảng | đã có |
-| 6 | 67 | Một lệnh chạy sáu bước ETL và ghi lại từng bước | extract → ODS → dim → fact → mart → tests → snapshot → export | `3-4-1_pipeline.png` | đã có |
-| 7 | 68 | Extract chỉ lấy dòng chưa có: đơn theo watermark, bảng nhỏ theo khoá | Chế độ full 52 giây; incremental khoảng 22 giây | `3-4-1_pipeline.png` | đã có |
-| 8 | 69 | ODS xử lý lỗi theo ba cách: chuẩn hóa, gắn cờ hoặc loại có lý do | 1.359 đơn bàn giao trước khi duyệt được gắn cờ, không xóa | bảng | đã có |
-| 9 | 70 | Trước và sau ETL: bảng đơn hàng có thêm cờ lỗi và kiểu dữ liệu chuẩn | Ví dụ trước/sau | `3-4-3_before_after_orders.png` | đã có |
-| 10 | 71 | Trước và sau ETL: sản phẩm và seller được chuẩn hóa tên cột và thành phố | *_lenght → *_length; thành phố bỏ dấu, chữ thường | `3-4-3_before_after_products.png`, `3-4-3_before_after_sellers.png` | đã có |
-| 11 | 72 | Trước và sau ETL: 1.000.163 dòng toạ độ gom thành 19.178 mã bưu chính | Trung vị toạ độ, mode thành phố | `3-4-3_before_after_geolocation.png` | đã có |
-| 12 | 73 | Trước và sau ETL: MQL và deal có giá trị trống thành unknown | origin rỗng → unknown; doanh thu khai báo 0 gắn cờ | `3-4-3_before_after_mql.png`, `3-4-3_before_after_closed_deals.png` | đã có |
+| 4 | 136 | Kiến trúc sáu tầng từ nguồn đến BI, mỗi tầng có thành phần, công nghệ, số dòng | Giám sát etl_log 6 bảng; điều phối bằng một lệnh Python | – | đã có |
+| 5 | 52 | ODS là lớp làm sạch trung gian: 18 bảng, 678.183 dòng, mọi lỗi có cờ hoặc lý do |  | – | đã có |
+| 6 | 67 | Một lệnh chạy sáu bước ETL và ghi lại từng bước |  | – | đã có |
+| 7 | 68 | Extract chỉ lấy dòng chưa có: đơn theo watermark, bảng nhỏ theo khoá |  | – | đã có |
+| 8 | 69 | ODS xử lý lỗi theo ba cách: chuẩn hóa, gắn cờ hoặc loại có lý do |  | – | đã có |
+| 9 | 70 | Trước và sau ETL: bảng đơn hàng có thêm cờ lỗi và kiểu dữ liệu chuẩn |  | – | đã có |
+| 10 | 71 | Trước và sau ETL: sản phẩm và seller được chuẩn hóa tên cột và thành phố |  | – | đã có |
+| 11 | 72 | Trước và sau ETL: 1.000.163 dòng toạ độ gom thành 19.178 mã bưu chính |  | – | đã có |
+| 12 | 73 | Trước và sau ETL: MQL và deal có giá trị trống thành unknown |  | – | đã có |
 | 13 | 74 | Đối soát số dòng: nguồn = staging = ODS + loại, và tổng tiền khớp từng đồng | price 13.591.643,70 BRL = file CSV | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng đối soát (handoff P4) |
 | 14 | 75 | SCD2 được nạp bằng window function: mỗi lần zip đổi mở một phiên bản mới | lag(zip) so với đơn trước; effective_from = ngày mua | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: đoạn SQL (Phụ lục B, code/scd2_ |
 | 15 | 76 | Nạp fact: tra khoá theo phiên bản có hiệu lực, khoảng thời gian âm thành NULL | 1.359 đơn có handling_days âm (bàn giao trước khi duyệt) được đặt NULL và đếm | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng fact_ |
-| 16 | 77 | Nạp tăng dần mô phỏng: 11 đợt hằng tháng, tổng 286.144 bản ghi mới | simulate_increment rồi run_pipeline –mode incremental | `3-4-1_pipeline.png` | đã có |
-| 17 | 78 | Mỗi đợt chạy 20–26 giây, trong đó kiểm thử chiếm hơn một nửa | Bảng 11 đợt: bản ghi mới, thời gian | bảng | đã có |
+| 16 | 77 | Nạp tăng dần mô phỏng: 11 đợt hằng tháng, tổng 286.144 bản ghi mới |  | – | đã có |
+| 17 | 78 | Mỗi đợt chạy 20–26 giây, trong đó kiểm thử chiếm hơn một nửa |  | – | đã có |
 | 18 | 79 | Funnel lấp đầy dần: MQL 2.002 → 8.000, deal 3 → 842, seller có đơn 0 → 379 | Số liệu mỗi đợt từ batch_metrics | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: biểu đồ đường từ batch_ |
-| 19 | 80 | Kết quả incremental trùng nạp full: 16/16 bảng khớp số dòng, tổng tiền và nội dung | So sánh bằng checksum trên khoá tự nhiên | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng so sánh (handoff/2026-11-05-P5.md |
-| 20 | 81 | Dòng mồ côi được thử lại ở đợt sau, nhưng cơ chế mới được chứng minh bằng kiểm thử | Kịch bản deal b91cf88… trên bản sao trong giao dịch rồi hoàn tác | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: sơ đồ 3 bước (loại → cha đến → nạp lại) |
-| 21 | 82 | 136 phép kiểm thử đạt 100%, cộng 6 phép đối chiếu với khám phá dữ liệu | Số dòng, tổng tiền, grain, khoá ngoại, SCD2, mart khớp fact | bảng | đã có |
+| 19 | 80 | Incremental trùng nạp full: 16/16 bảng khớp số dòng, tổng tiền và nội dung | So sánh bằng checksum trên khoá tự nhiên | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng so sánh (handoff/2026-11-05-P5.md |
+| 20 | 81 | Dòng mồ côi được thử lại ở đợt sau; cơ chế mới được chứng minh bằng kiểm thử | Kịch bản deal b91cf88… trên bản sao trong giao dịch rồi hoàn tác | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: sơ đồ 3 bước (loại → cha đến → nạp lại) |
+| 21 | 82 | 136 phép kiểm thử đạt 100%, cộng 6 phép đối chiếu với khám phá dữ liệu |  | – | đã có |
 | 22 | 83 | Nhật ký etl_log cho biết mỗi lô chạy gì, mất bao lâu, loại bao nhiêu dòng | job_run, rejected_rows, dq_check, batch_metrics | khung chờ | cần ảnh: CHÈN BẢNG: giám sát ETL (báo cáo mục 3.3) |
-| 23 | 110 | Dựng lại toàn bộ dự án từ đầu mất 443 giây và cho kết quả giống hệt | Xóa hai database, chạy một lệnh, 16/16 bảng khớp | bảng | đã có |
-| 24 | 137 | Sáu giai đoạn ETL: lô đầu nạp 1.273.620 dòng vào staging, 42 dòng loại, 142 test đạt | Extract, seed và ODS, dimension và fact, mart, kiểm thử, xuất CSV; Số dòng lấy từ etl_log.job_run (lô đầu và tổng các lô) | `3-3_etl_jobs.png` | đã có |
-| 25 | 138 | SQL, Python và Power Query cho cùng kết quả làm sạch: 8.011 thành 5.968 thành phố | Chữ thường, bỏ dấu, zip đủ 5 ký tự; 73.440 dòng đổi; Python chênh 2 dòng do ký tự ordinal; mã M thêm bảng thay thế để khớp SQL | – | đã có |
-| 26 | 105 | Giám sát ETL: 11 đợt tăng dần 21–28 giây, 136 test đạt 100%, chỉ 42 dòng bị loại | Dòng bị loại duy nhất là 42 điểm toạ độ ngoài Brazil; không có dòng mồ côi; Funnel lấp đầy dần: MQL 2.002 → 8.000, deal 3 → 842, seller có đơn 0 → 379 | khung chờ | cần ảnh: CHÈN BẢNG: các đợt nạp (tables/p8b_etl_batches) |
-| 27 | 57 | Mười bảng chiều với số dòng từ 6 đến 96.339 | dim_date 1.828; geography 19.178; customer 96.339; seller 3.558; product 32.952; ... | bảng | đã có |
+| 23 | 110 | Dựng lại toàn bộ dự án từ đầu mất 443 giây và cho kết quả giống hệt |  | – | đã có |
+| 24 | 137 | Sáu giai đoạn ETL: lô đầu 1.273.620 dòng vào staging, 42 dòng loại, 142 test đạt | Số dòng lấy từ etl_log.job_run (lô đầu và tổng các lô) | – | đã có |
+| 25 | 138 | SQL, Python và Power Query cùng kết quả làm sạch: 8.011 thành 5.968 thành phố | Chữ thường, bỏ dấu, zip đủ 5 ký tự; 73.440 dòng đổi; Python chênh 2 dòng do ký tự ordinal; mã M thêm bảng thay thế để khớp SQL | – | đã có |
+| 26 | 105 | Giám sát ETL: 11 đợt 21–28 giây, 136 test đạt 100%, chỉ 42 dòng bị loại | Dòng bị loại duy nhất là 42 điểm toạ độ ngoài Brazil; không có dòng mồ côi; Funnel lấp đầy dần: MQL 2.002 → 8.000, deal 3 → 842, seller có đơn 0 → 379 | khung chờ | cần ảnh: CHÈN BẢNG: các đợt nạp (tables/p8b_etl_batches) |
+| 27 | 57 | Mười bảng chiều với số dòng từ 6 đến 96.339 |  | – | đã có |
 | 28 | 58 | Hệ thống chiều khái niệm: phân cấp ngày, địa lý, sản phẩm, seller, khách | Ngày → tháng → quý → năm; zip → thành phố → bang → vùng | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: sơ đồ phân cấp (vẽ) |
-| 29 | 59 | SCD2 giữ lịch sử địa chỉ: 96.096 khách thành 96.339 dòng, 236 khách đổi zip | Đơn cũ vẫn trỏ về địa chỉ lúc mua | bảng | đã có |
+| 29 | 59 | SCD2 giữ lịch sử địa chỉ: 96.096 khách thành 96.339 dòng, 236 khách đổi zip |  | – | đã có |
 | 30 | 60 | dim_seller là chiều dùng chung: nối bán hàng với funnel qua seller_id | 462 seller chỉ có trong CRM vẫn có dòng, địa chỉ Unknown | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng ví dụ seller (huong-dan/01-pipeline-b |
 | 31 | 61 | Chiều rác và role-playing giúp fact gọn mà vẫn đủ thông tin | dim_lead_profile gom 7 thuộc tính thành 503 tổ hợp; dim_date đóng 5 vai ở fulfillment | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng ví dụ hai kỹ thuật |
 | 32 | 66 | Dòng Unknown -1 và khoá thay thế bảo đảm fact không bao giờ có khoá rỗng | Mọi lỗi tra khoá được ghi fact_load_issue | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng dim_ |
-| 33 | 139 | Phân cấp đúng khi tháng kèm năm, thành phố kèm bang: 303 tên thành phố trùng giữa các bang | 12 số tháng nhưng 60 cặp (năm, tháng); 5.814 tên thành phố nhưng 6.190 cặp (bang, thành phố); Mỗi danh mục một nhóm ngành, mỗi origin một nhóm kênh (0 | – | đã có |
-| 34 | 53 | Bus matrix: sáu fact dùng chung các chiều ngày, seller, khách, địa lý | Seller là chiều dùng chung của hai quy trình | bảng | đã có |
-| 35 | 54 | Mô hình constellation: bốn mart, sáu fact (cam), mười chiều (xanh) | Khung = data mart | `3-3-4_constellation.png` | đã có |
-| 36 | 55 | Data model logic: mỗi fact nối đúng các chiều theo bus matrix | Ví dụ fact_order_item nối 6 chiều với 2 vai địa lý | `3-3-4_erd_dw.png` | đã có |
-| 37 | 56 | Data model vật lý: khoá chính theo grain, khoá ngoại có index, 112.650 dòng hàng | Mọi khoá ngoại NOT NULL, dòng Unknown -1 | `3-3-4_erd_dw.png` | đã có |
-| 38 | 62 | Sáu fact thuộc đủ ba loại của Kimball | Transaction 3, accumulating 2, periodic 1 | bảng | đã có |
-| 39 | 63 | fact_order_fulfillment là accumulating snapshot: một đơn một dòng, cập nhật theo mốc | Mốc chưa xảy ra có khoá -1; thời gian từng chặng tính sẵn | bảng | đã có |
-| 40 | 64 | fact_lead_funnel ghi lại hành trình MQL: ba mốc ngày và hai khoảng thời gian | days_to_close TB 48,5; days_won_to_first_sale TB 51,9 | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: dòng ví dụ MQL |
+| 33 | 139 | Phân cấp đúng: tháng kèm năm, thành phố kèm bang; 303 tên thành phố trùng | 12 số tháng nhưng 60 cặp (năm, tháng); 5.814 tên thành phố nhưng 6.190 cặp (bang, thành phố); Mỗi danh mục một nhóm ngành, mỗi origin một nhóm kênh (0 | – | đã có |
+| 34 | 53 | Bus matrix: sáu fact dùng chung các chiều ngày, seller, khách, địa lý |  | – | đã có |
+| 35 | 54 | Mô hình constellation: bốn mart, sáu fact (cam), mười chiều (xanh) |  | – | đã có |
+| 36 | 55 | Data model logic: mỗi fact nối đúng các chiều theo bus matrix |  | – | đã có |
+| 37 | 56 | Data model vật lý: khoá chính theo grain, khoá ngoại có index, 112.650 dòng hàng |  | – | đã có |
+| 38 | 62 | Sáu fact thuộc đủ ba loại của Kimball |  | – | đã có |
+| 39 | 63 | fact_order_fulfillment: accumulating snapshot, một đơn một dòng |  | – | đã có |
+| 40 | 64 | fact_lead_funnel ghi hành trình MQL: ba mốc ngày và hai khoảng thời gian | days_to_close TB 48,5; days_won_to_first_sale TB 51,9 | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: dòng ví dụ MQL |
 | 41 | 65 | fact_seller_monthly lưu dày đặc 36.583 dòng để thấy seller ngừng bán | Dày đặc so với thưa: 36.583 và 16.441 dòng | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng 4 tháng đầu của một seller |
-| 42 | 84 | Bốn data mart gồm 17 view, trong đó 4 là materialized view làm mới trong 2 giây | Sales, fulfillment, cx, acquisition | bảng | đã có |
-| 43 | 85 | Roll-up và drill-down: GMV 2017 là 6,11 triệu, 2018 là 7,34 triệu; ngày Black Friday cao gấp 5,2 lần | Quý 4/2017: 2,41 triệu BRL; 24/11/2017: 152.654 BRL | bảng | đã có |
-| 44 | 86 | Slice, dice và pivot: vùng Sudeste chiếm 64,3% GMV năm 2017 | Dice Sudeste Home & Furniture quý 4: SP 199.179 BRL | bảng | đã có |
+| 42 | 84 | Bốn data mart gồm 17 view, trong đó 4 là materialized view làm mới trong 2 giây |  | – | đã có |
+| 43 | 85 | Roll-up: GMV 2017 là 6,11 triệu, 2018 là 7,34 triệu; Black Friday gấp 5,2 lần |  | – | đã có |
+| 44 | 86 | Slice, dice và pivot: vùng Sudeste chiếm 64,3% GMV năm 2017 |  | – | đã có |
 | 45 | 87 | Chọn ROLAP vì dữ liệu nhỏ, kho luôn tươi và Power BI làm lớp ngữ nghĩa | Khác MOLAP: không phải xử lý lại khối khi nạp dữ liệu | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng ROLAP vs MOLAP (handoff/olap-examples |
-| 46 | 88 | Star schema chỉ nhanh hơn OLTP 1,0–1,6 lần; tốc độ lớn đến từ materialized view và index | Chọn lọc một seller nhanh gấp 9 lần nhờ index; materialized view dưới 1 ms so với 150–750 ms | `3-5-1_benchmark.png` | đã có |
-| 47 | 140 | Data model logic: sáu quy trình nối với mười dimension và các cấp phân cấp | Fact cam, dimension xanh; không ghi kiểu dữ liệu | `3-5_data_model_logic.png` | đã có |
-| 48 | 141 | Data model vật lý sinh từ cơ sở dữ liệu: mọi bảng dw với cột, kiểu, PK và FK | 16 bảng, fact và dimension khác màu | `3-5_data_model_vat_ly.png` | đã có |
-| 49 | 142 | Bốn data mart, mỗi mart gồm fact, dimension và 3–4 câu hỏi phân tích | mart_sales, mart_fulfillment, mart_cx, mart_acquisition | `3-5_data_mart.png` | đã có |
+| 46 | 88 | Star schema chỉ nhanh hơn OLTP 1,0–1,6 lần; tốc độ nhờ materialized view, index |  | – | đã có |
+| 47 | 140 | Data model logic: sáu quy trình nối với mười dimension và các cấp phân cấp |  | – | đã có |
+| 48 | 141 | Data model vật lý sinh từ cơ sở dữ liệu: mọi bảng dw với cột, kiểu, PK và FK |  | – | đã có |
+| 49 | 142 | Bốn data mart, mỗi mart gồm fact, dimension và 3–4 câu hỏi phân tích |  | – | đã có |
 
 *49 frame trong `02b-kien-truc-etl-model.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
 <!-- /SLIDES -->

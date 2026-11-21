@@ -98,35 +98,35 @@ Hình: `figures/2-4_*.png` (4 hình), `2-5_*.png` (2 hình), `3-1_*.png` (10 hì
 <!-- SLIDES:01b-du-lieu-nguon-erd.tex,02a-kham-pha.tex -->
 | STT | S | Tiêu đề (câu kết luận) | Nội dung chính | Hình / bảng | Trạng thái |
 | ---: | ---: | --- | --- | --- | --- |
-| 1 | 32 | Phạm vi: dữ liệu 01/2017–08/2018 chiếm 99,6% số đơn nên được dùng cho xu hướng | 2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn | `3-3-1_orders_per_month.png` | đã có |
-| 2 | 33 | Hai hệ thống nguồn có 11 bảng, 121 MB và 1.559.764 dòng | oltp 9 bảng 1.550.922 dòng; crm 2 bảng 8.842 dòng | bảng | đã có |
+| 1 | 32 | Phạm vi: dữ liệu 01/2017–08/2018 chiếm 99,6% số đơn nên được dùng cho xu hướng |  | – | đã có |
+| 2 | 33 | Hai hệ thống nguồn có 11 bảng, 121 MB và 1.559.764 dòng |  | – | đã có |
 | 3 | 34 | Bảng toạ độ chiếm 64% số dòng nhưng chỉ đại diện 19.015 mã bưu chính | 1.000.163 dòng geolocation | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng nguồn (làm nổi dòng geolocation) |
-| 4 | 37 | Luồng dữ liệu và tần suất cập nhật: nạp ban đầu 45.430 đơn rồi 11 đợt hằng tháng | Tổng 286.144 bản ghi mới qua 11 đợt | `3-4-1_pipeline.png` | đã có |
-| 5 | 127 | Trung bình 163 đơn mỗi ngày, đỉnh 1.176 đơn ngày Black Friday: lô hằng ngày là đủ | Cửa sổ 01/2017–08/2018: 163 đơn, 185 dòng hàng, 13 MQL, 1,3 deal mỗi ngày; Bảng tần suất đề xuất công nghệ: lô hằng ngày bằng procedure PostgreSQL; gầ | `2-4_tan_suat_cap_nhat.png` | đã có |
-| 6 | 128 | Cây phân loại dữ liệu chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu | Mỗi bảng kèm hai cột tiêu biểu và giá trị thật; Phân loại thêm theo kiểu dữ liệu, độ nhạy cảm (định danh, vị trí) và tính biến động | `2-4_data_taxonomy.png` | đã có |
-| 7 | 129 | Data flow hiện trạng: mũi tên ghi thông tin được truyền, hai hệ thống nguồn tách rời | Thông tin đơn, trạng thái giao, thanh toán, điểm đánh giá, lead; Marketing funnel (SDR, SR) tách khỏi hệ thống bán hàng | `2-4_data_flow_hien_trang.png` | đã có |
-| 8 | 130 | Data flow đề xuất: nguồn, staging, ODS, kho, mart và BI, có nhật ký ETL giám sát | Bảng lớp, thành phần, công nghệ, tần suất, ghi chú ở báo cáo; Điều phối bằng một lệnh Python, biến đổi bằng PL/pgSQL | `2-4_data_flow_de_xuat.png` | đã có |
-| 9 | 35 | ERD hệ thống bán hàng: chín bảng nối quanh đơn hàng | orders → items, payments, reviews; customers, sellers, products | `3-2-4_erd_oltp.png` | đã có |
+| 4 | 37 | Luồng dữ liệu và tần suất cập nhật: nạp ban đầu 45.430 đơn rồi 11 đợt hằng tháng |  | – | đã có |
+| 5 | 127 | Trung bình 163 đơn/ngày, đỉnh 1.176 đơn ngày Black Friday: lô hằng ngày là đủ |  | – | đã có |
+| 6 | 128 | Cây phân loại chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu |  | – | đã có |
+| 7 | 129 | Data flow hiện trạng: mũi tên ghi thông tin truyền, hai nguồn tách rời |  | – | đã có |
+| 8 | 130 | Data flow đề xuất: nguồn, staging, ODS, kho, mart và BI, có nhật ký ETL giám sát |  | – | đã có |
+| 9 | 35 | ERD hệ thống bán hàng: chín bảng nối quanh đơn hàng |  | – | đã có |
 | 10 | 36 | Các cột được gạch chân trên ERD là cột đi sang kho, kèm ghi chú mapping | Ví dụ: order_purchase_timestamp → purchase_date_key, price → price | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: ERD đã gạch chân (vẽ lại) |
-| 11 | 131 | ERD tô màu theo nhóm dữ liệu: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP | Gạch chân suy ra từ bảng mapping nguồn → ODS → kho; 6 cột không dùng: geolocation.id, 3 thuộc tính sản phẩm, 2 thuộc tính khai báo của deal | `2-5_erd_oltp_gach_chan.png` | đã có |
-| 12 | 132 | Luồng OLTP sang OLAP cho thấy bảng nguồn nào nuôi dimension nào và fact nào | Bảng tổng hợp mapping theo bảng nguồn ở báo cáo mục 2.5; Mapping đầy đủ từng cột ở Phụ lục C | `2-5_data_flow_oltp_olap.png` | đã có |
-| 13 | 38 | Khám phá dữ liệu đo được 45 loại lỗi cần xử lý ở ODS | Cột thiếu, mốc thời gian sai thứ tự, tên thành phố lệch dấu, trùng lặp | `3-3-1_data_quality.png` | đã có |
-| 14 | 39 | Tỷ lệ ô rỗng cho thấy cột nào cần điền unknown | Cột review và ngày giao có nhiều ô rỗng hợp lệ | `3-3-1_null_heatmap.png` | đã có |
-| 15 | 40 | Bảng toạ độ bẩn nhất: 93,5% mã bưu chính có nhiều toạ độ, 26,2% dòng trùng hoàn toàn | 7,3% tên thành phố lệch dấu; 42 điểm ngoài lãnh thổ Brazil | `3-4-3_before_after_geolocation.png` | đã có |
-| 16 | 41 | Phân bố giá, phí vận chuyển và lead time đều lệch phải | Nhiều giá trị lớn bất thường ở phí vận chuyển | `3-3-1_distributions_numeric.png` | đã có |
-| 17 | 42 | Dữ liệu đơn dùng được là 01/2017–08/2018, hai đầu rất thưa | 2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn | `3-3-1_orders_per_month.png` | đã có |
-| 18 | 43 | 18/74 danh mục (24,3%) tạo 80% GMV, dẫn đầu health_beauty 9,3% | Quy luật Pareto theo danh mục | `3-3-1_pareto_category.png` | đã có |
-| 19 | 44 | Seller thì phân tán hơn: 540 seller tạo 80% GMV, 5 seller lớn nhất chỉ 7,7% | Doanh thu không phụ thuộc vài seller | `3-3-1_pareto_seller.png` | đã có |
-| 20 | 45 | Giao trễ làm điểm review rơi từ 4,29 xuống 1,70 và 79,2% review tiêu cực | Đơn trễ chiếm 6,5% số review nhưng tạo 27,4% review tiêu cực | `3-3-1_delay_vs_review.png` | đã có |
-| 21 | 46 | Trễ tập trung ở Bắc và Đông Bắc: Nordeste trễ 12,8%, Norte lead time 22,6 ngày | Sudeste chỉ 6,1% trễ, lead time 10,7 ngày | `3-3-1_late_rate_by_state.png` | đã có |
-| 22 | 47 | Chỉ 380/842 deal (45,1%) có đơn: funnel và bán hàng chỉ giao nhau một phần | 380 seller tạo 674.005 BRL, 4,99% GMV; 380 là số seller có đơn ở mọi trạng thái; kho chỉ tính đơn không bị huỷ nên có 379 seller (45,0%) | `3-3-1_funnel_seller_overlap.png` | đã có |
-| 23 | 48 | Sáu quyết định thiết kế đến từ khám phá dữ liệu | SCD2 khách (0,26% đổi zip); DB4 hai trang (cộng trang chi tiết); snapshot seller dày đặc; 13 nhóm ngành; zip thiếu toạ độ vẫn có dòng; mốc nạp 2017-12 | bảng | đã có |
-| 24 | 107 | Mở rộng địa lý: hàm haversine SQL thuần tính khoảng cách seller → khách cho 112.650 dòng hàng | 555 dòng (0,49%) thiếu toạ độ vẫn được giữ lại với giá trị trống | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: đoạn SQL dw.haversine_ |
-| 25 | 108 | Khoảng cách tăng từ dưới 100 km lên trên 1.000 km làm phí vận chuyển gấp 2,7 lần và lead time gấp 2,9 lần | Phí 11,75 → 31,65 BRL; lead time 6,5 → 19,0 ngày; trễ 4,5% → 10,3% | `3-5-2_distance_vs_freight.png`, `3-5-2_distance_vs_leadtime.png` | đã có |
-| 26 | 109 | Haversine thuần đủ cho khoảng cách điểm–điểm; PostGIS cần khi truy vấn bán kính hoặc đa giác | GiST chỉ mục không gian; haversine sai số tối đa 0,5% | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng so sánh (report/chapters/3-1-kham-pha |
-| 27 | 133 | Hai phương pháp cùng đánh dấu 24.213 ngoại lai; nhóm giữ vì đó là ngoại lai hợp lệ | IQR đánh dấu 45.568, Isolation Forest (contamination 0,05, random_state 42) 26.212; Phí cao đi với hàng nặng (trung vị 5.700 g so với 700 g); 76,9% đơ | `3-1_outliers_boxplot.png` | đã có |
-| 28 | 134 | Cramér's V lớn nhất 0,403 (giao trễ và nhóm review); tỉ số tương quan review theo cờ trễ 0,392 | V hiệu chỉnh Bergsma cho cặp biến phân loại; cho biến phân loại và biến số; Vùng khách – vùng seller V = 0,072: gần như độc lập | `3-1_cramer_v_heatmap.png` | đã có |
-| 29 | 135 | STL: xu hướng mạnh 0,73, mùa vụ tuần 0,22; dưới 2 năm nên không kết luận mùa vụ theo năm | F = (0, 1 - Var(R)/Var(S+R)); Black Friday 24/11/2017: 1.176 đơn, gấp 6,6 lần trung bình tháng 11 | `3-1_stl_daily.png` | đã có |
+| 11 | 131 | ERD tô màu theo nhóm: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP |  | – | đã có |
+| 12 | 132 | Luồng OLTP sang OLAP cho thấy bảng nguồn nào nuôi dimension nào và fact nào |  | – | đã có |
+| 13 | 38 | Khám phá dữ liệu đo được 45 loại lỗi cần xử lý ở ODS |  | – | đã có |
+| 14 | 39 | Tỷ lệ ô rỗng cho thấy cột nào cần điền unknown |  | – | đã có |
+| 15 | 40 | Toạ độ bẩn nhất: 93,5% mã bưu chính nhiều toạ độ, 26,2% dòng trùng hoàn toàn |  | – | đã có |
+| 16 | 41 | Phân bố giá, phí vận chuyển và lead time đều lệch phải |  | – | đã có |
+| 17 | 42 | Dữ liệu đơn dùng được là 01/2017–08/2018, hai đầu rất thưa |  | – | đã có |
+| 18 | 43 | 18/74 danh mục (24,3%) tạo 80% GMV, dẫn đầu health_beauty 9,3% |  | – | đã có |
+| 19 | 44 | Seller thì phân tán hơn: 540 seller tạo 80% GMV, 5 seller lớn nhất chỉ 7,7% |  | – | đã có |
+| 20 | 45 | Giao trễ làm điểm review rơi từ 4,29 xuống 1,70 và 79,2% review tiêu cực |  | – | đã có |
+| 21 | 46 | Trễ tập trung ở Bắc và Đông Bắc: Nordeste trễ 12,8%, Norte lead time 22,6 ngày |  | – | đã có |
+| 22 | 47 | Chỉ 380/842 deal (45,1%) có đơn: funnel và bán hàng chỉ giao nhau một phần | 380 là số seller có đơn ở mọi trạng thái; kho chỉ tính đơn không bị huỷ nên có 379 seller (45,0%) | – | đã có |
+| 23 | 48 | Sáu quyết định thiết kế đến từ khám phá dữ liệu |  | – | đã có |
+| 24 | 107 | Haversine SQL thuần tính khoảng cách seller → khách cho 112.650 dòng hàng | 555 dòng (0,49%) thiếu toạ độ vẫn được giữ lại với giá trị trống | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: đoạn SQL dw.haversine_ |
+| 25 | 108 | Từ dưới 100 km lên trên 1.000 km: phí gấp 2,7 lần, lead time gấp 2,9 lần |  | – | đã có |
+| 26 | 109 | Haversine đủ cho khoảng cách điểm–điểm; PostGIS khi cần bán kính hoặc đa giác | GiST chỉ mục không gian; haversine sai số tối đa 0,5% | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng so sánh (report/chapters/3-1-kham-pha |
+| 27 | 133 | Hai phương pháp cùng đánh dấu 24.213 ngoại lai | IQR đánh dấu 45.568, Isolation Forest (contamination 0,05, random_state 42) 26.212; Phí cao đi với hàng nặng (trung vị 5.700 g so với 700 g); 76,9% đơ | – | đã có |
+| 28 | 134 | Cramér's V lớn nhất 0,403 (giao trễ và nhóm review) | V hiệu chỉnh Bergsma cho cặp biến phân loại; cho biến phân loại và biến số; Vùng khách – vùng seller V = 0,072: gần như độc lập | – | đã có |
+| 29 | 135 | STL: xu hướng mạnh 0,73, mùa vụ tuần 0,22 | F = (0, 1 - Var(R)/Var(S+R)); Black Friday 24/11/2017: 1.176 đơn, gấp 6,6 lần trung bình tháng 11 | – | đã có |
 
 *29 frame trong `01b-du-lieu-nguon-erd.tex`, `02a-kham-pha.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
 <!-- /SLIDES -->

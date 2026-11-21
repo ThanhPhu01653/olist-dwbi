@@ -98,12 +98,12 @@ Hình: ảnh chụp dashboard `4_DBx_<mô-tả>.png` (nhóm chụp), `figures/2-
 <!-- SLIDES:03-dashboard.tex -->
 | STT | S | Tiêu đề (câu kết luận) | Nội dung chính | Hình / bảng | Trạng thái |
 | ---: | ---: | --- | --- | --- | --- |
-| 1 | 89 | Bốn dashboard theo bốn loại: dòng thời gian có dự báo, thống kê, OLAP và vận hành | DB1 Tổng quan và doanh thu DB2 Giao hàng và trải nghiệm khách DB3 Địa lý và phí vận chuyển DB4 Thu hút và hiệu quả seller | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng 4 dashboard (huong-dan/dashboards/ |
+| 1 | 89 | Bốn dashboard, bốn loại: dòng thời gian có dự báo, thống kê, OLAP, vận hành | DB1 Tổng quan và doanh thu; DB2 Giao hàng và trải nghiệm khách | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng 4 dashboard (huong-dan/dashboards/ |
 | 2 | 90 | Mô hình Power BI có 16 bảng và 32 quan hệ, mỗi fact một quan hệ ngày hoạt động | Quan hệ còn lại không hoạt động | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: ảnh chụp Model view |
-| 3 | 91 | Role-playing date và DAX tăng trưởng: GMV tháng 11/2017 tăng 52,1% so với tháng 10 | USERELATIONSHIP, DATEADD, SAMEPERIODLASTYEAR | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: đoạn DAX (powerbi/measures.md |
+| 3 | 91 | Role-playing date và DAX: GMV tháng 11/2017 tăng 52,1% so với tháng 10 | USERELATIONSHIP, DATEADD, SAMEPERIODLASTYEAR | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: đoạn DAX (powerbi/measures.md |
 | 4 | 92 | Chủ đề màu thống nhất: xanh là tốt, vàng cần chú ý, đỏ là xấu | powerbi/theme.json; ngưỡng cảnh báo on-time 90%/95% | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: ảnh chụp theme |
 | 5 | 93 | DB1 trang 1: GMV 13,49 triệu BRL, 98.199 đơn, đúng hạn 93,2%, review 4,09 | Thẻ KPI, đường GMV theo tháng, cột MoM, thanh theo vùng, treemap ngành | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB1 trang 1 |
-| 6 | 94 | DB1 trang 1: tháng 11/2017 là đỉnh 1,0 triệu BRL, Sudeste 65% GMV, có đường dự báo | Black Friday 152.654 BRL trong một ngày | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB1 trang 1 |
+| 6 | 94 | DB1 trang 1: đỉnh 11/2017 là 1,0 triệu BRL, Sudeste 65% GMV, có dự báo | Black Friday 152.654 BRL trong một ngày | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB1 trang 1 |
 | 7 | 95 | DB1 trang 2: 18 danh mục tạo 80% GMV; Home & Furniture dẫn đầu 22,8% | Treemap, ma trận drill, Pareto, scatter AOV – freight | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB1 trang 2 |
 | 8 | 96 | DB1 trang 2: phí vận chuyển nặng ở hàng giá thấp và ở vùng xa | Freight ratio 16,6% toàn sàn | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: ảnh chụp DB1 trang 2 (scatter) |
 | 9 | 97 | DB2 trang 1: lead time 12,6 ngày, phễu trạng thái và tỷ lệ trễ theo bang | Funnel, cột chồng từng chặng, bản đồ trễ | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB2 trang 1 |
@@ -112,15 +112,15 @@ Hình: ảnh chụp dashboard `4_DBx_<mô-tả>.png` (nhóm chụp), `figures/2-
 | 12 | 102 | DB2 trang 2: thẻ tín dụng 78,3% giá trị thanh toán, trả góp trung bình 3,5 kỳ | 66,9% giao dịch thẻ trả góp nhiều kỳ | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB2 trang 2 |
 | 13 | 145 | DB2 trang 3: Key Influencers cho biết yếu tố nào đi kèm review tiêu cực | Kỳ vọng từ khám phá dữ liệu: giao trễ đứng đầu (Cramér's V 0,403; 0,392); Mô hình thống kê tự động, không chứng minh nhân quả | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB2 trang 3 (Key Influencers) |
 | 14 | 99 | DB3 trang 1: Sudeste 65,4% GMV, Norte và Nordeste chịu phí vận chuyển 22% | Bản đồ bong bóng, ma trận phân cấp, GMV khách và seller | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB3 trang 1 |
-| 15 | 100 | DB3 trang 1: 36% dòng hàng có seller và khách cùng bang; drill-down vùng đến thành phố | Khoảng cách TB 598 km | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB3 trang 1 |
-| 16 | 146 | DB3 trang 2: drill-through từ một bang sang trang chi tiết bang, kèm tooltip theo bang | Chuột phải một bang → Drill through → Chi tiết bang; Thẻ GMV, Freight ratio, Avg lead days, Late rate; bảng theo thành phố | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB3 trang 2 (Chi tiết bang) |
+| 15 | 100 | DB3 trang 1: 36% dòng hàng seller và khách cùng bang; drill-down tới thành phố | Khoảng cách TB 598 km | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB3 trang 1 |
+| 16 | 146 | DB3 trang 2: drill-through từ một bang sang chi tiết bang, kèm tooltip | Chuột phải một bang → Drill through → Chi tiết bang; Thẻ GMV, Freight ratio, Avg lead days, Late rate; bảng theo thành phố | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB3 trang 2 (Chi tiết bang) |
 | 17 | 103 | DB4 trang 1: tỷ lệ chốt theo kênh từ 2,7% (other) đến 16,7% (unknown) | Phễu MQL → deal → seller có đơn; thời gian chốt | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB4 trang 1 TRANG 1 |
 | 18 | 104 | DB4 trang 2: seller từ funnel chỉ tạo 4,99% GMV; kênh nhỏ được cảnh báo mẫu nhỏ | Scorecard seller, GMV/seller theo kênh | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB4 trang 2 TRANG 2 |
 | 19 | 147 | DB4 trang 3: drill-through sang chi tiết seller cho thấy tháng seller ngừng bán | Trường drill-through dim_seller[seller_id]; Đường GMV theo tháng nhờ snapshot dày đặc, kèm cảnh báo mẫu nhỏ | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB4 trang 3 (Chi tiết seller) |
 | 20 | 106 | Publish to web chia sẻ cả bốn dashboard bằng một liên kết công khai và mã QR | Dữ liệu Olist công khai nên chấp nhận được | khung chờ | cần ảnh: CHÈN HÌNH: ảnh Publish to web và mã QR của link |
-| 21 | 143 | Checklist chung: dự báo ở DB1, Key Influencers ở DB2, OLAP và drill-through ở DB3, DB4 | Số đơn 12.3K, tiền 13.5M, phần trăm một chữ số thập phân; Màu đỏ chỉ để cảnh báo; theme không còn đỏ trong màu dữ liệu | – | đã có |
+| 21 | 143 | Checklist: dự báo ở DB1, Key Influencers ở DB2, OLAP và drill-through ở DB3, DB4 | Số đơn 12.3K, tiền 13.5M, phần trăm một chữ số thập phân; Màu đỏ chỉ để cảnh báo; theme không còn đỏ trong màu dữ liệu | – | đã có |
 | 22 | 112 | Bài học: không xóa âm thầm, chọn grain trước, định nghĩa KPI một lần | Mô hình chiều đáng dùng vì nhất quán, tốc độ đến từ materialized view và index | – | đã có |
-| 23 | 144 | Bài học chỉ số: GMV 13,49 so với 13,59 triệu, review đúng hạn 4,21 sửa thành 4,29 | Chọn một định nghĩa và ghi cạnh con số; 380 so với 379 seller; Sửa ở ETL (cột is_delivered), không sửa ở BI | – | đã có |
+| 23 | 144 | Bài học chỉ số: GMV 13,49 so với 13,59 triệu; review 4,21 sửa thành 4,29 | Chọn một định nghĩa và ghi cạnh con số; 380 so với 379 seller; Sửa ở ETL (cột is_delivered), không sửa ở BI | – | đã có |
 
 *23 frame trong `03-dashboard.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
 <!-- /SLIDES -->
