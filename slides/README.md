@@ -32,9 +32,10 @@ Mỗi slide là một `frame`: tiêu đề là câu kết luận có số, 1–3
 ## 3. Sửa thông tin nhóm, tên thành viên, giảng viên
 Mở `main.tex`, sửa khối **THÔNG TIN CẦN SỬA** ở đầu file:
 ```latex
-\newcommand{\TenNhom}{[TÊN NHÓM]}
-\newcommand{\ThanhVienA}{[Họ tên 1 -- MSSV]}   % ... đến \ThanhVienD
-\newcommand{\GiangVien}{[Họ tên giảng viên]}
+\newcommand{\TenNhom}{19}
+\newcommand{\MaLop}{174394}
+\newcommand{\ThanhVienA}{Phạm Thị Phương Anh -- 20237414}   % ... đến \ThanhVienE (5 thành viên, xếp theo tên)
+\newcommand{\GiangVien}{ThS. Nguyễn Danh Tú}
 ```
 Các giá trị này xuất hiện ở bìa, chân trang và slide cảm ơn. Cần thêm thành viên thứ năm: thêm `\newcommand{\ThanhVienE}{...}` và thêm `\ThanhVienE` vào dòng `\author{...}` bên dưới. Tên môn và đề tài nằm ở `\title{...}`.
 
