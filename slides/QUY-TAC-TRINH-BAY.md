@@ -84,6 +84,7 @@ ote{}` hoặc vào `99-du-phong.tex` (để trả lời khi được hỏi). Fra
 - **Biểu đồ cho slide luôn vẽ qua `scripts/slide_fig.py`:** hình được tạo đúng bằng kích thước khi chèn (khổ khung đo trên PDF bằng `scripts/do_vung_slide.py`), nên cỡ chữ trong matplotlib bằng cỡ chữ trên slide. Không có tiêu đề trong hình (tiêu đề nằm ở frame). Bản slide nằm ở `figures/slide/`; báo cáo giữ hình cũ. Vẽ lại mọi biểu đồ của bộ chính: `python scripts/slide_fig.py --all` rồi `python scripts/sync_figures.py`.
 - **Sơ đồ chi tiết (như kiến trúc tổng):** tách thành 1 slide tổng quan với ít khối, rồi 1–2 slide phóng to từng phần. Không thu nhỏ cả sơ đồ vào một trang. Cây và mindmap vẽ theo chiều ngang (xem `scripts/p12d_trees.py`).
 - **Vùng nội dung (đo trên PDF):** hình bắt đầu ngay dưới thanh tiêu đề (khe 3–5 pt); nhãn `\muc` nằm trong thanh tiêu đề, bên phải; `\HinhCao` = 175 pt (hình có `\KetLuan`), `\VungCao` = 195 pt (hình không có), `\HinhChu` dành 64% chiều rộng cho hình. Hình không được chạm thanh tiêu đề, nhãn mục hay chân trang (khe tối thiểu 2 pt).
+- **Quy tắc vẽ bằng draw.io (đo từ P12d):** hình đầy khung vẽ khung khoảng **860 × 350 px**, chữ tối thiểu **20 px**, tên khối 22–24 px; hình đặt cạnh chữ (\HinhChu) khung khoảng **550 × 350 px**, chữ tối thiểu 20 px. Không đặt tiêu đề trong hình, viền trắng 10 px, xuất PNG zoom 300%. Không vừa thì tách thành 2 hình (lớp bấm), không thu nhỏ chữ.
 - **Màu theo quy ước:** fact màu cam, dimension màu xanh, nhấn mạnh màu đỏ HUST.
 
 ## 7. Tiêu đề và chữ

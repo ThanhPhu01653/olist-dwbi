@@ -46,7 +46,7 @@ VUNG_CAO_PT = 195.0      # \VungCao
 MIN_PT = 9.3             # smallest text in the drawing (>= 9 pt after insertion even at display scale 0.97)
 MAIN_PT = 10.0           # main text (axis labels, annotations)
 
-BOX_PT = {"full_ket": (LINEWIDTH_PT, HINH_CAO_PT), "full": (LINEWIDTH_PT, VUNG_CAO_PT), "left60": (0.64 * LINEWIDTH_PT, HINH_CAO_PT)}
+BOX_PT = {"full_ket": (LINEWIDTH_PT, HINH_CAO_PT), "full": (LINEWIDTH_PT, VUNG_CAO_PT), "left60": (0.64 * LINEWIDTH_PT, HINH_CAO_PT), "full_ket_ca": (LINEWIDTH_PT, HINH_CAO_PT - 14.0)}
 BOX_IN = {k: (w / 72.0, h / 72.0) for k, (w, h) in BOX_PT.items()}
 
 _PAT = re.compile(r"\\(HinhLon|AnhChup|HinhChu|anh|begin\{AnhKhoanh\})(?:\[[^\]]*\])?\{([^}]+\.(?:png|jpg|jpeg))\}")

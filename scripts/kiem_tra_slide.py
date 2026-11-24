@@ -198,7 +198,40 @@ def check_pdf(pdf: Path, include_backup: bool = False) -> tuple[int, int]:
         first_backup = len(ms)
     man_path = ROOT / "figures" / "slide" / "_manifest.json"
     man = json.loads(man_path.read_text(encoding="utf-8")) if man_path.exists() else {}
-    by_px = {tuple(v["px"]): (k, v) for k, v in man.items()}
+    import hashlib
+    from PIL import Image
+
+    def _md5(im):
+        return hashlib.md5(im.convert("RGB").tobytes()).hexdigest()
+
+    by_hash = {}
+    for k, v in man.items():
+        fp = ROOT / "figures" / "slide" / k
+        if fp.exists():
+            by_hash[_md5(Image.open(fp))] = (k, v)
+    by_px = {}
+    for k, v in man.items():
+        by_px.setdefault(tuple(v["px"]), []).append((k, v))
+    import io
+    def find_manifest(f):
+        try:
+            raw = doc.extract_image(f["xref"])["image"]
+            h = _md5(Image.open(io.BytesIO(raw)))
+            if h in by_hash:
+                return by_hash[h]
+        except Exception:
+            pass
+        c = by_px.get(tuple(f["px"]), [])
+        return c[0] if len(c) == 1 else None
+    nguon_path = ROOT / "figures" / "slide" / "_nguon_chu.json"
+    nguon = json.loads(nguon_path.read_text(encoding="utf-8")) if nguon_path.exists() else {}
+    files_by_px = {}
+    from PIL import Image
+    for fp in list((ROOT / "slides" / "figures").glob("*.png")) + list((ROOT / "slides" / "figures").glob("*.jpg")):
+        try:
+            files_by_px.setdefault(Image.open(fp).size, []).append(fp.name)
+        except Exception:
+            pass
     GAP = 2.0
     FULL_W = 428.0
     HINH_CAO = 175.0
@@ -230,13 +263,28 @@ def check_pdf(pdf: Path, include_backup: bool = False) -> tuple[int, int]:
         for f in m["figs"]:
             x0, y0, x1, y1 = f["bbox"]
             w, h = x1 - x0, y1 - y0
-            hit = by_px.get(tuple(f["px"]))
+            hit = find_manifest(f)
             if hit:
                 nm, v = hit
                 scale = w / (v["w_in"] * 72.0)
                 shown = v["min_pt"] * scale
                 if shown < 9.0 - 0.05:
                     say("LỖI", pg, f"{nm}: chữ nhỏ nhất sau khi chèn {shown:.1f} pt < 9 (cỡ {v['min_pt']:.1f} pt, thu phóng {scale:.2f})")
+            if not hit:
+                # P12e: picture not drawn through slide_fig.py -> estimate = display scale x declared source font (default 10 pt)
+                from PIL import Image
+                nm = next((fn for fn in files_by_px.get(tuple(f["px"]), [])), None)
+                decl = nguon.get(nm, {}) if nm else {}
+                dpi = decl.get("dpi", 200)
+                scale = w / (f["px"][0] / dpi * 72.0)
+                est = decl.get("min_pt", 10.0) * scale
+                loai = decl.get("loai", 1)
+                who = decl.get("ai", "")
+                if est < 9.0 - 0.05:
+                    if loai in (1, 2):
+                        say("LỖI", pg, f"{nm or '?'}: hình do script vẽ, chữ ước tính sau khi chèn {est:.1f} pt < 9 (thu phóng {scale:.2f}); vẽ lại qua slide_fig.py")
+                    else:
+                        say("NÊN", pg, f"{nm or '?'}: ảnh chụp hoặc hình thành viên, chữ ước tính {est:.1f} pt < 9; nhờ {who or 'người phụ trách'} vẽ hoặc chụp lại")
             if w < 0.55 * FULL_W and h >= HINH_CAO - 4 and w < 0.45 * m["w"]:
                 say("NÊN", pg, f"hình hẹp ({w:.0f} pt trên khung {FULL_W:.0f} pt) mà đã chạm trần chiều cao: vẽ lại theo chiều ngang")
     return n_err, n_warn

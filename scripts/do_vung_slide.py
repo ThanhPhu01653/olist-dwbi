@@ -40,10 +40,10 @@ def measure_page(page: "pymupdf.Page") -> dict:
             res["ket"] = [r.x0, r.y0, r.x1, r.y1]
         elif dr.get("fill") is None and dr.get("color") is not None and abs(r.y0 - r.y1) < 0.5 and r.y0 > H * 0.85 and r.width > W * 0.5:
             res["footer_top"] = r.y0  # footer rule
-    for im in page.get_image_info():
+    for im in page.get_image_info(xrefs=True):
         x0, y0, x1, y1 = im["bbox"]
         if y0 > (res["bar_bottom"] or 35) - 1 and y1 < H * 0.96 and (x1 - x0) > 40 and (y1 - y0) > 20:
-            res["figs"].append({"bbox": [x0, y0, x1, y1], "px": [im["width"], im["height"]]})
+            res["figs"].append({"bbox": [x0, y0, x1, y1], "px": [im["width"], im["height"]], "xref": im.get("xref")})
     return res
 
 

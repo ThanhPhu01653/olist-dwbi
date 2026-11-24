@@ -124,7 +124,7 @@ coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.r
 
 \begin{frame}{ETL jobs: sáu giai đoạn, 142 test đạt}
 \muc{3.3 · ETL}
-\HinhChu{3-3_etl_jobs.png}{%
+\HinhChu{slide/3-3_etl_jobs.png}{%
 \small\begin{itemize}
   \item Số dòng lấy từ etl\_log.job\_run (lô đầu và tổng các lô)
 \end{itemize}}
@@ -145,7 +145,13 @@ coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.r
 
 \begin{frame}{Before – after: bảng đơn hàng}
 \muc{3.3 · ETL}
-\HinhLon{3-4-3_before_after_orders.png}
+\begin{BangTC}{llllX}
+\textbf{order\_id} & \textbf{approved\_at} & \textbf{carrier} & \textbf{customer} & \textbf{dq\_flags (sau)} \\ \midrule
+0184d4dd\ldots{} & 2017-09-13 22:17:15 & 2017-09-04 14:05:50 & 2017-09-09 15:12:44 & \texttt{carrier\_\allowbreak{}before\_\allowbreak{}approved} \\
+0922ee16\ldots{} & 2017-07-11 10:55:15 & 2017-07-14 12:41:34 & 2017-07-12 20:49:42 & \texttt{delivered\_\allowbreak{}before\_\allowbreak{}carrier} \\
+12a95a3c\ldots{} & NULL & 2017-02-22 11:23:11 & 2017-03-02 11:09:19 & \texttt{delivered\_\allowbreak{}without\_\allowbreak{}approval} \\
+2aa91108\ldots{} & 2017-09-29 09:07:16 & NULL & 2017-11-20 19:44:47 & \texttt{delivered\_\allowbreak{}without\_\allowbreak{}carrier\_\allowbreak{}date} \\
+\end{BangTC}
 \KetLuan{Ví dụ trước/sau}
 
 \note{[S70] Cùng 99.441 đơn nhưng thêm \texttt{dq\_\allowbreak{}flags}. Tiêu đề trước đây: Trước và sau ETL: bảng đơn hàng có thêm cờ lỗi và kiểu dữ liệu chuẩn}
@@ -153,7 +159,7 @@ coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.r
 
 \begin{frame}{Before – after: 1.000.163 dòng toạ độ thành 19.178 zip}
 \muc{3.3 · ETL}
-\HinhLon{3-4-3_before_after_geolocation.png}
+\TruocSau{Trước (staging)}{zip 01006: 9 điểm\\lat từ $-23{,}55070$ đến $-23{,}55026$}{Sau (ods)}{1 dòng: lat $-23{,}5503$\\lng $-46{,}6362$, sao paulo, SP}
 \KetLuan{Trung vị toạ độ, mode thành phố}
 
 \note{[S72] 42 điểm ngoài Brazil được ghi vào bảng loại. Tiêu đề trước đây: Trước và sau ETL: 1.000.163 dòng toạ độ gom thành 19.178 mã bưu chính}
@@ -397,7 +403,9 @@ fact\_seller\_monthly &  &  \\
 
 \begin{frame}{Data model logic: constellation bốn mart}
 \muc{3.5 · Data model OLAP}
-\HinhLon{3-3-4_constellation.png}
+\only<1>{%
+\HinhLon{slide/3-3-4_constellation_a.png}}\only<2>{%
+\HinhLon{slide/3-3-4_constellation_b.png}}
 \KetLuan{Khung = data mart}
 
 \note{[S54] Fact màu cam, chiều màu xanh đúng yêu cầu trình bày. Tiêu đề trước đây: Mô hình constellation: bốn mart, sáu fact (cam), mười chiều (xanh)}
@@ -405,14 +413,25 @@ fact\_seller\_monthly &  &  \\
 
 \begin{frame}{Data model vật lý: sinh từ cơ sở dữ liệu}
 \muc{3.5 · Data model OLAP}
-\HinhLon{3-5_data_model_vat_ly.png}
+\HinhLon{slide/3-5_data_model_vat_ly.png}
 \KetLuan{16 bảng, fact và dimension khác màu}
 \note{[S141] Mô hình vật lý tổng thể. Tiêu đề trước đây: Data model vật lý sinh từ cơ sở dữ liệu: mọi bảng dw với cột, kiểu, PK và FK}
 \end{frame}
 
 \begin{frame}{Data model vật lý: khoá chính, khoá ngoại, index}
 \muc{3.5 · Data model OLAP}
-\HinhLon{3-3-4_erd_dw.png}
+\only<1>{%
+\HinhLon{slide/3-3-4_erd_dw_fact_order_item.png}}
+\only<2>{%
+\HinhLon{slide/3-3-4_erd_dw_fact_order_fulfillment.png}}
+\only<3>{%
+\HinhLon{slide/3-3-4_erd_dw_fact_payment.png}}
+\only<4>{%
+\HinhLon{slide/3-3-4_erd_dw_fact_review.png}}
+\only<5>{%
+\HinhLon{slide/3-3-4_erd_dw_fact_lead_funnel.png}}
+\only<6>{%
+\HinhLon{slide/3-3-4_erd_dw_fact_seller_monthly.png}}
 \KetLuan{Mọi khoá ngoại NOT NULL, dòng Unknown -1}
 
 \note{[S56] Tiền \texttt{numeric(12,2)}, khoá \texttt{<tên>\_\allowbreak{}key}, ngày \texttt{yyyymmdd}. Tiêu đề trước đây: Data model vật lý: khoá chính theo grain, khoá ngoại có index, 112.650 dòng hàng}
@@ -435,7 +454,13 @@ fact\_seller\_monthly & Periodic snapshot (dày đặc) & 1 seller × 1 tháng &
 
 \begin{frame}{Data mart: mỗi mart một nhóm câu hỏi}
 \muc{3.5 · Data model OLAP}
-\HinhLon{3-5_data_mart.png}
+\begin{BangTC}{lXX}
+\textbf{Mart} & \textbf{View chính} & \textbf{Câu hỏi} \\ \midrule
+\texttt{mart\_\allowbreak{}sales} & \texttt{v\_\allowbreak{}sales\_\allowbreak{}daily}, \texttt{v\_\allowbreak{}sales\_\allowbreak{}state\_\allowbreak{}month}, \texttt{v\_\allowbreak{}category\_\allowbreak{}pareto} & GMV theo ngày, bang, danh mục; Pareto \\
+\texttt{mart\_\allowbreak{}fulfillment} & \texttt{v\_\allowbreak{}fulfillment\_\allowbreak{}order}, \texttt{v\_\allowbreak{}fulfillment\_\allowbreak{}state\_\allowbreak{}month}, \texttt{v\_\allowbreak{}shipping\_\allowbreak{}distance} & lead time, trễ, trạng thái đơn, khoảng cách \\
+\texttt{mart\_\allowbreak{}cx} & \texttt{v\_\allowbreak{}review\_\allowbreak{}vs\_\allowbreak{}delay}, \texttt{v\_\allowbreak{}payment\_\allowbreak{}mix\_\allowbreak{}month} & review theo mức trễ; cơ cấu thanh toán \\
+\texttt{mart\_\allowbreak{}acquisition} & \texttt{v\_\allowbreak{}funnel\_\allowbreak{}by\_\allowbreak{}origin\_\allowbreak{}month} & chuyển đổi MQL theo kênh \\
+\end{BangTC}
 \KetLuan{mart\_sales, mart\_fulfillment, mart\_cx, mart\_acquisition}
 \note{[S142] Data mart. Tiêu đề trước đây: Bốn data mart, mỗi mart gồm fact, dimension và 3--4 câu hỏi phân tích}
 \end{frame}
@@ -481,7 +506,7 @@ Norte & 1.200 & 168.018 & 164.596 & 333.814 \\
 
 \begin{frame}{Hiệu năng: star schema nhanh hơn OLTP 1,0–1,6 lần}
 \muc{3.5 · Data model OLAP}
-\HinhLon{3-5-1_benchmark.png}
+\HinhLon{slide/3-5-1_benchmark.png}
 \KetLuan{Một seller nhanh gấp 9 lần nhờ index; materialized view dưới 1 ms so với 150–750 ms}
 
 \note{[S88] Không phóng đại: giá trị chính của mô hình chiều là truy vấn đơn giản và số liệu nhất quán. Tiêu đề đầy đủ trước khi rút gọn: Star schema chỉ nhanh hơn OLTP 1,0–1,6 lần; tốc độ lớn đến từ materialized view và index Thanh kết luận đầy đủ trước khi rút gọn: Chọn lọc một seller nhanh gấp 9 lần nhờ index; materialized view dưới 1 ms so với 150–750 ms. Tiêu đề trước đây: Star schema chỉ nhanh hơn OLTP 1,0–1,6 lần; tốc độ nhờ materialized view, index}

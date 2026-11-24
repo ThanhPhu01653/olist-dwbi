@@ -6,7 +6,7 @@
 % (A) kiến trúc
 \begin{frame}{Data lakehouse: kiến trúc CDC, Bronze, Silver, Gold}
 \muc{5.1 · Lakehouse}
-\HinhLon{5-1_kien_truc_lakehouse_sl.png}
+\HinhLon{slide/5-1_kien_truc_lakehouse_sl.png}
 \KetLuan{Gold giữ đúng mô hình sao chương 3; đối soát với kho khớp 16/16 bảng}
 \note{[P10-kiến trúc] Hình: docs/LAKEHOUSE.md mục 3.3. Nguồn vẫn là PostgreSQL; mỗi thay đổi được bắt từ log (CDC), qua Kafka vào Bronze, Silver, Gold trên object storage ở dạng bảng Iceberg (Parquet cộng metadata), truy vấn bằng Trino, dựng Gold bằng dbt. Lakehouse không thay kho chương 3 mà là đường thứ hai; phần kết quả chứng minh hai đường cho cùng số liệu. Sơ đồ chi tiết cũ (cho báo cáo): figures/5-1\_kien\_truc\_lakehouse.png. Tiêu đề trước đây: Lakehouse thêm đường thứ hai: từ CDC qua Bronze, Silver đến Gold}
 \end{frame}
