@@ -1,6 +1,6 @@
 # DB1 – Tổng quan và doanh thu
 
-*Loại: Theo dòng thời gian, có dự báo. Người dựng: Người 1 (Phú dựng file gốc, tổng hợp và chỉnh sửa). Dựng theo `powerbi/model.md` (mục 8); công thức DAX ở `powerbi/measures.md`. Cây phân tích: `huong-dan/05-nghiep-vu-nhap.md` mục 6 (hình `figures/2-3_cay_phan_tich_DB1.png`).*
+*Loại: Theo dòng thời gian, có dự báo. Người dựng: Người 1. Dựng theo `powerbi/model.md` (mục 8); công thức DAX ở `powerbi/measures.md`. Cây phân tích: `huong-dan/05-nghiep-vu-nhap.md` mục 6 (hình `figures/2-3_cay_phan_tich_DB1.png`).*
 
 ## 1. Mục tiêu
 

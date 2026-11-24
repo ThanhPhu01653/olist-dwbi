@@ -40,6 +40,7 @@ Nguyên tắc chung:
 | R7 | Slide có hình hoặc bảng thì có `\KetLuan{}`: một câu nói người xem phải nhớ gì, có số |
 | R8 | Không thu nhỏ hình dưới 0,45`\textheight`; mặc định `\HinhCao` là vừa |
 | R9 | Tối đa khoảng 70 từ nhìn thấy trên một trang (không tính bảng) |
+| R10 | Không để slide thưa: chỉ 1–3 gạch đầu dòng ngắn mà không có hình, bảng, thẻ số; thêm thẻ số, bảng, `\LoTrinh` hoặc ghi `% cho-phep: R10 <lý do>` |
 
 Ngoại lệ có lý do: thêm dòng chú thích `% cho-phep: R5 <lý do>` trong frame. Script sẽ bỏ qua mã đó cho frame này.
 
@@ -54,7 +55,17 @@ Ngoại lệ có lý do: thêm dòng chú thích `% cho-phep: R5 <lý do>` trong
 | **E. Trước / sau** | Lỗi và cách sửa, trước và sau tối ưu | `\TruocSau{Trước}{...}{Sau}{...}` + tối đa 2 ý + `\KetLuan{...}` |
 | **F. Gạch đầu dòng** | Giải thích khái niệm, quy trình ngắn | `itemize` tối đa 5 ý, chữ `\normalsize` |
 
+**Lộ trình** (`\LoTrinh{Mục 1, Mục 2, ...}{k}`): hàng ô đánh số nối bằng mũi tên, ô thứ `k` tô màu (`k = 0` không tô); dùng cho trang mở của phần và của khối thay danh sách nối bằng "·". Tối đa 6 ô, mỗi nhãn tối đa 3 từ; kèm một `\KetLuan` nói phần này trả lời câu hỏi gì.
+
 **Hình + chữ** (`\HinhChu`) chỉ dùng khi hình là biểu đồ vẫn đọc được ở 60% chiều rộng và chữ tối đa 3 ý ngắn. Hình luôn ở bên trái.
+
+## Nói cái lớn
+
+- Bộ chính chỉ giữ kết quả, quyết định thiết kế lớn và vấn đề lớn (tối đa 2–3 vấn đề mỗi chương).
+- Lỗi nhỏ, quyết định nhỏ và chi tiết kỹ thuật đưa vào `
+ote{}` hoặc vào `99-du-phong.tex` (để trả lời khi được hỏi). Frame chuyển sang dự phòng được chuyển nguyên, giữ `\muc`.
+- Một ý một slide, nhưng không tách một ý thành nhiều slide một dòng: gộp vào slide cùng ý (bảng kèm 2–3 gạch đầu dòng, thẻ số kèm giải thích, trong giới hạn R5 và R6).
+- `\LoTrinh` chỉ dùng cho trang mở của chương, phần và nhóm nội dung lớn; không dùng cho từng khối nhỏ.
 
 ## 5. Ảnh chụp màn hình
 

@@ -28,16 +28,6 @@ crm.closed\_deals & olist\_closed\_deals\_dataset.csv & 842 & 14 & 0,16 \\
 \note{[S33] Vượt tiêu chí kích thước dữ liệu của môn (trên 100 MB). Bảng chia hai phần (bấm để chuyển): phần 1 là 5 bảng đầu, phần 2 là 6 bảng còn lại và dòng tổng. Tiêu đề trước đây: Hai hệ thống nguồn có 11 bảng, 121 MB và 1.559.764 dòng}
 \end{frame}
 
-\begin{frame}{Quy mô dữ liệu: bảng toạ độ chiếm 64\% số dòng}
-\muc{2.4 · Dữ liệu nguồn}
-\begin{itemize}
-  \item 1.000.163 dòng geolocation
-\end{itemize}
-\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng nguồn (làm nổi dòng geolocation)}
-
-\note{[S34] Đây là bảng cần xử lý nhiều nhất ở ODS. Tiêu đề trước đây: Bảng toạ độ chiếm 64\% số dòng nhưng chỉ đại diện 19.015 mã bưu chính}
-\end{frame}
-
 \begin{frame}{Data flow hiện trạng: hai nguồn tách rời}
 \muc{2.4 · Dữ liệu nguồn}
 \HinhLon{2-4_data_flow_hien_trang.png}
@@ -50,13 +40,6 @@ crm.closed\_deals & olist\_closed\_deals\_dataset.csv & 842 & 14 & 0,16 \\
 \HinhLon{2-4_data_flow_de_xuat.png}
 \KetLuan{Điều phối bằng một lệnh Python, biến đổi bằng PL/pgSQL}
 \note{[S130] Đề xuất: luồng nguồn đến BI. Ý đã chuyển khỏi slide: Bảng lớp, thành phần, công nghệ, tần suất, ghi chú ở báo cáo. Tiêu đề trước đây: Data flow đề xuất: nguồn, staging, ODS, kho, mart và BI, có nhật ký ETL giám sát}
-\end{frame}
-
-\begin{frame}{Tần suất cập nhật: nạp đầu 45.430 đơn, 11 đợt tháng}
-\muc{2.4 · Dữ liệu nguồn}
-\HinhLon{3-4-1_pipeline.png}
-\KetLuan{Tổng 286.144 bản ghi mới qua 11 đợt}
-\note{[S37] Dữ liệu Kaggle là ảnh tĩnh nên nhóm mô phỏng cập nhật. Tiêu đề trước đây: Luồng dữ liệu và tần suất cập nhật: nạp ban đầu 45.430 đơn rồi 11 đợt hằng tháng}
 \end{frame}
 
 \begin{frame}{Tần suất cập nhật: lô hằng ngày là đủ}
@@ -90,13 +73,6 @@ crm.closed\_deals & olist\_closed\_deals\_dataset.csv & 842 & 14 & 0,16 \\
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: ERD đã gạch chân (vẽ lại)}
 
 \note{[S36] Bảng mapping đầy đủ 108 dòng ODS $\rightarrow$ kho nằm ở phụ lục. Tiêu đề trước đây: Các cột được gạch chân trên ERD là cột đi sang kho, kèm ghi chú mapping}
-\end{frame}
-
-\begin{frame}{ERD OLTP: 65 trong 71 cột nguồn đi sang OLAP}
-\muc{2.5 · ERD OLTP}
-\HinhLon{2-5_erd_oltp_gach_chan.png}
-\KetLuan{Gạch chân suy ra từ bảng mapping nguồn $\rightarrow$ ODS $\rightarrow$ kho}
-\note{[S131] ERD nháp tô màu và gạch chân cột dùng sang OLAP. Tiêu đề đầy đủ trước khi rút gọn: ERD tô màu theo nhóm dữ liệu: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP Ý đã chuyển khỏi slide: 6 cột không dùng: geolocation.id, 3 thuộc tính sản phẩm, 2 thuộc tính khai báo của deal. Tiêu đề trước đây: ERD tô màu theo nhóm: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP}
 \end{frame}
 
 \begin{frame}{OLTP $\rightarrow$ OLAP: bảng nguồn nuôi dimension và fact}

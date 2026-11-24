@@ -278,7 +278,7 @@ def build(key: str) -> str:
     d = DB[key]
     srcs = [SRC[s] for s in d["sources"]]
     md = [f"# {d['title']}", "",
-          f"*Loại: {d['kind']}. Người dựng: {d['builder']} (Phú dựng file gốc, tổng hợp và chỉnh sửa). Dựng theo `powerbi/model.md` (mục 8); công thức DAX ở `{M}`. Cây phân tích: `huong-dan/05-nghiep-vu-nhap.md` mục 6 (hình `figures/2-3_cay_phan_tich_{key}.png`).*", "",
+          f"*Loại: {d['kind']}. Người dựng: {d['builder']}. Dựng theo `powerbi/model.md` (mục 8); công thức DAX ở `{M}`. Cây phân tích: `huong-dan/05-nghiep-vu-nhap.md` mục 6 (hình `figures/2-3_cay_phan_tich_{key}.png`).*", "",
           "## 1. Mục tiêu", "", d["goal"], "",
           "## 2. Câu hỏi trả lời, người dùng và tần suất xem", ""]
     qs = [q for s in srcs for q in s["questions"]]
@@ -372,7 +372,7 @@ def checklist_how(key, d, slicers, drills):
 
 README = """# Hướng dẫn dựng dashboard: DB1–DB4 và checklist chung
 
-Bộ dashboard Power BI gồm **4 dashboard** (gộp từ 7 dashboard ở bản trước, quyết định ngày 13/11). Mỗi dashboard thuộc một loại mà môn học yêu cầu và do một thành viên dựng; Phú làm file `.pbix` gốc, tổng hợp và chỉnh sửa.
+Bộ dashboard Power BI gồm **4 dashboard** (gộp từ 7 dashboard ở bản trước). Mỗi dashboard thuộc một loại mà môn học yêu cầu và do một thành viên dựng trên cùng một file `.pbix` gốc, sau đó ghép thành bộ chung.
 
 | Dashboard | Loại | Người dựng | Hướng dẫn |
 | --- | --- | --- | --- |

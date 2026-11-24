@@ -147,6 +147,11 @@ def check_frame(title: str, body: str) -> list[tuple[str, str, str]]:
     words = len(visible_text(re.sub(r"\\begin\{(tabular|tabularx|BangTC)\}.*?\\end\{\1\}", "", b, flags=re.S)).split())
     if words > MAX_WORDS:
         add("NÊN", "R9", f"{words} từ trên trang > {MAX_WORDS}: chuyển bớt sang ghi chú người nói (\\note)")
+    # R10 (P12b): slide thưa = không có hình, bảng, thẻ số, khung chờ; chỉ có danh sách tối đa 3 mục, mỗi mục dưới 90 ký tự
+    if not re.search(r"\\(HinhLon|AnhChup|HinhChu|includegraphics|HangSo|TruocSau|khungchen|anh|LoTrinh)\b|\\begin\{(AnhKhoanh|BangTC|tabular|tikzpicture)\}", b):
+        items = re.findall(r"\\item\s+([^\n]*)", b)
+        if 1 <= len(items) <= 3 and all(len(visible_text(x)) < 90 for x in items):
+            add("NÊN", "R10", f"slide thưa: chỉ {len(items)} gạch đầu dòng ngắn, không hình, bảng hay thẻ số; thêm thẻ số, bảng hoặc hình, hoặc ghi lý do bằng % cho-phep: R10")
     return msgs
 
 

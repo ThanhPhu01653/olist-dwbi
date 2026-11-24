@@ -4,11 +4,9 @@
 
 \begin{frame}{Kết quả đạt được: kho chạy từ đầu đến cuối}
 \muc{6 · Kết luận}
-\HangSo[4]{\So{99.441}{đơn hàng}\hfill\So{16}{bảng chiều và fact}\hfill\So{17}{view mart}\hfill\So{136}{kiểm thử đạt}}
-\begin{itemize}
-  \item 10 chiều, 6 fact, 17 view mart; GMV 13,49 triệu BRL
-\end{itemize}
-\note{[S111] Tổng kết các con số chính của dự án: 10 chiều, 6 fact, 17 view mart; 99.441 đơn; GMV 13,49 triệu BRL; 136 kiểm thử đạt; bốn dashboard. Sơ đồ chòm sao (constellation) của kho nằm ở slide mở đầu. Tiêu đề trước đây: Kết quả: kho chạy được từ đầu đến cuối, 136 kiểm thử đạt, bốn dashboard}
+\HangSo[4]{\So{99.441}{đơn trong nguồn}\hfill\So{13,49 triệu}{GMV, 98.199 đơn}\hfill\So{16}{bảng chiều và fact}\hfill\So{136}{kiểm thử đạt}}
+\KetLuan{Kho chạy từ đầu đến cuối: 10 chiều, 6 fact, 17 view mart, 4 dashboard}
+\note{[S111] Tổng kết các con số chính của dự án: 10 chiều, 6 fact, 17 view mart; 99.441 đơn; GMV 13,49 triệu BRL; 136 kiểm thử đạt; bốn dashboard. Sơ đồ chòm sao (constellation) của kho nằm ở slide mở đầu. Tiêu đề trước đây: Kết quả: kho chạy được từ đầu đến cuối, 136 kiểm thử đạt, bốn dashboard Ý đã chuyển khỏi slide: 10 chiều, 6 fact, 17 view mart; GMV 13,49 triệu BRL. GMV tính trên 98.199 đơn không bị hủy; 99.441 là số đơn trong nguồn. Ý đã chuyển khỏi slide: 10 chiều, 6 fact, 17 view mart; GMV 13,49 triệu BRL.}
 \end{frame}
 
 \begin{frame}{Đối chiếu với yêu cầu phân tích}
@@ -49,11 +47,10 @@ Thu hút seller & DB4 & MQLs, Won deals, MQL to won rate, Avg days to close \\
 \textbf{Vấn đề} & \textbf{Con số} & \textbf{Cách xử lý} \\ \midrule
 Một KPI có hai con số & GMV 13,49 so với 13,59 triệu; 380 so với 379 seller & chọn một định nghĩa, ghi cạnh con số \\
 Điểm review đúng hạn sai & 4,21 rồi sửa thành 4,29 & sửa ở ETL (cột \texttt{is\_delivered}), không sửa ở BI \\
-Khoá thay thế đổi giữa các lần dựng & hai bản dựng lệch khoá & chèn theo \texttt{ORDER BY} khoá tự nhiên \\
-Dòng bị loại & 42 điểm toạ độ ngoài Brazil & ghi \texttt{etl\_log.rejected\_rows}, không xóa âm thầm \\
+Silver thiếu đơn mà log không báo & 24.765 so với 45.971 đơn & đối soát Silver với nguồn; sửa bằng \texttt{localCheckpoint()} \\
 \end{BangTC}
 \KetLuan{Đối soát với nguồn bắt được lỗi mà log không thấy}
-\note{[P12] Bài học theo mạch vấn đề, con số, cách xử lý. Nguồn: các slide Giới hạn dữ liệu (2.3), ETL (3.3) và lakehouse (5.1). Mô hình chiều đáng dùng vì nhất quán; tốc độ đến từ materialized view và index.}
+\note{[P12] Bài học theo mạch vấn đề, con số, cách xử lý. Nguồn: các slide Giới hạn dữ liệu (2.3), ETL (3.3) và lakehouse (5.1). Bài học nhỏ hơn, để trả lời khi được hỏi: khoá thay thế đổi giữa các lần dựng (hai bản dựng lệch khoá, chèn theo ORDER BY khoá tự nhiên); 42 điểm toạ độ ngoài Brazil bị loại và ghi etl\_log.rejected\_rows, không xoá âm thầm. Mô hình chiều đáng dùng vì nhất quán; tốc độ đến từ materialized view và index.}
 \end{frame}
 
 \begin{frame}{Bài học làm việc nhóm}
@@ -64,13 +61,16 @@ Dòng bị loại & 42 điểm toạ độ ngoài Brazil & ghi \texttt{etl\_log.
 
 \begin{frame}{Hạn chế và hướng phát triển}
 \muc{6 · Kết luận}
-\begin{itemize}
-  \item Hạn chế: mô phỏng cập nhật chỉ thêm bản ghi mới; cơ chế thử lại mồ côi mới được chứng minh bằng test
-  \item Hướng phát triển: lưu trạng thái trung gian của đơn
-  \item Hướng phát triển: PostGIS cho tính toán địa lý
-  \item Hướng phát triển: lịch chạy tự động
-\end{itemize}
-\note{[S113] Nhóm nói rõ giới hạn để kết quả đáng tin. Tiêu đề trước đây: Hạn chế còn lại và ba hướng phát triển: trạng thái đơn, PostGIS, lịch chạy}
+\begin{BangTC}{XX}
+\textbf{Hạn chế} & \textbf{Hướng phát triển} \\ \midrule
+Dữ liệu năm 2016 rất thưa, tháng 09/2018 bị cắt & Bổ sung các kỳ còn thiếu khi có dữ liệu \\
+Không có chi phí marketing; ngày hứa giao quá rộng & Thu thập chi phí marketing theo kênh \\
+Mỗi đơn chỉ giữ trạng thái mới nhất & Lưu lịch sử trạng thái đơn \\
+Kho chạy theo lô bằng tay; lakehouse chạy trong 4 GB RAM & Lịch chạy tự động \\
+Khoảng cách tính bằng công thức; chưa dùng AI trong Power BI & PostGIS; AI trong Power BI (xem mục 5) \\
+\end{BangTC}
+\KetLuan{Hạn chế của dữ liệu và của cách vận hành, kèm hướng khắc phục}
+\note{[S113] Nhóm nói rõ giới hạn để kết quả đáng tin. Tiêu đề trước đây: Hạn chế còn lại và ba hướng phát triển: trạng thái đơn, PostGIS, lịch chạy Ý trước đây: mô phỏng cập nhật chỉ thêm bản ghi mới; cơ chế thử lại dòng mồ côi mới được chứng minh bằng test (kịch bản trong transaction rồi hoàn tác). Số: 2016 chỉ 329 đơn, 09–10/2018 chỉ 20 đơn; ngày hứa giao trung bình 24,4 ngày so với thực tế 12,6 ngày. Ý đã chuyển khỏi slide: Hạn chế: mô phỏng cập nhật chỉ thêm bản ghi mới; cơ chế thử lại mồ côi mới được chứng minh bằng test; Hướng phát triển: lưu trạng thái trung gian của đơn; Hướng phát triển: PostGIS cho tính toán địa lý; Hướng phát triển: lịch chạy tự động.}
 \end{frame}
 
 \begin{hustdarkframe}

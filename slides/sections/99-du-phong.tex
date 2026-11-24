@@ -445,3 +445,618 @@ Open-Meteo & 54 & 29.821 & 0,59 \\
 
 \note{[S109] Nhóm không cài PostGIS nên chọn giải pháp thuần SQL. Tiêu đề đầy đủ trước khi rút gọn: Haversine thuần đủ cho khoảng cách điểm–điểm; PostGIS cần khi truy vấn bán kính hoặc đa giác Tiêu đề trước đây: Haversine đủ cho khoảng cách điểm–điểm; PostGIS khi cần bán kính hoặc đa giác}
 \end{frame}
+
+%% ===== P12b: chuyển từ bộ chính, nhóm khảo sát (01a) =====
+\begin{frame}[noprogressbar,noframenumbering]{Quy trình nghiệp vụ: hai hệ thống rời nhau}
+\muc{2.1 · Nghiệp vụ}
+\HinhLon[\dimexpr\HinhCao-4pt\relax]{3-2-4_erd_oltp.png}
+\KetLuan{Hai hệ thống chỉ gặp nhau ở \texttt{seller\_\allowbreak{}id}}
+\note{[S16] Giá trị của kho là tích hợp để trả lời câu hỏi xuyên quy trình. Tiêu đề đầy đủ trước khi rút gọn: Bài toán: hiểu hiệu suất đơn hàng và hiệu quả thu hút seller từ hai hệ thống rời nhau Tiêu đề trước đây: Bài toán: hiểu hiệu suất đơn hàng và thu hút seller từ hai hệ thống rời nhau}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Quy trình nghiệp vụ: kho phục vụ hai quy trình}
+\muc{2.1 · Nghiệp vụ}
+\HinhLon{3-3-4_constellation.png}
+\KetLuan{Chung chiều seller và ngày}
+\note{[S18] Chiều seller là "chiếc cầu" nối hai quy trình. Tiêu đề trước đây: Kho phục vụ hai quy trình nghiệp vụ: xử lý đơn và thu hút seller}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Quy trình nghiệp vụ: đơn hàng qua bốn mốc}
+\muc{2.1 · Nghiệp vụ}
+\HinhLon{3-2-1_bpmn_don_hang.png}
+\KetLuan{Đặt $\rightarrow$ duyệt $\rightarrow$ bàn giao vận chuyển $\rightarrow$ giao $\rightarrow$ đánh giá; 1.234 đơn Failed (1,24\%)}
+\note{[S19] BPMN nháp; [nhóm vẽ lại bằng draw.io]. Tiêu đề trước đây: Đơn hàng đi qua bốn mốc thời gian và có thể bị hủy hoặc không khả dụng}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Yêu cầu theo chủ điểm: bán hàng}
+\muc{2.2 · Yêu cầu phân tích}
+\begin{itemize}
+  \item GMV 13,49 triệu BRL; AOV 137,42 BRL
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng chủ điểm bán hàng (3.2.2)}
+
+\note{[S26] GMV không tính đơn hủy để phản ánh doanh thu thật. Tiêu đề trước đây: Bán hàng: GMV cần tăng trưởng MoM, YoY và quy luật 80/20}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Yêu cầu theo chủ điểm: xử lý đơn}
+\muc{2.2 · Yêu cầu phân tích}
+\begin{itemize}
+  \item Đúng hạn 93,2\% nhưng hứa 24,4 ngày, thực tế 12,6 ngày
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng chủ điểm xử lý đơn}
+
+\note{[S27] Vì ngày dự kiến rất rộng nên nhóm thêm KPI ngày hứa so với ngày giao thực tế. Tiêu đề đầy đủ trước khi rút gọn: Xử lý đơn: không chỉ hỏi "đúng hạn không" mà hỏi "hứa so với thực tế chênh bao nhiêu" Tiêu đề trước đây: Xử lý đơn: hỏi "hứa so với thực tế chênh bao nhiêu" thay vì "đúng hạn không"}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Yêu cầu theo chủ điểm: trải nghiệm khách}
+\muc{2.2 · Yêu cầu phân tích}
+\HinhLon{3-3-1_delay_vs_review.png}
+\KetLuan{Điểm 4,29 khi giao sớm, 1,70 khi trễ trên 7 ngày}
+\note{[S28] Đây là phát hiện trung tâm của DB2 (trang trải nghiệm khách). Tiêu đề trước đây: Trải nghiệm khách: giao trễ là yếu tố kéo điểm review xuống mạnh nhất}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Yêu cầu theo chủ điểm: thu hút seller}
+\muc{2.2 · Yêu cầu phân tích}
+\HinhLon{3-3-1_funnel_win_rate_by_origin.png}
+\KetLuan{Tỷ lệ chốt theo kênh từ 2,7\% đến 16,7\%}
+\note{[S29] Luôn nêu cỡ mẫu vì nhiều kênh chỉ có vài chục seller. Tiêu đề đầy đủ trước khi rút gọn: Thu hút seller: câu hỏi là kênh nào chuyển đổi tốt và seller từ funnel bán ra sao Tiêu đề trước đây: Thu hút seller: kênh nào chuyển đổi tốt và seller từ funnel bán ra sao}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Mô hình kinh doanh: giá trị đề xuất, phí vận chuyển 16,6\%}
+\muc{2.1 · Nghiệp vụ}
+\HinhLon{3-2-3_business_model_canvas.png}
+\KetLuan{Giá trị cho seller và cho người mua; chi phí chính là vận chuyển và hậu cần}
+\note{[S15] GMV 13,49 triệu BRL, phí vận chuyển 2,24 triệu BRL. Tiêu đề đầy đủ trước khi rút gọn: Giá trị đề xuất: một hợp đồng, nhiều sàn; dữ liệu cho thấy phí vận chuyển bằng 16,6\% giá hàng Tiêu đề trước đây: Giá trị đề xuất: một hợp đồng, nhiều sàn; phí vận chuyển bằng 16,6\% giá hàng}
+\end{frame}
+
+%% ===== P12b: chuyển từ bộ chính, nhóm dữ liệu nguồn (01b) =====
+\begin{frame}[noprogressbar,noframenumbering]{Quy mô dữ liệu: bảng toạ độ chiếm 64\% số dòng}
+\muc{2.4 · Dữ liệu nguồn}
+\begin{itemize}
+  \item 1.000.163 dòng geolocation
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng nguồn (làm nổi dòng geolocation)}
+
+\note{[S34] Đây là bảng cần xử lý nhiều nhất ở ODS. Tiêu đề trước đây: Bảng toạ độ chiếm 64\% số dòng nhưng chỉ đại diện 19.015 mã bưu chính}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Tần suất cập nhật: nạp đầu 45.430 đơn, 11 đợt tháng}
+\muc{2.4 · Dữ liệu nguồn}
+\HinhLon{3-4-1_pipeline.png}
+\KetLuan{Tổng 286.144 bản ghi mới qua 11 đợt}
+\note{[S37] Dữ liệu Kaggle là ảnh tĩnh nên nhóm mô phỏng cập nhật. Tiêu đề trước đây: Luồng dữ liệu và tần suất cập nhật: nạp ban đầu 45.430 đơn rồi 11 đợt hằng tháng}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{ERD OLTP: 65 trong 71 cột nguồn đi sang OLAP}
+\muc{2.5 · ERD OLTP}
+\HinhLon{2-5_erd_oltp_gach_chan.png}
+\KetLuan{Gạch chân suy ra từ bảng mapping nguồn $\rightarrow$ ODS $\rightarrow$ kho}
+\note{[S131] ERD nháp tô màu và gạch chân cột dùng sang OLAP. Tiêu đề đầy đủ trước khi rút gọn: ERD tô màu theo nhóm dữ liệu: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP Ý đã chuyển khỏi slide: 6 cột không dùng: geolocation.id, 3 thuộc tính sản phẩm, 2 thuộc tính khai báo của deal. Tiêu đề trước đây: ERD tô màu theo nhóm: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP}
+\end{frame}
+
+%% ===== P12b: chuyển từ bộ chính, nhóm khám phá dữ liệu (02a) =====
+\begin{frame}[noprogressbar,noframenumbering]{Chất lượng dữ liệu}
+\muc{3.1 · Khám phá dữ liệu}
+\LoTrinh{Chất lượng, Phân bố, Đặc trưng, Tương quan, Khuynh hướng mùa vụ}{1}
+\KetLuan{Dữ liệu có lỗi nào cần xử lý trước khi nạp kho?}
+\note{Mục trong checklist của thầy. Nội dung khối: Loại lỗi và tỷ lệ ô rỗng; toạ độ trùng và tên thành phố lệch dấu. Ý đã chuyển khỏi slide: Loại lỗi và tỷ lệ ô rỗng; Toạ độ trùng và tên thành phố lệch dấu.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Phân bố}
+\muc{3.1 · Khám phá dữ liệu}
+\LoTrinh{Chất lượng, Phân bố, Đặc trưng, Tương quan, Khuynh hướng mùa vụ}{2}
+\KetLuan{Giá, phí vận chuyển và thời gian phân bố ra sao?}
+\note{Mục trong checklist của thầy. Nội dung khối: Histogram giá, phí vận chuyển, lead time; phân bố theo thời gian; Pareto theo danh mục và theo seller. Ý đã chuyển khỏi slide: Histogram giá, phí vận chuyển, lead time; Phân bố theo thời gian; Pareto theo danh mục và theo seller.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Thống kê đặc trưng}
+\muc{3.1 · Khám phá dữ liệu}
+\LoTrinh{Chất lượng, Phân bố, Đặc trưng, Tương quan, Khuynh hướng mùa vụ}{3}
+\KetLuan{Mean và median của các biến chênh nhau bao nhiêu?}
+\note{Mục trong checklist của thầy. Nội dung khối: Mean, median, độ lệch, nhọn; đối chiếu Python với Excel ToolPak; ngoại lai IQR và Isolation Forest. Ý đã chuyển khỏi slide: Mean, median, độ lệch, nhọn; Đối chiếu Python với Excel ToolPak; Ngoại lai: IQR và Isolation Forest.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Tương quan}
+\muc{3.1 · Khám phá dữ liệu}
+\LoTrinh{Chất lượng, Phân bố, Đặc trưng, Tương quan, Khuynh hướng mùa vụ}{4}
+\KetLuan{Biến nào đi cùng giao trễ và phí vận chuyển?}
+\note{Mục trong checklist của thầy. Nội dung khối: Fact với fact: khoảng cách, phí, lead time; dimension với fact: giao trễ, review, vùng; dimension với dimension: Cramér's V; funnel và bán hàng. Ý đã chuyển khỏi slide: Fact với fact: khoảng cách, phí vận chuyển, lead time; Dimension với fact: giao trễ, review, vùng; Dimension với dimension: Cramér's V; Funnel và bán hàng.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Khuynh hướng và mùa vụ}
+\muc{3.1 · Khám phá dữ liệu}
+\LoTrinh{Chất lượng, Phân bố, Đặc trưng, Tương quan, Khuynh hướng mùa vụ}{5}
+\KetLuan{Số đơn có xu hướng và mùa vụ không?}
+\note{Mục trong checklist của thầy. Nội dung khối: STL theo ngày và theo tháng; đỉnh Black Friday. Ý đã chuyển khỏi slide: STL theo ngày và theo tháng; Đỉnh Black Friday.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Phân bố theo thời gian: hai đầu rất thưa}
+\muc{3.1 · Khám phá dữ liệu · Phân bố}
+\HinhLon{3-3-1_orders_per_month.png}
+\KetLuan{2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn}
+\note{[S42] Quyết định lọc thời gian đưa vào Power BI. Tiêu đề trước đây: Dữ liệu đơn dùng được là 01/2017–08/2018, hai đầu rất thưa Phạm vi dữ liệu dùng cho xu hướng: 01/2017–08/2018 chiếm 99,6\% số đơn. Bộ lọc InWindow trong Power BI cố định cửa sổ này cho DB1–DB4.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Phân bố: 540 seller tạo 80\% GMV (Pareto)}
+\muc{3.1 · Khám phá dữ liệu · Phân bố}
+\HinhLon{3-3-1_pareto_seller.png}
+\KetLuan{Doanh thu không phụ thuộc vài seller}
+\note{[S44] Khác với danh mục, rủi ro tập trung vào seller thấp. Tiêu đề trước đây: Seller thì phân tán hơn: 540 seller tạo 80\% GMV, 5 seller lớn nhất chỉ 7,7\%}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Khuynh hướng và mùa vụ: STL theo tháng}
+\muc{3.1 · Khám phá dữ liệu · Khuynh hướng và mùa vụ}
+\HinhLon{3-1_stl_monthly.png}
+\KetLuan{Theo tháng: xu hướng 0,948, mùa vụ 0,800 nhưng chỉ có 20 điểm}
+\note{[P12] Phân rã STL số đơn theo tháng (chu kỳ 12 tháng); số lấy từ handoff/2026-11-14-P8-eda.md.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Chất lượng dữ liệu: tỷ lệ ô rỗng theo cột}
+\muc{3.1 · Khám phá dữ liệu · Chất lượng dữ liệu}
+\HinhLon{3-3-1_null_heatmap.png}
+\KetLuan{Cột review và ngày giao có nhiều ô rỗng hợp lệ}
+\note{[S39] Ô rỗng của ngày giao đa phần là đơn chưa giao hoặc bị hủy. Tiêu đề trước đây: Tỷ lệ ô rỗng cho thấy cột nào cần điền unknown}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Chất lượng dữ liệu: bảng toạ độ bẩn nhất}
+\muc{3.1 · Khám phá dữ liệu · Chất lượng dữ liệu}
+\HinhLon{3-4-3_before_after_geolocation.png}
+\KetLuan{7,3\% tên thành phố lệch dấu; 42 điểm ngoài lãnh thổ Brazil}
+\note{[S40] Giải pháp: lọc khung Brazil, lấy trung vị toạ độ và mode tên thành phố theo zip. Tiêu đề đầy đủ trước khi rút gọn: Bảng toạ độ bẩn nhất: 93,5\% mã bưu chính có nhiều toạ độ, 26,2\% dòng trùng hoàn toàn Tiêu đề trước đây: Toạ độ bẩn nhất: 93,5\% mã bưu chính nhiều toạ độ, 26,2\% dòng trùng hoàn toàn}
+\end{frame}
+
+%% ===== P12b: chuyển từ bộ chính, nhóm kiến trúc, ETL, model (02b) =====
+\begin{frame}[noprogressbar,noframenumbering]{Kiến trúc: luồng sáu lớp đến bốn dashboard}
+\muc{3.2 · Kiến trúc}
+\HinhLon{3-4-1_pipeline.png}
+\KetLuan{oltp/crm $\rightarrow$ staging $\rightarrow$ ODS $\rightarrow$ kho $\rightarrow$ data mart $\rightarrow$ Power BI; etl\_log giám sát}
+
+\note{[S49] Mỗi lớp có một việc và một cách kiểm tra riêng. Tiêu đề trước đây: Kiến trúc sáu lớp từ hai hệ thống nguồn đến bốn dashboard}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Kiến trúc: tách lớp giúp đối soát số dòng}
+\muc{3.2 · Kiến trúc}
+\begin{itemize}
+  \item Chỗ nào hỏng biết ngay lớp nào
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng đối soát (handoff P2)}
+
+\note{[S50] Không phải lấy lại dữ liệu từ nguồn khi ODS lỗi. Tiêu đề trước đây: Tách lớp giúp đối soát: staging = ODS + dòng bị loại cho mọi bảng}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Tóm tắt ETL: extract chỉ lấy dòng chưa có}
+\muc{3.3 · ETL}
+\HinhLon{3-4-1_pipeline.png}
+\KetLuan{Chế độ full 52 giây; incremental khoảng 22 giây}
+
+\note{[S68] MQL và deal không dùng watermark ngày vì deal có thể đến trước MQL. Tiêu đề trước đây: Extract chỉ lấy dòng chưa có: đơn theo watermark, bảng nhỏ theo khoá}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{ETL jobs: SCD2 nạp bằng window function}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item \texttt{lag(zip)} so với đơn trước; \texttt{effective\_\allowbreak{}from} = ngày mua
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: đoạn SQL (Phụ lục B, \texttt{code/scd2\_\allowbreak{}dim\_\allowbreak{}customer.sql})}
+
+\note{[S75] Khoá thay thế cũ không đổi khi chạy lại. Tiêu đề trước đây: SCD2 được nạp bằng window function: mỗi lần zip đổi mở một phiên bản mới}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{ETL jobs: nạp fact, khoảng thời gian âm thành NULL}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item 1.359 đơn có \texttt{handling\_\allowbreak{}days} âm (bàn giao trước khi duyệt) được đặt NULL và đếm
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng \texttt{fact\_\allowbreak{}load\_\allowbreak{}issue}}
+
+\note{[S76] Tra không thấy thì dùng -1 và ghi nhận. Tiêu đề trước đây: Nạp fact: tra khoá theo phiên bản có hiệu lực, khoảng thời gian âm thành NULL}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{ETL jobs: dòng mồ côi được thử lại ở đợt sau}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item Kịch bản deal \texttt{b91cf88…} trên bản sao trong giao dịch rồi hoàn tác
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: sơ đồ 3 bước (loại $\rightarrow$ cha đến $\rightarrow$ nạp lại)}
+
+\note{[S81] Trong 11 đợt thật không có dòng mồ côi nào; nhóm nói thẳng điều này. Tiêu đề đầy đủ trước khi rút gọn: Dòng mồ côi được thử lại ở đợt sau, nhưng cơ chế mới được chứng minh bằng kiểm thử Tiêu đề trước đây: Dòng mồ côi được thử lại ở đợt sau; cơ chế mới được chứng minh bằng kiểm thử}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Before – after: sản phẩm và seller}
+\muc{3.3 · ETL}
+\only<1>{%
+\HinhLon{3-4-3_before_after_products.png}
+\KetLuan{\texttt{*\_\allowbreak{}lenght} $\rightarrow$ \texttt{*\_\allowbreak{}length}; thành phố bỏ dấu, chữ thường}}
+\only<2>{%
+\HinhLon{3-4-3_before_after_sellers.png}
+\KetLuan{\texttt{*\_\allowbreak{}lenght} $\rightarrow$ \texttt{*\_\allowbreak{}length}; thành phố bỏ dấu, chữ thường}}
+
+\note{[S71] Hai hình cùng một slide. Bấm để chuyển giữa hai hình (hình 1, hình 2). Tiêu đề trước đây: Trước và sau ETL: sản phẩm và seller được chuẩn hóa tên cột và thành phố}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Before – after: MQL và deal có giá trị trống}
+\muc{3.3 · ETL}
+\only<1>{%
+\HinhLon{3-4-3_before_after_mql.png}
+\KetLuan{\texttt{origin} rỗng $\rightarrow$ \texttt{unknown}; doanh thu khai báo 0 gắn cờ}}
+\only<2>{%
+\HinhLon{3-4-3_before_after_closed_deals.png}
+\KetLuan{\texttt{origin} rỗng $\rightarrow$ \texttt{unknown}; doanh thu khai báo 0 gắn cờ}}
+
+\note{[S73] Không đoán giá trị, chỉ đánh dấu. Bấm để chuyển giữa hai hình (hình 1, hình 2). Tiêu đề trước đây: Trước và sau ETL: MQL và deal có giá trị trống thành unknown}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Nạp tăng dần: mỗi đợt 20–26 giây, kiểm thử hơn một nửa}
+\muc{3.3 · ETL}
+\only<1>{%
+\begin{BangTC}{cl>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
+\textbf{Đợt} & \textbf{Đến tháng} & \textbf{Bản ghi mới ở nguồn} & \textbf{ODS chèn} & \textbf{ODS loại} \\ \midrule
+1 & 2018-01 & 38.768 & 38.768 & 0 \\
+2 & 2018-02 & 35.979 & 35.979 & 0 \\
+3 & 2018-03 & 38.659 & 38.659 & 0 \\
+4 & 2018-04 & 37.515 & 37.515 & 0 \\
+5 & 2018-05 & 37.079 & 37.079 & 0 \\
+6 & 2018-06 & 32.035 & 32.035 & 0 \\
+\end{BangTC}
+\KetLuan{Bảng 11 đợt: bản ghi mới, thời gian}}
+\only<2>{%
+\begin{BangTC}{cl>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
+\textbf{Đợt} & \textbf{Đến tháng} & \textbf{Bản ghi mới ở nguồn} & \textbf{ODS chèn} & \textbf{ODS loại} \\ \midrule
+7 & 2018-07 & 32.489 & 32.489 & 0 \\
+8 & 2018-08 & 33.490 & 33.490 & 0 \\
+9 & 2018-09 & 87 & 87 & 0 \\
+10 & 2018-10 & 37 & 37 & 0 \\
+11 & 2018-11 & 6 & 6 & 0 \\
+\end{BangTC}
+\KetLuan{Bảng 11 đợt: bản ghi mới, thời gian}}
+\only<3>{%
+\begin{BangTC}{c>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
+\textbf{Đợt} & \textbf{DW chèn / cập nhật} & \textbf{Giây} \\ \midrule
+1 & 40.535 / 216 & 21,9 \\
+2 & 37.817 / 251 & 24,0 \\
+3 & 40.668 / 312 & 22,8 \\
+4 & 39.700 / 486 & 24,6 \\
+5 & 39.402 / 446 & 24,8 \\
+6 & 34.594 / 467 & 25,5 \\
+\end{BangTC}
+\KetLuan{Bảng 11 đợt: bản ghi mới, thời gian}}
+\only<4>{%
+\begin{BangTC}{c>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
+\textbf{Đợt} & \textbf{DW chèn / cập nhật} & \textbf{Giây} \\ \midrule
+7 & 35.245 / 431 & 25,6 \\
+8 & 36.399 / 365 & 27,6 \\
+9 & 3.195 / 23 & 21,9 \\
+10 & 54 / 21 & 21,5 \\
+11 & 18 / 6 & 21,3 \\
+\end{BangTC}
+\KetLuan{Bảng 11 đợt: bản ghi mới, thời gian}}
+\only<5>{%
+\begin{BangTC}{c>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
+\textbf{Đợt} & \textbf{MQL} & \textbf{Deal} & \textbf{Seller có đơn} & \textbf{Đơn} \\ \midrule
+1 & 3.143 & 76 & 3 & 52.699 \\
+2 & 4.171 & 189 & 30 & 59.427 \\
+3 & 5.345 & 336 & 55 & 66.638 \\
+4 & 6.697 & 543 & 117 & 73.577 \\
+5 & 8.000 & 665 & 198 & 80.450 \\
+6 & 8.000 & 722 & 280 & 86.617 \\
+\end{BangTC}
+\KetLuan{Bảng 11 đợt: bản ghi mới, thời gian}}
+\only<6>{%
+\begin{BangTC}{c>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
+\textbf{Đợt} & \textbf{MQL} & \textbf{Deal} & \textbf{Seller có đơn} & \textbf{Đơn} \\ \midrule
+7 & 8.000 & 759 & 340 & 92.909 \\
+8 & 8.000 & 792 & 379 & 99.421 \\
+9 & 8.000 & 815 & 379 & 99.437 \\
+10 & 8.000 & 836 & 379 & 99.441 \\
+11 & 8.000 & 842 & 379 & 99.441 \\
+\end{BangTC}
+\KetLuan{Bảng 11 đợt: bản ghi mới, thời gian}}
+\note{[S78] Đợt 1–8 mang 99,95\% bản ghi mới; ba đợt cuối mang nốt 20 đơn và 50 deal. Bấm để chuyển giữa 6 phần của bảng. Tiêu đề trước đây: Mỗi đợt chạy 20–26 giây, trong đó kiểm thử chiếm hơn một nửa}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Nạp tăng dần: funnel lấp đầy dần}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item Số liệu mỗi đợt từ \texttt{batch\_\allowbreak{}metrics}
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: biểu đồ đường từ \texttt{batch\_\allowbreak{}metrics} (bảng giám sát ở mục 3.3)}
+
+\note{[S79] Đây là điểm trình bày của nạp tăng dần. Tiêu đề trước đây: Funnel lấp đầy dần: MQL 2.002 $\rightarrow$ 8.000, deal 3 $\rightarrow$ 842, seller có đơn 0 $\rightarrow$ 379}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Nhật ký ETL: \texttt{etl\_log} theo từng lô}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item \texttt{job\_\allowbreak{}run}, \texttt{rejected\_\allowbreak{}rows}, \texttt{dq\_\allowbreak{}check}, \texttt{batch\_\allowbreak{}metrics}
+\end{itemize}
+\khungchen{CHÈN BẢNG: giám sát ETL (báo cáo mục 3.3)}
+
+\note{[S83] Giám sát hệ thống nay là bảng ở mục 3.3 (không còn dashboard). Tiêu đề trước đây: Nhật ký etl\symbol{95}log cho biết mỗi lô chạy gì, mất bao lâu, loại bao nhiêu dòng}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Giám sát ETL: 11 đợt 21--28 giây, 42 dòng bị loại}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item Dòng bị loại duy nhất là 42 điểm toạ độ ngoài Brazil; không có dòng mồ côi
+  \item Funnel lấp đầy dần: MQL 2.002 $\rightarrow$ 8.000, deal 3 $\rightarrow$ 842, seller có đơn 0 $\rightarrow$ 379
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN BẢNG: các đợt nạp (tables/p8b\_etl\_batches)}
+
+\note{[S105] Số liệu giám sát lấy từ etl_log. Tiêu đề đầy đủ trước khi rút gọn: Giám sát ETL: 11 đợt tăng dần 21--28 giây, 136 test đạt 100\%, chỉ 42 dòng bị loại Ý đã chuyển khỏi slide: Bảng số dòng qua từng lớp, dòng bị loại, thời gian và test đạt từng đợt ở báo cáo mục 3.3 (trước đây là một dashboard). Tiêu đề trước đây: Giám sát ETL: 11 đợt 21--28 giây, 136 test đạt 100\%, chỉ 42 dòng bị loại}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Dimension: \texttt{dim\_seller} dùng chung}
+\muc{3.4 · Dimension}
+\begin{itemize}
+  \item 462 seller chỉ có trong CRM vẫn có dòng, địa chỉ Unknown
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng ví dụ seller (\texttt{huong-dan/01-pipeline-bang-loi.md})}
+
+\note{[S60] \texttt{first\_\allowbreak{}sale\_\allowbreak{}date} được điền sau khi nạp fact. Tiêu đề trước đây: dim\symbol{95}seller là chiều dùng chung: nối bán hàng với funnel qua seller\symbol{95}id}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Dimension: chiều rác và role-playing}
+\muc{3.4 · Dimension}
+\begin{itemize}
+  \item \texttt{dim\_\allowbreak{}lead\_\allowbreak{}profile} gom 7 thuộc tính thành 503 tổ hợp; \texttt{dim\_\allowbreak{}date} đóng 5 vai ở fulfillment
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng ví dụ hai kỹ thuật}
+
+\note{[S61] Trong Power BI, vai trò ngày dùng quan hệ không hoạt động và \texttt{USERELATIONSHIP}. Tiêu đề trước đây: Chiều rác và role-playing giúp fact gọn mà vẫn đủ thông tin}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Dimension: dòng Unknown -1 và khoá thay thế}
+\muc{3.4 · Dimension}
+\begin{itemize}
+  \item Mọi lỗi tra khoá được ghi \texttt{fact\_\allowbreak{}load\_\allowbreak{}issue}
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng \texttt{dim\_\allowbreak{}seller} dòng -1}
+
+\note{[S66] Nhờ đó ETL không làm rơi dòng khi chiều thiếu. Tiêu đề trước đây: Dòng Unknown -1 và khoá thay thế bảo đảm fact không bao giờ có khoá rỗng}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Data model logic: sáu quy trình, mười dimension}
+\muc{3.5 · Data model OLAP}
+\HinhLon{3-5_data_model_logic.png}
+\KetLuan{Fact cam, dimension xanh; không ghi kiểu dữ liệu}
+\note{[S140] Mô hình logic. Tiêu đề trước đây: Data model logic: sáu quy trình nối với mười dimension và các cấp phân cấp}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Data model logic: \texttt{fact\_order\_item} nối sáu chiều}
+\muc{3.5 · Data model OLAP}
+\HinhLon{3-3-4_erd_dw.png}
+\KetLuan{Ví dụ \texttt{fact\_\allowbreak{}order\_\allowbreak{}item} nối 6 chiều với 2 vai địa lý}
+
+\note{[S55] Địa lý có hai vai: khách và seller. Tiêu đề trước đây: Data model logic: mỗi fact nối đúng các chiều theo bus matrix}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Data model: \texttt{fact\_order\_fulfillment}}
+\muc{3.5 · Data model OLAP}
+\only<1>{%
+\begin{BangTC}{Xl}
+\textbf{Cột của fact\_order\_fulfillment (đơn 19c36691…)} & \textbf{Giá trị} \\ \midrule
+approval\_hours & 36,61 \\
+handling\_days & 0,71 \\
+transit\_days & 12,84 \\
+lead\_days & 15,07 \\
+promised\_days & 21 \\
+\end{BangTC}
+\KetLuan{Mốc chưa xảy ra có khoá -1; thời gian từng chặng tính sẵn}}
+\only<2>{%
+\begin{BangTC}{Xl}
+\textbf{Cột của fact\_order\_fulfillment (đơn 19c36691…)} & \textbf{Giá trị} \\ \midrule
+delay\_days & -6 (giao sớm 6 ngày) \\
+order\_value & 43,00 \\
+freight\_total & 45,30 \\
+payment\_total & 88,30 \\
+\end{BangTC}
+\KetLuan{Mốc chưa xảy ra có khoá -1; thời gian từng chặng tính sẵn}}
+\note{[S63] Nếu dùng transaction fact phải ghép nhiều dòng mới tính được lead time. Tiêu đề đầy đủ trước khi rút gọn: fact\symbol{95}order\symbol{95}fulfillment là accumulating snapshot: một đơn một dòng, cập nhật theo mốc Bấm để chuyển giữa 2 phần của bảng. Tiêu đề trước đây: fact\_order\_fulfillment: accumulating snapshot, một đơn một dòng}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Data model: \texttt{fact\_lead\_funnel}}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item \texttt{days\_\allowbreak{}to\_\allowbreak{}close} TB 48,5; \texttt{days\_\allowbreak{}won\_\allowbreak{}to\_\allowbreak{}first\_\allowbreak{}sale} TB 51,9
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: dòng ví dụ MQL}
+
+\note{[S64] Cũng là accumulating snapshot, 8.000 dòng. Tiêu đề đầy đủ trước khi rút gọn: fact\symbol{95}lead\symbol{95}funnel ghi lại hành trình MQL: ba mốc ngày và hai khoảng thời gian Tiêu đề trước đây: fact\_lead\_funnel ghi hành trình MQL: ba mốc ngày và hai khoảng thời gian}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Data model: \texttt{fact\_seller\_monthly}, 36.583 dòng}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item Dày đặc so với thưa: 36.583 và 16.441 dòng
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng 4 tháng đầu của một seller}
+
+\note{[S65] Tháng không có đơn vẫn có dòng với \texttt{orders = 0}. Tiêu đề trước đây: fact\symbol{95}seller\symbol{95}monthly lưu dày đặc 36.583 dòng để thấy seller ngừng bán}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Data mart: 17 view, 4 materialized view}
+\muc{3.5 · Data model OLAP}
+\begin{BangTC}{lXl}
+\textbf{Mart} & \textbf{Số view} & \textbf{Dashboard} \\ \midrule
+mart\_sales & 6 & DB1, DB3 \\
+mart\_fulfillment & 4 & DB2, DB3 \\
+mart\_cx & 4 (RFM, cohort materialized) & DB2 \\
+mart\_acquisition & 3 (scorecard, theo kênh materialized) & DB4 \\
+\end{BangTC}
+\KetLuan{Sales, fulfillment, cx, acquisition}
+\note{[S84] Mart được làm mới tự động ở bước mart của pipeline. Tiêu đề trước đây: Bốn data mart gồm 17 view, trong đó 4 là materialized view làm mới trong 2 giây}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{OLAP: chọn ROLAP}
+\muc{3.5 · Data model OLAP}
+\begin{itemize}
+  \item Khác MOLAP: không phải xử lý lại khối khi nạp dữ liệu
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng ROLAP vs MOLAP (\texttt{handoff/olap-examples.md})}
+
+\note{[S87] Đây là lý do lựa chọn đã nêu ở phần 1. Tiêu đề trước đây: Chọn ROLAP vì dữ liệu nhỏ, kho luôn tươi và Power BI làm lớp ngữ nghĩa}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+%% ===== P12b: chuyển từ bộ chính, nhóm dashboard (03) =====
+\begin{frame}[noprogressbar,noframenumbering]{DB2 – DAX chính}
+\muc{4 · DB2 Giao hàng và trải nghiệm khách}
+\khungchen[0.3\textheight]{CHÈN ẢNH / ĐOẠN DAX: measure chính của DB2 (powerbi/measures.md)}
+\note{[P12] Khung chờ ảnh đoạn DAX chính; nguồn powerbi/measures.md (Người phụ trách dashboard điền).}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{DB3 – DAX chính}
+\muc{4 · DB3 Địa lý và phí vận chuyển}
+\khungchen[0.3\textheight]{CHÈN ẢNH / ĐOẠN DAX: measure chính của DB3 (powerbi/measures.md)}
+\note{[P12] Khung chờ ảnh đoạn DAX chính; nguồn powerbi/measures.md (Người phụ trách dashboard điền).}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{DB4 – DAX chính}
+\muc{4 · DB4 Thu hút và hiệu quả seller}
+\khungchen[0.3\textheight]{CHÈN ẢNH / ĐOẠN DAX: measure chính của DB4 (powerbi/measures.md)}
+\note{[P12] Khung chờ ảnh đoạn DAX chính; nguồn powerbi/measures.md (Người phụ trách dashboard điền).}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{DB1 – Tình huống: ban điều hành hỏi gì}
+\muc{4 · DB1 Tổng quan và doanh thu}
+\begin{BangTC}{lX}
+\textbf{Mục} & \textbf{Nội dung} \\ \midrule
+Ai dùng & ban điều hành; quản lý kinh doanh và danh mục \\
+Xem khi nào & hằng tuần, hằng tháng \\
+Câu hỏi chính & doanh thu có tăng không; giao hàng và khách hàng ra sao \\
+\end{BangTC}
+\KetLuan{GMV tăng hay giảm so với tháng trước và cùng kỳ năm trước?}
+\note{[P12] Ai dùng và câu hỏi của DB1 (mạch Tình huống, Dashboard, Phát hiện, Quyết định). Nguồn: huong-dan/dashboards/DB1.md mục 2 (người dùng, câu hỏi, tần suất xem). Ý đã chuyển khỏi slide: Ai dùng: ban điều hành và quản lý kinh doanh, xem hằng tuần và hằng tháng; Câu hỏi: GMV tăng trưởng MoM, YoY và quy luật 80/20.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{DB2 – Tình huống: vận hành và chăm sóc khách}
+\muc{4 · DB2 Giao hàng và trải nghiệm khách}
+\begin{BangTC}{lX}
+\textbf{Mục} & \textbf{Nội dung} \\ \midrule
+Ai dùng & quản lý vận hành và logistics; chăm sóc khách hàng \\
+Xem khi nào & hằng ngày đến hằng tuần (vận hành); hằng tuần (chăm sóc khách) \\
+Câu hỏi chính & chặng nào chậm; vì sao review thấp \\
+\end{BangTC}
+\KetLuan{Ngày hứa giao và ngày giao thực tế chênh nhau bao nhiêu?}
+\note{[P12] Ai dùng và câu hỏi của DB2 (mạch Tình huống, Dashboard, Phát hiện, Quyết định). Nguồn: huong-dan/dashboards/DB2.md mục 2 (người dùng, câu hỏi, tần suất xem). Ý đã chuyển khỏi slide: Ai dùng: vận hành và logistics (hằng ngày đến hằng tuần), chăm sóc khách hàng; Câu hỏi: hứa so với thực tế chênh bao nhiêu, giao trễ có kéo điểm review xuống không.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{DB3 – Tình huống: địa lý và phí vận chuyển}
+\muc{4 · DB3 Địa lý và phí vận chuyển}
+\begin{BangTC}{lX}
+\textbf{Mục} & \textbf{Nội dung} \\ \midrule
+Ai dùng & quản lý vận hành và logistics; quản lý kinh doanh \\
+Xem khi nào & hằng ngày đến hằng tuần (vận hành); hằng tháng (kinh doanh) \\
+Câu hỏi chính & phí vận chuyển chiếm bao nhiêu phần trăm giá hàng theo vùng \\
+\end{BangTC}
+\KetLuan{Seller và khách xa nhau bao nhiêu, ảnh hưởng freight và lead time ra sao?}
+\note{[P12] Ai dùng và câu hỏi của DB3 (mạch Tình huống, Dashboard, Phát hiện, Quyết định). Nguồn: huong-dan/dashboards/DB3.md mục 2 (người dùng, câu hỏi, tần suất xem). Ý đã chuyển khỏi slide: Ai dùng: vận hành và logistics; Câu hỏi: địa lý quyết định trải nghiệm giao hàng và phí vận chuyển ra sao.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{DB4 – Tình huống: thu hút và hiệu quả seller}
+\muc{4 · DB4 Thu hút và hiệu quả seller}
+\begin{BangTC}{lX}
+\textbf{Mục} & \textbf{Nội dung} \\ \midrule
+Ai dùng & quản lý seller và đội sales (SDR, SR) \\
+Xem khi nào & hằng tuần, hằng tháng \\
+Câu hỏi chính & kênh nào chuyển đổi tốt; seller từ funnel bán ra sao \\
+\end{BangTC}
+\KetLuan{Bao nhiêu phần trăm MQL được chốt, theo từng kênh?}
+\note{[P12] Ai dùng và câu hỏi của DB4 (mạch Tình huống, Dashboard, Phát hiện, Quyết định). Nguồn: huong-dan/dashboards/DB4.md mục 2 (người dùng, câu hỏi, tần suất xem). Ý đã chuyển khỏi slide: Ai dùng: quản lý seller và đội sales; Câu hỏi: kênh nào chuyển đổi tốt và seller từ funnel bán ra sao.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Nguyên tắc thiết kế: chủ đề màu}
+\muc{4 · Xây dựng chương trình}
+\begin{itemize}
+  \item \texttt{powerbi/theme.json}; ngưỡng cảnh báo on-time 90\%/95\%
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: ảnh chụp theme}
+
+\note{[S92] Cùng một quy ước màu trên mọi dashboard. Tiêu đề trước đây: Chủ đề màu thống nhất: xanh là tốt, vàng cần chú ý, đỏ là xấu}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
+
+%% ===== P12b: chuyển từ bộ chính, nhóm mở rộng (04) =====
+\begin{frame}[noprogressbar,noframenumbering]{Data lakehouse: Kafka = Bronze = 1.720.555 sự kiện}
+\muc{5.1 · Lakehouse}
+\begin{BangTC}{Xrr}
+\textbf{Topic} & \textbf{Snapshot} & \textbf{Sau phát lại} \\ \midrule
+\texttt{geolocation} & 1.000.163 & 1.000.163 \\
+\texttt{orders} (gồm 160.791 cập nhật trạng thái) & 45.430 & 260.232 \\
+\texttt{order\_items}, \texttt{payments}, \texttt{reviews} & 144.475 & 315.760 \\
+\texttt{customers}, \texttt{products}, \texttt{sellers} & 81.476 & 135.487 \\
+CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
+\DongNhan\textbf{Tổng (= số dòng Bronze)} & \textbf{1.273.620} & \textbf{1.720.555} \\
+\end{BangTC}
+\KetLuan{Không mất, không trùng sự kiện: Kafka = Bronze = 1.720.555}
+\note{[P10-bước 2] Offset đọc bằng kafka-get-offsets trong container; kiểm thử tự động tests/test\_silver\_equals\_source.py::test\_bronze\_equals\_kafka. Bảng đầy đủ 11 topic và cách tách 3.000 sự kiện chạy thử khỏi lần chạy tính giờ: slide dự phòng chương 5. Tiêu đề trước đây: Kafka giữ đủ 1.720.555 sự kiện, bằng đúng số dòng Bronze}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Data lakehouse: Bronze và Silver bằng MERGE}
+\muc{5.1 · Lakehouse}
+\HangSo[3]{\So{1,72 triệu}{dòng Bronze = Kafka}\hfill\So{30 s}{micro-batch}\hfill\So{96.338}{phiên bản SCD2 khách}}
+\begin{itemize}
+  \item Bronze: Spark ghi nguyên văn từng sự kiện vào bảng Iceberg chỉ-thêm
+  \item Silver: MERGE theo khoá, chỉ thay dòng khi \texttt{ts\_ms} không cũ hơn
+  \item Đơn đến trước khách vào \texttt{*\_rejected}, thử lại mỗi lô; cuối chạy còn 0
+\end{itemize}
+\note{[P10-bước 3 và 4] lakehouse/spark/stream\_bronze\_silver.py, silver\_batch.py. Bronze: khoá, payload (JSON của Debezium), op, ts\_ms, partition và offset Kafka, ingested\_at; tối đa 100.000 sự kiện mỗi lô để giữ bộ nhớ. Dữ liệu API đi đường khác: tệp JSON lên s3://lakehouse/landing/, Spark tạo bốn bảng bronze.api\_* (73 dòng, chạy lại thêm 0 dòng). Silver áp quy tắc của sql/30\_ods/020\_ods\_procs.sql; silver.order\_status\_history là SCD2 theo trạng thái. Silver địa lý 19.015 zip (42 điểm bị loại, có ghi lý do); Silver API cùng bốn tầng ghép đô thị trùng từng số với P9. SCD2 địa chỉ khách: 96.338 phiên bản, khớp dim\_customer của kho. Tiêu đề trước đây: Bronze giữ nguyên văn sự kiện, Silver áp quy tắc ODS bằng MERGE}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Data lakehouse: lineage của \texttt{fact\_order\_item}}
+\muc{5.1 · Lakehouse}
+% cho-phep: R7 ảnh lineage dùng hết chiều cao khung, không có thanh kết luận; kết quả 71/71 test nằm trong ghi chú và slide dự phòng
+\AnhChup[\dimexpr\VungCao-24pt\relax]{5-1_dbt_lineage_fact_tc.png}
+\note{[P10-bước 5] 71/71 phép kiểm thử dbt đạt, gồm 3 phép riêng về tiền, số dòng và SCD2. Ảnh Phú chụp từ dbt docs (figures/5-1\_dbt\_lineage\_fact.png, đã cắt: 5-1\_dbt\_lineage\_fact\_tc.png): 13 nguồn Silver, 5 dimension nối tới fact\_order\_item. Ảnh chụp trước khi thêm depends\_on nên chưa vẽ dim\_date; fact nối tới dim\_date qua khoá ngày tính từ mốc thời gian, không join. Hình bốn tầng đầy đủ (18 nguồn Silver, 10 dimension, 6 fact, 4 mart) ở slide dự phòng chương 5. Ảnh dbt test: slide dự phòng chương 5. Tiêu đề trước đây: Lineage của fact\_order\_item: 13 nguồn Silver qua 5 dimension}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Bài học lakehouse: trim() của Trino khác PostgreSQL}
+\muc{5.1 · Lakehouse}
+\TruocSau{Gold trước khi sửa}{Review có bình luận: \textbf{40.950}\\ kho: 40.968}{Gold sau khi sửa}{Review có bình luận: \textbf{40.968}\\ bằng kho}
+\vspace{4pt}
+\begin{itemize}
+  \item \texttt{trim()} của Trino bỏ cả xuống dòng và tab, của PostgreSQL chỉ bỏ dấu cách
+  \item Sửa: model chỉ bỏ dấu cách hai đầu (\texttt{regexp\_replace})
+\end{itemize}
+\KetLuan{Cùng câu hỏi, hai engine, khác ngữ nghĩa nhỏ: chỉ so từng giá trị mới thấy}
+\note{[P10-bài học] Lỗi do Gold, không phải kho. fact\_review lệch ở hai cột: has\_comment\_message (40.950 so với 40.968) và comment\_length (tổng 2.800.913 so với 2.804.417); 18 review chỉ có ký tự xuống dòng bị tính là không có bình luận. Hai lỗi nhỏ khác là do cách so sánh (số chữ số 0 cuối, làm tròn số thực), đã sửa phép so. docs/LAKEHOUSE.md mục 3.9. Tiêu đề trước đây: Lỗi 2: trim() của Trino khác PostgreSQL, 18 review bị tính nhầm}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Data lakehouse: độ trễ nguồn đến Silver 22,6 giây}
+\muc{5.1 · Lakehouse}
+\HinhLon{5-1_latency_sl.png}
+\KetLuan{6 lần đo: 10,9 đến 37,8 giây; Debezium chỉ mất dưới 1 giây}
+\note{[P10-đo] handoff/2026-11-19-P10-latency.md; script lakehouse/scripts/latency\_probe.py (hình vẽ lại bằng scripts/p11\_figures.py từ chính 6 lần đo, không đo lại). Trung bình: PostgreSQL sang Kafka 0,5 giây, Kafka sang Bronze 12,1 giây (gồm chờ trigger 30 giây kế tiếp), Bronze sang Silver 10,0 giây; nguồn đến Silver 22,6 giây (10,9 đến 37,8); nguồn đến đọc được qua Trino 29,9 giây (19,8 đến 42,9). Mỗi lần thử đổi một cột của một đơn rồi hoàn nguyên, Silver trở lại bằng nguồn. Thông lượng và RAM: slide dự phòng chương 5. Tiêu đề trước đây: Độ trễ nguồn đến Silver trung bình 22,6 giây, chủ yếu là chờ micro-batch}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Thu thập dữ liệu qua API: kiến trúc collector}
+\muc{5.2 · Thu thập từ API}
+\HinhLon{5-2_kien_truc_api_sl.png}
+\KetLuan{Dựng lại toàn bộ (rebuild) dùng landing zone, không cần mạng}
+\note{[S119] Sơ đồ rút gọn cho máy chiếu; sơ đồ chi tiết (cho báo cáo): figures/5-2\_kien\_truc\_api.png. Lỗi gọi API ghi vào etl\_log; các cột mới của kho giữ NULL và bốn dashboard DB1--DB4 không đổi số. Collector thử lại tối đa 5 lần, landing zone 69 lời gọi, 4,66 MB, 48.016 bản ghi: slide dự phòng chương 5. Tiêu đề trước đây: Kiến trúc API: lỗi gọi API không làm hỏng pipeline chính}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{DB1 – DAX chính}
+\muc{4 · DB1 Tổng quan và doanh thu}
+\khungchen[0.3\textheight]{CHÈN ẢNH / ĐOẠN DAX: measure chính của DB1 (powerbi/measures.md)}
+\note{[P12] Khung chờ ảnh đoạn DAX chính; nguồn powerbi/measures.md (Người phụ trách dashboard điền).}
+% khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
+\end{frame}
