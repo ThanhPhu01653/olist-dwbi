@@ -12,7 +12,7 @@ Trước khi thiết kế kho dữ liệu, nhóm khám phá toàn bộ 11 bảng
 \hinh{3-3-1_delay_vs_review.png}{Điểm đánh giá theo mức trễ giao hàng}{fig:delay-review}{0.85}
 \hinh{3-3-1_lead_time_by_region.png}{Lead time theo vùng}{fig:lead-region}{0.85}
 \hinh{3-3-1_late_rate_by_state.png}{Tỷ lệ giao trễ theo bang}{fig:late-state}{0.85}
-\hinh{3-3-1_correlation_matrix.png}{Ma trận tương quan Spearman giữa các biến số}{fig:corr}{0.85}
+\hinh{3-1_spearman_slide.png}{Ma trận tương quan Spearman giữa tám biến số của đơn đã giao (nửa dưới tam giác); $\dagger$ là tương quan do định nghĩa: ngày vận chuyển là một phần của lead time. Tổng thanh toán đã bỏ vì bằng tiền hàng cộng phí vận chuyển ($\rho = 0{,}99$)}{fig:corr}{0.78}
 \hinh{3-3-1_funnel_seller_overlap.png}{Seller của funnel có và không có đơn hàng}{fig:funnel-overlap}{0.8}
 \hinh{3-3-1_funnel_win_rate_by_origin.png}{Tỷ lệ chốt deal theo kênh (origin)}{fig:funnel-origin}{0.85}
 \input{tables/review_delay}
@@ -70,6 +70,13 @@ phân loại -- số & tỉ số tương quan $\eta$ & từ 0 đến 1; $\eta^2$
 \hinh{3-1_eta_heatmap.png}{Tỉ số tương quan $\eta$ giữa biến phân loại (cột) và biến số (hàng)}{fig:eta}{0.85}
 \input{tables/p8_association_eta}
 \emph{Nhận xét.} Điểm review theo cờ giao trễ có $\eta = 0{,}392$ ($\eta^2 = 0{,}154$): khoảng 15,4\% phương sai điểm review gắn với việc đơn có giao trễ hay không; ngày trễ theo vùng khách chỉ có $\eta = 0{,}075$ và điểm review theo nhóm ngành $\eta = 0{,}054$. Cặp (ngày trễ, cờ giao trễ) bị bỏ khỏi bảng xếp hạng vì cờ trễ được định nghĩa từ chính ngày trễ. \textbf{Đối chiếu với Spearman}: Spearman giữa ngày trễ và điểm review là $-0{,}176$ và giữa lead time và điểm review là $-0{,}235$, cùng hướng kết luận nhưng yếu hơn nhiều so với $\eta = 0{,}392$ theo cờ trễ; điều đó cho thấy ảnh hưởng của giao trễ lên review mang tính ngưỡng (đơn trễ mới tụt điểm mạnh) hơn là tuyến tính theo số ngày, và $V$ cùng $\eta$ mở rộng việc đo liên hệ sang biến phân loại mà Spearman không đo được.
+
+\paragraph{Kiểm định $\chi^2$, Theil's U và odds ratio.}
+Với bảy biến phân loại, nhóm kiểm định tính độc lập bằng $\chi^2$ cho cả 21 cặp. Vì cỡ mẫu khoảng 100.000 đơn nên 19 trên 21 cặp có $p < 0{,}05$, kể cả cặp có $V$ chỉ 0,01; do đó $p$ chỉ cho biết có liên hệ hay không và nhóm đọc độ mạnh $V$ chứ không đọc $p$ (chỉ ba cặp có $V$ từ 0,1 trở lên). Sáu cặp có hơn 20\% ô kỳ vọng nhỏ hơn 5 nên $p$ được tính bằng Monte Carlo với 2.000 lần hoán vị. Để biết chiều của liên hệ, nhóm tính thêm hệ số bất định Theil's $U(X \mid Y) = \bigl(H(X) - H(X \mid Y)\bigr) / H(X)$: biết $Y$ thì độ bất định về $X$ giảm bao nhiêu phần. Với cặp mạnh nhất, biết nhóm review giảm 22,2\% độ bất định về cờ giao trễ, còn biết cờ giao trễ chỉ giảm 8,3\% độ bất định về nhóm review (bảng \ref{tab:p12c-chi2}).
+\input{tables/p12c_chi2}
+\hinh{3-1_theils_u_heatmap.png}{Theil's $U$: biết biến ở cột thì độ bất định của biến ở hàng giảm bao nhiêu}{fig:theils-u}{0.78}
+Cuối cùng, nhóm đo độ mạnh của cặp đáng chú ý nhất bằng odds ratio. Review tiêu cực (1--2 sao) chiếm 62,4\% ở đơn trễ so với 9,3\% ở đơn đúng hạn hoặc sớm, tương ứng odds ratio 16,3 (khoảng tin cậy 95\% từ 15,4 đến 17,2). Khi kiểm soát vùng khách và nhóm ngành bằng hồi quy logistic, odds ratio của cờ giao trễ gần như không đổi (16,3), nghĩa là ảnh hưởng của giao trễ không đến từ vùng hay ngành hàng. Đây vẫn là tương quan chứ không phải nhân quả (bảng \ref{tab:p12c-or}). Phân tích đa biến MCA trên bốn biến (giao trễ, nhóm review, vùng khách, trạng thái đơn) cho bản đồ hai trục giải thích 31,5\% quán tính nên chỉ dùng để đọc vị trí tương đối, và được để ở slide dự phòng.
+\input{tables/p12c_or}
 
 \subsection{Khuynh hướng và mùa vụ}\label{sec:mua-vu}
 Phân tích giới hạn ở đoạn đủ dữ liệu 01/2017--08/2018 (608 ngày). Hình \ref{fig:series} cho thấy số đơn và GMV tăng gần như liên tục từ đầu 2017, đạt đỉnh ở tuần chứa Black Friday rồi giữ mặt bằng mới cao hơn trước đó; GMV tháng 11/2017 cao hơn tháng 10/2017 52,1\%.

@@ -78,6 +78,18 @@ approval\_hours & 9,81 & 0,34 & 19,43 & 4,57 \\
 \note{[S133] Ngoại lai bằng IQR và iForest trên 5 biến. Tiêu đề đầy đủ trước khi rút gọn: Hai phương pháp cùng đánh dấu 24.213 ngoại lai; nhóm giữ vì đó là ngoại lai hợp lệ Tiêu đề trước đây: Hai phương pháp cùng đánh dấu 24.213 ngoại lai}
 \end{frame}
 
+\begin{frame}{Tương quan: chọn phương pháp theo loại biến}
+\muc{3.1 · Khám phá dữ liệu · Tương quan}
+\begin{BangTC}{lXXX}
+\textbf{Cặp biến} & \textbf{Phương pháp} & \textbf{Vì sao} & \textbf{Kết quả nổi bật} \\ \midrule
+số -- số & Spearman & biến lệch phải (skewness 3,8--12,3), nhiều ngoại lai; Pearson chỉ đo quan hệ tuyến tính & khoảng cách -- phí 0,63 \\
+phân loại -- số & tỉ số tương quan $\eta$ & đo phần phương sai của biến số do nhóm giải thích & review theo cờ trễ $\eta$ = 0,392 \\
+phân loại -- phân loại & $\chi^2$ $\rightarrow$ Cramér's V $\rightarrow$ Theil's U & $\chi^2$: có liên hệ không; V: mạnh đến đâu; U: theo chiều nào & cờ trễ -- nhóm review V = 0,40 \\
+\end{BangTC}
+\KetLuan{Với n khoảng 100.000, p gần như luôn < 0,05: nhóm đọc độ mạnh, không đọc p}
+\note{[P12c] Câu trả lời ngắn cho các câu có thể bị hỏi. (1) Vì sao không dùng Pearson: giá, phí và lead time lệch phải mạnh (skewness 3,8 đến 12,3 trên đơn đã giao) và có nhiều ngoại lai hợp lệ; Pearson chỉ đo quan hệ tuyến tính và bị vài đơn lớn kéo đi, Spearman dựa trên hạng nên bền hơn. (2) Vì sao không đọc p-value: với khoảng 100.000 đơn, 19 trên 21 cặp biến phân loại có p < 0,05, kể cả cặp có V chỉ 0,01; p chỉ trả lời có liên hệ hay không, không nói mạnh hay yếu, nên nhóm đọc V (chỉ 3 cặp có V từ 0,1 trở lên). (3) V khác U thế nào: V đối xứng, cho một con số độ mạnh; U có chiều, cho biết biết biến này thì giảm bao nhiêu phần trăm độ bất định của biến kia. Cờ trễ và nhóm review có V = 0,40; biết nhóm review giảm 22,2\% bất định về cờ trễ, biết cờ trễ giảm 8,3\% bất định về nhóm review. (4) Tương quan không phải nhân quả: đơn trễ đi kèm review xấu (odds gấp khoảng 16 lần, đã kiểm soát vùng khách và nhóm ngành), nhưng nhóm không kết luận trễ gây ra điểm thấp; còn có yếu tố khác như loại hàng, kỳ vọng của khách. (5) Vì sao bỏ cặp tiền hàng và tổng thanh toán: tổng thanh toán là tiền hàng cộng phí vận chuyển nên ρ = 0,99 là do định nghĩa, không phải phát hiện; tương tự ngày vận chuyển với lead time (0,89). Hai cặp này được đánh dấu hoặc bỏ khỏi ma trận Spearman ở slide dự phòng. Kết quả: handoff/2026-11-25-P12c-tuong-quan.md.}
+\end{frame}
+
 \begin{frame}{Tương quan fact–fact: khoảng cách, phí, lead time}
 \muc{3.1 · Khám phá dữ liệu · Tương quan}
 \only<1>{%
@@ -92,8 +104,8 @@ approval\_hours & 9,81 & 0,34 & 19,43 & 4,57 \\
 \begin{frame}{Tương quan dim–fact: giao trễ và điểm review}
 \muc{3.1 · Khám phá dữ liệu · Tương quan}
 \HinhLon{3-3-1_delay_vs_review.png}
-\KetLuan{Đơn trễ chiếm 6,5\% số review nhưng tạo 27,4\% review tiêu cực}
-\note{[S45] Trung bình toàn sàn che mất nhóm nhỏ nhưng đau. Tiêu đề trước đây: Giao trễ làm điểm review rơi từ 4,29 xuống 1,70 và 79,2\% review tiêu cực}
+\KetLuan{Đơn trễ: odds review tiêu cực gấp 16 lần, đã kiểm soát vùng khách và ngành}
+\note{[S45] Trung bình toàn sàn che mất nhóm nhỏ nhưng đau. [P12c] Odds ratio: review tiêu cực 62,4\% ở đơn trễ so với 9,3\% ở đơn đúng hạn hoặc sớm; OR thô 16,27 (khoảng tin cậy 95\% 15,40 đến 17,20); hồi quy logistic có kiểm soát vùng khách và nhóm ngành cho OR 16,28 (15,40 đến 17,22), gần như không đổi. Ý đã chuyển khỏi slide: đơn trễ chiếm 6,5\% số review nhưng tạo 27,4\% review tiêu cực. Tiêu đề trước đây: Giao trễ làm điểm review rơi từ 4,29 xuống 1,70 và 79,2\% review tiêu cực}
 \end{frame}
 
 \begin{frame}{Tương quan dim–fact: vùng và tỷ lệ trễ}
@@ -103,16 +115,22 @@ approval\_hours & 9,81 & 0,34 & 19,43 & 4,57 \\
 \note{[S46] Địa lý quyết định trải nghiệm giao hàng. Tiêu đề trước đây: Trễ tập trung ở Bắc và Đông Bắc: Nordeste trễ 12,8\%, Norte lead time 22,6 ngày}
 \end{frame}
 
-\begin{frame}{Tương quan dim–dim: Cramér's V lớn nhất 0,403}
+\begin{frame}{Tương quan dim–dim: Cramér's V 0,40, Theil's U có chiều}
 \muc{3.1 · Khám phá dữ liệu · Tương quan}
-\HinhChu{3-1_cramer_v_heatmap.png}{%
+\only<1>{%
+\HinhChu{3-1_cramer_v_heatmap_p.png}{%
 \small\begin{itemize}
-  \item V hiệu chỉnh Bergsma cho cặp biến phân loại; $\eta$ cho biến phân loại và biến số
-  \item Vùng khách -- vùng seller V = 0,072: gần như độc lập
-  \item Spearman ngày trễ -- review chỉ $-0{,}18$: ảnh hưởng mang tính ngưỡng
+  \item V đọc theo độ mạnh; * là p < 0,05
+  \item 19/21 cặp có *, kể cả V = 0,01
 \end{itemize}}
-\KetLuan{Tỉ số tương quan review theo cờ trễ 0,392}
-\note{[S134] Công thức V, hiệu chỉnh Bergsma, tỉ số tương quan và thang đọc ở báo cáo mục 3.1. Tiêu đề đầy đủ trước khi rút gọn: Cramér's V lớn nhất 0,403 (giao trễ và nhóm review); tỉ số tương quan review theo cờ trễ 0,392 Tiêu đề trước đây: Cramér's V lớn nhất 0,403 (giao trễ và nhóm review)}
+\KetLuan{Chỉ 3/21 cặp có V từ 0,1; mạnh nhất là cờ giao trễ -- nhóm review 0,40}}
+\only<2>{%
+\HinhChu{3-1_theils_u_heatmap.png}{%
+\small\begin{itemize}
+  \item U(hàng | cột): biết cột thì giảm bấy nhiêu bất định của hàng
+\end{itemize}}
+\KetLuan{Biết đơn trễ giảm 8,3\% bất định về review; biết review giảm 22,2\% về cờ trễ}}
+\note{[S134] Công thức V, hiệu chỉnh Bergsma, tỉ số tương quan và thang đọc ở báo cáo mục 3.1. [P12c] Vùng khách -- vùng seller V = 0,072: gần như độc lập. V hiệu chỉnh Bergsma. Bấm để chuyển giữa Cramér's V (kèm dấu * của kiểm định $\chi^2$) và Theil's U. U(X | Y) = (H(X) $-$ H(X | Y)) / H(X). Cờ trễ chỉ có 2 giá trị còn nhóm review có 3 nên hai chiều khác nhau: biết review giúp đoán cờ trễ (22,2\%) nhiều hơn biết cờ trễ giúp đoán nhóm review (8,3\%). Spearman ngày trễ -- review chỉ $-0{,}18$ trong khi tỉ số tương quan review theo cờ trễ 0,392: ảnh hưởng mang tính ngưỡng. Tiêu đề trước đây: Cramér's V lớn nhất 0,403 (giao trễ và nhóm review); tỉ số tương quan review theo cờ trễ 0,392.}
 \end{frame}
 
 \begin{frame}{Tương quan: funnel và bán hàng giao nhau một phần}
