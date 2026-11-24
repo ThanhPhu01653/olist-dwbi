@@ -1,24 +1,19 @@
 \section[Phân tích và thiết kế]{Phân tích và thiết kế}
 
+\begin{frame}{Phân tích và thiết kế: năm nội dung}
+\muc{3 · Phân tích và thiết kế}
+\LoTrinh{Khám phá dữ liệu, Kiến trúc, ETL, Dimension, Data model}{0}
+\KetLuan{Phần này trả lời: kho được thiết kế và nạp dữ liệu như thế nào?}
+\note{[P12b] Trang mở phần 3: các mục 3.1 đến 3.5.}
+\end{frame}
+
 \subsection{3.1 Khám phá dữ liệu}
 
 \begin{frame}{Khám phá dữ liệu: năm khối phân tích}
 \muc{3.1 · Khám phá dữ liệu}
-\begin{itemize}
-  \item Chất lượng dữ liệu $\cdot$ Phân bố $\cdot$ Thống kê đặc trưng
-  \item Tương quan $\cdot$ Khuynh hướng và mùa vụ
-  \item Kết thúc: sáu quyết định thiết kế
-\end{itemize}
-\note{[P12] Thứ tự theo checklist của thầy: phân bố, đặc trưng, tương quan, khuynh hướng và mùa vụ.}
-\end{frame}
-
-\begin{frame}{Chất lượng dữ liệu}
-\muc{3.1 · Khám phá dữ liệu}
-\begin{itemize}
-  \item Loại lỗi và tỷ lệ ô rỗng
-  \item Toạ độ trùng và tên thành phố lệch dấu
-\end{itemize}
-\note{Mục trong checklist của thầy.}
+\LoTrinh{Chất lượng, Phân bố, Đặc trưng, Tương quan, Khuynh hướng mùa vụ}{0}
+\KetLuan{Phần này trả lời: dữ liệu nguồn có đủ tốt để thiết kế kho không?}
+\note{[P12] Thứ tự theo checklist của thầy: phân bố, đặc trưng, tương quan, khuynh hướng và mùa vụ. Ý đã chuyển khỏi slide: Chất lượng dữ liệu $\cdot$ Phân bố $\cdot$ Thống kê đặc trưng; Tương quan $\cdot$ Khuynh hướng và mùa vụ; Kết thúc: sáu quyết định thiết kế.}
 \end{frame}
 
 \begin{frame}{Chất lượng dữ liệu: 45 loại lỗi cần xử lý ở ODS}
@@ -26,30 +21,6 @@
 \HinhLon{3-3-1_data_quality.png}
 \KetLuan{Cột thiếu, mốc thời gian sai thứ tự, tên thành phố lệch dấu, trùng lặp}
 \note{[S38] Không loại lỗi nào bằng cách xóa dữ liệu. Tiêu đề trước đây: Khám phá dữ liệu đo được 45 loại lỗi cần xử lý ở ODS}
-\end{frame}
-
-\begin{frame}{Chất lượng dữ liệu: tỷ lệ ô rỗng theo cột}
-\muc{3.1 · Khám phá dữ liệu · Chất lượng dữ liệu}
-\HinhLon{3-3-1_null_heatmap.png}
-\KetLuan{Cột review và ngày giao có nhiều ô rỗng hợp lệ}
-\note{[S39] Ô rỗng của ngày giao đa phần là đơn chưa giao hoặc bị hủy. Tiêu đề trước đây: Tỷ lệ ô rỗng cho thấy cột nào cần điền unknown}
-\end{frame}
-
-\begin{frame}{Chất lượng dữ liệu: bảng toạ độ bẩn nhất}
-\muc{3.1 · Khám phá dữ liệu · Chất lượng dữ liệu}
-\HinhLon{3-4-3_before_after_geolocation.png}
-\KetLuan{7,3\% tên thành phố lệch dấu; 42 điểm ngoài lãnh thổ Brazil}
-\note{[S40] Giải pháp: lọc khung Brazil, lấy trung vị toạ độ và mode tên thành phố theo zip. Tiêu đề đầy đủ trước khi rút gọn: Bảng toạ độ bẩn nhất: 93,5\% mã bưu chính có nhiều toạ độ, 26,2\% dòng trùng hoàn toàn Tiêu đề trước đây: Toạ độ bẩn nhất: 93,5\% mã bưu chính nhiều toạ độ, 26,2\% dòng trùng hoàn toàn}
-\end{frame}
-
-\begin{frame}{Phân bố}
-\muc{3.1 · Khám phá dữ liệu}
-\begin{itemize}
-  \item Histogram giá, phí vận chuyển, lead time
-  \item Phân bố theo thời gian
-  \item Pareto theo danh mục và theo seller
-\end{itemize}
-\note{Mục trong checklist của thầy.}
 \end{frame}
 
 \begin{frame}{Phân bố: giá, phí vận chuyển, lead time lệch phải}
@@ -66,35 +37,11 @@
 \note{[S32] Bộ lọc InWindow trong Power BI cố định cửa sổ này cho DB1–DB4. Tiêu đề trước đây: Phạm vi: dữ liệu 01/2017–08/2018 chiếm 99,6\% số đơn nên được dùng cho xu hướng}
 \end{frame}
 
-\begin{frame}{Phân bố theo thời gian: hai đầu rất thưa}
-\muc{3.1 · Khám phá dữ liệu · Phân bố}
-\HinhLon{3-3-1_orders_per_month.png}
-\KetLuan{2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn}
-\note{[S42] Quyết định lọc thời gian đưa vào Power BI. Tiêu đề trước đây: Dữ liệu đơn dùng được là 01/2017–08/2018, hai đầu rất thưa Phạm vi dữ liệu dùng cho xu hướng: 01/2017–08/2018 chiếm 99,6\% số đơn. Bộ lọc InWindow trong Power BI cố định cửa sổ này cho DB1–DB4.}
-\end{frame}
-
 \begin{frame}{Phân bố: 18/74 danh mục tạo 80\% GMV (Pareto)}
 \muc{3.1 · Khám phá dữ liệu · Phân bố}
 \HinhLon{3-3-1_pareto_category.png}
 \KetLuan{Quy luật Pareto theo danh mục}
 \note{[S43] Danh mục được gom thành 13 nhóm ngành hàng. Tiêu đề trước đây: 18/74 danh mục (24,3\%) tạo 80\% GMV, dẫn đầu health\symbol{95}beauty 9,3\%}
-\end{frame}
-
-\begin{frame}{Phân bố: 540 seller tạo 80\% GMV (Pareto)}
-\muc{3.1 · Khám phá dữ liệu · Phân bố}
-\HinhLon{3-3-1_pareto_seller.png}
-\KetLuan{Doanh thu không phụ thuộc vài seller}
-\note{[S44] Khác với danh mục, rủi ro tập trung vào seller thấp. Tiêu đề trước đây: Seller thì phân tán hơn: 540 seller tạo 80\% GMV, 5 seller lớn nhất chỉ 7,7\%}
-\end{frame}
-
-\begin{frame}{Thống kê đặc trưng}
-\muc{3.1 · Khám phá dữ liệu}
-\begin{itemize}
-  \item Mean, median, độ lệch, nhọn
-  \item Đối chiếu Python với Excel ToolPak
-  \item Ngoại lai: IQR và Isolation Forest
-\end{itemize}
-\note{Mục trong checklist của thầy.}
 \end{frame}
 
 \begin{frame}{Thống kê đặc trưng: mean, median, độ lệch, nhọn}
@@ -109,8 +56,8 @@ delay\_days & -12,00 & -12 & 9,66 & 1,29 \\
 review\_score & 4,15 & 5 & 1,29 & -1,45 \\
 approval\_hours & 9,81 & 0,34 & 19,43 & 4,57 \\
 \end{BangTC}
-\KetLuan{Mẫu 5.000 đơn: mean lớn hơn median ở giá, phí, thanh toán (lệch phải)}
-\note{[P12] Tính bằng Python (pandas) trên 5.000 dòng của sheet du\_lieu trong exports/eda\_sample.xlsx (sheet python\_doi\_chieu): Std là độ lệch chuẩn mẫu, Skewness theo hàm SKEW của Excel. Còn thêm bảy biến khác trong sheet: items, freight\_ratio, weight\_total\_g, installments\_max, handling\_days, transit\_days, is\_late.}
+\KetLuan{Mẫu và toàn kho cùng lệch phải: giá TB 138 và 137, trung vị 85 cả hai}
+\note{[P12] Tính bằng Python (pandas) trên 5.000 dòng của sheet du\_lieu trong exports/eda\_sample.xlsx (sheet python\_doi\_chieu): Std là độ lệch chuẩn mẫu, Skewness theo hàm SKEW của Excel. Còn thêm bảy biến khác trong sheet: items, freight\_ratio, weight\_total\_g, installments\_max, handling\_days, transit\_days, is\_late. Toàn bộ kho (SQL trên dw.fact_order_fulfillment, 21/11/2026): order_value (tổng giá hàng của đơn, 99.441 đơn) mean 136,68, median 85,00; lead_days (96.476 đơn đã giao) mean 12,56, median 10,22. Mẫu 5.000 đơn (ToolPak): price_total mean 138,22, median 85; lead_days mean 12,43, median 10,29. Mẫu và toàn kho cho cùng kết luận: mean lớn hơn median, phân bố lệch phải.}
 \end{frame}
 
 \begin{frame}{Thống kê đặc trưng (Excel ToolPak): đối chiếu Python}
@@ -129,17 +76,6 @@ approval\_hours & 9,81 & 0,34 & 19,43 & 4,57 \\
 \end{itemize}}
 \KetLuan{Nhóm giữ vì đó là ngoại lai hợp lệ}
 \note{[S133] Ngoại lai bằng IQR và iForest trên 5 biến. Tiêu đề đầy đủ trước khi rút gọn: Hai phương pháp cùng đánh dấu 24.213 ngoại lai; nhóm giữ vì đó là ngoại lai hợp lệ Tiêu đề trước đây: Hai phương pháp cùng đánh dấu 24.213 ngoại lai}
-\end{frame}
-
-\begin{frame}{Tương quan}
-\muc{3.1 · Khám phá dữ liệu}
-\begin{itemize}
-  \item Fact với fact: khoảng cách, phí vận chuyển, lead time
-  \item Dimension với fact: giao trễ, review, vùng
-  \item Dimension với dimension: Cramér's V
-  \item Funnel và bán hàng
-\end{itemize}
-\note{Mục trong checklist của thầy.}
 \end{frame}
 
 \begin{frame}{Tương quan fact–fact: khoảng cách, phí, lead time}
@@ -189,15 +125,6 @@ approval\_hours & 9,81 & 0,34 & 19,43 & 4,57 \\
 \note{[S47] Quyết định DB4 hiển thị cả nhóm "chốt nhưng chưa bán". Ý đã chuyển khỏi slide: 380 seller tạo 674.005 BRL, 4,99\% GMV. Tiêu đề trước đây: Chỉ 380/842 deal (45,1\%) có đơn: funnel và bán hàng chỉ giao nhau một phần Phễu thu hút (từ phần khảo sát): 8.000 MQL $\rightarrow$ 842 deal (10,5\%) $\rightarrow$ 379 seller có đơn bán được (45,0\% số deal); 462 deal đã chốt nhưng chưa bán gì. Đây là kết quả phân tích, không phải lỗi dữ liệu.}
 \end{frame}
 
-\begin{frame}{Khuynh hướng và mùa vụ}
-\muc{3.1 · Khám phá dữ liệu}
-\begin{itemize}
-  \item STL theo ngày và theo tháng
-  \item Đỉnh Black Friday
-\end{itemize}
-\note{Mục trong checklist của thầy.}
-\end{frame}
-
 \begin{frame}{Khuynh hướng và mùa vụ: STL số đơn theo ngày}
 \muc{3.1 · Khám phá dữ liệu · Khuynh hướng và mùa vụ}
 \HinhChu{3-1_stl_daily.png}{%
@@ -208,13 +135,6 @@ approval\_hours & 9,81 & 0,34 & 19,43 & 4,57 \\
 \end{itemize}}
 \KetLuan{Dưới 2 năm nên không kết luận mùa vụ theo năm}
 \note{[S135] Phân rã STL số đơn theo ngày. Tiêu đề đầy đủ trước khi rút gọn: STL: xu hướng mạnh 0,73, mùa vụ tuần 0,22; dưới 2 năm nên không kết luận mùa vụ theo năm Tiêu đề trước đây: STL: xu hướng mạnh 0,73, mùa vụ tuần 0,22}
-\end{frame}
-
-\begin{frame}{Khuynh hướng và mùa vụ: STL theo tháng}
-\muc{3.1 · Khám phá dữ liệu · Khuynh hướng và mùa vụ}
-\HinhLon{3-1_stl_monthly.png}
-\KetLuan{Theo tháng: xu hướng 0,948, mùa vụ 0,800 nhưng chỉ có 20 điểm}
-\note{[P12] Phân rã STL số đơn theo tháng (chu kỳ 12 tháng); số lấy từ handoff/2026-11-14-P8-eda.md.}
 \end{frame}
 
 \begin{frame}{Khuynh hướng và mùa vụ: đỉnh Black Friday}

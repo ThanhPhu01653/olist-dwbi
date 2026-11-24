@@ -8,7 +8,7 @@
 \renewcommand{\hust@render@progressbar}{%
   \fill[hustgrayline!30] (current page.north west) rectangle ([yshift=-\hust@prog@h] current page.north east);
   \ifnum\inserttotalframenumber>0\relax
-    \setlength{\hust@sec@w}{\dimexpr\paperwidth * \insertframenumber / \inserttotalframenumber\relax}%
+    \ifnum\insertframenumber>\inserttotalframenumber \setlength{\hust@sec@w}{\paperwidth}\else \setlength{\hust@sec@w}{\dimexpr\paperwidth * \insertframenumber / \inserttotalframenumber\relax}\fi%
     \fill[hustmain] (current page.north west) rectangle ([xshift=\hust@sec@w, yshift=-\hust@prog@h] current page.north west);
   \fi
 }

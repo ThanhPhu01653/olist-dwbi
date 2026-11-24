@@ -116,4 +116,28 @@
 %% 9. Ghi nguồn nhỏ ở cuối (chỉ chỗ này được dùng chữ nhỏ).
 \newcommand{\Nguon}[1]{\par\vspace{2pt}{\scriptsize\color{black!55}Nguồn: #1}\par}
 
+%% 10. Lộ trình (trang mở của phần hoặc khối): một hàng ô đánh số 1..n nối bằng mũi tên; ô thứ k tô màu hustmain, k = 0 thì không tô ô nào.
+%%     Tối đa 6 ô; mỗi nhãn tối đa 3 từ (cho phép xuống dòng trong ô).
+%%     \LoTrinh{Chất lượng, Phân bố, Đặc trưng, Tương quan, Xu hướng}{2}
+\tikzset{LoOn/.style={fill=hustmain,draw=hustmain,text=white},LoOff/.style={fill=white,draw=hustmain!40,text=hustblack}}
+\newcount\LoTn
+\newcount\LoTi
+\newlength{\LoTw}
+\newcommand{\LoTrinh}[2]{%
+  \par\vspace{8pt}\noindent
+  \LoTn=0 \foreach \x in {#1}{\global\advance\LoTn by 1}%
+  \setlength{\LoTw}{\dimexpr(\linewidth-\LoTn\dimexpr 0.5cm\relax+0.5cm)/\LoTn\relax}%
+  \begin{tikzpicture}
+    \LoTi=0
+    \foreach \x in {#1}{%
+      \global\advance\LoTi by 1
+      \ifnum\LoTi=#2 \def\LoStyle{LoOn}\else\def\LoStyle{LoOff}\fi
+      \node[\LoStyle,rounded corners=3pt,line width=1pt,inner sep=4pt,minimum height=1.7cm,text width=\dimexpr\LoTw-8pt\relax,align=center,anchor=north west,font=\normalsize\bfseries]
+        (lo\the\LoTi) at (\the\dimexpr(\LoTw+0.5cm)*\numexpr\LoTi-1\relax,0) {\the\LoTi\\[1pt]{\normalsize\mdseries\x}};
+      \ifnum\LoTi<\LoTn
+        \draw[-{Stealth[length=6pt]},line width=1.4pt,hustmain] (lo\the\LoTi.east) -- ++(0.5cm,0);
+      \fi
+    }%
+  \end{tikzpicture}\par\vspace{4pt}}
+
 \endinput
