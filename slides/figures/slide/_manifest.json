@@ -47,6 +47,42 @@
   "script": "scripts/p12d_trees.py",
   "w_in": 5.953
  },
+ "2-4_data_flow_de_xuat.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.46,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_drafts.py",
+  "w_in": 5.747
+ },
+ "2-4_data_flow_hien_trang.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.46,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_drafts.py",
+  "w_in": 5.747
+ },
+ "2-4_data_taxonomy.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.31,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_drafts.py",
+  "w_in": 5.747
+ },
  "2-4_tan_suat_cap_nhat.png": {
   "dpi": 300,
   "h_in": 1.903,
@@ -58,6 +94,18 @@
   ],
   "script": "scripts/eda/source_profile.py",
   "w_in": 5.933
+ },
+ "2-5_data_flow_oltp_olap.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.46,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_drafts.py",
+  "w_in": 5.747
  },
  "3-1_black_friday.png": {
   "dpi": 300,
@@ -118,6 +166,90 @@
   ],
   "script": "scripts/eda/p12c_categorical.py",
   "w_in": 3.627
+ },
+ "3-2-1_bpmn_don_hang.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.46,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_drafts.py",
+  "w_in": 5.747
+ },
+ "3-2-2_bpmn_thu_hut_seller.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.46,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_drafts.py",
+  "w_in": 5.747
+ },
+ "3-2-3_business_model_canvas.png": {
+  "dpi": 300,
+  "h_in": 2.207,
+  "kind": "full_ket_ca",
+  "min_pt": 9.46,
+  "px": [
+   1721,
+   662
+  ],
+  "script": "scripts/p12e_drafts.py",
+  "w_in": 5.737
+ },
+ "3-2-4_erd_oltp.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.46,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_drafts.py",
+  "w_in": 5.747
+ },
+ "3-2-5_cay_nghiep_vu.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.46,
+  "px": [
+   1754,
+   719
+  ],
+  "script": "scripts/p12e_drafts.py",
+  "w_in": 5.847
+ },
+ "3-2-6_cay_yeu_cau_phan_tich_a.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.46,
+  "px": [
+   1730,
+   719
+  ],
+  "script": "scripts/p12e_drafts.py",
+  "w_in": 5.767
+ },
+ "3-2-6_cay_yeu_cau_phan_tich_b.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.46,
+  "px": [
+   1730,
+   719
+  ],
+  "script": "scripts/p12e_drafts.py",
+  "w_in": 5.767
  },
  "3-2_kien_truc_cac_lop.png": {
   "dpi": 300,
@@ -215,6 +347,126 @@
   "script": "scripts/eda/distributions.py",
   "w_in": 5.827
  },
+ "3-3-4_constellation_a.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.46,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_model.py",
+  "w_in": 5.747
+ },
+ "3-3-4_constellation_b.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.46,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_model.py",
+  "w_in": 5.747
+ },
+ "3-3-4_constellation_sl.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.46,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_model.py",
+  "w_in": 5.747
+ },
+ "3-3-4_erd_dw_fact_lead_funnel.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_model.py",
+  "w_in": 5.747
+ },
+ "3-3-4_erd_dw_fact_order_fulfillment.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_model.py",
+  "w_in": 5.747
+ },
+ "3-3-4_erd_dw_fact_order_item.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_model.py",
+  "w_in": 5.747
+ },
+ "3-3-4_erd_dw_fact_payment.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_model.py",
+  "w_in": 5.747
+ },
+ "3-3-4_erd_dw_fact_review.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_model.py",
+  "w_in": 5.747
+ },
+ "3-3-4_erd_dw_fact_seller_monthly.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_model.py",
+  "w_in": 5.747
+ },
+ "3-3_etl_jobs.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "left60",
+  "min_pt": 9.46,
+  "px": [
+   1112,
+   719
+  ],
+  "script": "scripts/p12e_model.py",
+  "w_in": 3.707
+ },
  "3-4-1_pipeline.png": {
   "dpi": 300,
   "h_in": 2.44,
@@ -226,6 +478,30 @@
   ],
   "script": "scripts/p12d_diagrams.py",
   "w_in": 5.953
+ },
+ "3-4-1_pipeline_sl.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.46,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_model.py",
+  "w_in": 5.747
+ },
+ "3-5-1_benchmark.png": {
+  "dpi": 300,
+  "h_in": 2.367,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1748,
+   710
+  ],
+  "script": "scripts/p12e_model.py",
+  "w_in": 5.827
  },
  "3-5-2_distance_vs_freight.png": {
   "dpi": 300,
@@ -250,6 +526,30 @@
   ],
   "script": "scripts/geo_analysis.py",
   "w_in": 5.95
+ },
+ "3-5_data_model_vat_ly.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.46,
+  "px": [
+   1724,
+   719
+  ],
+  "script": "scripts/p12e_model.py",
+  "w_in": 5.747
+ },
+ "5-1_kien_truc_lakehouse_sl.png": {
+  "dpi": 300,
+  "h_in": 2.397,
+  "kind": "full_ket",
+  "min_pt": 9.8,
+  "px": [
+   1735,
+   719
+  ],
+  "script": "scripts/p12e_model.py",
+  "w_in": 5.783
  },
  "5-2_danh_nghia_so_voi_thuc_sl.png": {
   "dpi": 300,

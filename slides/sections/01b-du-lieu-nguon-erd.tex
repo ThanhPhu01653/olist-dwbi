@@ -30,14 +30,14 @@ crm.closed\_deals & olist\_closed\_deals\_dataset.csv & 842 & 14 & 0,16 \\
 
 \begin{frame}{Data flow hiện trạng: hai nguồn tách rời}
 \muc{2.4 · Dữ liệu nguồn}
-\HinhLon{2-4_data_flow_hien_trang.png}
+\HinhLon{slide/2-4_data_flow_hien_trang.png}
 \KetLuan{Marketing funnel (SDR, SR) tách khỏi hệ thống bán hàng}
 \note{[S129] Hiện trạng: luồng thông tin giữa các hệ thống CNTT (bản nháp, nhóm vẽ lại). Tiêu đề đầy đủ trước khi rút gọn: Data flow hiện trạng: mũi tên ghi thông tin được truyền, hai hệ thống nguồn tách rời Ý đã chuyển khỏi slide: Thông tin đơn, trạng thái giao, thanh toán, điểm đánh giá, lead. Tiêu đề trước đây: Data flow hiện trạng: mũi tên ghi thông tin truyền, hai nguồn tách rời}
 \end{frame}
 
 \begin{frame}{Data flow đề xuất: từ nguồn đến BI}
 \muc{2.4 · Dữ liệu nguồn}
-\HinhLon{2-4_data_flow_de_xuat.png}
+\HinhLon{slide/2-4_data_flow_de_xuat.png}
 \KetLuan{Điều phối bằng một lệnh Python, biến đổi bằng PL/pgSQL}
 \note{[S130] Đề xuất: luồng nguồn đến BI. Ý đã chuyển khỏi slide: Bảng lớp, thành phần, công nghệ, tần suất, ghi chú ở báo cáo. Tiêu đề trước đây: Data flow đề xuất: nguồn, staging, ODS, kho, mart và BI, có nhật ký ETL giám sát}
 \end{frame}
@@ -51,7 +51,7 @@ crm.closed\_deals & olist\_closed\_deals\_dataset.csv & 842 & 14 & 0,16 \\
 
 \begin{frame}{Data taxonomy: 11 bảng chia 4 nhóm}
 \muc{2.4 · Dữ liệu nguồn}
-\HinhLon{2-4_data_taxonomy.png}
+\HinhLon{slide/2-4_data_taxonomy.png}
 \KetLuan{Mỗi bảng kèm hai cột tiêu biểu và giá trị thật}
 \note{[S128] Data taxonomy của 11 bảng nguồn. Tiêu đề đầy đủ trước khi rút gọn: Cây phân loại dữ liệu chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu Ý đã chuyển khỏi slide: Phân loại thêm theo kiểu dữ liệu, độ nhạy cảm (định danh, vị trí) và tính biến động. Tiêu đề trước đây: Cây phân loại chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu}
 \end{frame}
@@ -60,7 +60,7 @@ crm.closed\_deals & olist\_closed\_deals\_dataset.csv & 842 & 14 & 0,16 \\
 
 \begin{frame}{ERD OLTP: chín bảng nối quanh đơn hàng}
 \muc{2.5 · ERD OLTP}
-\HinhLon{3-2-4_erd_oltp.png}
+\HinhLon{slide/3-2-4_erd_oltp.png}
 \KetLuan{orders $\rightarrow$ items, payments, reviews; customers, sellers, products}
 \note{[S35] \texttt{customer\_\allowbreak{}id} được sinh riêng cho từng đơn nên cần \texttt{customer\_\allowbreak{}unique\_\allowbreak{}id} để nhận ra khách thật. Tiêu đề trước đây: ERD hệ thống bán hàng: chín bảng nối quanh đơn hàng}
 \end{frame}
@@ -77,7 +77,7 @@ crm.closed\_deals & olist\_closed\_deals\_dataset.csv & 842 & 14 & 0,16 \\
 
 \begin{frame}{OLTP $\rightarrow$ OLAP: bảng nguồn nuôi dimension và fact}
 \muc{2.5 · ERD OLTP}
-\HinhLon{2-5_data_flow_oltp_olap.png}
+\HinhLon{slide/2-5_data_flow_oltp_olap.png}
 \KetLuan{Mapping đầy đủ từng cột ở Phụ lục C}
 \note{[S132] Sơ đồ luồng dữ liệu OLTP sang OLAP. Ý đã chuyển khỏi slide: Bảng tổng hợp mapping theo bảng nguồn ở báo cáo mục 2.5. Tiêu đề trước đây: Luồng OLTP sang OLAP cho thấy bảng nguồn nào nuôi dimension nào và fact nào}
 \end{frame}
