@@ -18,28 +18,28 @@
 
 \begin{frame}{Chất lượng dữ liệu: 45 loại lỗi cần xử lý ở ODS}
 \muc{3.1 · Khám phá dữ liệu · Chất lượng dữ liệu}
-\HinhLon{3-3-1_data_quality.png}
+\HinhLon{slide/3-3-1_data_quality.png}
 \KetLuan{Cột thiếu, mốc thời gian sai thứ tự, tên thành phố lệch dấu, trùng lặp}
 \note{[S38] Không loại lỗi nào bằng cách xóa dữ liệu. Tiêu đề trước đây: Khám phá dữ liệu đo được 45 loại lỗi cần xử lý ở ODS}
 \end{frame}
 
 \begin{frame}{Phân bố: giá, phí vận chuyển, lead time lệch phải}
 \muc{3.1 · Khám phá dữ liệu · Phân bố}
-\HinhLon{3-3-1_distributions_numeric.png}
+\HinhLon{slide/3-3-1_distributions_numeric.png}
 \KetLuan{Nhiều giá trị lớn bất thường ở phí vận chuyển}
 \note{[S41] Vì vậy dùng trung vị và Spearman khi cần. Tiêu đề trước đây: Phân bố giá, phí vận chuyển và lead time đều lệch phải}
 \end{frame}
 
 \begin{frame}{Phân bố theo thời gian: 99,6\% số đơn trong 01/2017–08/2018}
 \muc{3.1 · Khám phá dữ liệu · Phân bố}
-\HinhLon{3-3-1_orders_per_month.png}
+\HinhLon{slide/3-3-1_orders_per_month.png}
 \KetLuan{2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn}
 \note{[S32] Bộ lọc InWindow trong Power BI cố định cửa sổ này cho DB1–DB4. Tiêu đề trước đây: Phạm vi: dữ liệu 01/2017–08/2018 chiếm 99,6\% số đơn nên được dùng cho xu hướng}
 \end{frame}
 
 \begin{frame}{Phân bố: 18/74 danh mục tạo 80\% GMV (Pareto)}
 \muc{3.1 · Khám phá dữ liệu · Phân bố}
-\HinhLon{3-3-1_pareto_category.png}
+\HinhLon{slide/3-3-1_pareto_category.png}
 \KetLuan{Quy luật Pareto theo danh mục}
 \note{[S43] Danh mục được gom thành 13 nhóm ngành hàng. Tiêu đề trước đây: 18/74 danh mục (24,3\%) tạo 80\% GMV, dẫn đầu health\symbol{95}beauty 9,3\%}
 \end{frame}
@@ -68,7 +68,7 @@ approval\_hours & 9,81 & 0,34 & 19,43 & 4,57 \\
 
 \begin{frame}{Thống kê đặc trưng: ngoại lai IQR và Isolation Forest}
 \muc{3.1 · Khám phá dữ liệu · Thống kê đặc trưng}
-\HinhChu{3-1_outliers_boxplot.png}{%
+\HinhChu{slide/3-1_outliers_boxplot.png}{%
 \small\begin{itemize}
   \item IQR đánh dấu 45.568, Isolation Forest (contamination 0,05, random\_state 42) 26.212
   \item Phí cao đi với hàng nặng (trung vị 5.700 g so với 700 g); 76,9\% đơn lead time ngoại lai là đơn trễ
@@ -93,24 +93,24 @@ phân loại -- phân loại & $\chi^2$ $\rightarrow$ Cramér's V $\rightarrow$ 
 \begin{frame}{Tương quan fact–fact: khoảng cách, phí, lead time}
 \muc{3.1 · Khám phá dữ liệu · Tương quan}
 \only<1>{%
-\HinhLon{3-5-2_distance_vs_freight.png}
+\HinhLon{slide/3-5-2_distance_vs_freight.png}
 \KetLuan{Phí 11,75 $\rightarrow$ 31,65 BRL; lead time 6,5 $\rightarrow$ 19,0 ngày; trễ 4,5\% $\rightarrow$ 10,3\%}}
 \only<2>{%
-\HinhLon{3-5-2_distance_vs_leadtime.png}
+\HinhLon{slide/3-5-2_distance_vs_leadtime.png}
 \KetLuan{Phí 11,75 $\rightarrow$ 31,65 BRL; lead time 6,5 $\rightarrow$ 19,0 ngày; trễ 4,5\% $\rightarrow$ 10,3\%}}
 \note{[S108] Tương quan Spearman 0,63 với phí và 0,54 với lead time; đó là tương quan, không phải nhân quả. Tiêu đề đầy đủ trước khi rút gọn: Khoảng cách tăng từ dưới 100 km lên trên 1.000 km làm phí vận chuyển gấp 2,7 lần và lead time gấp 2,9 lần Bấm để chuyển giữa hai biểu đồ (phí vận chuyển, lead time). Ý đã chuyển khỏi slide: Phí 11,75 $\rightarrow$ 31,65 BRL; lead time 6,5 $\rightarrow$ 19,0 ngày; trễ 4,5\% $\rightarrow$ 10,3\%. Tiêu đề trước đây: Từ dưới 100 km lên trên 1.000 km: phí gấp 2,7 lần, lead time gấp 2,9 lần}
 \end{frame}
 
 \begin{frame}{Tương quan dim–fact: giao trễ và điểm review}
 \muc{3.1 · Khám phá dữ liệu · Tương quan}
-\HinhLon{3-3-1_delay_vs_review.png}
+\HinhLon{slide/3-3-1_delay_vs_review.png}
 \KetLuan{Đơn trễ: odds review tiêu cực gấp 16 lần, đã kiểm soát vùng khách và ngành}
 \note{[S45] Trung bình toàn sàn che mất nhóm nhỏ nhưng đau. [P12c] Odds ratio: review tiêu cực 62,4\% ở đơn trễ so với 9,3\% ở đơn đúng hạn hoặc sớm; OR thô 16,27 (khoảng tin cậy 95\% 15,40 đến 17,20); hồi quy logistic có kiểm soát vùng khách và nhóm ngành cho OR 16,28 (15,40 đến 17,22), gần như không đổi. Ý đã chuyển khỏi slide: đơn trễ chiếm 6,5\% số review nhưng tạo 27,4\% review tiêu cực. Tiêu đề trước đây: Giao trễ làm điểm review rơi từ 4,29 xuống 1,70 và 79,2\% review tiêu cực}
 \end{frame}
 
 \begin{frame}{Tương quan dim–fact: vùng và tỷ lệ trễ}
 \muc{3.1 · Khám phá dữ liệu · Tương quan}
-\HinhLon{3-3-1_late_rate_by_state.png}
+\HinhLon{slide/3-3-1_late_rate_by_state.png}
 \KetLuan{Sudeste chỉ 6,1\% trễ, lead time 10,7 ngày}
 \note{[S46] Địa lý quyết định trải nghiệm giao hàng. Tiêu đề trước đây: Trễ tập trung ở Bắc và Đông Bắc: Nordeste trễ 12,8\%, Norte lead time 22,6 ngày}
 \end{frame}
@@ -118,14 +118,14 @@ phân loại -- phân loại & $\chi^2$ $\rightarrow$ Cramér's V $\rightarrow$ 
 \begin{frame}{Tương quan dim–dim: Cramér's V 0,40, Theil's U có chiều}
 \muc{3.1 · Khám phá dữ liệu · Tương quan}
 \only<1>{%
-\HinhChu{3-1_cramer_v_heatmap_p.png}{%
+\HinhChu{slide/3-1_cramer_v_heatmap_p.png}{%
 \small\begin{itemize}
   \item V đọc theo độ mạnh; * là p < 0,05
   \item 19/21 cặp có *, kể cả V = 0,01
 \end{itemize}}
 \KetLuan{Chỉ 3/21 cặp có V từ 0,1; mạnh nhất là cờ giao trễ -- nhóm review 0,40}}
 \only<2>{%
-\HinhChu{3-1_theils_u_heatmap.png}{%
+\HinhChu{slide/3-1_theils_u_heatmap.png}{%
 \small\begin{itemize}
   \item U(hàng | cột): biết cột thì giảm bấy nhiêu bất định của hàng
 \end{itemize}}
@@ -135,7 +135,7 @@ phân loại -- phân loại & $\chi^2$ $\rightarrow$ Cramér's V $\rightarrow$ 
 
 \begin{frame}{Tương quan: funnel và bán hàng giao nhau một phần}
 \muc{3.1 · Khám phá dữ liệu · Tương quan}
-\HinhChu{3-3-1_funnel_seller_overlap.png}{%
+\HinhChu{slide/3-3-1_funnel_seller_overlap.png}{%
 \small\begin{itemize}
   \item 380 là số seller có đơn ở mọi trạng thái; kho chỉ tính đơn không bị huỷ nên có 379 seller (45,0\%)
 \end{itemize}}
@@ -145,7 +145,7 @@ phân loại -- phân loại & $\chi^2$ $\rightarrow$ Cramér's V $\rightarrow$ 
 
 \begin{frame}{Khuynh hướng và mùa vụ: STL số đơn theo ngày}
 \muc{3.1 · Khám phá dữ liệu · Khuynh hướng và mùa vụ}
-\HinhChu{3-1_stl_daily.png}{%
+\HinhChu{slide/3-1_stl_daily.png}{%
 \small\begin{itemize}
   \item $F = \max(0, 1 - \mathrm{Var}(R)/\mathrm{Var}(S+R))$
   \item Black Friday 24/11/2017: 1.176 đơn, gấp 6,6 lần trung bình tháng 11
@@ -157,7 +157,7 @@ phân loại -- phân loại & $\chi^2$ $\rightarrow$ Cramér's V $\rightarrow$ 
 
 \begin{frame}{Khuynh hướng và mùa vụ: đỉnh Black Friday}
 \muc{3.1 · Khám phá dữ liệu · Khuynh hướng và mùa vụ}
-\HinhLon{3-1_black_friday.png}
+\HinhLon{slide/3-1_black_friday.png}
 \KetLuan{Black Friday 24/11/2017: 1.176 đơn, gấp 6,6 lần trung bình tháng 11}
 \note{[P12] Hình đỉnh Black Friday trong figures/3-1\_black\_friday.png.}
 \end{frame}

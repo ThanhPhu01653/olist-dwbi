@@ -12,5 +12,12 @@
     \fill[hustmain] (current page.north west) rectangle ([xshift=\hust@sec@w, yshift=-\hust@prog@h] current page.north west);
   \fi
 }
+% P12d: noi dung len sat thanh tieu de (do tren PDF bang scripts/do_vung_slide.py)
+\newlength\TieuDeLen
+\setlength\TieuDeLen{17pt}
+\addtobeamertemplate{frametitle}{}{\vskip-\TieuDeLen}
+\newlength\ThemVung
+\setlength\ThemVung{14pt}  % vung noi dung duoc phep dai den sat duong ke chan trang (y = 236,6 pt); do tren PDF
+\g@addto@macro\beamer@calculateheadfoot{\advance\textheight by \ThemVung \@colht\textheight \@colroom\textheight \vsize\textheight}
 \makeatother
 \endinput

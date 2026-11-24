@@ -17,4 +17,12 @@ for dst in (ROOT / "report" / "figures", ROOT / "slides" / "figures"):
         if not t.exists() or f.stat().st_mtime > t.stat().st_mtime:
             shutil.copy2(f, t)
             copied += 1
+# P12d: figures drawn for the slides (figures/slide/) go to slides/figures/slide only; the report keeps its own figures
+sd = ROOT / "slides" / "figures" / "slide"
+sd.mkdir(parents=True, exist_ok=True)
+for f in list((SRC / "slide").glob("*.png")) + list((SRC / "slide").glob("*.json")):
+    t = sd / f.name
+    if not t.exists() or f.stat().st_mtime > t.stat().st_mtime:
+        shutil.copy2(f, t)
+        copied += 1
 print("copied", copied, "files")

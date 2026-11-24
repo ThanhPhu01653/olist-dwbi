@@ -2,7 +2,7 @@
 
 \begin{frame}{Kiến trúc: sáu tầng, thành phần, công nghệ, số dòng}
 \muc{3.2 · Kiến trúc}
-\HinhChu{3-2_kien_truc_cac_lop.png}{%
+\HinhChu{slide/3-2_kien_truc_cac_lop.png}{%
 \small\begin{itemize}
   \item Giám sát etl\_log 6 bảng; điều phối bằng một lệnh Python
 \end{itemize}}
@@ -40,7 +40,7 @@ Power BI & 4 dashboard & đối chiếu giá trị kỳ vọng từ SQL \\
 
 \begin{frame}{Tóm tắt ETL: một lệnh chạy các bước và ghi nhật ký}
 \muc{3.3 · ETL}
-\HinhLon{3-4-1_pipeline.png}
+\HinhLon{slide/3-4-1_pipeline.png}
 \KetLuan{extract $\rightarrow$ ODS $\rightarrow$ dim $\rightarrow$ fact $\rightarrow$ mart $\rightarrow$ tests $\rightarrow$ snapshot $\rightarrow$ export}
 
 \note{[S67] Mỗi bước ghi \texttt{job\_\allowbreak{}run}; lỗi thì dừng và đánh dấu failed. Tiêu đề trước đây: Một lệnh chạy sáu bước ETL và ghi lại từng bước}
@@ -219,7 +219,7 @@ crm.mql & 4/4 & dim\_seller, fact\_lead\_funnel & origin: lower(trim()), NULL $\
 
 \begin{frame}{Nạp tăng dần: 11 đợt, 286.144 bản ghi mới}
 \muc{3.3 · ETL}
-\HinhLon{3-4-1_pipeline.png}
+\HinhLon{slide/3-4-1_pipeline.png}
 \KetLuan{\texttt{simulate\_\allowbreak{}increment} rồi \texttt{run\_\allowbreak{}pipeline --mode incremental}}
 
 \note{[S77] Đơn vào với trạng thái cuối; đó là giới hạn của mô phỏng. Tiêu đề trước đây: Nạp tăng dần mô phỏng: 11 đợt hằng tháng, tổng 286.144 bản ghi mới}

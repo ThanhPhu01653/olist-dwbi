@@ -1,0 +1,278 @@
+{
+ "2-3_cay_phan_tich_DB1.png": {
+  "dpi": 300,
+  "h_in": 2.437,
+  "kind": "full_ket",
+  "min_pt": 9.4,
+  "px": [
+   1693,
+   731
+  ],
+  "script": "scripts/p12d_trees.py",
+  "w_in": 5.643
+ },
+ "2-3_cay_phan_tich_DB2.png": {
+  "dpi": 300,
+  "h_in": 2.42,
+  "kind": "full_ket",
+  "min_pt": 9.4,
+  "px": [
+   1648,
+   726
+  ],
+  "script": "scripts/p12d_trees.py",
+  "w_in": 5.493
+ },
+ "2-3_cay_phan_tich_DB3.png": {
+  "dpi": 300,
+  "h_in": 2.44,
+  "kind": "full_ket",
+  "min_pt": 9.4,
+  "px": [
+   1675,
+   732
+  ],
+  "script": "scripts/p12d_trees.py",
+  "w_in": 5.583
+ },
+ "2-3_cay_phan_tich_DB4.png": {
+  "dpi": 300,
+  "h_in": 2.437,
+  "kind": "full_ket",
+  "min_pt": 9.4,
+  "px": [
+   1786,
+   731
+  ],
+  "script": "scripts/p12d_trees.py",
+  "w_in": 5.953
+ },
+ "2-4_tan_suat_cap_nhat.png": {
+  "dpi": 300,
+  "h_in": 1.903,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1780,
+   571
+  ],
+  "script": "scripts/eda/source_profile.py",
+  "w_in": 5.933
+ },
+ "3-1_black_friday.png": {
+  "dpi": 300,
+  "h_in": 2.387,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1742,
+   716
+  ],
+  "script": "scripts/eda/p8_seasonality.py",
+  "w_in": 5.807
+ },
+ "3-1_cramer_v_heatmap_p.png": {
+  "dpi": 300,
+  "h_in": 2.413,
+  "kind": "left60",
+  "min_pt": 9.3,
+  "px": [
+   1088,
+   724
+  ],
+  "script": "scripts/eda/p12c_categorical.py",
+  "w_in": 3.627
+ },
+ "3-1_outliers_boxplot.png": {
+  "dpi": 300,
+  "h_in": 2.283,
+  "kind": "left60",
+  "min_pt": 9.3,
+  "px": [
+   1129,
+   685
+  ],
+  "script": "scripts/eda/p8_outliers.py",
+  "w_in": 3.763
+ },
+ "3-1_stl_daily.png": {
+  "dpi": 300,
+  "h_in": 2.393,
+  "kind": "left60",
+  "min_pt": 9.3,
+  "px": [
+   1145,
+   718
+  ],
+  "script": "scripts/eda/p8_seasonality.py",
+  "w_in": 3.817
+ },
+ "3-1_theils_u_heatmap.png": {
+  "dpi": 300,
+  "h_in": 2.413,
+  "kind": "left60",
+  "min_pt": 9.3,
+  "px": [
+   1088,
+   724
+  ],
+  "script": "scripts/eda/p12c_categorical.py",
+  "w_in": 3.627
+ },
+ "3-2_kien_truc_cac_lop.png": {
+  "dpi": 300,
+  "h_in": 2.44,
+  "kind": "left60",
+  "min_pt": 9.4,
+  "px": [
+   1144,
+   732
+  ],
+  "script": "scripts/p12d_diagrams.py",
+  "w_in": 3.813
+ },
+ "3-3-1_data_quality.png": {
+  "dpi": 300,
+  "h_in": 2.207,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1670,
+   662
+  ],
+  "script": "scripts/eda/data_quality.py",
+  "w_in": 5.567
+ },
+ "3-3-1_delay_vs_review.png": {
+  "dpi": 300,
+  "h_in": 2.33,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1708,
+   699
+  ],
+  "script": "scripts/eda/correlations.py",
+  "w_in": 5.693
+ },
+ "3-3-1_distributions_numeric.png": {
+  "dpi": 300,
+  "h_in": 2.027,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1766,
+   608
+  ],
+  "script": "scripts/eda/distributions.py",
+  "w_in": 5.887
+ },
+ "3-3-1_funnel_seller_overlap.png": {
+  "dpi": 300,
+  "h_in": 2.433,
+  "kind": "left60",
+  "min_pt": 9.3,
+  "px": [
+   1144,
+   730
+  ],
+  "script": "scripts/eda/funnel.py",
+  "w_in": 3.813
+ },
+ "3-3-1_late_rate_by_state.png": {
+  "dpi": 300,
+  "h_in": 2.417,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1770,
+   725
+  ],
+  "script": "scripts/eda/correlations.py",
+  "w_in": 5.9
+ },
+ "3-3-1_orders_per_month.png": {
+  "dpi": 300,
+  "h_in": 2.39,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1738,
+   717
+  ],
+  "script": "scripts/eda/distributions.py",
+  "w_in": 5.793
+ },
+ "3-3-1_pareto_category.png": {
+  "dpi": 300,
+  "h_in": 2.333,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1748,
+   700
+  ],
+  "script": "scripts/eda/distributions.py",
+  "w_in": 5.827
+ },
+ "3-4-1_pipeline.png": {
+  "dpi": 300,
+  "h_in": 2.44,
+  "kind": "full_ket",
+  "min_pt": 9.6,
+  "px": [
+   1786,
+   732
+  ],
+  "script": "scripts/p12d_diagrams.py",
+  "w_in": 5.953
+ },
+ "3-5-2_distance_vs_freight.png": {
+  "dpi": 300,
+  "h_in": 2.437,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1783,
+   731
+  ],
+  "script": "scripts/geo_analysis.py",
+  "w_in": 5.943
+ },
+ "3-5-2_distance_vs_leadtime.png": {
+  "dpi": 300,
+  "h_in": 2.44,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1785,
+   732
+  ],
+  "script": "scripts/geo_analysis.py",
+  "w_in": 5.95
+ },
+ "5-2_danh_nghia_so_voi_thuc_sl.png": {
+  "dpi": 300,
+  "h_in": 2.383,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1768,
+   715
+  ],
+  "script": "scripts/p9_results.py",
+  "w_in": 5.893
+ },
+ "5-2_gmv_dau_nguoi_theo_bang_sl.png": {
+  "dpi": 300,
+  "h_in": 2.383,
+  "kind": "full_ket",
+  "min_pt": 9.3,
+  "px": [
+   1703,
+   715
+  ],
+  "script": "scripts/p9_results.py",
+  "w_in": 5.677
+ }
+}
