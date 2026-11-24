@@ -183,15 +183,82 @@ def render(pdf: Path, pages: str):
     print(f"Đã xuất {len(files)} trang vào {out}")
 
 
+def check_pdf(pdf: Path, include_backup: bool = False) -> tuple[int, int]:
+    """P12d: check geometry on the rendered PDF (see scripts/do_vung_slide.py). Returns (errors, warnings)."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import hashlib  # noqa: F401
+    import json
+    from do_vung_slide import measure
+    ms = measure(pdf)
+    try:
+        import pymupdf
+        doc = pymupdf.open(str(pdf))
+        first_backup = next((i for i, pg in enumerate(doc) if "accumulating snapshot (3)" in pg.get_text()), len(ms))
+    except Exception:
+        first_backup = len(ms)
+    man_path = ROOT / "figures" / "slide" / "_manifest.json"
+    man = json.loads(man_path.read_text(encoding="utf-8")) if man_path.exists() else {}
+    by_px = {tuple(v["px"]): (k, v) for k, v in man.items()}
+    GAP = 2.0
+    FULL_W = 428.0
+    HINH_CAO = 175.0
+    n_err = n_warn = 0
+
+    def say(level, pg, msg):
+        nonlocal n_err, n_warn
+        print(f"pdf trang {pg}  {level} P12d  {msg}")
+        n_err += level == "LỖI"
+        n_warn += level == "NÊN"
+
+    for m in ms:
+        pg = m["page"]
+        if not include_backup and pg - 1 >= first_backup:
+            break
+        bar, foot = m["bar_bottom"], m["footer_top"]
+        if bar is None or foot is None:
+            continue  # title / section / thanks pages
+        boxes = [("hình", f["bbox"]) for f in m["figs"]]
+        if m["ket"]:
+            boxes.append(("thanh KetLuan", m["ket"]))
+        for name, (x0, y0, x1, y1) in boxes:
+            if y0 < bar + GAP:
+                say("LỖI", pg, f"{name} chạm thanh tiêu đề/nhãn mục (khe {y0 - bar:.1f} pt < {GAP:g})")
+            if y1 > foot - GAP:
+                say("LỖI", pg, f"{name} chạm chân trang (khe {foot - y1:.1f} pt < {GAP:g})")
+            if x0 < 0 or x1 > m["w"] or y1 > m["h"]:
+                say("LỖI", pg, f"{name} ra ngoài trang")
+        for f in m["figs"]:
+            x0, y0, x1, y1 = f["bbox"]
+            w, h = x1 - x0, y1 - y0
+            hit = by_px.get(tuple(f["px"]))
+            if hit:
+                nm, v = hit
+                scale = w / (v["w_in"] * 72.0)
+                shown = v["min_pt"] * scale
+                if shown < 9.0 - 0.05:
+                    say("LỖI", pg, f"{nm}: chữ nhỏ nhất sau khi chèn {shown:.1f} pt < 9 (cỡ {v['min_pt']:.1f} pt, thu phóng {scale:.2f})")
+            if w < 0.55 * FULL_W and h >= HINH_CAO - 4 and w < 0.45 * m["w"]:
+                say("NÊN", pg, f"hình hẹp ({w:.0f} pt trên khung {FULL_W:.0f} pt) mà đã chạm trần chiều cao: vẽ lại theo chiều ngang")
+    return n_err, n_warn
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("files", nargs="*")
     ap.add_argument("--strict", action="store_true")
     ap.add_argument("--final", action="store_true", help="ban thuyet trinh cuoi: LOI neu con khung cho, nhan xac nhan, todo, lorem")
     ap.add_argument("--anh", nargs=2, metavar=("PDF", "TRANG"))
+    ap.add_argument("--pdf", metavar="PDF", help="P12d: do hình, thanh KetLuan, chữ trong hình trên PDF (bộ chính; thêm --ca-du-phong để gồm cả dự phòng)")
+    ap.add_argument("--ca-du-phong", action="store_true")
     a = ap.parse_args()
     if a.anh:
         render(Path(a.anh[0]), a.anh[1]); return
+    if a.pdf:
+        e, w = check_pdf(Path(a.pdf), a.ca_du_phong)
+        print(f"\nPDF: {e} LỖI, {w} NÊN")
+        if a.strict and e:
+            sys.exit(1)
+        return
     files = [Path(f) for f in a.files] or sorted(SECTIONS.glob("*.tex"))
     n_err = n_warn = 0
     for f in files:

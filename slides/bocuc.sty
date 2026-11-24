@@ -17,9 +17,9 @@
 %%   (không có \vbox tràn), vẫn chừa chỗ cho thanh \KetLuan một dòng (khoảng 34 pt). Đổi một chỗ ở đây nếu theme hoặc override thay đổi.
 %% \VungCao: hình không kèm thanh kết luận. \HinhCao: hình có thanh kết luận bên dưới.
 \newlength{\VungCao}
-\setlength{\VungCao}{0.82\textheight}
+\setlength{\VungCao}{195pt}
 \newlength{\HinhCao}
-\setlength{\HinhCao}{0.60\textheight}
+\setlength{\HinhCao}{175pt}
 
 %% Cỡ chữ chuẩn khi chiếu: thân bài \normalsize, bảng \small; KHÔNG dùng \scriptsize, \tiny cho nội dung.
 
@@ -58,10 +58,10 @@
 %%    Không dùng \vfill: khung chữ của theme dài quá chân trang, \vfill đẩy thanh xuống dưới chân trang.
 %%    \KetLuan{Gold khớp kho ở 16/16 bảng; GMV 13.494.400,74 BRL ở cả hai phía}
 \newcommand{\KetLuan}[1]{%
-  \par\vspace{6pt}\noindent
+  \par\vspace{3pt}\noindent
   \begin{tikzpicture}
     \node[fill=hustmain!10,draw=hustmain,line width=0.8pt,rounded corners=3pt,
-      text width=\dimexpr\linewidth-14pt\relax,inner sep=5pt,align=center,
+      text width=\dimexpr\linewidth-14pt\relax,inner sep=3pt,align=center,
       font=\normalsize\bfseries,text=hustblack] {#1};
   \end{tikzpicture}\par}
 
@@ -109,9 +109,9 @@
 %%    \HinhChu{5-2_gmv_dau_nguoi_theo_bang.png}{\begin{itemize}\item ...\end{itemize}}
 \newcommand{\HinhChu}[3][\HinhCao]{%
   \par\vspace{2pt}\noindent
-  \begin{minipage}[c]{0.60\linewidth}\centering
+  \begin{minipage}[c]{0.64\linewidth}\centering
     \includegraphics[width=\linewidth,height=#1,keepaspectratio]{#2}\end{minipage}\hfill
-  \begin{minipage}[c]{0.37\linewidth}\normalsize #3\end{minipage}\par}
+  \begin{minipage}[c]{0.33\linewidth}\normalsize #3\end{minipage}\par}
 
 %% 9. Ghi nguồn nhỏ ở cuối (chỉ chỗ này được dùng chữ nhỏ).
 \newcommand{\Nguon}[1]{\par\vspace{2pt}{\scriptsize\color{black!55}Nguồn: #1}\par}
