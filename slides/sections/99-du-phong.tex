@@ -1,22 +1,24 @@
-\begin{frame}[noprogressbar,noframenumbering]{Vì sao fact\symbol{95}order\symbol{95}fulfillment là accumulating snapshot? (3)}
-\begin{itemize}
-  \item Đơn đi qua nhiều mốc; một dòng, cập nhật theo mốc; lead time tính sẵn (approval 10,3 giờ, handling 2,9 ngày, transit 9,3 ngày)
-  \item Slide chính liên quan: S63
-\end{itemize}
-\begin{center}\adjustbox{max width=\linewidth,max height=0.5\textheight}{\small\renewcommand{\arraystretch}{1.15}\begin{tabular}{ll}\toprule
-\textbf{Cột của fact\_order\_fulfillment (đơn 19c36691…)} & \textbf{Giá trị} \\\midrule
+\begin{frame}[noprogressbar,noframenumbering]{Fact: vì sao fulfillment là accumulating snapshot (3)}
+\only<1>{%
+\begin{BangTC}{Xl}
+\textbf{Cột của fact\_order\_fulfillment (đơn 19c36691…)} & \textbf{Giá trị} \\ \midrule
 approval\_hours & 36,61 \\
 handling\_days & 0,71 \\
 transit\_days & 12,84 \\
 lead\_days & 15,07 \\
 promised\_days & 21 \\
+\end{BangTC}
+\KetLuan{Đơn đi qua nhiều mốc; một dòng, cập nhật theo mốc; lead time tính sẵn}}
+\only<2>{%
+\begin{BangTC}{Xl}
+\textbf{Cột của fact\_order\_fulfillment (đơn 19c36691…)} & \textbf{Giá trị} \\ \midrule
 delay\_days & -6 (giao sớm 6 ngày) \\
 order\_value & 43,00 \\
 freight\_total & 45,30 \\
 payment\_total & 88,30 \\
-\bottomrule\end{tabular}}\end{center}
-
-\note{[S63] B01 - dự phòng cho câu hỏi: Vì sao \texttt{fact\_\allowbreak{}order\_\allowbreak{}fulfillment} là accumulating snapshot? (3). Xem huong-dan/04-cau-hoi-van-dap.md.}
+\end{BangTC}
+\KetLuan{Đơn đi qua nhiều mốc; một dòng, cập nhật theo mốc; lead time tính sẵn}}
+\note{[S63] B01 - dự phòng cho câu hỏi: Vì sao \texttt{fact\_\allowbreak{}order\_\allowbreak{}fulfillment} là accumulating snapshot? (3). Xem huong-dan/04-cau-hoi-van-dap.md. Tiêu đề đầy đủ trước khi rút gọn: Vì sao fact\symbol{95}order\symbol{95}fulfillment là accumulating snapshot? (3) Bấm để chuyển giữa 2 phần của bảng. Ý đã chuyển khỏi slide: Đơn đi qua nhiều mốc; một dòng, cập nhật theo mốc; lead time tính sẵn (approval 10,3 giờ, handling 2,9 ngày, transit 9,3 ngày); Slide chính liên quan: S63.}
 \end{frame}
 
 \begin{frame}[noprogressbar,noframenumbering]{Vì sao chọn ROLAP mà không MOLAP? (25)}
@@ -76,7 +78,7 @@ Nhóm chọn & -- & \ding{51} ROLAP & -- \\
 \note{[B05] B05 - dự phòng cho câu hỏi: Vì sao đúng hạn 93,2\% mà review đơn trễ vẫn tệ? (33). Xem huong-dan/04-cau-hoi-van-dap.md.}
 \end{frame}
 
-\begin{frame}[noprogressbar,noframenumbering]{Vì sao star schema chỉ nhanh hơn OLTP 1,0–1,6 lần mà vẫn đáng dùng? (30)}
+\begin{frame}[noprogressbar,noframenumbering]{Hiệu năng: star schema chỉ nhanh hơn OLTP 1,0–1,6 lần (30)}
 \begin{columns}[T]\begin{column}{0.4\textwidth}
 \begin{itemize}
   \item Dữ liệu nhỏ; giá trị là truy vấn đơn giản, KPI nhất quán; tốc độ từ materialized view và index
@@ -86,7 +88,7 @@ Nhóm chọn & -- & \ding{51} ROLAP & -- \\
 \begin{center}\anh[0.74\textheight]{3-5-1_benchmark.png}\end{center}
 \end{column}\end{columns}
 
-\note{[B06] B06 - dự phòng cho câu hỏi: Vì sao star schema chỉ nhanh hơn OLTP 1,0–1,6 lần mà vẫn đáng dùng? (30). Xem huong-dan/04-cau-hoi-van-dap.md.}
+\note{[B06] B06 - dự phòng cho câu hỏi: Vì sao star schema chỉ nhanh hơn OLTP 1,0–1,6 lần mà vẫn đáng dùng? (30). Xem huong-dan/04-cau-hoi-van-dap.md. Tiêu đề trước đây: Vì sao star schema chỉ nhanh hơn OLTP 1,0–1,6 lần mà vẫn đáng dùng? (30)}
 \end{frame}
 
 \begin{frame}[noprogressbar,noframenumbering]{Làm sao biết nạp tăng dần đúng? (13)}
@@ -130,7 +132,7 @@ Nhóm chọn & -- & \ding{51} ROLAP & -- \\
 \end{frame}
 
 % --- slide lý thuyết rút khỏi bài trình bày chính (barem không có mục lý thuyết)
-\begin{frame}[noprogressbar,noframenumbering]{Kimball xây từ các data mart có chiều dùng chung, Inmon xây kho 3NF rồi mới tách mart}
+\begin{frame}[noprogressbar,noframenumbering]{Kimball và Inmon: bottom-up so với top-down}
 \begin{itemize}
   \item Nhóm chọn hướng Kimball: bus matrix, conformed dimension
 \end{itemize}
@@ -142,10 +144,10 @@ Thời gian ra kết quả & nhanh, từng quy trình một & lâu hơn, thiết
 Nhóm chọn & \ding{51} (bus matrix, \texttt{dim\_seller} dùng chung) & -- \\
 \bottomrule\end{tabular}}\end{center}
 
-\note{[S06] Vì bài toán có hai quy trình nghiệp vụ dùng chung chiều seller và ngày, cách Kimball phù hợp và nhanh ra kết quả.}
+\note{[S06] Vì bài toán có hai quy trình nghiệp vụ dùng chung chiều seller và ngày, cách Kimball phù hợp và nhanh ra kết quả. Tiêu đề trước đây: Kimball xây từ các data mart có chiều dùng chung, Inmon xây kho 3NF rồi mới tách mart}
 \end{frame}
 
-\begin{frame}[noprogressbar,noframenumbering]{Mô hình chiều gồm fact, dimension và grain: chọn grain trước, mọi thứ còn lại theo sau}
+\begin{frame}[noprogressbar,noframenumbering]{Mô hình chiều: chọn grain trước}
 \begin{columns}[T]\begin{column}{0.4\textwidth}
 \begin{itemize}
   \item Grain của dự án: 1 dòng hàng, 1 đơn, 1 lần thanh toán, 1 review, 1 MQL, 1 seller $\times$ tháng
@@ -154,7 +156,7 @@ Nhóm chọn & \ding{51} (bus matrix, \texttt{dim\_seller} dùng chung) & -- \\
 \begin{center}\anh[0.74\textheight]{3-3-4_erd_dw.png}\end{center}
 \end{column}\end{columns}
 
-\note{[S07] Grain mịn nhất cho phép cộng lên mọi cấp; ví dụ GMV tính từ grain dòng hàng.}
+\note{[S07] Grain mịn nhất cho phép cộng lên mọi cấp; ví dụ GMV tính từ grain dòng hàng. Tiêu đề trước đây: Mô hình chiều gồm fact, dimension và grain: chọn grain trước, mọi thứ còn lại theo sau}
 \end{frame}
 
 \begin{frame}[noprogressbar,noframenumbering]{Ba loại fact và hai kiểu SCD đủ để mô tả mọi nhu cầu của bài toán}
@@ -172,7 +174,7 @@ SCD1 / SCD2 & ghi đè / giữ lịch sử & \texttt{dim\_seller} / \texttt{dim\
 \note{[S08] Dự án có đủ cả ba loại fact và dùng SCD2 cho khách, SCD1 cho seller.}
 \end{frame}
 
-\begin{frame}[noprogressbar,noframenumbering]{ETL biến dữ liệu nguồn bẩn thành dữ liệu đáng tin qua staging và ODS}
+\begin{frame}[noprogressbar,noframenumbering]{ETL: nguồn bẩn thành dữ liệu tin cậy qua ODS}
 \begin{columns}[T]\begin{column}{0.4\textwidth}
 \begin{itemize}
   \item Extract $\rightarrow$ làm sạch ở ODS $\rightarrow$ nạp chiều và fact; full và incremental
@@ -181,7 +183,7 @@ SCD1 / SCD2 & ghi đè / giữ lịch sử & \texttt{dim\_seller} / \texttt{dim\
 \begin{center}\anh[0.74\textheight]{3-4-1_pipeline.png}\end{center}
 \end{column}\end{columns}
 
-\note{[S09] Nguyên tắc của nhóm là không xóa âm thầm: dòng lỗi được gắn cờ hoặc ghi vào bảng loại kèm lý do.}
+\note{[S09] Nguyên tắc của nhóm là không xóa âm thầm: dòng lỗi được gắn cờ hoặc ghi vào bảng loại kèm lý do. Tiêu đề trước đây: ETL biến dữ liệu nguồn bẩn thành dữ liệu đáng tin qua staging và ODS}
 \end{frame}
 
 \begin{frame}[noprogressbar,noframenumbering]{Năm thao tác OLAP đều quy về SQL trên lược đồ sao}
@@ -200,7 +202,7 @@ Pivot & \texttt{FILTER} & vùng $\times$ năm \\
 \note{[S10] Mỗi thao tác là một câu SQL ngắn; phần 5 sẽ cho kết quả thật.}
 \end{frame}
 
-\begin{frame}[noprogressbar,noframenumbering]{MOLAP tính sẵn khối đa chiều, ROLAP tính lúc truy vấn, HOLAP kết hợp: nhóm chọn ROLAP}
+\begin{frame}[noprogressbar,noframenumbering]{MOLAP, ROLAP, HOLAP: nhóm chọn ROLAP}
 \begin{itemize}
   \item Lý do: PostgreSQL không có khối đa chiều, dữ liệu 112.650 dòng hàng trả lời dưới 1 giây, kho luôn cập nhật sau mỗi lần nạp
 \end{itemize}
@@ -213,16 +215,16 @@ Công cụ & ví dụ SSAS & PostgreSQL + Power BI & -- \\
 Nhóm chọn & -- & \ding{51} ROLAP & -- \\
 \bottomrule\end{tabular}}\end{center}
 
-\note{[S11] Đổi lại, truy vấn nặng được tăng tốc bằng materialized view; phần hiệu năng sẽ cho thấy lợi ích.}
+\note{[S11] Đổi lại, truy vấn nặng được tăng tốc bằng materialized view; phần hiệu năng sẽ cho thấy lợi ích. Tiêu đề trước đây: MOLAP tính sẵn khối đa chiều, ROLAP tính lúc truy vấn, HOLAP kết hợp: nhóm chọn ROLAP}
 \end{frame}
 
-\begin{frame}[noprogressbar,noframenumbering]{BI đưa kho dữ liệu đến người ra quyết định qua mô hình ngữ nghĩa, KPI và dashboard}
+\begin{frame}[noprogressbar,noframenumbering]{BI: từ kho đến người ra quyết định}
 \begin{itemize}
   \item Power BI: nạp CSV, quan hệ, measure DAX, dashboard
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: sơ đồ chuỗi dữ liệu $\rightarrow$ kho $\rightarrow$ mô hình $\rightarrow$ dashboard (vẽ)}
 
-\note{[S12] Mọi KPI được định nghĩa một lần bằng DAX và đối chiếu với giá trị tính bằng SQL.}
+\note{[S12] Mọi KPI được định nghĩa một lần bằng DAX và đối chiếu với giá trị tính bằng SQL. Tiêu đề trước đây: BI đưa kho dữ liệu đến người ra quyết định qua mô hình ngữ nghĩa, KPI và dashboard}
 \end{frame}
 
 % ============================================================================================================
@@ -262,7 +264,7 @@ Spark 3.5.6, Trino 477 & chạy được truy vấn thử \\
 \note{[P11-dự phòng 5.1] Ảnh Phú chụp: figures/5-1\_minio\_iceberg.png (đã cắt). Tệp *.metadata.json là nền tảng của time travel. Bronze = Kafka được kiểm bằng pytest.}
 \end{frame}
 
-\begin{frame}[noprogressbar,noframenumbering]{Phát lại 11 tháng: 443.935 sự kiện của lần chạy tính giờ, 468,5 sự kiện/giây}
+\begin{frame}[noprogressbar,noframenumbering]{Phát lại 11 tháng: 443.935 sự kiện, 468,5 sự kiện/giây}
 \begin{BangTC}{Xrr}
 \textbf{Phần} & \textbf{Sự kiện} & \textbf{Đơn mới} \\ \midrule
 Snapshot (đến 31/12/2017) & 1.273.620 & 45.430 (có sẵn) \\
@@ -271,7 +273,7 @@ Chạy thử (3.000 sự kiện đầu) & 3.000 & 541 \\
 \textbf{Tổng trong Kafka và Bronze} & \textbf{1.720.555} & 99.441 \\
 \end{BangTC}
 \KetLuan{Nhịp phát 468,5 sự kiện/giây; năng lực xử lý khoảng 2.100 sự kiện/giây}
-\note{[P11-dự phòng 5.1] docs/LAKEHOUSE.md mục 3.8. Lịch phát lại gồm 446.935 sự kiện cho 54.011 đơn mới (160.791 UPDATE trạng thái), áp thành hai lần; 3.000 sự kiện đầu bị bỏ qua ở lần chạy tính giờ vì đã áp dụng (không đổi dòng nào nên Debezium không phát gì). Số cũ 471,7 chia cả phần bỏ qua; số đúng 443.935 / 947,5 giây = 468,5. Nhịp phát do script quyết định; năng lực xử lý đo ở lần nạp bù (13 lô, 1.276.620 sự kiện, khoảng 10 phút). Danh sách sự kiện sinh chỉ từ CSV, UPDATE không đưa đơn về trạng thái trước nên chạy lại an toàn.}
+\note{[P11-dự phòng 5.1] docs/LAKEHOUSE.md mục 3.8. Lịch phát lại gồm 446.935 sự kiện cho 54.011 đơn mới (160.791 UPDATE trạng thái), áp thành hai lần; 3.000 sự kiện đầu bị bỏ qua ở lần chạy tính giờ vì đã áp dụng (không đổi dòng nào nên Debezium không phát gì). Số cũ 471,7 chia cả phần bỏ qua; số đúng 443.935 / 947,5 giây = 468,5. Nhịp phát do script quyết định; năng lực xử lý đo ở lần nạp bù (13 lô, 1.276.620 sự kiện, khoảng 10 phút). Danh sách sự kiện sinh chỉ từ CSV, UPDATE không đưa đơn về trạng thái trước nên chạy lại an toàn. Tiêu đề trước đây: Phát lại 11 tháng: 443.935 sự kiện của lần chạy tính giờ, 468,5 sự kiện/giây}
 \end{frame}
 
 \begin{frame}[noprogressbar,noframenumbering]{Spark UI ghi lại hai lô dồn việc 20.000 dòng và 448 job}
@@ -349,7 +351,7 @@ PostgreSQL, Iceberg REST & 169 / 152 \\
 \end{frame}
 
 % --- 5.2 Thu thập từ API ---
-\begin{frame}[noprogressbar,noframenumbering]{Bốn nguồn API công khai, mã bảng và mã chuỗi đối chiếu với chính API}
+\begin{frame}[noprogressbar,noframenumbering]{Thu thập API: bốn nguồn, mã đối chiếu với chính API}
 \begin{BangTC}{lXX}
 \textbf{Nguồn} & \textbf{Dữ liệu} & \textbf{Mã kiểm tra} \\ \midrule
 IBGE Localidades & 27 bang, 5.571 đô thị & /estados, /municipios \\
@@ -359,7 +361,7 @@ BrasilAPI & ngày lễ quốc gia & /feriados/v1/<năm> \\
 Open-Meteo & mưa ngày, 27 thủ phủ & geocoding + archive \\
 \end{BangTC}
 \KetLuan{Chuỗi 433 của Banco Central trùng IBGE 1737 ở cả 60/60 tháng}
-\note{[S150] Mỗi endpoint được gọi thử thật trước khi viết mã. Tần suất đề xuất: IBGE khi đổi, SIDRA hằng năm, Banco Central hằng ngày và hằng tháng, BrasilAPI hằng năm, Open-Meteo hằng tuần (CC BY 4.0). SIDRA: bảng 6579 (biến 9324), 5938 (biến 37). BCB không có trang mô tả cho chuỗi 433 nên được xác nhận bằng cách so với biến IPCA của IBGE.}
+\note{[S150] Mỗi endpoint được gọi thử thật trước khi viết mã. Tần suất đề xuất: IBGE khi đổi, SIDRA hằng năm, Banco Central hằng ngày và hằng tháng, BrasilAPI hằng năm, Open-Meteo hằng tuần (CC BY 4.0). SIDRA: bảng 6579 (biến 9324), 5938 (biến 37). BCB không có trang mô tả cho chuỗi 433 nên được xác nhận bằng cách so với biến IPCA của IBGE. Tiêu đề trước đây: Bốn nguồn API công khai, mã bảng và mã chuỗi đối chiếu với chính API}
 \end{frame}
 
 \begin{frame}[noprogressbar,noframenumbering]{Collector thử lại tối đa 5 lần, chờ tăng dần từ 1,5 đến 12 giây}
@@ -372,7 +374,7 @@ Open-Meteo & mưa ngày, 27 thủ phủ & geocoding + archive \\
 \note{[S151] Collector trong api\_ingest/collect.py và http.py; có timeout, giữ khoảng cách giữa các lời gọi và dùng User-Agent chung (không dùng email cá nhân). Pytest chạy offline bằng session giả; kiểm thử watermark.}
 \end{frame}
 
-\begin{frame}[noprogressbar,noframenumbering]{Landing zone giữ JSON nguyên văn: 69 lời gọi, 48.016 bản ghi, không lỗi}
+\begin{frame}[noprogressbar,noframenumbering]{Thu thập API: landing zone 69 lời gọi, 48.016 bản ghi}
 \begin{BangTC}{Xrrr}
 \textbf{Nguồn} & \textbf{Lời gọi} & \textbf{Bản ghi} & \textbf{JSON (MB)} \\ \midrule
 IBGE & 8 & 16.794 & 4,02 \\
@@ -381,7 +383,7 @@ Open-Meteo & 54 & 29.821 & 0,59 \\
 \DongNhan\textbf{Tổng} & \textbf{69} & \textbf{48.016} & \textbf{4,66} \\
 \end{BangTC}
 \KetLuan{Mỗi lời gọi có URL, thời điểm, HTTP, số bản ghi, byte và sha256 trong manifest}
-\note{[S120] Số liệu lấy từ manifest.json của landing zone. Banco Central 2 lời gọi 1.336 bản ghi 0,05 MB; BrasilAPI 5 lời gọi 65 bản ghi 0,01 MB (gộp thành một dòng cho gọn); thời gian gọi tổng 60,0 giây.}
+\note{[S120] Số liệu lấy từ manifest.json của landing zone. Banco Central 2 lời gọi 1.336 bản ghi 0,05 MB; BrasilAPI 5 lời gọi 65 bản ghi 0,01 MB (gộp thành một dòng cho gọn); thời gian gọi tổng 60,0 giây. Tiêu đề trước đây: Landing zone giữ JSON nguyên văn: 69 lời gọi, 48.016 bản ghi, không lỗi}
 \end{frame}
 
 \begin{frame}[noprogressbar,noframenumbering]{Staging giữ nguyên giá trị API; ODS ép kiểu và ghi dòng bị loại}
@@ -397,14 +399,14 @@ Open-Meteo & 54 & 29.821 & 0,59 \\
 \note{[S152] Bảng staging thuộc schema api (stg\_api\_*). Tỷ giá điền cho ngày nghỉ; IPCA nối chỉ số, tháng đầu = 100.}
 \end{frame}
 
-\begin{frame}[noprogressbar,noframenumbering]{Ngưỡng fuzzy 95: từ 95 trở lên mọi cặp đúng, 90--94 đã có ghép sai}
+\begin{frame}[noprogressbar,noframenumbering]{Thu thập API: ngưỡng fuzzy 95, 90--94 đã ghép sai}
 \begin{itemize}
   \item sao thome das letras $\rightarrow$ São Tomé das Letras (97,4)
   \item santana do livramento $\rightarrow$ Sant'Ana do Livramento (97,7)
   \item boa vista de minas $\rightarrow$ Bela Vista de Minas (92): \textbf{sai}, bị loại
   \item Chỉ nhận khi ứng viên thứ hai thấp hơn $\ge$ 10 điểm
 \end{itemize}
-\note{[S154] Ngưỡng chọn bằng cách đọc các ứng viên. Trả lời câu hỏi fuzzy có ghép sai không: ở ngưỡng 95 đã kiểm tay các cặp được nhận.}
+\note{[S154] Ngưỡng chọn bằng cách đọc các ứng viên. Trả lời câu hỏi fuzzy có ghép sai không: ở ngưỡng 95 đã kiểm tay các cặp được nhận. Tiêu đề trước đây: Ngưỡng fuzzy 95: từ 95 trở lên mọi cặp đúng, 90--94 đã có ghép sai}
 \end{frame}
 
 \begin{frame}[noprogressbar,noframenumbering]{Tỉ lệ ghép luỹ kế: zip lên 96,3\% và GMV lên 99,5\% sau bốn tầng}
@@ -413,16 +415,16 @@ Open-Meteo & 54 & 29.821 & 0,59 \\
 \note{[P11-dự phòng 5.2] Biểu đồ vẽ lại cho máy chiếu bằng python scripts/p9\_results.py --slide (cùng số liệu; trục bắt đầu từ 40\% để thấy tầng 1).}
 \end{frame}
 
-\begin{frame}[noprogressbar,noframenumbering]{Thư viện ngày lễ thiếu 19 ngày so với BrasilAPI; ngày có lễ ít hơn 27,9\% đơn}
+\begin{frame}[noprogressbar,noframenumbering]{Phân tích API: ngày lễ thiếu 19 ngày, ít hơn 27,9\% đơn}
 \HinhLon{5-2_ngay_le_va_don_sl.png}
 \KetLuan{Ngày thường có lễ: 124,7 đơn; không lễ: 172,9 đơn}
-\note{[S158] BrasilAPI 64 ngày lễ; thư viện holidays 45 ngày; 19 ngày chỉ có ở BrasilAPI (Carnaval, Phục sinh, Corpus Christi). Ngày lễ 01/2017--08/2018, bỏ Black Friday.}
+\note{[S158] BrasilAPI 64 ngày lễ; thư viện holidays 45 ngày; 19 ngày chỉ có ở BrasilAPI (Carnaval, Phục sinh, Corpus Christi). Ngày lễ 01/2017--08/2018, bỏ Black Friday. Tiêu đề trước đây: Thư viện ngày lễ thiếu 19 ngày so với BrasilAPI; ngày có lễ ít hơn 27,9\% đơn}
 \end{frame}
 
-\begin{frame}[noprogressbar,noframenumbering]{(Tuỳ chọn) Giao trễ tăng từ 5,45\% lúc không mưa lên 9,55\% khi mưa từ 20 mm}
+\begin{frame}[noprogressbar,noframenumbering]{Phân tích API (tuỳ chọn): mưa và giao trễ}
 \HinhLon{5-2_mua_va_giao_tre_sl.png}
 \KetLuan{Liên hệ thống kê; mưa đo ở thủ phủ bang, không ở nơi khách ở}
-\note{[S159] Mưa ngày giao tại thủ phủ bang của khách. Nguồn tuỳ chọn Open-Meteo (CC BY 4.0; ghi nguồn Weather data by Open-Meteo.com).}
+\note{[S159] Mưa ngày giao tại thủ phủ bang của khách. Nguồn tuỳ chọn Open-Meteo (CC BY 4.0; ghi nguồn Weather data by Open-Meteo.com). Tiêu đề trước đây: (Tuỳ chọn) Giao trễ tăng từ 5,45\% lúc không mưa lên 9,55\% khi mưa từ 20 mm}
 \end{frame}
 
 \begin{frame}[noprogressbar,noframenumbering]{20 phép kiểm thử SQL mới và 18 test pytest đều đạt}
@@ -433,4 +435,13 @@ Open-Meteo & 54 & 29.821 & 0,59 \\
   \item Tổng số phép của pipeline tăng từ 136 lên 156
 \end{itemize}
 \note{[S156] Test mới nằm trong sql/90\_tests/050\_api\_tests.sql; khi chưa nạp API các phép này đạt trống. pytest chạy offline.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Haversine và PostGIS: khi nào cần PostGIS}
+\begin{itemize}
+  \item GiST chỉ mục không gian; haversine sai số tối đa 0,5\%
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng so sánh (\texttt{report/chapters/3-1-kham-pha.tex})}
+
+\note{[S109] Nhóm không cài PostGIS nên chọn giải pháp thuần SQL. Tiêu đề đầy đủ trước khi rút gọn: Haversine thuần đủ cho khoảng cách điểm–điểm; PostGIS cần khi truy vấn bán kính hoặc đa giác Tiêu đề trước đây: Haversine đủ cho khoảng cách điểm–điểm; PostGIS khi cần bán kính hoặc đa giác}
 \end{frame}

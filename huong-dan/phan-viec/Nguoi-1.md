@@ -87,34 +87,33 @@ Hình: `figures/3-2-1_bpmn_don_hang.png`, `3-2-2_bpmn_thu_hut_seller.png`, `3-2-
 <!-- SLIDES:00b-ly-thuyet-rut-gon.tex,01a-nghiep-vu-yeu-cau.tex -->
 | STT | S | Tiêu đề (câu kết luận) | Nội dung chính | Hình / bảng | Trạng thái |
 | ---: | ---: | --- | --- | --- | --- |
-| 1 | 4 | Kho dữ liệu là nơi tích hợp dữ liệu hướng chủ đề, biến thiên theo thời gian | Bốn đặc tính của Inmon: hướng chủ đề, tích hợp, biến thiên theo thời gian, không biến động | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: sơ đồ 4 ô (vẽ) |
-| 2 | 5 | OLTP tối ưu ghi từng giao dịch, OLAP tối ưu đọc và tổng hợp |  | – | đã có |
-| 3 | 13 | Olist nối người bán nhỏ với các sàn lớn: 3.095 seller bán 99.441 đơn trong 2 năm | Dữ liệu Brazil, 09/2016–10/2018; hai bộ Kaggle | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: ảnh/logo Olist |
-| 4 | 14 | Mô hình kinh doanh hai phía: seller được thu hút, người mua mua qua sàn |  | – | đã có, nhóm xác nhận |
-| 5 | 15 | Giá trị đề xuất: một hợp đồng, nhiều sàn; phí vận chuyển bằng 16,6% giá hàng |  | – | đã có |
-| 6 | 16 | Bài toán: hiểu hiệu suất đơn hàng và thu hút seller từ hai hệ thống rời nhau |  | – | đã có |
-| 7 | 17 | Sáu nhóm câu hỏi phân tích bao trùm bán hàng, vận hành, khách và thu hút seller |  | – | đã có |
-| 8 | 18 | Kho phục vụ hai quy trình nghiệp vụ: xử lý đơn và thu hút seller |  | – | đã có |
-| 9 | 19 | Đơn hàng đi qua bốn mốc thời gian và có thể bị hủy hoặc không khả dụng |  | – | đã có |
-| 10 | 20 | Mỗi mốc của quy trình là một cột thời gian mà kho biến thành chỉ số |  | – | đã có |
-| 11 | 21 | Kho thu thập dữ liệu ở bảy điểm của quy trình đơn hàng |  | – | đã có |
-| 12 | 22 | Quy trình thu hút seller đi từ MQL đến seller có đơn, trung bình mất 100 ngày |  | – | đã có |
-| 13 | 23 | Phễu: 8.000 MQL → 842 deal (10,5%) → 379 seller có đơn (45,0% số deal) |  | – | đã có |
-| 14 | 24 | Cây nghiệp vụ gom hoạt động của Olist thành năm nhóm |  | – | đã có |
-| 15 | 122 | Mười một điểm phân tích A1–A11 gắn mỗi bước của quy trình với dashboard và KPI | A1–A6 trên quy trình đơn: đặt hàng và thanh toán, duyệt, bàn giao, giao hàng, đánh giá, hủy; A7–A10 trên quy trình seller: MQL, SDR và SR, chốt deal,  | – | đã có |
-| 16 | 123 | Mỗi khối Business Model Canvas dẫn tới câu hỏi quản trị, chỉ số và dashboard | Giá trị đề xuất → giao đúng hạn và đủ rẻ? → On-time rate, Freight ratio 16,6% → DB2, DB3; Kênh → kênh nào đưa về seller chốt được? → MQL to won rate → | – | đã có |
-| 17 | 25 | Cây yêu cầu phân tích đi từ sáu chủ điểm đến các câu hỏi cụ thể |  | – | đã có |
-| 18 | 26 | Bán hàng: GMV cần tăng trưởng MoM, YoY và quy luật 80/20 | GMV 13,49 triệu BRL; AOV 137,42 BRL | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng chủ điểm bán hàng (3.2.2) |
-| 19 | 27 | Xử lý đơn: hỏi "hứa so với thực tế chênh bao nhiêu" thay vì "đúng hạn không" | Đúng hạn 93,2% nhưng hứa 24,4 ngày, thực tế 12,6 ngày | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng chủ điểm xử lý đơn |
-| 20 | 28 | Trải nghiệm khách: giao trễ là yếu tố kéo điểm review xuống mạnh nhất |  | – | đã có |
-| 21 | 29 | Thu hút seller: kênh nào chuyển đổi tốt và seller từ funnel bán ra sao |  | – | đã có |
-| 22 | 124 | Tám điểm hiện trạng của hệ thống nguồn dẫn tới tám yêu cầu cải tiến cho kho | Hai hệ thống rời nhau, chỉ gặp qua seller_id → chiều dùng chung dim_seller; Trạng thái đơn không có lịch sử mốc → snapshot tích luỹ 5 mốc | – | đã có |
-| 23 | 125 | Sáu nhóm người dùng, mỗi nhóm có câu hỏi, dashboard và tần suất xem riêng | Ban điều hành → DB1 (hằng tuần, hằng tháng); quản lý kinh doanh → DB1; Vận hành và logistics → DB2, DB3 (hằng ngày đến hằng tuần); chăm sóc khách hàng | – | đã có |
-| 24 | 30 | Bảng KPI chính gồm 19 chỉ số, mỗi chỉ số có một định nghĩa DAX duy nhất |  | – | đã có |
-| 25 | 31 | Bốn dashboard có bốn cây phân tích từ mục tiêu đến chỉ số và chiều |  | – | đã có |
-| 26 | 126 | Năm giới hạn dữ liệu làm KPI có hai con số: GMV 13,49 so với 13,59 triệu BRL | GMV loại đơn Failed 13.494.400,74; tổng giá hàng mọi đơn 13.591.643,70 BRL; Orders 98.199 so với Orders placed 99.441 (chênh 1.242 đơn); 380 so với 37 | – | đã có |
+| 1 | 4 | Lý thuyết: kho dữ liệu hướng chủ đề, biến thiên theo thời gian | Bốn đặc tính của Inmon: hướng chủ đề, tích hợp, biến thiên theo thời gian, không biến động | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: sơ đồ 4 ô (vẽ) |
+| 2 | 5 | Lý thuyết: OLTP tối ưu ghi, OLAP tối ưu đọc |  | – | đã có |
+| 3 | 13 | Quy trình nghiệp vụ: Olist nối seller nhỏ với sàn lớn | Dữ liệu Brazil, 09/2016–10/2018; hai bộ Kaggle | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: ảnh/logo Olist |
+| 4 | 16 | Quy trình nghiệp vụ: hai hệ thống rời nhau |  | – | đã có |
+| 5 | 18 | Quy trình nghiệp vụ: kho phục vụ hai quy trình |  | – | đã có |
+| 6 | 19 | Quy trình nghiệp vụ: đơn hàng qua bốn mốc |  | – | đã có |
+| 7 | 21 | Quy trình nghiệp vụ: bảy điểm thu thập dữ liệu |  | – | đã có |
+| 8 | 22 | Quy trình thu hút seller: MQL đến seller có đơn |  | – | đã có |
+| 9 | 122 | Điểm phân tích trên quy trình: A1 đến A11 |  | – | đã có |
+| 10 | 20 | Điểm phân tích trên quy trình: chỉ số theo bước |  | – | đã có |
+| 11 | 14 | Mô hình kinh doanh: Canvas hai phía |  | – | đã có, nhóm xác nhận |
+| 12 | 15 | Mô hình kinh doanh: giá trị đề xuất, phí vận chuyển 16,6% |  | – | đã có |
+| 13 | 123 | Liên kết mô hình kinh doanh dashboard | Giá trị đề xuất → giao đúng hạn và đủ rẻ? → On-time rate, Freight ratio 16,6% → DB2, DB3; Kênh → kênh nào đưa về seller chốt được? → MQL to won rate → | – | đã có |
+| 14 | 24 | Cây nghiệp vụ: năm nhóm hoạt động |  | – | đã có |
+| 15 | 124 | Hiện trạng và yêu cầu cải tiến: tám điểm | Hai hệ thống rời nhau, chỉ gặp qua seller_id → chiều dùng chung dim_seller; Trạng thái đơn không có lịch sử mốc → snapshot tích luỹ 5 mốc | – | đã có |
+| 16 | 17 | Yêu cầu phân tích tổng thể: sáu chủ điểm | Bán hàng xử lý đơn; Thanh toán trải nghiệm khách | – | đã có |
+| 17 | 26 | Yêu cầu theo chủ điểm: bán hàng | GMV 13,49 triệu BRL; AOV 137,42 BRL | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng chủ điểm bán hàng (3.2.2) |
+| 18 | 27 | Yêu cầu theo chủ điểm: xử lý đơn | Đúng hạn 93,2% nhưng hứa 24,4 ngày, thực tế 12,6 ngày | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng chủ điểm xử lý đơn |
+| 19 | 28 | Yêu cầu theo chủ điểm: trải nghiệm khách |  | – | đã có |
+| 20 | 29 | Yêu cầu theo chủ điểm: thu hút seller |  | – | đã có |
+| 21 | 25 | Mindmap yêu cầu: chủ điểm, câu hỏi, chiều |  | – | đã có |
+| 22 | 125 | Đối tượng sử dụng: sáu nhóm người dùng | Ban điều hành → DB1 (hằng tuần, hằng tháng); quản lý kinh doanh → DB1; Vận hành và logistics → DB2, DB3 (hằng ngày đến hằng tuần); chăm sóc khách hàng | – | đã có |
+| 23 | 31 | Cây phân tích dashboard: DB1 đến DB4 |  | – | đã có |
+| 24 | 30 | Bảng KPI: 19 chỉ số, mỗi chỉ số một định nghĩa DAX |  | – | đã có |
+| 25 | 126 | Giới hạn dữ liệu: KPI có hai con số | GMV loại đơn Failed 13.494.400,74; tổng giá hàng mọi đơn 13.591.643,70 BRL; Orders 98.199 so với Orders placed 99.441 (chênh 1.242 đơn); 380 so với 37 | – | đã có |
 
-*26 frame trong `00b-ly-thuyet-rut-gon.tex`, `01a-nghiep-vu-yeu-cau.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
+*25 frame trong `00b-ly-thuyet-rut-gon.tex`, `01a-nghiep-vu-yeu-cau.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
 <!-- /SLIDES -->
 
 **Slide cần thêm** (theo `docs/doi-chieu-nhom6.md`). Số trong tiêu đề lấy từ `huong-dan/dashboards/DB2.md`, `DB4.md` và `huong-dan/05-nghiep-vu-nhap.md`; số chưa có nguồn đánh dấu *nhóm bổ sung*.

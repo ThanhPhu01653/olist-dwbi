@@ -79,32 +79,36 @@ Không được chép câu chữ, số liệu hay hình của nhóm 6.
 <!-- SLIDES:04-mo-rong.tex,05-tong-ket.tex -->
 | STT | S | Tiêu đề (câu kết luận) | Nội dung chính | Hình / bảng | Trạng thái |
 | ---: | ---: | --- | --- | --- | --- |
-| 1 | – | Lakehouse thêm đường thứ hai: từ CDC qua Bronze, Silver đến Gold |  | – | đã có |
-| 2 | – | Bảy dịch vụ chạy trong 4 GB RAM, vận hành bằng script, không cần Airflow |  | – | đã có |
-| 3 | – | CDC: Debezium chụp snapshot 1.273.620 dòng rồi bắt từng thay đổi từ log | Nạp nguồn đến 31/12/2017 bằng mã chương 3, trong 11,1 giây; Debezium chụp snapshot 11 bảng rồi đọc log của PostgreSQL | – | đã có |
-| 4 | – | Kafka giữ đủ 1.720.555 sự kiện, bằng đúng số dòng Bronze |  | – | đã có |
-| 5 | – | Bronze giữ nguyên văn sự kiện, Silver áp quy tắc ODS bằng MERGE | Bronze: Spark ghi nguyên văn từng sự kiện vào bảng Iceberg chỉ-thêm; Silver: MERGE theo khoá, chỉ thay dòng khi ts_ms không cũ hơn | – | đã có |
-| 6 | – | Silver bằng nguồn ở 10/10 bảng: cùng số dòng và cùng checksum khoá |  | – | đã có |
-| 7 | – | Gold: dbt dựng 20 model trong 70 giây, giữ nguyên tên bảng và cột của đặc tả | 10 dimension, 6 fact, 4 mart; dòng Unknown khoá -1 như kho; Dùng lại seed và lịch dim_date của chương 3; làm giàu bằng dữ liệu API | – | đã có |
-| 8 | – | Lineage của fact_order_item: 13 nguồn Silver qua 5 dimension |  | – | đã có |
-| 9 | – | Đối soát Gold với kho: 16/16 bảng khớp, GMV bằng nhau đến từng xu |  | – | đã có |
-| 10 | – | Lỗi 1: Silver chỉ có 24.765 trên 45.971 đơn, log không báo gì | Nguyên nhân: Spark tính lại dữ liệu đã cache sau khi xoá đơn chờ cũ; Sửa: localCheckpoint() thay cho persist() | – | đã có |
-| 11 | – | Lỗi 2: trim() của Trino khác PostgreSQL, 18 review bị tính nhầm | trim() của Trino bỏ cả xuống dòng và tab, của PostgreSQL chỉ bỏ dấu cách; Sửa: model chỉ bỏ dấu cách hai đầu (regexp_replace) | – | đã có |
-| 12 | – | Độ trễ nguồn đến Silver trung bình 22,6 giây, chủ yếu là chờ micro-batch |  | – | đã có |
-| 13 | – | Time travel: rollback một thao tác sửa nhầm trong 0,09 giây | silver.orders có 31 snapshot; đọc lại bản đầu có 307 đơn, bản mới nhất 99.441; Đọc phiên bản cũ mất 0,11 đến 0,16 giây | – | đã có |
-| 14 | – | DB1 trên Superset: dashboard đọc từ tầng Gold của lakehouse qua Trino |  | – | đã có |
-| 15 | – | Tổng kết 5.1: cùng số liệu với kho chương 3, thêm sự kiện và time travel | Hai lỗi chỉ lộ ra nhờ đối soát: thiếu đơn ở Silver, trim() khác nhau ở Gold; Hạn chế: 7 dịch vụ trong 4 GB RAM; vận hành bằng script, chưa có Airflow | – | đã có |
-| 16 | 118 | Năm câu hỏi mà bán hàng một mình không trả lời được cần dữ liệu công khai |  | – | đã có |
-| 17 | 119 | Kiến trúc API: lỗi gọi API không làm hỏng pipeline chính |  | – | đã có |
-| 18 | 153 | Bốn tầng ghép đô thị gán 96,3% số zip và 99,5% GMV |  | – | đã có |
-| 19 | – | Kho được làm giàu không đổi khoá; phép kiểm thử tăng từ 136 lên 156 | fact_state_year: 27 bang 3 năm; GMV = 13.494.400,74; 20 phép kiểm thử SQL mới đều đạt; DB1–DB4 vẫn đúng số cũ | – | đã có |
-| 20 | 121 | Theo đầu người, Rio de Janeiro dẫn đầu: 53,90 BRL trên 1.000 dân |  | – | đã có |
-| 21 | 157 | GMV tháng 1–8 tăng 138,3% danh nghĩa, 130,9% theo giá thực, 116,7% theo USD |  | – | đã có |
-| 22 | 149 | Dashboard D8 Thị trường Brazil dựng từ dữ liệu API thu thập thực tế |  | khung chờ | cần ảnh: P9 điền: ảnh chụp D8 |
-| 23 | 111 | Kết quả: kho chạy được từ đầu đến cuối, 136 kiểm thử đạt, bốn dashboard | 10 chiều, 6 fact, 17 view mart; GMV 13,49 triệu BRL | – | đã có |
-| 24 | 113 | Hạn chế còn lại và ba hướng phát triển: trạng thái đơn, PostGIS, lịch chạy | Hạn chế: mô phỏng cập nhật chỉ thêm bản ghi mới; cơ chế thử lại mồ côi mới được chứng minh bằng test; Hướng phát triển: lưu trạng thái trung gian của  | – | đã có |
+| 1 | – | Data lakehouse: kiến trúc CDC, Bronze, Silver, Gold |  | – | đã có |
+| 2 | – | Data lakehouse: bảy dịch vụ trong 4 GB RAM |  | – | đã có |
+| 3 | – | Data lakehouse: CDC bằng Debezium, 1.273.620 dòng snapshot | Nạp nguồn đến 31/12/2017 bằng mã chương 3, trong 11,1 giây; Debezium chụp snapshot 11 bảng rồi đọc log của PostgreSQL | – | đã có |
+| 4 | – | Data lakehouse: Kafka = Bronze = 1.720.555 sự kiện |  | – | đã có |
+| 5 | – | Data lakehouse: Bronze và Silver bằng MERGE | Bronze: Spark ghi nguyên văn từng sự kiện vào bảng Iceberg chỉ-thêm; Silver: MERGE theo khoá, chỉ thay dòng khi ts_ms không cũ hơn | – | đã có |
+| 6 | – | Data lakehouse: Silver bằng nguồn ở 10/10 bảng |  | – | đã có |
+| 7 | – | Data lakehouse: Gold bằng dbt, 20 model trong 70 giây | 10 dimension, 6 fact, 4 mart; dòng Unknown khoá -1 như kho; Dùng lại seed và lịch dim_date của chương 3; làm giàu bằng dữ liệu API | – | đã có |
+| 8 | – | Data lakehouse: lineage của fact_order_item |  | – | đã có |
+| 9 | – | Data lakehouse: đối soát Gold với kho, 16/16 bảng |  | – | đã có |
+| 10 | – | Bài học lakehouse: Silver thiếu đơn mà log không báo | Nguyên nhân: Spark tính lại dữ liệu đã cache sau khi xoá đơn chờ cũ; Sửa: localCheckpoint() thay cho persist() | – | đã có |
+| 11 | – | Bài học lakehouse: trim() của Trino khác PostgreSQL | trim() của Trino bỏ cả xuống dòng và tab, của PostgreSQL chỉ bỏ dấu cách; Sửa: model chỉ bỏ dấu cách hai đầu (regexp_replace) | – | đã có |
+| 12 | – | Data lakehouse: độ trễ nguồn đến Silver 22,6 giây |  | – | đã có |
+| 13 | – | Data lakehouse: time travel và rollback | silver.orders có 31 snapshot; đọc lại bản đầu có 307 đơn, bản mới nhất 99.441; Đọc phiên bản cũ mất 0,11 đến 0,16 giây | – | đã có |
+| 14 | – | Data lakehouse: DB1 trên Superset |  | – | đã có |
+| 15 | – | Data lakehouse: tổng kết, cùng số liệu với kho | Hai lỗi chỉ lộ ra nhờ đối soát: thiếu đơn ở Silver, trim() khác nhau ở Gold; Hạn chế: 7 dịch vụ trong 4 GB RAM; vận hành bằng script, chưa có Airflow | – | đã có |
+| 16 | 118 | Thu thập dữ liệu qua API: năm câu hỏi cần dữ liệu ngoài |  | – | đã có |
+| 17 | 119 | Thu thập dữ liệu qua API: kiến trúc collector |  | – | đã có |
+| 18 | 153 | Thu thập dữ liệu qua API: ghép đô thị bốn tầng |  | – | đã có |
+| 19 | – | Thu thập dữ liệu qua API: làm giàu kho, 156 phép kiểm thử | fact_state_year: 27 bang 3 năm; GMV = 13.494.400,74; 20 phép kiểm thử SQL mới đều đạt; DB1–DB4 vẫn đúng số cũ | – | đã có |
+| 20 | 121 | Phân tích dữ liệu API: GMV trên 1.000 dân theo bang |  | – | đã có |
+| 21 | 157 | Phân tích dữ liệu API: GMV danh nghĩa, thực và USD |  | – | đã có |
+| 22 | 149 | Dashboard D8: thị trường Brazil từ dữ liệu API |  | khung chờ | cần ảnh: P9 điền: ảnh chụp D8 |
+| 23 | 111 | Kết quả đạt được: kho chạy từ đầu đến cuối | 10 chiều, 6 fact, 17 view mart; GMV 13,49 triệu BRL | – | đã có |
+| 24 | – | Đối chiếu với yêu cầu phân tích |  | – | đã có, nhóm xác nhận |
+| 25 | – | Kiến thức thu được | Thiết kế kho hình sao: grain, fact ba loại, SCD2, bus matrix; ETL có kiểm thử: làm sạch ở ODS, đối soát số dòng và tổng tiền, chạy lại không đổi kết q | – | đã có |
+| 26 | – | Bài học kỹ thuật: vấn đề, con số, cách xử lý |  | – | đã có |
+| 27 | – | Bài học làm việc nhóm |  | khung chờ | cần ảnh: CHÈN: ba bài học làm việc nhóm, phân công, Git, khó khăn thự |
+| 28 | 113 | Hạn chế và hướng phát triển | Hạn chế: mô phỏng cập nhật chỉ thêm bản ghi mới; cơ chế thử lại mồ côi mới được chứng minh bằng test; Hướng phát triển: lưu trạng thái trung gian của  | – | đã có |
 
-*24 frame trong `04-mo-rong.tex`, `05-tong-ket.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
+*28 frame trong `04-mo-rong.tex`, `05-tong-ket.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
 <!-- /SLIDES -->
 
 **Slide cần thêm** (theo `docs/doi-chieu-nhom6.md`: xen kẽ slide triển khai và slide minh chứng):

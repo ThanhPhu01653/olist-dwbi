@@ -1,13 +1,6 @@
 \subsection{2.4 Dữ liệu nguồn}
 
-\begin{frame}{Phạm vi: dữ liệu 01/2017–08/2018 chiếm 99,6\% số đơn nên được dùng cho xu hướng}
-\muc{2.4 · Dữ liệu nguồn}
-\HinhLon{3-3-1_orders_per_month.png}
-\KetLuan{2016 chỉ 329 đơn; 09–10/2018 chỉ 20 đơn}
-\note{[S32] Bộ lọc InWindow trong Power BI cố định cửa sổ này cho DB1–DB4.}
-\end{frame}
-
-\begin{frame}{Hai hệ thống nguồn có 11 bảng, 121 MB và 1.559.764 dòng}
+\begin{frame}{Quy mô dữ liệu: 11 bảng, 121 MB, 1,56 triệu dòng}
 \muc{2.4 · Dữ liệu nguồn}
 \only<1>{%
 \begin{BangTC}{XXrrr}
@@ -32,84 +25,83 @@ crm.closed\_deals & olist\_closed\_deals\_dataset.csv & 842 & 14 & 0,16 \\
 \end{BangTC}
 \vspace{-6pt}
 \KetLuan{oltp 9 bảng 1.550.922 dòng; crm 2 bảng 8.842 dòng}}
-\note{[S33] Vượt tiêu chí kích thước dữ liệu của môn (trên 100 MB). Bảng chia hai phần (bấm để chuyển): phần 1 là 5 bảng đầu, phần 2 là 6 bảng còn lại và dòng tổng.}
+\note{[S33] Vượt tiêu chí kích thước dữ liệu của môn (trên 100 MB). Bảng chia hai phần (bấm để chuyển): phần 1 là 5 bảng đầu, phần 2 là 6 bảng còn lại và dòng tổng. Tiêu đề trước đây: Hai hệ thống nguồn có 11 bảng, 121 MB và 1.559.764 dòng}
 \end{frame}
 
-\begin{frame}{Bảng toạ độ chiếm 64\% số dòng nhưng chỉ đại diện 19.015 mã bưu chính}
+\begin{frame}{Quy mô dữ liệu: bảng toạ độ chiếm 64\% số dòng}
 \muc{2.4 · Dữ liệu nguồn}
 \begin{itemize}
   \item 1.000.163 dòng geolocation
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng nguồn (làm nổi dòng geolocation)}
 
-\note{[S34] Đây là bảng cần xử lý nhiều nhất ở ODS.}
+\note{[S34] Đây là bảng cần xử lý nhiều nhất ở ODS. Tiêu đề trước đây: Bảng toạ độ chiếm 64\% số dòng nhưng chỉ đại diện 19.015 mã bưu chính}
 \end{frame}
 
-\begin{frame}{Luồng dữ liệu và tần suất cập nhật: nạp ban đầu 45.430 đơn rồi 11 đợt hằng tháng}
-\muc{2.4 · Dữ liệu nguồn}
-\HinhLon{3-4-1_pipeline.png}
-\KetLuan{Tổng 286.144 bản ghi mới qua 11 đợt}
-\note{[S37] Dữ liệu Kaggle là ảnh tĩnh nên nhóm mô phỏng cập nhật.}
-\end{frame}
-
-\begin{frame}{Trung bình 163 đơn/ngày, đỉnh 1.176 đơn ngày Black Friday: lô hằng ngày là đủ}
-\muc{2.4 · Dữ liệu nguồn}
-\HinhLon{2-4_tan_suat_cap_nhat.png}
-\KetLuan{Cửa sổ 01/2017--08/2018: 163 đơn, 185 dòng hàng, 13 MQL, 1,3 deal mỗi ngày}
-\note{[S127] Biểu đồ tần suất cập nhật theo thời gian và bảng công nghệ xử lý đề xuất. Tiêu đề đầy đủ trước khi rút gọn: Trung bình 163 đơn mỗi ngày, đỉnh 1.176 đơn ngày Black Friday: lô hằng ngày là đủ Ý đã chuyển khỏi slide: Bảng tần suất đề xuất công nghệ: lô hằng ngày bằng procedure PostgreSQL; gần thời gian thực thì CDC + Kafka (chương 5).}
-\end{frame}
-
-\begin{frame}{Cây phân loại chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu}
-\muc{2.4 · Dữ liệu nguồn}
-\HinhLon{2-4_data_taxonomy.png}
-\KetLuan{Mỗi bảng kèm hai cột tiêu biểu và giá trị thật}
-\note{[S128] Data taxonomy của 11 bảng nguồn. Tiêu đề đầy đủ trước khi rút gọn: Cây phân loại dữ liệu chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu Ý đã chuyển khỏi slide: Phân loại thêm theo kiểu dữ liệu, độ nhạy cảm (định danh, vị trí) và tính biến động.}
-\end{frame}
-
-\begin{frame}{Data flow hiện trạng: mũi tên ghi thông tin truyền, hai nguồn tách rời}
+\begin{frame}{Data flow hiện trạng: hai nguồn tách rời}
 \muc{2.4 · Dữ liệu nguồn}
 \HinhLon{2-4_data_flow_hien_trang.png}
 \KetLuan{Marketing funnel (SDR, SR) tách khỏi hệ thống bán hàng}
-\note{[S129] Hiện trạng: luồng thông tin giữa các hệ thống CNTT (bản nháp, nhóm vẽ lại). Tiêu đề đầy đủ trước khi rút gọn: Data flow hiện trạng: mũi tên ghi thông tin được truyền, hai hệ thống nguồn tách rời Ý đã chuyển khỏi slide: Thông tin đơn, trạng thái giao, thanh toán, điểm đánh giá, lead.}
+\note{[S129] Hiện trạng: luồng thông tin giữa các hệ thống CNTT (bản nháp, nhóm vẽ lại). Tiêu đề đầy đủ trước khi rút gọn: Data flow hiện trạng: mũi tên ghi thông tin được truyền, hai hệ thống nguồn tách rời Ý đã chuyển khỏi slide: Thông tin đơn, trạng thái giao, thanh toán, điểm đánh giá, lead. Tiêu đề trước đây: Data flow hiện trạng: mũi tên ghi thông tin truyền, hai nguồn tách rời}
 \end{frame}
 
-\begin{frame}{Data flow đề xuất: nguồn, staging, ODS, kho, mart và BI, có nhật ký ETL giám sát}
+\begin{frame}{Data flow đề xuất: từ nguồn đến BI}
 \muc{2.4 · Dữ liệu nguồn}
 \HinhLon{2-4_data_flow_de_xuat.png}
 \KetLuan{Điều phối bằng một lệnh Python, biến đổi bằng PL/pgSQL}
-\note{[S130] Đề xuất: luồng nguồn đến BI. Ý đã chuyển khỏi slide: Bảng lớp, thành phần, công nghệ, tần suất, ghi chú ở báo cáo.}
+\note{[S130] Đề xuất: luồng nguồn đến BI. Ý đã chuyển khỏi slide: Bảng lớp, thành phần, công nghệ, tần suất, ghi chú ở báo cáo. Tiêu đề trước đây: Data flow đề xuất: nguồn, staging, ODS, kho, mart và BI, có nhật ký ETL giám sát}
+\end{frame}
+
+\begin{frame}{Tần suất cập nhật: nạp đầu 45.430 đơn, 11 đợt tháng}
+\muc{2.4 · Dữ liệu nguồn}
+\HinhLon{3-4-1_pipeline.png}
+\KetLuan{Tổng 286.144 bản ghi mới qua 11 đợt}
+\note{[S37] Dữ liệu Kaggle là ảnh tĩnh nên nhóm mô phỏng cập nhật. Tiêu đề trước đây: Luồng dữ liệu và tần suất cập nhật: nạp ban đầu 45.430 đơn rồi 11 đợt hằng tháng}
+\end{frame}
+
+\begin{frame}{Tần suất cập nhật: lô hằng ngày là đủ}
+\muc{2.4 · Dữ liệu nguồn}
+\HinhLon{2-4_tan_suat_cap_nhat.png}
+\KetLuan{Cửa sổ 01/2017--08/2018: 163 đơn, 185 dòng hàng, 13 MQL, 1,3 deal mỗi ngày}
+\note{[S127] Biểu đồ tần suất cập nhật theo thời gian và bảng công nghệ xử lý đề xuất. Tiêu đề đầy đủ trước khi rút gọn: Trung bình 163 đơn mỗi ngày, đỉnh 1.176 đơn ngày Black Friday: lô hằng ngày là đủ Ý đã chuyển khỏi slide: Bảng tần suất đề xuất công nghệ: lô hằng ngày bằng procedure PostgreSQL; gần thời gian thực thì CDC + Kafka (chương 5). Tiêu đề trước đây: Trung bình 163 đơn/ngày, đỉnh 1.176 đơn ngày Black Friday: lô hằng ngày là đủ}
+\end{frame}
+
+\begin{frame}{Data taxonomy: 11 bảng chia 4 nhóm}
+\muc{2.4 · Dữ liệu nguồn}
+\HinhLon{2-4_data_taxonomy.png}
+\KetLuan{Mỗi bảng kèm hai cột tiêu biểu và giá trị thật}
+\note{[S128] Data taxonomy của 11 bảng nguồn. Tiêu đề đầy đủ trước khi rút gọn: Cây phân loại dữ liệu chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu Ý đã chuyển khỏi slide: Phân loại thêm theo kiểu dữ liệu, độ nhạy cảm (định danh, vị trí) và tính biến động. Tiêu đề trước đây: Cây phân loại chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu}
 \end{frame}
 
 \subsection{2.5 ERD OLTP}
 
-\begin{frame}{ERD hệ thống bán hàng: chín bảng nối quanh đơn hàng}
+\begin{frame}{ERD OLTP: chín bảng nối quanh đơn hàng}
 \muc{2.5 · ERD OLTP}
 \HinhLon{3-2-4_erd_oltp.png}
 \KetLuan{orders $\rightarrow$ items, payments, reviews; customers, sellers, products}
-\note{[S35] \texttt{customer\_\allowbreak{}id} được sinh riêng cho từng đơn nên cần \texttt{customer\_\allowbreak{}unique\_\allowbreak{}id} để nhận ra khách thật.}
+\note{[S35] \texttt{customer\_\allowbreak{}id} được sinh riêng cho từng đơn nên cần \texttt{customer\_\allowbreak{}unique\_\allowbreak{}id} để nhận ra khách thật. Tiêu đề trước đây: ERD hệ thống bán hàng: chín bảng nối quanh đơn hàng}
 \end{frame}
 
-\begin{frame}{Các cột được gạch chân trên ERD là cột đi sang kho, kèm ghi chú mapping}
+\begin{frame}{ERD OLTP: cột gạch chân đi sang kho}
 \muc{2.5 · ERD OLTP}
 \begin{itemize}
   \item Ví dụ: \texttt{order\_\allowbreak{}purchase\_\allowbreak{}timestamp} $\rightarrow$ \texttt{purchase\_\allowbreak{}date\_\allowbreak{}key}, \texttt{price} $\rightarrow$ \texttt{price}
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: ERD đã gạch chân (vẽ lại)}
 
-\note{[S36] Bảng mapping đầy đủ 108 dòng ODS $\rightarrow$ kho nằm ở phụ lục.}
+\note{[S36] Bảng mapping đầy đủ 108 dòng ODS $\rightarrow$ kho nằm ở phụ lục. Tiêu đề trước đây: Các cột được gạch chân trên ERD là cột đi sang kho, kèm ghi chú mapping}
 \end{frame}
 
-\begin{frame}{ERD tô màu theo nhóm: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP}
+\begin{frame}{ERD OLTP: 65 trong 71 cột nguồn đi sang OLAP}
 \muc{2.5 · ERD OLTP}
 \HinhLon{2-5_erd_oltp_gach_chan.png}
 \KetLuan{Gạch chân suy ra từ bảng mapping nguồn $\rightarrow$ ODS $\rightarrow$ kho}
-\note{[S131] ERD nháp tô màu và gạch chân cột dùng sang OLAP. Tiêu đề đầy đủ trước khi rút gọn: ERD tô màu theo nhóm dữ liệu: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP Ý đã chuyển khỏi slide: 6 cột không dùng: geolocation.id, 3 thuộc tính sản phẩm, 2 thuộc tính khai báo của deal.}
+\note{[S131] ERD nháp tô màu và gạch chân cột dùng sang OLAP. Tiêu đề đầy đủ trước khi rút gọn: ERD tô màu theo nhóm dữ liệu: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP Ý đã chuyển khỏi slide: 6 cột không dùng: geolocation.id, 3 thuộc tính sản phẩm, 2 thuộc tính khai báo của deal. Tiêu đề trước đây: ERD tô màu theo nhóm: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP}
 \end{frame}
 
-\begin{frame}{Luồng OLTP sang OLAP cho thấy bảng nguồn nào nuôi dimension nào và fact nào}
+\begin{frame}{OLTP $\rightarrow$ OLAP: bảng nguồn nuôi dimension và fact}
 \muc{2.5 · ERD OLTP}
 \HinhLon{2-5_data_flow_oltp_olap.png}
 \KetLuan{Mapping đầy đủ từng cột ở Phụ lục C}
-\note{[S132] Sơ đồ luồng dữ liệu OLTP sang OLAP. Ý đã chuyển khỏi slide: Bảng tổng hợp mapping theo bảng nguồn ở báo cáo mục 2.5.}
+\note{[S132] Sơ đồ luồng dữ liệu OLTP sang OLAP. Ý đã chuyển khỏi slide: Bảng tổng hợp mapping theo bảng nguồn ở báo cáo mục 2.5. Tiêu đề trước đây: Luồng OLTP sang OLAP cho thấy bảng nguồn nào nuôi dimension nào và fact nào}
 \end{frame}
-

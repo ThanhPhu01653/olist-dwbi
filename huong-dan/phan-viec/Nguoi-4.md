@@ -98,31 +98,46 @@ Hình: ảnh chụp dashboard `4_DBx_<mô-tả>.png` (nhóm chụp), `figures/2-
 <!-- SLIDES:03-dashboard.tex -->
 | STT | S | Tiêu đề (câu kết luận) | Nội dung chính | Hình / bảng | Trạng thái |
 | ---: | ---: | --- | --- | --- | --- |
-| 1 | 89 | Bốn dashboard, bốn loại: dòng thời gian có dự báo, thống kê, OLAP, vận hành | DB1 Tổng quan và doanh thu; DB2 Giao hàng và trải nghiệm khách | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng 4 dashboard (huong-dan/dashboards/ |
-| 2 | 90 | Mô hình Power BI có 16 bảng và 32 quan hệ, mỗi fact một quan hệ ngày hoạt động | Quan hệ còn lại không hoạt động | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: ảnh chụp Model view |
-| 3 | 91 | Role-playing date và DAX: GMV tháng 11/2017 tăng 52,1% so với tháng 10 | USERELATIONSHIP, DATEADD, SAMEPERIODLASTYEAR | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: đoạn DAX (powerbi/measures.md |
-| 4 | 92 | Chủ đề màu thống nhất: xanh là tốt, vàng cần chú ý, đỏ là xấu | powerbi/theme.json; ngưỡng cảnh báo on-time 90%/95% | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: ảnh chụp theme |
-| 5 | 93 | DB1 trang 1: GMV 13,49 triệu BRL, 98.199 đơn, đúng hạn 93,2%, review 4,09 | Thẻ KPI, đường GMV theo tháng, cột MoM, thanh theo vùng, treemap ngành | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB1 trang 1 |
-| 6 | 94 | DB1 trang 1: đỉnh 11/2017 là 1,0 triệu BRL, Sudeste 65% GMV, có dự báo | Black Friday 152.654 BRL trong một ngày | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB1 trang 1 |
-| 7 | 95 | DB1 trang 2: 18 danh mục tạo 80% GMV; Home & Furniture dẫn đầu 22,8% | Treemap, ma trận drill, Pareto, scatter AOV – freight | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB1 trang 2 |
-| 8 | 96 | DB1 trang 2: phí vận chuyển nặng ở hàng giá thấp và ở vùng xa | Freight ratio 16,6% toàn sàn | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: ảnh chụp DB1 trang 2 (scatter) |
-| 9 | 97 | DB2 trang 1: lead time 12,6 ngày, phễu trạng thái và tỷ lệ trễ theo bang | Funnel, cột chồng từng chặng, bản đồ trễ | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB2 trang 1 |
-| 10 | 98 | DB2 trang 1: Olist hứa 24,4 ngày, giao 12,6 ngày, sớm hơn lời hứa 11,8 ngày | Đúng hạn tụt 87,6% ở Black Friday 11/2017 và 81,0% ở 03/2018 | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB2 trang 1 |
-| 11 | 101 | DB2 trang 2: review 4,09, 14,7% tiêu cực, chỉ 3,1% khách quay lại | Cột điểm theo nhóm trễ, donut thanh toán, RFM, cohort | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB2 trang 2 |
-| 12 | 102 | DB2 trang 2: thẻ tín dụng 78,3% giá trị thanh toán, trả góp trung bình 3,5 kỳ | 66,9% giao dịch thẻ trả góp nhiều kỳ | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB2 trang 2 |
-| 13 | 145 | DB2 trang 3: Key Influencers cho biết yếu tố nào đi kèm review tiêu cực | Kỳ vọng từ khám phá dữ liệu: giao trễ đứng đầu (Cramér's V 0,403; 0,392); Mô hình thống kê tự động, không chứng minh nhân quả | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB2 trang 3 (Key Influencers) |
-| 14 | 99 | DB3 trang 1: Sudeste 65,4% GMV, Norte và Nordeste chịu phí vận chuyển 22% | Bản đồ bong bóng, ma trận phân cấp, GMV khách và seller | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB3 trang 1 |
-| 15 | 100 | DB3 trang 1: 36% dòng hàng seller và khách cùng bang; drill-down tới thành phố | Khoảng cách TB 598 km | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB3 trang 1 |
-| 16 | 146 | DB3 trang 2: drill-through từ một bang sang chi tiết bang, kèm tooltip | Chuột phải một bang → Drill through → Chi tiết bang; Thẻ GMV, Freight ratio, Avg lead days, Late rate; bảng theo thành phố | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB3 trang 2 (Chi tiết bang) |
-| 17 | 103 | DB4 trang 1: tỷ lệ chốt theo kênh từ 2,7% (other) đến 16,7% (unknown) | Phễu MQL → deal → seller có đơn; thời gian chốt | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB4 trang 1 TRANG 1 |
-| 18 | 104 | DB4 trang 2: seller từ funnel chỉ tạo 4,99% GMV; kênh nhỏ được cảnh báo mẫu nhỏ | Scorecard seller, GMV/seller theo kênh | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB4 trang 2 TRANG 2 |
-| 19 | 147 | DB4 trang 3: drill-through sang chi tiết seller cho thấy tháng seller ngừng bán | Trường drill-through dim_seller[seller_id]; Đường GMV theo tháng nhờ snapshot dày đặc, kèm cảnh báo mẫu nhỏ | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB4 trang 3 (Chi tiết seller) |
-| 20 | 106 | Publish to web chia sẻ cả bốn dashboard bằng một liên kết công khai và mã QR | Dữ liệu Olist công khai nên chấp nhận được | khung chờ | cần ảnh: CHÈN HÌNH: ảnh Publish to web và mã QR của link |
-| 21 | 143 | Checklist: dự báo ở DB1, Key Influencers ở DB2, OLAP và drill-through ở DB3, DB4 | Số đơn 12.3K, tiền 13.5M, phần trăm một chữ số thập phân; Màu đỏ chỉ để cảnh báo; theme không còn đỏ trong màu dữ liệu | – | đã có |
-| 22 | 112 | Bài học: không xóa âm thầm, chọn grain trước, định nghĩa KPI một lần | Mô hình chiều đáng dùng vì nhất quán, tốc độ đến từ materialized view và index | – | đã có |
-| 23 | 144 | Bài học chỉ số: GMV 13,49 so với 13,59 triệu; review 4,21 sửa thành 4,29 | Chọn một định nghĩa và ghi cạnh con số; 380 so với 379 seller; Sửa ở ETL (cột is_delivered), không sửa ở BI | – | đã có |
+| 1 | 89 | Dashboard: bốn dashboard, bốn loại | DB1 Tổng quan và doanh thu; DB2 Giao hàng và trải nghiệm khách | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng 4 dashboard (huong-dan/dashboards/ |
+| 2 | 90 | Mô hình Power BI: 16 bảng sao, 32 quan hệ cho DB1–DB4 | Quan hệ còn lại không hoạt động | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: ảnh chụp Model view |
+| 3 | – | Nguyên tắc thiết kế: bố cục và định dạng | Mỗi trang có thanh tiêu đề, icon minh hoạ và menu điều hướng giữa các trang; Mỗi đồ thị có tiêu đề | – | đã có |
+| 4 | 92 | Nguyên tắc thiết kế: chủ đề màu | powerbi/theme.json; ngưỡng cảnh báo on-time 90%/95% | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: ảnh chụp theme |
+| 5 | – | Quy chuẩn định dạng số: con số có nghĩa |  | – | đã có |
+| 6 | – | DB1 – Tình huống: ban điều hành hỏi gì | Ai dùng: ban điều hành và quản lý kinh doanh, xem hằng tuần và hằng tháng; Câu hỏi: GMV tăng trưởng MoM, YoY và quy luật 80/20 | – | đã có |
+| 7 | 93 | DB1 – Dashboard: trang 1 tổng quan | Thẻ KPI, đường GMV theo tháng, cột MoM, thanh theo vùng, treemap ngành | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB1 trang 1 |
+| 8 | 94 | DB1 – Dashboard: trang 1 xu hướng và dự báo | Black Friday 152.654 BRL trong một ngày | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB1 trang 1 |
+| 9 | 95 | DB1 – Dashboard: trang 2 danh mục | Treemap, ma trận drill, Pareto, scatter AOV – freight | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB1 trang 2 |
+| 10 | 96 | DB1 – Dashboard: trang 2 phí vận chuyển | Freight ratio 16,6% toàn sàn | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: ảnh chụp DB1 trang 2 (scatter) |
+| 11 | – | DB1 – Phát hiện: ba số cần nhớ | GMV 13,49 triệu BRL, 98.199 đơn, đúng hạn 93,2%, review 4,09; Tháng 11/2017 là đỉnh 1,0 triệu BRL; Sudeste 65% GMV; Black Friday 152.654 BRL trong một | – | đã có |
+| 12 | – | DB1 – Quyết định: hành động đề xuất | Chuẩn bị tồn kho và vận chuyển trước Black Friday; Tập trung vào 18 danh mục tạo 80% GMV | – | đã có |
+| 13 | – | DB1 – DAX chính |  | khung chờ | cần ảnh: CHÈN ẢNH / ĐOẠN DAX: measure chính của DB1 (powerbi/measures |
+| 14 | – | DB2 – Tình huống: vận hành và chăm sóc khách | Ai dùng: vận hành và logistics (hằng ngày đến hằng tuần), chăm sóc khách hàng; Câu hỏi: hứa so với thực tế chênh bao nhiêu, giao trễ có kéo điểm revie | – | đã có |
+| 15 | 97 | DB2 – Dashboard: trang 1 lead time và phễu | Funnel, cột chồng từng chặng, bản đồ trễ | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB2 trang 1 |
+| 16 | 98 | DB2 – Dashboard: trang 1 hứa so với thực tế | Đúng hạn tụt 87,6% ở Black Friday 11/2017 và 81,0% ở 03/2018 | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB2 trang 1 |
+| 17 | 101 | DB2 – Dashboard: trang 2 review và khách quay lại | Cột điểm theo nhóm trễ, donut thanh toán, RFM, cohort | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB2 trang 2 |
+| 18 | 102 | DB2 – Dashboard: trang 2 cơ cấu thanh toán | 66,9% giao dịch thẻ trả góp nhiều kỳ | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB2 trang 2 |
+| 19 | 145 | DB2 – Dashboard: trang 3 Key Influencers | Kỳ vọng từ khám phá dữ liệu: giao trễ đứng đầu (Cramér's V 0,403; 0,392); Mô hình thống kê tự động, không chứng minh nhân quả | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB2 trang 3 (Key Influencers) |
+| 20 | – | DB2 – Phát hiện: ba số cần nhớ | Olist hứa 24,4 ngày, giao 12,6 ngày, sớm hơn lời hứa 11,8 ngày; Đúng hạn tụt còn 87,6% ở Black Friday 11/2017 và 81,0% ở 03/2018 | – | đã có |
+| 21 | – | DB2 – Quyết định: hành động đề xuất | Giảm trễ ở các tháng tải cao; Ưu tiên xử lý đơn có nguy cơ trễ vì điểm review rơi từ 4,29 xuống 1,70 khi trễ trên 7 ngày | – | đã có |
+| 22 | – | DB2 – DAX chính |  | khung chờ | cần ảnh: CHÈN ẢNH / ĐOẠN DAX: measure chính của DB2 (powerbi/measures |
+| 23 | – | DB3 – Tình huống: địa lý và phí vận chuyển | Ai dùng: vận hành và logistics; Câu hỏi: địa lý quyết định trải nghiệm giao hàng và phí vận chuyển ra sao | – | đã có |
+| 24 | 99 | DB3 – Dashboard: trang 1 bản đồ và phí | Bản đồ bong bóng, ma trận phân cấp, GMV khách và seller | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB3 trang 1 |
+| 25 | 100 | DB3 – Dashboard: trang 1 drill-down vùng đến thành phố | Khoảng cách TB 598 km | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB3 trang 1 |
+| 26 | 146 | DB3 – Dashboard: trang 2 drill-through và tooltip | Chuột phải một bang → Drill through → Chi tiết bang; Thẻ GMV, Freight ratio, Avg lead days, Late rate; bảng theo thành phố | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB3 trang 2 (Chi tiết bang) |
+| 27 | – | DB3 – Phát hiện: ba số cần nhớ | Sudeste chiếm 65,4% GMV; Norte và Nordeste chịu phí vận chuyển 22%; 36% dòng hàng có seller và khách cùng bang | – | đã có |
+| 28 | – | DB3 – Quyết định: hành động đề xuất | Ưu tiên cải thiện giao hàng ở Norte và Nordeste; Cân nhắc seller gần khách hơn để giảm phí và lead time | – | đã có |
+| 29 | – | DB3 – DAX chính |  | khung chờ | cần ảnh: CHÈN ẢNH / ĐOẠN DAX: measure chính của DB3 (powerbi/measures |
+| 30 | – | DB4 – Tình huống: thu hút và hiệu quả seller | Ai dùng: quản lý seller và đội sales; Câu hỏi: kênh nào chuyển đổi tốt và seller từ funnel bán ra sao | – | đã có |
+| 31 | 103 | DB4 – Dashboard: trang 1 phễu và tỷ lệ chốt | Phễu MQL → deal → seller có đơn; thời gian chốt | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB4 trang 1 TRANG 1 |
+| 32 | 104 | DB4 – Dashboard: trang 2 scorecard seller | Scorecard seller, GMV/seller theo kênh | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB4 trang 2 TRANG 2 |
+| 33 | 147 | DB4 – Dashboard: trang 3 chi tiết seller | Trường drill-through dim_seller[seller_id]; Đường GMV theo tháng nhờ snapshot dày đặc, kèm cảnh báo mẫu nhỏ | khung chờ | cần ảnh: CHÈN ẢNH CHỤP DB4 trang 3 (Chi tiết seller) |
+| 34 | – | DB4 – Phát hiện: ba số cần nhớ | Tỷ lệ chốt theo kênh từ 2,7% (other) đến 16,7% (unknown); Seller từ funnel chỉ tạo 4,99% GMV | – | đã có |
+| 35 | – | DB4 – Quyết định: hành động đề xuất | Đánh giá kênh kèm cỡ mẫu, không chỉ theo tỷ lệ; Hỗ trợ 462 deal đã chốt nhưng chưa bán gì | – | đã có |
+| 36 | – | DB4 – DAX chính |  | khung chờ | cần ảnh: CHÈN ẢNH / ĐOẠN DAX: measure chính của DB4 (powerbi/measures |
+| 37 | 106 | Publish và QR: chia sẻ bốn dashboard bằng một liên kết | Dữ liệu Olist công khai nên chấp nhận được | khung chờ | cần ảnh: CHÈN HÌNH: ảnh Publish to web và mã QR của link |
+| 38 | 143 | Checklist dashboard: dự báo, Key Influencers, OLAP, drill-through | Số đơn 12.3K, tiền 13.5M, phần trăm một chữ số thập phân; Màu đỏ chỉ để cảnh báo; theme không còn đỏ trong màu dữ liệu | – | đã có |
 
-*23 frame trong `03-dashboard.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
+*38 frame trong `03-dashboard.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
 <!-- /SLIDES -->
 
 **Slide cần thêm hoặc sửa** (theo `docs/doi-chieu-nhom6.md`):

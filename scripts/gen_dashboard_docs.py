@@ -153,7 +153,7 @@ SYM = {"yes": "✓", "no": "–"}
 
 # checklist items (README matrix rows)
 ITEMS = [
-    ("Định dạng số", "mọi số dùng đơn vị rút gọn và dấu phân cách; phần trăm 1 chữ số thập phân", "số đơn 12.3K; tiền 13.5M; 12,4%"),
+    ("Định dạng số", "con số có nghĩa: phần trăm trên thẻ KPI làm tròn số nguyên, một chữ số thập phân chỉ khi dưới 10% hoặc cần phân biệt; tiền rút gọn", "93%; 3,1%; 13,5 triệu"),
     ("Tiêu đề dạng câu hỏi", "mỗi visual có tiêu đề là câu hỏi mà nó trả lời", "\"GMV tháng này tăng hay giảm so với tháng trước?\""),
     ("Màu đỏ chỉ để cảnh báo", "đỏ chỉ ở giá trị xấu hoặc vượt ngưỡng; màu dữ liệu của chủ đề không có đỏ", "`powerbi/theme.json`"),
     ("Định dạng có điều kiện", "measure DAX trả về màu (`Color …`) cho card, bảng, bản đồ", "`powerbi/measures.md` mục 6"),
@@ -164,22 +164,25 @@ ITEMS = [
     ("Chuỗi thời gian có dự báo", "line chart theo tháng có đường dự báo (Analytics → Forecast)", "DB1: GMV theo tháng"),
     ("Thống kê: Key Influencers", "visual AI cho biết yếu tố nào đi kèm kết quả cần giải thích", "DB2: review tiêu cực"),
     ("Publish web và mã QR", "publish công khai (không cần đăng nhập) và mã QR của link", "`powerbi/model.md` mục 9"),
+    ("Thanh tiêu đề và icon minh hoạ", "mỗi trang có thanh tiêu đề và icon minh hoạ", "theo mẫu trang trong `powerbi/theme.json`"),
+    ("Menu điều hướng giữa các trang", "nút điều hướng (Page navigator) chuyển giữa các trang của dashboard", "Insert → Buttons → Navigator → Page navigator"),
+    ("Tiêu đề mỗi đồ thị", "mỗi đồ thị có tiêu đề (Format → Title)", "danh sách tiêu đề ở mục 7 của từng DB*.md"),
 ]
 # 1 = dashboard satisfies the item (yes), 0 = not applicable
 MATRIX = {
-    "DB1": [1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1],
-    "DB2": [1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1],
-    "DB3": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-    "DB4": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+    "DB1": [1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1],
+    "DB2": [1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1],
+    "DB3": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+    "DB4": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
 }
 
 FMT = {
-    "DB1": [("GMV", "tiền", '`#,0.0,,"M"` → 13.5M'), ("Orders, Items", "số", '`#,0.0,"K"` → 98.2K'), ("AOV", "tiền", "`#,0.0` → 137.4"), ("On-time rate, Cancel rate, Freight ratio", "phần trăm", "`0.0%` → 93.2%"),
+    "DB1": [("GMV", "tiền", '`#,0.0,,"M"` → 13,5 triệu (Display units = Millions)'), ("Orders, Items", "số", '`#,0.0,"K"` → 98 nghìn (Display units = Thousands)'), ("AOV", "tiền", "`#,0.0` → 137.4"), ("On-time rate, Cancel rate, Freight ratio", "phần trăm", "`0%` (thẻ KPI; dưới 10% hoặc cần phân biệt: `0.0%`) → 93.2%"),
             ("Avg review", "điểm", "`0.00` → 4.09"), ("GMV MoM %, GMV YoY %", "phần trăm", "`+0.0%;-0.0%`")],
-    "DB2": [("Avg lead days, Avg promised days, Promised vs actual", "ngày", "`0.0` → 12.6"), ("On-time rate, Late rate, Cancel rate, % negative, Repeat customer rate", "phần trăm", "`0.0%`"),
+    "DB2": [("Avg lead days, Avg promised days, Promised vs actual", "ngày", "`0.0` → 12.6"), ("On-time rate, Late rate, Cancel rate, % negative, Repeat customer rate", "phần trăm", "`0%` (thẻ KPI; dưới 10% hoặc cần phân biệt: `0.0%`)"),
             ("Orders placed, Reviews", "số", '`#,0.0,"K"`'), ("Avg review", "điểm", "`0.00`"), ("Payment value", "tiền", '`#,0.0,,"M"`'), ("Avg installments", "số kỳ", "`0.0`")],
-    "DB3": [("GMV theo bang", "tiền", '`#,0.0,"K"` hoặc `#,0.0,,"M"`'), ("Freight ratio, Late rate", "phần trăm", "`0.0%`"), ("Avg lead days", "ngày", "`0.0`"), ("Khoảng cách", "km", "`#,0`")],
-    "DB4": [("MQLs, Won deals", "số", "`#,0`"), ("MQL to won rate, Won to first sale rate, Seller late rate", "phần trăm", "`0.0%`"), ("Avg days to close, Avg days won to first sale", "ngày", "`0.0`"),
+    "DB3": [("GMV theo bang", "tiền", '`#,0.0,"K"` hoặc `#,0.0,,"M"`'), ("Freight ratio, Late rate", "phần trăm", "`0%` (thẻ KPI; dưới 10% hoặc cần phân biệt: `0.0%`)"), ("Avg lead days", "ngày", "`0.0`"), ("Khoảng cách", "km", "`#,0`")],
+    "DB4": [("MQLs, Won deals", "số", "`#,0`"), ("MQL to won rate, Won to first sale rate, Seller late rate", "phần trăm", "`0%` (thẻ KPI; dưới 10% hoặc cần phân biệt: `0.0%`)"), ("Avg days to close, Avg days won to first sale", "ngày", "`0.0`"),
             ("Seller GMV (monthly), Seller GMV first 90d", "tiền", '`#,0.0,"K"`')],
 }
 
@@ -364,7 +367,7 @@ def checklist_how(key, d, slicers, drills):
                 "slicer Nhóm kênh → Origin", "drill Origin → Nhóm kênh; bảng seller drill theo bang", "trang *Chi tiết seller* (trường `seller_id`)", "`Tooltip_Kenh`",
                 "không áp dụng (dự báo ở DB1)", "không áp dụng (Key Influencers ở DB2)", "cùng báo cáo với các dashboard khác"],
     }
-    return t[key]
+    return t[key] + ["mỗi trang có thanh tiêu đề và icon minh hoạ", "nút điều hướng (Page navigator) giữa các trang của dashboard", "mỗi đồ thị có tiêu đề (xem danh sách bên dưới)"]
 
 
 README = """# Hướng dẫn dựng dashboard: DB1–DB4 và checklist chung
@@ -398,7 +401,9 @@ Mỗi mục có ít nhất một dashboard đáp ứng: dự báo ở DB1, Key I
 
 ## 3. Hướng dẫn chi tiết
 
-**Định dạng số.** Chọn visual → *Format → Display units* (Thousands, Millions) và *Value decimal places = 1*; với measure dùng *Measure tools → Format → Custom*: `#,0.0,,"M"` (triệu), `#,0.0,"K"` (nghìn), `0.0%` (phần trăm một chữ số thập phân). Dấu phân cách hàng nghìn bật ở *Format → Value*. Luôn ghi đơn vị (BRL, ngày, %) ở tiêu đề hoặc nhãn trục.
+**Định dạng số: con số có nghĩa.** Measure dùng định dạng `#,0` (giá trị thật vẫn đầy đủ); việc rút gọn làm ở visual: *Format → Display units* (Thousands, Millions). Phần trăm trên thẻ KPI làm tròn số nguyên (93%); chỉ giữ một chữ số thập phân khi giá trị dưới 10% hoặc cần phân biệt (3,1%). Tiền rút gọn theo triệu hoặc nghìn (13,5 triệu); ví dụ 12,39% hiển thị 12%. Luôn ghi đơn vị (BRL, ngày, %) ở tiêu đề hoặc nhãn trục.
+
+**Thanh tiêu đề, icon và menu.** Mỗi trang có thanh tiêu đề và icon minh hoạ; thêm *Insert → Buttons → Navigator → Page navigator* để chuyển giữa các trang; mỗi đồ thị có tiêu đề (*Format → Title*). Đây là các mục thầy ghi "chưa" trong checklist.
 
 **Tiêu đề dạng câu hỏi.** Mỗi visual có tiêu đề là câu hỏi nó trả lời (mục 7 của từng DB*.md có danh sách); tiêu đề trang cũng là câu hỏi chính của dashboard.
 

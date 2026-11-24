@@ -1,34 +1,6 @@
 \subsection{3.2 Kiến trúc}
 
-\begin{frame}{Kiến trúc sáu lớp từ hai hệ thống nguồn đến bốn dashboard}
-\muc{3.2 · Kiến trúc}
-\HinhLon{3-4-1_pipeline.png}
-\KetLuan{oltp/crm $\rightarrow$ staging $\rightarrow$ ODS $\rightarrow$ kho $\rightarrow$ data mart $\rightarrow$ Power BI; etl\_log giám sát}
-
-\note{[S49] Mỗi lớp có một việc và một cách kiểm tra riêng.}
-\end{frame}
-
-\begin{frame}{Tách lớp giúp đối soát: staging = ODS + dòng bị loại cho mọi bảng}
-\muc{3.2 · Kiến trúc}
-\begin{itemize}
-  \item Chỗ nào hỏng biết ngay lớp nào
-\end{itemize}
-\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng đối soát (handoff P2)}
-
-\note{[S50] Không phải lấy lại dữ liệu từ nguồn khi ODS lỗi.}
-\end{frame}
-
-\begin{frame}{Công nghệ: PostgreSQL 18, Python 3.11, SQL procedure, Power BI, Git}
-\muc{3.2 · Kiến trúc}
-\begin{itemize}
-  \item Không Docker, không PostGIS; điều phối bằng một lệnh
-\end{itemize}
-\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: logo công nghệ (chèn)}
-
-\note{[S51] Chạy được trên laptop sinh viên 8 GB.}
-\end{frame}
-
-\begin{frame}{Kiến trúc sáu tầng từ nguồn đến BI, mỗi tầng có thành phần, công nghệ, số dòng}
+\begin{frame}{Kiến trúc: sáu tầng, thành phần, công nghệ, số dòng}
 \muc{3.2 · Kiến trúc}
 \HinhChu{3-2_kien_truc_cac_lop.png}{%
 \small\begin{itemize}
@@ -36,66 +8,109 @@
 \end{itemize}}
 \KetLuan{PostgreSQL, Python, Power BI, GitHub; số bảng và số dòng từng lớp}
 
-\note{[S136] Kiến trúc theo lớp (không vẽ luồng); luồng ở data flow và sơ đồ job. Tiêu đề đầy đủ trước khi rút gọn: Kiến trúc theo lớp: sáu tầng từ nguồn đến BI, mỗi tầng có thành phần, công nghệ, số dòng}
+\note{[S136] Kiến trúc theo lớp (không vẽ luồng); luồng ở data flow và sơ đồ job. Tiêu đề đầy đủ trước khi rút gọn: Kiến trúc theo lớp: sáu tầng từ nguồn đến BI, mỗi tầng có thành phần, công nghệ, số dòng Tiêu đề trước đây: Kiến trúc sáu tầng từ nguồn đến BI, mỗi tầng có thành phần, công nghệ, số dòng}
+\end{frame}
+
+\begin{frame}{Kiến trúc: luồng sáu lớp đến bốn dashboard}
+\muc{3.2 · Kiến trúc}
+\HinhLon{3-4-1_pipeline.png}
+\KetLuan{oltp/crm $\rightarrow$ staging $\rightarrow$ ODS $\rightarrow$ kho $\rightarrow$ data mart $\rightarrow$ Power BI; etl\_log giám sát}
+
+\note{[S49] Mỗi lớp có một việc và một cách kiểm tra riêng. Tiêu đề trước đây: Kiến trúc sáu lớp từ hai hệ thống nguồn đến bốn dashboard}
+\end{frame}
+
+\begin{frame}{Kiến trúc: vai trò từng lớp}
+\muc{3.2 · Kiến trúc}
+\begin{BangTC}{lXX}
+\textbf{Lớp} & \textbf{Việc làm} & \textbf{Số liệu và kiểm tra} \\ \midrule
+Nguồn & \texttt{oltp} (9 bảng) và \texttt{crm} (2 bảng) & 11 bảng, 1.559.764 dòng \\
+Staging & chép dữ liệu từ nguồn vào \texttt{stg\_*} & staging = ODS + dòng bị loại \\
+ODS & làm sạch, gắn cờ \texttt{dq\_flags} & 18 bảng, 678.183 dòng \\
+Kho (\texttt{dw}) & 10 dimension và 6 fact & 136 phép kiểm thử \\
+Data mart & 4 mart cho 4 dashboard & 17 view, khớp fact \\
+Power BI & 4 dashboard & đối chiếu giá trị kỳ vọng từ SQL \\
+\end{BangTC}
+\KetLuan{Mỗi lớp có một việc và một cách kiểm tra riêng}
+\note{[P12] Trang giải thích từng lớp của kiến trúc (checklist: phân tích chi tiết kiến trúc). Số liệu lấy từ các slide ETL và dimension.}
+\end{frame}
+
+\begin{frame}{Kiến trúc: công nghệ sử dụng}
+\muc{3.2 · Kiến trúc}
+\begin{itemize}
+  \item Không Docker, không PostGIS; điều phối bằng một lệnh
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: logo công nghệ (chèn)}
+
+\note{[S51] Chạy được trên laptop sinh viên 8 GB. Tiêu đề trước đây: Công nghệ: PostgreSQL 18, Python 3.11, SQL procedure, Power BI, Git}
+\end{frame}
+
+\begin{frame}{Kiến trúc: tách lớp giúp đối soát số dòng}
+\muc{3.2 · Kiến trúc}
+\begin{itemize}
+  \item Chỗ nào hỏng biết ngay lớp nào
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng đối soát (handoff P2)}
+
+\note{[S50] Không phải lấy lại dữ liệu từ nguồn khi ODS lỗi. Tiêu đề trước đây: Tách lớp giúp đối soát: staging = ODS + dòng bị loại cho mọi bảng}
 \end{frame}
 
 \subsection{3.3 ETL}
 
-\begin{frame}{ODS là lớp làm sạch trung gian: 18 bảng, 678.183 dòng, mọi lỗi có cờ hoặc lý do}
-\muc{3.3 · ETL}
-\only<1>{%
-\begin{BangTC}{XrX}
-\textbf{Lỗi} & \textbf{Số dòng} & \textbf{Xử lý} \\ \midrule
-Bàn giao vận chuyển trước khi duyệt thanh toán & 1.359 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
-Bàn giao vận chuyển trước ngày mua & 166 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
-Giao khách trước khi bàn giao vận chuyển & 23 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
-Đơn đã giao nhưng không có ngày duyệt & 14 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
-\end{BangTC}
-\KetLuan{Zip thành 5 chữ số, thành phố bỏ dấu, \texttt{NULL} thành \texttt{unknown}, khử trùng review}}
-\only<2>{%
-\begin{BangTC}{XrX}
-\textbf{Lỗi} & \textbf{Số dòng} & \textbf{Xử lý} \\ \midrule
-Trạng thái delivered nhưng không có ngày giao & 8 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
-Có ngày giao nhưng trạng thái chưa là delivered & 6 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
-Đã giao nhưng không có ngày bàn giao & 2 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
-\end{BangTC}
-\KetLuan{Zip thành 5 chữ số, thành phố bỏ dấu, \texttt{NULL} thành \texttt{unknown}, khử trùng review}}
-\only<3>{%
-\begin{BangTC}{XrX}
-\textbf{Lỗi} & \textbf{Số dòng} & \textbf{Xử lý} \\ \midrule
-Giá trị thanh toán = 0 & 9 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
-Hình thức thanh toán not\_defined & 3 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
-Số kỳ trả góp = 0 (đặt thành 1) & 2 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
-\end{BangTC}
-\KetLuan{Zip thành 5 chữ số, thành phố bỏ dấu, \texttt{NULL} thành \texttt{unknown}, khử trùng review}}
-\only<4>{%
-\begin{BangTC}{XrX}
-\textbf{Lỗi} & \textbf{Số dòng} & \textbf{Xử lý} \\ \midrule
-Doanh thu tháng khai báo = 0 & 797 & Gắn cờ, giữ nguyên giá trị \\
-Chốt deal trước ngày liên hệ đầu & 1 & Gắn cờ, giữ nguyên giá trị \\
-coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.rejected\_rows \\
-\end{BangTC}
-\KetLuan{Zip thành 5 chữ số, thành phố bỏ dấu, \texttt{NULL} thành \texttt{unknown}, khử trùng review}}
-\note{[S52] 1.411 đơn (1,4\%) có ít nhất một cờ chất lượng. Bấm để chuyển giữa 4 phần của bảng.}
-\end{frame}
-
-\begin{frame}{Một lệnh chạy sáu bước ETL và ghi lại từng bước}
+\begin{frame}{Tóm tắt ETL: một lệnh chạy các bước và ghi nhật ký}
 \muc{3.3 · ETL}
 \HinhLon{3-4-1_pipeline.png}
 \KetLuan{extract $\rightarrow$ ODS $\rightarrow$ dim $\rightarrow$ fact $\rightarrow$ mart $\rightarrow$ tests $\rightarrow$ snapshot $\rightarrow$ export}
 
-\note{[S67] Mỗi bước ghi \texttt{job\_\allowbreak{}run}; lỗi thì dừng và đánh dấu failed.}
+\note{[S67] Mỗi bước ghi \texttt{job\_\allowbreak{}run}; lỗi thì dừng và đánh dấu failed. Tiêu đề trước đây: Một lệnh chạy sáu bước ETL và ghi lại từng bước}
 \end{frame}
 
-\begin{frame}{Extract chỉ lấy dòng chưa có: đơn theo watermark, bảng nhỏ theo khoá}
+\begin{frame}{Tóm tắt ETL: extract chỉ lấy dòng chưa có}
 \muc{3.3 · ETL}
 \HinhLon{3-4-1_pipeline.png}
 \KetLuan{Chế độ full 52 giây; incremental khoảng 22 giây}
 
-\note{[S68] MQL và deal không dùng watermark ngày vì deal có thể đến trước MQL.}
+\note{[S68] MQL và deal không dùng watermark ngày vì deal có thể đến trước MQL. Tiêu đề trước đây: Extract chỉ lấy dòng chưa có: đơn theo watermark, bảng nhỏ theo khoá}
 \end{frame}
 
-\begin{frame}{ODS xử lý lỗi theo ba cách: chuẩn hóa, gắn cờ hoặc loại có lý do}
+\begin{frame}{Tóm tắt ETL: ODS làm sạch 18 bảng, 678.183 dòng}
+\muc{3.3 · ETL}
+\only<1>{%
+\begin{BangTC}{XrX}
+\textbf{Lỗi} & \textbf{Số dòng} & \textbf{Xử lý} \\ \midrule
+Bàn giao vận chuyển trước khi duyệt thanh toán & 1.359 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Bàn giao vận chuyển trước ngày mua & 166 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Giao khách trước khi bàn giao vận chuyển & 23 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Đơn đã giao nhưng không có ngày duyệt & 14 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+\end{BangTC}
+\KetLuan{Zip thành 5 chữ số, thành phố bỏ dấu, \texttt{NULL} thành \texttt{unknown}, khử trùng review}}
+\only<2>{%
+\begin{BangTC}{XrX}
+\textbf{Lỗi} & \textbf{Số dòng} & \textbf{Xử lý} \\ \midrule
+Trạng thái delivered nhưng không có ngày giao & 8 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Có ngày giao nhưng trạng thái chưa là delivered & 6 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+Đã giao nhưng không có ngày bàn giao & 2 & Gắn cờ dq\_flags, giữ đơn; khoảng thời gian âm đặt NULL \\
+\end{BangTC}
+\KetLuan{Zip thành 5 chữ số, thành phố bỏ dấu, \texttt{NULL} thành \texttt{unknown}, khử trùng review}}
+\only<3>{%
+\begin{BangTC}{XrX}
+\textbf{Lỗi} & \textbf{Số dòng} & \textbf{Xử lý} \\ \midrule
+Giá trị thanh toán = 0 & 9 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+Hình thức thanh toán not\_defined & 3 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+Số kỳ trả góp = 0 (đặt thành 1) & 2 & Gắn cờ, chuẩn hoá (số kỳ 0 → 1) \\
+\end{BangTC}
+\KetLuan{Zip thành 5 chữ số, thành phố bỏ dấu, \texttt{NULL} thành \texttt{unknown}, khử trùng review}}
+\only<4>{%
+\begin{BangTC}{XrX}
+\textbf{Lỗi} & \textbf{Số dòng} & \textbf{Xử lý} \\ \midrule
+Doanh thu tháng khai báo = 0 & 797 & Gắn cờ, giữ nguyên giá trị \\
+Chốt deal trước ngày liên hệ đầu & 1 & Gắn cờ, giữ nguyên giá trị \\
+coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.rejected\_rows \\
+\end{BangTC}
+\KetLuan{Zip thành 5 chữ số, thành phố bỏ dấu, \texttt{NULL} thành \texttt{unknown}, khử trùng review}}
+\note{[S52] 1.411 đơn (1,4\%) có ít nhất một cờ chất lượng. Bấm để chuyển giữa 4 phần của bảng. Tiêu đề trước đây: ODS là lớp làm sạch trung gian: 18 bảng, 678.183 dòng, mọi lỗi có cờ hoặc lý do}
+\end{frame}
+
+\begin{frame}{Tóm tắt ETL: ODS xử lý lỗi theo ba cách}
 \muc{3.3 · ETL}
 \only<1>{%
 \begin{BangTC}{XrX}
@@ -130,18 +145,69 @@ Chốt deal trước ngày liên hệ đầu & 1 & Gắn cờ, giữ nguyên gi�
 coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.rejected\_rows \\
 \end{BangTC}
 \KetLuan{1.359 đơn bàn giao trước khi duyệt được gắn cờ, không xóa}}
-\note{[S69] Khoảng thời gian âm đặt NULL ở fact và được đếm lại. Bấm để chuyển giữa 4 phần của bảng.}
+\note{[S69] Khoảng thời gian âm đặt NULL ở fact và được đếm lại. Bấm để chuyển giữa 4 phần của bảng. Tiêu đề trước đây: ODS xử lý lỗi theo ba cách: chuẩn hóa, gắn cờ hoặc loại có lý do}
 \end{frame}
 
-\begin{frame}{Trước và sau ETL: bảng đơn hàng có thêm cờ lỗi và kiểu dữ liệu chuẩn}
+\begin{frame}{ETL jobs: sáu giai đoạn, 142 test đạt}
+\muc{3.3 · ETL}
+\HinhChu{3-3_etl_jobs.png}{%
+\small\begin{itemize}
+  \item Số dòng lấy từ etl\_log.job\_run (lô đầu và tổng các lô)
+\end{itemize}}
+\KetLuan{Extract, seed và ODS, dimension và fact, mart, kiểm thử, xuất CSV}
+
+\note{[S137] Sơ đồ các job của run_pipeline sinh từ etl_log. Tiêu đề đầy đủ trước khi rút gọn: Sáu giai đoạn ETL: lô đầu nạp 1.273.620 dòng vào staging, 42 dòng loại, 142 test đạt Tiêu đề trước đây: Sáu giai đoạn ETL: lô đầu 1.273.620 dòng vào staging, 42 dòng loại, 142 test đạt}
+\end{frame}
+
+\begin{frame}{ETL jobs: SCD2 nạp bằng window function}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item \texttt{lag(zip)} so với đơn trước; \texttt{effective\_\allowbreak{}from} = ngày mua
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: đoạn SQL (Phụ lục B, \texttt{code/scd2\_\allowbreak{}dim\_\allowbreak{}customer.sql})}
+
+\note{[S75] Khoá thay thế cũ không đổi khi chạy lại. Tiêu đề trước đây: SCD2 được nạp bằng window function: mỗi lần zip đổi mở một phiên bản mới}
+\end{frame}
+
+\begin{frame}{ETL jobs: nạp fact, khoảng thời gian âm thành NULL}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item 1.359 đơn có \texttt{handling\_\allowbreak{}days} âm (bàn giao trước khi duyệt) được đặt NULL và đếm
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng \texttt{fact\_\allowbreak{}load\_\allowbreak{}issue}}
+
+\note{[S76] Tra không thấy thì dùng -1 và ghi nhận. Tiêu đề trước đây: Nạp fact: tra khoá theo phiên bản có hiệu lực, khoảng thời gian âm thành NULL}
+\end{frame}
+
+\begin{frame}{ETL jobs: dòng mồ côi được thử lại ở đợt sau}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item Kịch bản deal \texttt{b91cf88…} trên bản sao trong giao dịch rồi hoàn tác
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: sơ đồ 3 bước (loại $\rightarrow$ cha đến $\rightarrow$ nạp lại)}
+
+\note{[S81] Trong 11 đợt thật không có dòng mồ côi nào; nhóm nói thẳng điều này. Tiêu đề đầy đủ trước khi rút gọn: Dòng mồ côi được thử lại ở đợt sau, nhưng cơ chế mới được chứng minh bằng kiểm thử Tiêu đề trước đây: Dòng mồ côi được thử lại ở đợt sau; cơ chế mới được chứng minh bằng kiểm thử}
+\end{frame}
+
+\begin{frame}{ETL jobs: làm giàu khoảng cách haversine}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item 555 dòng (0,49\%) thiếu toạ độ vẫn được giữ lại với giá trị trống
+\end{itemize}
+\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: đoạn SQL \texttt{dw.haversine\_\allowbreak{}km} (Phụ lục B)}
+
+\note{[S107] São Paulo – Rio tính ra 360,9 km, gần với thực tế. Tiêu đề đầy đủ trước khi rút gọn: Mở rộng địa lý: hàm haversine SQL thuần tính khoảng cách seller $\rightarrow$ khách cho 112.650 dòng hàng Tiêu đề trước đây: Haversine SQL thuần tính khoảng cách seller $\rightarrow$ khách cho 112.650 dòng hàng}
+\end{frame}
+
+\begin{frame}{Before – after: bảng đơn hàng}
 \muc{3.3 · ETL}
 \HinhLon{3-4-3_before_after_orders.png}
 \KetLuan{Ví dụ trước/sau}
 
-\note{[S70] Cùng 99.441 đơn nhưng thêm \texttt{dq\_\allowbreak{}flags}.}
+\note{[S70] Cùng 99.441 đơn nhưng thêm \texttt{dq\_\allowbreak{}flags}. Tiêu đề trước đây: Trước và sau ETL: bảng đơn hàng có thêm cờ lỗi và kiểu dữ liệu chuẩn}
 \end{frame}
 
-\begin{frame}{Trước và sau ETL: sản phẩm và seller được chuẩn hóa tên cột và thành phố}
+\begin{frame}{Before – after: sản phẩm và seller}
 \muc{3.3 · ETL}
 \only<1>{%
 \HinhLon{3-4-3_before_after_products.png}
@@ -150,19 +216,18 @@ coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.r
 \HinhLon{3-4-3_before_after_sellers.png}
 \KetLuan{\texttt{*\_\allowbreak{}lenght} $\rightarrow$ \texttt{*\_\allowbreak{}length}; thành phố bỏ dấu, chữ thường}}
 
-\note{[S71] Hai hình cùng một slide. Bấm để chuyển giữa hai hình (hình 1, hình 2).}
+\note{[S71] Hai hình cùng một slide. Bấm để chuyển giữa hai hình (hình 1, hình 2). Tiêu đề trước đây: Trước và sau ETL: sản phẩm và seller được chuẩn hóa tên cột và thành phố}
 \end{frame}
 
-
-\begin{frame}{Trước và sau ETL: 1.000.163 dòng toạ độ gom thành 19.178 mã bưu chính}
+\begin{frame}{Before – after: 1.000.163 dòng toạ độ thành 19.178 zip}
 \muc{3.3 · ETL}
 \HinhLon{3-4-3_before_after_geolocation.png}
 \KetLuan{Trung vị toạ độ, mode thành phố}
 
-\note{[S72] 42 điểm ngoài Brazil được ghi vào bảng loại.}
+\note{[S72] 42 điểm ngoài Brazil được ghi vào bảng loại. Tiêu đề trước đây: Trước và sau ETL: 1.000.163 dòng toạ độ gom thành 19.178 mã bưu chính}
 \end{frame}
 
-\begin{frame}{Trước và sau ETL: MQL và deal có giá trị trống thành unknown}
+\begin{frame}{Before – after: MQL và deal có giá trị trống}
 \muc{3.3 · ETL}
 \only<1>{%
 \HinhLon{3-4-3_before_after_mql.png}
@@ -171,49 +236,75 @@ coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.r
 \HinhLon{3-4-3_before_after_closed_deals.png}
 \KetLuan{\texttt{origin} rỗng $\rightarrow$ \texttt{unknown}; doanh thu khai báo 0 gắn cờ}}
 
-\note{[S73] Không đoán giá trị, chỉ đánh dấu. Bấm để chuyển giữa hai hình (hình 1, hình 2).}
+\note{[S73] Không đoán giá trị, chỉ đánh dấu. Bấm để chuyển giữa hai hình (hình 1, hình 2). Tiêu đề trước đây: Trước và sau ETL: MQL và deal có giá trị trống thành unknown}
 \end{frame}
 
+\begin{frame}{OLTP $\rightarrow$ OLAP: bảng nguồn và bảng đích}
+\muc{3.3 · ETL}
+\only<1>{%
+\begin{BangTC}{XlXX}
+\textbf{Bảng nguồn} & \textbf{Cột dùng} & \textbf{Bảng đích} & \textbf{Phép biến đổi tiêu biểu} \\ \midrule
+oltp.customers & 5/5 & dim\_customer, dim\_geography và 4 fact & zip $\rightarrow$ char(5), lpad bằng số 0 \\
+oltp.geolocation & 5/6 & dim\_geography & chuẩn hoá char(5) rồi GROUP BY zip \\
+oltp.order\_items & 7/7 & fact\_order\_fulfillment, fact\_order\_item & giữ nguyên giá trị \\
+\end{BangTC}
+\KetLuan{65 trong 71 cột nguồn được dùng sang OLAP}}
+\only<2>{%
+\begin{BangTC}{XlXX}
+\textbf{Bảng nguồn} & \textbf{Cột dùng} & \textbf{Bảng đích} & \textbf{Phép biến đổi tiêu biểu} \\ \midrule
+oltp.order\_payments & 5/5 & fact\_order\_fulfillment, fact\_payment & payment\_type: lower(trim()) \\
+oltp.order\_reviews & 7/7 & fact\_review & khử trùng cặp (review\_id, order\_id), giữ bản mới nhất \\
+oltp.orders & 8/8 & dim\_customer và 4 fact & order\_status: lower(trim()) \\
+\end{BangTC}
+\KetLuan{65 trong 71 cột nguồn được dùng sang OLAP}}
+\only<3>{%
+\begin{BangTC}{XlXX}
+\textbf{Bảng nguồn} & \textbf{Cột dùng} & \textbf{Bảng đích} & \textbf{Phép biến đổi tiêu biểu} \\ \midrule
+oltp.product\_category\_name\_translation & 2/2 & dim\_product & giữ nguyên giá trị \\
+oltp.products & 6/9 & dim\_product & category rỗng $\rightarrow$ 'unknown' \\
+oltp.sellers & 4/4 & dim\_geography, dim\_seller & zip $\rightarrow$ char(5) \\
+\end{BangTC}
+\KetLuan{65 trong 71 cột nguồn được dùng sang OLAP}}
+\only<4>{%
+\begin{BangTC}{XlXX}
+\textbf{Bảng nguồn} & \textbf{Cột dùng} & \textbf{Bảng đích} & \textbf{Phép biến đổi tiêu biểu} \\ \midrule
+crm.closed\_deals & 12/14 & dim\_lead\_profile, dim\_sales\_rep, dim\_seller, fact\_lead\_funnel & business\_segment: trim, NULL $\rightarrow$ 'unknown' \\
+crm.mql & 4/4 & dim\_seller, fact\_lead\_funnel & origin: lower(trim()), NULL $\rightarrow$ 'unknown' \\
+\end{BangTC}
+\KetLuan{65 trong 71 cột nguồn được dùng sang OLAP}}
+\note{[P12] Tổng hợp mapping OLTP sang OLAP theo bảng nguồn (báo cáo mục 3.3, bảng tab:mapping-tong-hop; mapping đầy đủ từng cột ở Phụ lục C). Cột dùng là số cột dùng sang OLAP trên tổng số cột của bảng nguồn. Bấm để chuyển giữa hai phần.}
+\end{frame}
 
-\begin{frame}{Đối soát số dòng: nguồn = staging = ODS + loại, và tổng tiền khớp từng đồng}
+\begin{frame}{Đa dạng công cụ ETL: SQL, Python, Power Query}
+\muc{3.3 · ETL}
+\begin{itemize}
+  \item Chữ thường, bỏ dấu, zip đủ 5 ký tự; 73.440 dòng đổi
+  \item Python chênh 2 dòng do ký tự ordinal; mã M thêm bảng thay thế để khớp SQL
+  \item Mã M và hướng dẫn chụp before/after: powerbi/power-query-vi-du.md
+\end{itemize}
+
+\note{[S138] Nhóm cần chạy mã M trong Power BI và chụp ảnh before/after. Tiêu đề đầy đủ trước khi rút gọn: SQL, Python và Power Query cho cùng kết quả làm sạch: 8.011 thành 5.968 thành phố Tiêu đề trước đây: SQL, Python và Power Query cùng kết quả làm sạch: 8.011 thành 5.968 thành phố}
+\end{frame}
+
+\begin{frame}{Đối soát số dòng: nguồn = staging = ODS + loại}
 \muc{3.3 · ETL}
 \begin{itemize}
   \item $\Sigma$ price 13.591.643,70 BRL = file CSV
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng đối soát (handoff P4)}
 
-\note{[S74] Chênh lệch nếu có phải giải thích được bằng \texttt{rejected\_\allowbreak{}rows}.}
+\note{[S74] Chênh lệch nếu có phải giải thích được bằng \texttt{rejected\_\allowbreak{}rows}. Tiêu đề trước đây: Đối soát số dòng: nguồn = staging = ODS + loại, và tổng tiền khớp từng đồng}
 \end{frame}
 
-\begin{frame}{SCD2 được nạp bằng window function: mỗi lần zip đổi mở một phiên bản mới}
-\muc{3.3 · ETL}
-\begin{itemize}
-  \item \texttt{lag(zip)} so với đơn trước; \texttt{effective\_\allowbreak{}from} = ngày mua
-\end{itemize}
-\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: đoạn SQL (Phụ lục B, \texttt{code/scd2\_\allowbreak{}dim\_\allowbreak{}customer.sql})}
-
-\note{[S75] Khoá thay thế cũ không đổi khi chạy lại.}
-\end{frame}
-
-\begin{frame}{Nạp fact: tra khoá theo phiên bản có hiệu lực, khoảng thời gian âm thành NULL}
-\muc{3.3 · ETL}
-\begin{itemize}
-  \item 1.359 đơn có \texttt{handling\_\allowbreak{}days} âm (bàn giao trước khi duyệt) được đặt NULL và đếm
-\end{itemize}
-\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng \texttt{fact\_\allowbreak{}load\_\allowbreak{}issue}}
-
-\note{[S76] Tra không thấy thì dùng -1 và ghi nhận.}
-\end{frame}
-
-\begin{frame}{Nạp tăng dần mô phỏng: 11 đợt hằng tháng, tổng 286.144 bản ghi mới}
+\begin{frame}{Nạp tăng dần: 11 đợt, 286.144 bản ghi mới}
 \muc{3.3 · ETL}
 \HinhLon{3-4-1_pipeline.png}
 \KetLuan{\texttt{simulate\_\allowbreak{}increment} rồi \texttt{run\_\allowbreak{}pipeline --mode incremental}}
 
-\note{[S77] Đơn vào với trạng thái cuối; đó là giới hạn của mô phỏng.}
+\note{[S77] Đơn vào với trạng thái cuối; đó là giới hạn của mô phỏng. Tiêu đề trước đây: Nạp tăng dần mô phỏng: 11 đợt hằng tháng, tổng 286.144 bản ghi mới}
 \end{frame}
 
-\begin{frame}{Mỗi đợt chạy 20–26 giây, trong đó kiểm thử chiếm hơn một nửa}
+\begin{frame}{Nạp tăng dần: mỗi đợt 20–26 giây, kiểm thử hơn một nửa}
 \muc{3.3 · ETL}
 \only<1>{%
 \begin{BangTC}{cl>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
@@ -278,40 +369,30 @@ coordinates outside Brazil bounding box & 42 & Loại khỏi ODS, ghi etl\_log.r
 11 & 8.000 & 842 & 379 & 99.441 \\
 \end{BangTC}
 \KetLuan{Bảng 11 đợt: bản ghi mới, thời gian}}
-\note{[S78] Đợt 1–8 mang 99,95\% bản ghi mới; ba đợt cuối mang nốt 20 đơn và 50 deal. Bấm để chuyển giữa 6 phần của bảng.}
+\note{[S78] Đợt 1–8 mang 99,95\% bản ghi mới; ba đợt cuối mang nốt 20 đơn và 50 deal. Bấm để chuyển giữa 6 phần của bảng. Tiêu đề trước đây: Mỗi đợt chạy 20–26 giây, trong đó kiểm thử chiếm hơn một nửa}
 \end{frame}
 
-\begin{frame}{Funnel lấp đầy dần: MQL 2.002 $\rightarrow$ 8.000, deal 3 $\rightarrow$ 842, seller có đơn 0 $\rightarrow$ 379}
+\begin{frame}{Nạp tăng dần: funnel lấp đầy dần}
 \muc{3.3 · ETL}
 \begin{itemize}
   \item Số liệu mỗi đợt từ \texttt{batch\_\allowbreak{}metrics}
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: biểu đồ đường từ \texttt{batch\_\allowbreak{}metrics} (bảng giám sát ở mục 3.3)}
 
-\note{[S79] Đây là điểm trình bày của nạp tăng dần.}
+\note{[S79] Đây là điểm trình bày của nạp tăng dần. Tiêu đề trước đây: Funnel lấp đầy dần: MQL 2.002 $\rightarrow$ 8.000, deal 3 $\rightarrow$ 842, seller có đơn 0 $\rightarrow$ 379}
 \end{frame}
 
-\begin{frame}{Incremental trùng nạp full: 16/16 bảng khớp số dòng, tổng tiền và nội dung}
+\begin{frame}{Nạp tăng dần: incremental trùng nạp full, 16/16 bảng}
 \muc{3.3 · ETL}
 \begin{itemize}
   \item So sánh bằng checksum trên khoá tự nhiên
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng so sánh (\texttt{handoff/2026-11-05-P5.md})}
 
-\note{[S80] Khoá thay thế khác nhau nên so sánh qua khoá tự nhiên. Tiêu đề đầy đủ trước khi rút gọn: Kết quả incremental trùng nạp full: 16/16 bảng khớp số dòng, tổng tiền và nội dung}
+\note{[S80] Khoá thay thế khác nhau nên so sánh qua khoá tự nhiên. Tiêu đề đầy đủ trước khi rút gọn: Kết quả incremental trùng nạp full: 16/16 bảng khớp số dòng, tổng tiền và nội dung Tiêu đề trước đây: Incremental trùng nạp full: 16/16 bảng khớp số dòng, tổng tiền và nội dung}
 \end{frame}
 
-\begin{frame}{Dòng mồ côi được thử lại ở đợt sau; cơ chế mới được chứng minh bằng kiểm thử}
-\muc{3.3 · ETL}
-\begin{itemize}
-  \item Kịch bản deal \texttt{b91cf88…} trên bản sao trong giao dịch rồi hoàn tác
-\end{itemize}
-\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: sơ đồ 3 bước (loại $\rightarrow$ cha đến $\rightarrow$ nạp lại)}
-
-\note{[S81] Trong 11 đợt thật không có dòng mồ côi nào; nhóm nói thẳng điều này. Tiêu đề đầy đủ trước khi rút gọn: Dòng mồ côi được thử lại ở đợt sau, nhưng cơ chế mới được chứng minh bằng kiểm thử}
-\end{frame}
-
-\begin{frame}{136 phép kiểm thử đạt 100\%, cộng 6 phép đối chiếu với khám phá dữ liệu}
+\begin{frame}{Kiểm thử ETL: 136 phép đạt 100\%, cộng 6 phép đối chiếu}
 \muc{3.3 · ETL}
 \begin{BangTC}{Xr}
 \textbf{Nhóm kiểm thử} & \textbf{Số phép} \\ \midrule
@@ -324,20 +405,20 @@ Thử lại dòng mồ côi (kịch bản) & 3 \\
 Đối chiếu khám phá dữ liệu (chỉ báo cáo) & 6/6 khớp \\
 \end{BangTC}
 \KetLuan{Số dòng, tổng tiền, grain, khoá ngoại, SCD2, mart khớp fact}
-\note{[S82] Chạy sau mỗi lần pipeline, lưu \texttt{etl\_\allowbreak{}log.dq\_\allowbreak{}check}.}
+\note{[S82] Chạy sau mỗi lần pipeline, lưu \texttt{etl\_\allowbreak{}log.dq\_\allowbreak{}check}. Tiêu đề trước đây: 136 phép kiểm thử đạt 100\%, cộng 6 phép đối chiếu với khám phá dữ liệu}
 \end{frame}
 
-\begin{frame}{Nhật ký etl\symbol{95}log cho biết mỗi lô chạy gì, mất bao lâu, loại bao nhiêu dòng}
+\begin{frame}{Nhật ký ETL: \texttt{etl\_log} theo từng lô}
 \muc{3.3 · ETL}
 \begin{itemize}
   \item \texttt{job\_\allowbreak{}run}, \texttt{rejected\_\allowbreak{}rows}, \texttt{dq\_\allowbreak{}check}, \texttt{batch\_\allowbreak{}metrics}
 \end{itemize}
 \khungchen{CHÈN BẢNG: giám sát ETL (báo cáo mục 3.3)}
 
-\note{[S83] Giám sát hệ thống nay là bảng ở mục 3.3 (không còn dashboard).}
+\note{[S83] Giám sát hệ thống nay là bảng ở mục 3.3 (không còn dashboard). Tiêu đề trước đây: Nhật ký etl\symbol{95}log cho biết mỗi lô chạy gì, mất bao lâu, loại bao nhiêu dòng}
 \end{frame}
 
-\begin{frame}{Dựng lại toàn bộ dự án từ đầu mất 443 giây và cho kết quả giống hệt}
+\begin{frame}{Dựng lại từ đầu: 443 giây, kết quả giống hệt}
 \muc{3.3 · ETL}
 \only<1>{%
 \begin{BangTC}{XrX}
@@ -356,32 +437,10 @@ replay\_increments (11 x simulate + incremental) & 287.1 & 11 đợt hằng thá
 run\_pipeline --mode incremental (tests + export\_powerbi) & 30.5 & tests: 136/136 đạt, 0 lỗi; đối chiếu EDA 6/6 khớp; pipeline 29.3s \\
 \end{BangTC}
 \KetLuan{Xóa hai database, chạy một lệnh, 16/16 bảng khớp}}
-\note{[S110] Khả năng tái lập là bằng chứng độ tin cậy của pipeline. Bấm để chuyển giữa 2 phần của bảng.}
+\note{[S110] Khả năng tái lập là bằng chứng độ tin cậy của pipeline. Bấm để chuyển giữa 2 phần của bảng. Tiêu đề trước đây: Dựng lại toàn bộ dự án từ đầu mất 443 giây và cho kết quả giống hệt}
 \end{frame}
 
-\begin{frame}{Sáu giai đoạn ETL: lô đầu 1.273.620 dòng vào staging, 42 dòng loại, 142 test đạt}
-\muc{3.3 · ETL}
-\HinhChu{3-3_etl_jobs.png}{%
-\small\begin{itemize}
-  \item Số dòng lấy từ etl\_log.job\_run (lô đầu và tổng các lô)
-\end{itemize}}
-\KetLuan{Extract, seed và ODS, dimension và fact, mart, kiểm thử, xuất CSV}
-
-\note{[S137] Sơ đồ các job của run_pipeline sinh từ etl_log. Tiêu đề đầy đủ trước khi rút gọn: Sáu giai đoạn ETL: lô đầu nạp 1.273.620 dòng vào staging, 42 dòng loại, 142 test đạt}
-\end{frame}
-
-\begin{frame}{SQL, Python và Power Query cùng kết quả làm sạch: 8.011 thành 5.968 thành phố}
-\muc{3.3 · ETL}
-\begin{itemize}
-  \item Chữ thường, bỏ dấu, zip đủ 5 ký tự; 73.440 dòng đổi
-  \item Python chênh 2 dòng do ký tự ordinal; mã M thêm bảng thay thế để khớp SQL
-  \item Mã M và hướng dẫn chụp before/after: powerbi/power-query-vi-du.md
-\end{itemize}
-
-\note{[S138] Nhóm cần chạy mã M trong Power BI và chụp ảnh before/after. Tiêu đề đầy đủ trước khi rút gọn: SQL, Python và Power Query cho cùng kết quả làm sạch: 8.011 thành 5.968 thành phố}
-\end{frame}
-
-\begin{frame}{Giám sát ETL: 11 đợt 21--28 giây, 136 test đạt 100\%, chỉ 42 dòng bị loại}
+\begin{frame}{Giám sát ETL: 11 đợt 21--28 giây, 42 dòng bị loại}
 \muc{3.3 · ETL}
 \begin{itemize}
   \item Dòng bị loại duy nhất là 42 điểm toạ độ ngoài Brazil; không có dòng mồ côi
@@ -389,13 +448,13 @@ run\_pipeline --mode incremental (tests + export\_powerbi) & 30.5 & tests: 136/1
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN BẢNG: các đợt nạp (tables/p8b\_etl\_batches)}
 
-\note{[S105] Số liệu giám sát lấy từ etl_log. Tiêu đề đầy đủ trước khi rút gọn: Giám sát ETL: 11 đợt tăng dần 21--28 giây, 136 test đạt 100\%, chỉ 42 dòng bị loại Ý đã chuyển khỏi slide: Bảng số dòng qua từng lớp, dòng bị loại, thời gian và test đạt từng đợt ở báo cáo mục 3.3 (trước đây là một dashboard).}
+\note{[S105] Số liệu giám sát lấy từ etl_log. Tiêu đề đầy đủ trước khi rút gọn: Giám sát ETL: 11 đợt tăng dần 21--28 giây, 136 test đạt 100\%, chỉ 42 dòng bị loại Ý đã chuyển khỏi slide: Bảng số dòng qua từng lớp, dòng bị loại, thời gian và test đạt từng đợt ở báo cáo mục 3.3 (trước đây là một dashboard). Tiêu đề trước đây: Giám sát ETL: 11 đợt 21--28 giây, 136 test đạt 100\%, chỉ 42 dòng bị loại}
 \end{frame}
 
-\subsection{3.4 Chiều khái niệm}
+\subsection{3.4 Dimension}
 
-\begin{frame}{Mười bảng chiều với số dòng từ 6 đến 96.339}
-\muc{3.4 · Chiều khái niệm}
+\begin{frame}{Số dòng mỗi dimension: từ 6 đến 96.339}
+\muc{3.4 · Dimension}
 \only<1>{%
 \begin{BangTC}{lXrc}
 \textbf{Chiều} & \textbf{Grain} & \textbf{Số dòng} & \textbf{SCD} \\ \midrule
@@ -416,21 +475,47 @@ dim\_lead\_profile & 1 tổ hợp thuộc tính deal (junk dimension) & 503 & --
 dim\_sales\_rep & 1 nhân viên và vai trò (SDR/SR) & 55 & -- \\
 \end{BangTC}
 \KetLuan{dim\_date 1.828; geography 19.178; customer 96.339; seller 3.558; product 32.952; ...}}
-\note{[S57] Mỗi chiều có đúng một dòng Unknown, được kiểm thử. Bấm để chuyển giữa 2 phần của bảng.}
+\note{[S57] Mỗi chiều có đúng một dòng Unknown, được kiểm thử. Bấm để chuyển giữa 2 phần của bảng. Tiêu đề trước đây: Mười bảng chiều với số dòng từ 6 đến 96.339}
 \end{frame}
 
-\begin{frame}{Hệ thống chiều khái niệm: phân cấp ngày, địa lý, sản phẩm, seller, khách}
-\muc{3.4 · Chiều khái niệm}
+\begin{frame}{Nhóm dimension: sáu nhóm theo vai trò}
+\muc{3.4 · Dimension}
+\begin{BangTC}{lXr}
+\textbf{Nhóm} & \textbf{Dimension} & \textbf{Số dòng} \\ \midrule
+Dùng chung & \texttt{dim\_seller} & 3.558 \\
+Đóng vai (role-playing) & \texttt{dim\_date}, \texttt{dim\_geography} & 1.828; 19.178 \\
+SCD2 & \texttt{dim\_customer} & 96.339 \\
+Chiều rác (junk) & \texttt{dim\_lead\_profile} & 503 \\
+Danh mục nhỏ & \texttt{dim\_order\_status}, \texttt{dim\_payment\_type}, \texttt{dim\_lead\_origin}, \texttt{dim\_sales\_rep} & 9; 6; 11; 55 \\
+Sản phẩm & \texttt{dim\_product} & 32.952 \\
+\end{BangTC}
+\KetLuan{Mười chiều chia nhóm: dùng chung, đóng vai, SCD2, rác, danh mục nhỏ}
+\note{[P12] Phân dimension thành nhóm để dễ theo dõi (checklist). Số dòng lấy từ bảng số dòng mỗi dimension.}
+\end{frame}
+
+\begin{frame}{Hệ thống chiều khái niệm: phân cấp năm chiều}
+\muc{3.4 · Dimension}
 \begin{itemize}
   \item Ngày $\rightarrow$ tháng $\rightarrow$ quý $\rightarrow$ năm; zip $\rightarrow$ thành phố $\rightarrow$ bang $\rightarrow$ vùng
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: sơ đồ phân cấp (vẽ)}
 
-\note{[S58] Phân cấp là cơ sở của roll-up và drill-down.}
+\note{[S58] Phân cấp là cơ sở của roll-up và drill-down. Tiêu đề trước đây: Hệ thống chiều khái niệm: phân cấp ngày, địa lý, sản phẩm, seller, khách}
 \end{frame}
 
-\begin{frame}{SCD2 giữ lịch sử địa chỉ: 96.096 khách thành 96.339 dòng, 236 khách đổi zip}
-\muc{3.4 · Chiều khái niệm}
+\begin{frame}{Hệ thống chiều khái niệm: số giá trị mỗi cấp}
+\muc{3.4 · Dimension}
+\begin{itemize}
+  \item 12 số tháng nhưng 60 cặp (năm, tháng); 5.814 tên thành phố nhưng 6.190 cặp (bang, thành phố)
+  \item Mỗi danh mục một nhóm ngành, mỗi origin một nhóm kênh (0 vi phạm)
+  \item Mười chiều chia nhóm: dùng chung, đóng vai, SCD2, rác, danh mục nhỏ
+\end{itemize}
+
+\note{[S139] Bảng phân cấp từng chiều với giá trị ví dụ và số giá trị phân biệt ở báo cáo mục 3.4. Tiêu đề đầy đủ trước khi rút gọn: Phân cấp đúng khi tháng kèm năm, thành phố kèm bang: 303 tên thành phố trùng giữa các bang Tiêu đề trước đây: Phân cấp đúng: tháng kèm năm, thành phố kèm bang; 303 tên thành phố trùng}
+\end{frame}
+
+\begin{frame}{Dimension: SCD2 địa chỉ khách, 96.339 dòng}
+\muc{3.4 · Dimension}
 \only<1>{%
 \begin{BangTC}{lllX}
 \textbf{customer\_key} & \textbf{khách thật} & \textbf{zip} & \textbf{thành phố} \\ \midrule
@@ -445,53 +530,42 @@ dim\_sales\_rep & 1 nhân viên và vai trò (SDR/SR) & 55 & -- \\
 15082 & 2017-11-09 & 9999-12-31 & có & 2 \\
 \end{BangTC}
 \KetLuan{Đơn cũ vẫn trỏ về địa chỉ lúc mua}}
-\note{[S59] Ví dụ khách \texttt{570eb70f…} đổi zip ngày 09/11/2017; đơn 24/10 thuộc phiên bản 1. Bấm để chuyển giữa 2 phần của bảng.}
+\note{[S59] Ví dụ khách \texttt{570eb70f…} đổi zip ngày 09/11/2017; đơn 24/10 thuộc phiên bản 1. Bấm để chuyển giữa 2 phần của bảng. Tiêu đề trước đây: SCD2 giữ lịch sử địa chỉ: 96.096 khách thành 96.339 dòng, 236 khách đổi zip}
 \end{frame}
 
-\begin{frame}{dim\symbol{95}seller là chiều dùng chung: nối bán hàng với funnel qua seller\symbol{95}id}
-\muc{3.4 · Chiều khái niệm}
+\begin{frame}{Dimension: \texttt{dim\_seller} dùng chung}
+\muc{3.4 · Dimension}
 \begin{itemize}
   \item 462 seller chỉ có trong CRM vẫn có dòng, địa chỉ Unknown
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng ví dụ seller (\texttt{huong-dan/01-pipeline-bang-loi.md})}
 
-\note{[S60] \texttt{first\_\allowbreak{}sale\_\allowbreak{}date} được điền sau khi nạp fact.}
+\note{[S60] \texttt{first\_\allowbreak{}sale\_\allowbreak{}date} được điền sau khi nạp fact. Tiêu đề trước đây: dim\symbol{95}seller là chiều dùng chung: nối bán hàng với funnel qua seller\symbol{95}id}
 \end{frame}
 
-\begin{frame}{Chiều rác và role-playing giúp fact gọn mà vẫn đủ thông tin}
-\muc{3.4 · Chiều khái niệm}
+\begin{frame}{Dimension: chiều rác và role-playing}
+\muc{3.4 · Dimension}
 \begin{itemize}
   \item \texttt{dim\_\allowbreak{}lead\_\allowbreak{}profile} gom 7 thuộc tính thành 503 tổ hợp; \texttt{dim\_\allowbreak{}date} đóng 5 vai ở fulfillment
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng ví dụ hai kỹ thuật}
 
-\note{[S61] Trong Power BI, vai trò ngày dùng quan hệ không hoạt động và \texttt{USERELATIONSHIP}.}
+\note{[S61] Trong Power BI, vai trò ngày dùng quan hệ không hoạt động và \texttt{USERELATIONSHIP}. Tiêu đề trước đây: Chiều rác và role-playing giúp fact gọn mà vẫn đủ thông tin}
 \end{frame}
 
-\begin{frame}{Dòng Unknown -1 và khoá thay thế bảo đảm fact không bao giờ có khoá rỗng}
-\muc{3.4 · Chiều khái niệm}
+\begin{frame}{Dimension: dòng Unknown -1 và khoá thay thế}
+\muc{3.4 · Dimension}
 \begin{itemize}
   \item Mọi lỗi tra khoá được ghi \texttt{fact\_\allowbreak{}load\_\allowbreak{}issue}
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng \texttt{dim\_\allowbreak{}seller} dòng -1}
 
-\note{[S66] Nhờ đó ETL không làm rơi dòng khi chiều thiếu.}
-\end{frame}
-
-\begin{frame}{Phân cấp đúng: tháng kèm năm, thành phố kèm bang; 303 tên thành phố trùng}
-\muc{3.4 · Chiều khái niệm}
-\begin{itemize}
-  \item 12 số tháng nhưng 60 cặp (năm, tháng); 5.814 tên thành phố nhưng 6.190 cặp (bang, thành phố)
-  \item Mỗi danh mục một nhóm ngành, mỗi origin một nhóm kênh (0 vi phạm)
-  \item Mười chiều chia nhóm: dùng chung, đóng vai, SCD2, rác, danh mục nhỏ
-\end{itemize}
-
-\note{[S139] Bảng phân cấp từng chiều với giá trị ví dụ và số giá trị phân biệt ở báo cáo mục 3.4. Tiêu đề đầy đủ trước khi rút gọn: Phân cấp đúng khi tháng kèm năm, thành phố kèm bang: 303 tên thành phố trùng giữa các bang}
+\note{[S66] Nhờ đó ETL không làm rơi dòng khi chiều thiếu. Tiêu đề trước đây: Dòng Unknown -1 và khoá thay thế bảo đảm fact không bao giờ có khoá rỗng}
 \end{frame}
 
 \subsection{3.5 Data model OLAP}
 
-\begin{frame}{Bus matrix: sáu fact dùng chung các chiều ngày, seller, khách, địa lý}
+\begin{frame}{Data model logic: bus matrix sáu fact}
 \muc{3.5 · Data model OLAP}
 \only<1>{%
 \begin{BangTC}{Xcccc}
@@ -526,34 +600,48 @@ fact\_lead\_funnel & \ding{51} & \ding{51} \\
 fact\_seller\_monthly &  &  \\
 \end{BangTC}
 \KetLuan{Seller là chiều dùng chung của hai quy trình}}
-\note{[S53] Bus matrix cho thấy chiều nào được dùng lại ở đâu. Bấm để chuyển giữa 3 phần của bảng.}
+\note{[S53] Bus matrix cho thấy chiều nào được dùng lại ở đâu. Bấm để chuyển giữa 3 phần của bảng. Tiêu đề trước đây: Bus matrix: sáu fact dùng chung các chiều ngày, seller, khách, địa lý}
 \end{frame}
 
-\begin{frame}{Mô hình constellation: bốn mart, sáu fact (cam), mười chiều (xanh)}
+\begin{frame}{Data model logic: constellation bốn mart}
 \muc{3.5 · Data model OLAP}
 \HinhLon{3-3-4_constellation.png}
 \KetLuan{Khung = data mart}
 
-\note{[S54] Fact màu cam, chiều màu xanh đúng yêu cầu trình bày.}
+\note{[S54] Fact màu cam, chiều màu xanh đúng yêu cầu trình bày. Tiêu đề trước đây: Mô hình constellation: bốn mart, sáu fact (cam), mười chiều (xanh)}
 \end{frame}
 
-\begin{frame}{Data model logic: mỗi fact nối đúng các chiều theo bus matrix}
+\begin{frame}{Data model logic: sáu quy trình, mười dimension}
+\muc{3.5 · Data model OLAP}
+\HinhLon{3-5_data_model_logic.png}
+\KetLuan{Fact cam, dimension xanh; không ghi kiểu dữ liệu}
+\note{[S140] Mô hình logic. Tiêu đề trước đây: Data model logic: sáu quy trình nối với mười dimension và các cấp phân cấp}
+\end{frame}
+
+\begin{frame}{Data model logic: \texttt{fact\_order\_item} nối sáu chiều}
 \muc{3.5 · Data model OLAP}
 \HinhLon{3-3-4_erd_dw.png}
 \KetLuan{Ví dụ \texttt{fact\_\allowbreak{}order\_\allowbreak{}item} nối 6 chiều với 2 vai địa lý}
 
-\note{[S55] Địa lý có hai vai: khách và seller.}
+\note{[S55] Địa lý có hai vai: khách và seller. Tiêu đề trước đây: Data model logic: mỗi fact nối đúng các chiều theo bus matrix}
 \end{frame}
 
-\begin{frame}{Data model vật lý: khoá chính theo grain, khoá ngoại có index, 112.650 dòng hàng}
+\begin{frame}{Data model vật lý: sinh từ cơ sở dữ liệu}
+\muc{3.5 · Data model OLAP}
+\HinhLon{3-5_data_model_vat_ly.png}
+\KetLuan{16 bảng, fact và dimension khác màu}
+\note{[S141] Mô hình vật lý tổng thể. Tiêu đề trước đây: Data model vật lý sinh từ cơ sở dữ liệu: mọi bảng dw với cột, kiểu, PK và FK}
+\end{frame}
+
+\begin{frame}{Data model vật lý: khoá chính, khoá ngoại, index}
 \muc{3.5 · Data model OLAP}
 \HinhLon{3-3-4_erd_dw.png}
 \KetLuan{Mọi khoá ngoại NOT NULL, dòng Unknown -1}
 
-\note{[S56] Tiền \texttt{numeric(12,2)}, khoá \texttt{<tên>\_\allowbreak{}key}, ngày \texttt{yyyymmdd}.}
+\note{[S56] Tiền \texttt{numeric(12,2)}, khoá \texttt{<tên>\_\allowbreak{}key}, ngày \texttt{yyyymmdd}. Tiêu đề trước đây: Data model vật lý: khoá chính theo grain, khoá ngoại có index, 112.650 dòng hàng}
 \end{frame}
 
-\begin{frame}{Sáu fact thuộc đủ ba loại của Kimball}
+\begin{frame}{Data model: ba loại fact của Kimball}
 \muc{3.5 · Data model OLAP}
 \begin{BangTC}{llXr}
 \textbf{Fact} & \textbf{Loại} & \textbf{Grain} & \textbf{Số dòng} \\ \midrule
@@ -565,10 +653,10 @@ fact\_lead\_funnel & Accumulating snapshot & 1 MQL & 8.000 \\
 fact\_seller\_monthly & Periodic snapshot (dày đặc) & 1 seller × 1 tháng & 36.583 \\
 \end{BangTC}
 \KetLuan{Transaction $\times$3, accumulating $\times$2, periodic $\times$1}
-\note{[S62] Tổng 459.784 dòng fact (99.441 + 112.650 + 103.886 + 99.224 + 8.000 + 36.583).}
+\note{[S62] Tổng 459.784 dòng fact (99.441 + 112.650 + 103.886 + 99.224 + 8.000 + 36.583). Tiêu đề trước đây: Sáu fact thuộc đủ ba loại của Kimball}
 \end{frame}
 
-\begin{frame}{fact\_order\_fulfillment: accumulating snapshot, một đơn một dòng}
+\begin{frame}{Data model: \texttt{fact\_order\_fulfillment}}
 \muc{3.5 · Data model OLAP}
 \only<1>{%
 \begin{BangTC}{Xl}
@@ -589,30 +677,37 @@ freight\_total & 45,30 \\
 payment\_total & 88,30 \\
 \end{BangTC}
 \KetLuan{Mốc chưa xảy ra có khoá -1; thời gian từng chặng tính sẵn}}
-\note{[S63] Nếu dùng transaction fact phải ghép nhiều dòng mới tính được lead time. Tiêu đề đầy đủ trước khi rút gọn: fact\symbol{95}order\symbol{95}fulfillment là accumulating snapshot: một đơn một dòng, cập nhật theo mốc Bấm để chuyển giữa 2 phần của bảng.}
+\note{[S63] Nếu dùng transaction fact phải ghép nhiều dòng mới tính được lead time. Tiêu đề đầy đủ trước khi rút gọn: fact\symbol{95}order\symbol{95}fulfillment là accumulating snapshot: một đơn một dòng, cập nhật theo mốc Bấm để chuyển giữa 2 phần của bảng. Tiêu đề trước đây: fact\_order\_fulfillment: accumulating snapshot, một đơn một dòng}
 \end{frame}
 
-\begin{frame}{fact\_lead\_funnel ghi hành trình MQL: ba mốc ngày và hai khoảng thời gian}
+\begin{frame}{Data model: \texttt{fact\_lead\_funnel}}
 \muc{3.5 · Data model OLAP}
 \begin{itemize}
   \item \texttt{days\_\allowbreak{}to\_\allowbreak{}close} TB 48,5; \texttt{days\_\allowbreak{}won\_\allowbreak{}to\_\allowbreak{}first\_\allowbreak{}sale} TB 51,9
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: dòng ví dụ MQL}
 
-\note{[S64] Cũng là accumulating snapshot, 8.000 dòng. Tiêu đề đầy đủ trước khi rút gọn: fact\symbol{95}lead\symbol{95}funnel ghi lại hành trình MQL: ba mốc ngày và hai khoảng thời gian}
+\note{[S64] Cũng là accumulating snapshot, 8.000 dòng. Tiêu đề đầy đủ trước khi rút gọn: fact\symbol{95}lead\symbol{95}funnel ghi lại hành trình MQL: ba mốc ngày và hai khoảng thời gian Tiêu đề trước đây: fact\_lead\_funnel ghi hành trình MQL: ba mốc ngày và hai khoảng thời gian}
 \end{frame}
 
-\begin{frame}{fact\symbol{95}seller\symbol{95}monthly lưu dày đặc 36.583 dòng để thấy seller ngừng bán}
+\begin{frame}{Data model: \texttt{fact\_seller\_monthly}, 36.583 dòng}
 \muc{3.5 · Data model OLAP}
 \begin{itemize}
   \item Dày đặc so với thưa: 36.583 và 16.441 dòng
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng 4 tháng đầu của một seller}
 
-\note{[S65] Tháng không có đơn vẫn có dòng với \texttt{orders = 0}.}
+\note{[S65] Tháng không có đơn vẫn có dòng với \texttt{orders = 0}. Tiêu đề trước đây: fact\symbol{95}seller\symbol{95}monthly lưu dày đặc 36.583 dòng để thấy seller ngừng bán}
 \end{frame}
 
-\begin{frame}{Bốn data mart gồm 17 view, trong đó 4 là materialized view làm mới trong 2 giây}
+\begin{frame}{Data mart: mỗi mart một nhóm câu hỏi}
+\muc{3.5 · Data model OLAP}
+\HinhLon{3-5_data_mart.png}
+\KetLuan{mart\_sales, mart\_fulfillment, mart\_cx, mart\_acquisition}
+\note{[S142] Data mart. Tiêu đề trước đây: Bốn data mart, mỗi mart gồm fact, dimension và 3--4 câu hỏi phân tích}
+\end{frame}
+
+\begin{frame}{Data mart: 17 view, 4 materialized view}
 \muc{3.5 · Data model OLAP}
 \begin{BangTC}{lXl}
 \textbf{Mart} & \textbf{Số view} & \textbf{Dashboard} \\ \midrule
@@ -622,10 +717,10 @@ mart\_cx & 4 (RFM, cohort materialized) & DB2 \\
 mart\_acquisition & 3 (scorecard, theo kênh materialized) & DB4 \\
 \end{BangTC}
 \KetLuan{Sales, fulfillment, cx, acquisition}
-\note{[S84] Mart được làm mới tự động ở bước mart của pipeline.}
+\note{[S84] Mart được làm mới tự động ở bước mart của pipeline. Tiêu đề trước đây: Bốn data mart gồm 17 view, trong đó 4 là materialized view làm mới trong 2 giây}
 \end{frame}
 
-\begin{frame}{Roll-up: GMV 2017 là 6,11 triệu, 2018 là 7,34 triệu; Black Friday gấp 5,2 lần}
+\begin{frame}{OLAP: roll-up và drill-down}
 \muc{3.5 · Data model OLAP}
 \only<1>{%
 \begin{BangTC}{llrr}
@@ -647,10 +742,10 @@ mart\_acquisition & 3 (scorecard, theo kênh materialized) & DB4 \\
 Tổng & (cả năm) & 97.906 & 13.449.674,68 \\
 \end{BangTC}
 \KetLuan{Quý 4/2017: 2,41 triệu BRL; 24/11/2017: 152.654 BRL}}
-\note{[S85] Roll-up dùng \texttt{ROLLUP}, drill-down thêm cấp vào \texttt{GROUP BY}. Tiêu đề đầy đủ trước khi rút gọn: Roll-up và drill-down: GMV 2017 là 6,11 triệu, 2018 là 7,34 triệu; ngày Black Friday cao gấp 5,2 lần Bấm để chuyển giữa 2 phần của bảng.}
+\note{[S85] Roll-up dùng \texttt{ROLLUP}, drill-down thêm cấp vào \texttt{GROUP BY}. Tiêu đề đầy đủ trước khi rút gọn: Roll-up và drill-down: GMV 2017 là 6,11 triệu, 2018 là 7,34 triệu; ngày Black Friday cao gấp 5,2 lần Bấm để chuyển giữa 2 phần của bảng. Tiêu đề trước đây: Roll-up: GMV 2017 là 6,11 triệu, 2018 là 7,34 triệu; Black Friday gấp 5,2 lần}
 \end{frame}
 
-\begin{frame}{Slice, dice và pivot: vùng Sudeste chiếm 64,3\% GMV năm 2017}
+\begin{frame}{OLAP: slice, dice và pivot}
 \muc{3.5 · Data model OLAP}
 \begin{BangTC}{Xrrrr}
 \textbf{Vùng} & \textbf{2016} & \textbf{2017} & \textbf{2018} & \textbf{Tổng} \\ \midrule
@@ -661,45 +756,23 @@ Centro-Oeste & 2.356 & 401.380 & 458.090 & 861.825 \\
 Norte & 1.200 & 168.018 & 164.596 & 333.814 \\
 \end{BangTC}
 \KetLuan{Dice Sudeste $\times$ Home \& Furniture $\times$ quý 4: SP 199.179 BRL}
-\note{[S86] Pivot bằng tổng có điều kiện \texttt{FILTER}.}
+\note{[S86] Pivot bằng tổng có điều kiện \texttt{FILTER}. Tiêu đề trước đây: Slice, dice và pivot: vùng Sudeste chiếm 64,3\% GMV năm 2017}
 \end{frame}
 
-\begin{frame}{Chọn ROLAP vì dữ liệu nhỏ, kho luôn tươi và Power BI làm lớp ngữ nghĩa}
+\begin{frame}{OLAP: chọn ROLAP}
 \muc{3.5 · Data model OLAP}
 \begin{itemize}
   \item Khác MOLAP: không phải xử lý lại khối khi nạp dữ liệu
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng ROLAP vs MOLAP (\texttt{handoff/olap-examples.md})}
 
-\note{[S87] Đây là lý do lựa chọn đã nêu ở phần 1.}
+\note{[S87] Đây là lý do lựa chọn đã nêu ở phần 1. Tiêu đề trước đây: Chọn ROLAP vì dữ liệu nhỏ, kho luôn tươi và Power BI làm lớp ngữ nghĩa}
 \end{frame}
 
-\begin{frame}{Star schema chỉ nhanh hơn OLTP 1,0–1,6 lần; tốc độ nhờ materialized view, index}
+\begin{frame}{Hiệu năng: star schema nhanh hơn OLTP 1,0–1,6 lần}
 \muc{3.5 · Data model OLAP}
 \HinhLon{3-5-1_benchmark.png}
 \KetLuan{Một seller nhanh gấp 9 lần nhờ index; materialized view dưới 1 ms so với 150–750 ms}
 
-\note{[S88] Không phóng đại: giá trị chính của mô hình chiều là truy vấn đơn giản và số liệu nhất quán. Tiêu đề đầy đủ trước khi rút gọn: Star schema chỉ nhanh hơn OLTP 1,0–1,6 lần; tốc độ lớn đến từ materialized view và index Thanh kết luận đầy đủ trước khi rút gọn: Chọn lọc một seller nhanh gấp 9 lần nhờ index; materialized view dưới 1 ms so với 150–750 ms.}
+\note{[S88] Không phóng đại: giá trị chính của mô hình chiều là truy vấn đơn giản và số liệu nhất quán. Tiêu đề đầy đủ trước khi rút gọn: Star schema chỉ nhanh hơn OLTP 1,0–1,6 lần; tốc độ lớn đến từ materialized view và index Thanh kết luận đầy đủ trước khi rút gọn: Chọn lọc một seller nhanh gấp 9 lần nhờ index; materialized view dưới 1 ms so với 150–750 ms. Tiêu đề trước đây: Star schema chỉ nhanh hơn OLTP 1,0–1,6 lần; tốc độ nhờ materialized view, index}
 \end{frame}
-
-\begin{frame}{Data model logic: sáu quy trình nối với mười dimension và các cấp phân cấp}
-\muc{3.5 · Data model OLAP}
-\HinhLon{3-5_data_model_logic.png}
-\KetLuan{Fact cam, dimension xanh; không ghi kiểu dữ liệu}
-\note{[S140] Mô hình logic.}
-\end{frame}
-
-\begin{frame}{Data model vật lý sinh từ cơ sở dữ liệu: mọi bảng dw với cột, kiểu, PK và FK}
-\muc{3.5 · Data model OLAP}
-\HinhLon{3-5_data_model_vat_ly.png}
-\KetLuan{16 bảng, fact và dimension khác màu}
-\note{[S141] Mô hình vật lý tổng thể.}
-\end{frame}
-
-\begin{frame}{Bốn data mart, mỗi mart gồm fact, dimension và 3--4 câu hỏi phân tích}
-\muc{3.5 · Data model OLAP}
-\HinhLon{3-5_data_mart.png}
-\KetLuan{mart\_sales, mart\_fulfillment, mart\_cx, mart\_acquisition}
-\note{[S142] Data mart.}
-\end{frame}
-
