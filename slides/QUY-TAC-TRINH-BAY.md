@@ -24,7 +24,7 @@ Nguyên tắc chung:
 
 | Mã | Quy tắc | Cách sửa |
 | --- | --- | --- |
-| R1 | Tiêu đề tối đa 80 ký tự, là **câu kết luận có số** | Bỏ vế phụ, giữ con số chính; vế phụ đưa xuống `\KetLuan` |
+| R1 | Tiêu đề = **tên mục trong checklist của thầy** + ": " + kết luận ngắn (tuỳ chọn), tối đa **65 ký tự** | Gọi đúng tên mục (ví dụ "Data taxonomy: 11 bảng chia 4 nhóm"); con số chi tiết để ở `\KetLuan` |
 | R2 | Tối đa **1 hình nhìn thấy cùng lúc** | Hai ảnh: dùng `\only<1>{...}` và `\only<2>{...}` (bấm để chuyển), hoặc tách 2 slide |
 | R3 | Không dùng `\scriptsize`, `\footnotesize`, `\tiny` cho nội dung | Thân bài `\normalsize`; bảng `\small` (môi trường `BangTC`); chỉ ghi nguồn (`\Nguon{}`) được chữ nhỏ |
 | R4 | Không đặt hình trong cột hẹp hơn 58% | Hình đứng một mình (`\HinhLon`, `\AnhChup`); nếu cần chữ bên cạnh thì dùng `\HinhChu` (hình 60%, chữ tối đa 3 ý) |
@@ -76,7 +76,7 @@ Ngoại lệ có lý do: thêm dòng chú thích `% cho-phep: R5 <lý do>` trong
 
 ## 7. Tiêu đề và chữ
 
-- **Tiêu đề:** câu kết luận có số. Ví dụ: "Gold khớp kho ở 16/16 bảng", không phải "Kết quả đối soát". Tối đa 80 ký tự.
+- **Tiêu đề:** tên mục + kết luận ngắn. Ví dụ: "Đối soát Gold với kho: 16/16 bảng khớp". Tối đa 65 ký tự. Thầy chấm theo checklist nên nhìn tiêu đề phải biết slide thuộc mục nào.
 - **`\KetLuan`:** điều người xem cần nhớ, khác với tiêu đề hoặc nói rõ hơn tiêu đề.
 - **Code trong slide:** chỉ tên bảng, tên lệnh ngắn bằng `\texttt`. Không chép khối code dài; cần thì chụp ảnh và khoanh.
 - **Nói nhiều hơn chữ:** câu giải thích, nguồn số liệu, đường dẫn file đều đưa vào `\note{}`.
@@ -95,3 +95,6 @@ Ngoại lệ có lý do: thêm dòng chú thích `% cho-phep: R5 <lý do>` trong
    ```
    Mở `slides/_xem_truoc/ghep-*.png` và xem từng trang. Tiêu đề có bị cắt không? Chữ có đọc được không? Có chạm chân trang không?
 4. Chỉ commit khi cả bước 2 và bước 3 đều đạt.
+
+## 9. Bản thuyết trình cuối
+`python scripts/kiem_tra_slide.py --final` báo LỖI nếu còn `\khungchen`, `\canxacnhan`, `\todo`, TODO hoặc lorem. Câu chữ viết như người nói: câu ngắn, không dùng dấu gạch dài, một cách gọi cho mỗi thuật ngữ (theo tên mục trong checklist).

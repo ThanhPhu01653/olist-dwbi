@@ -1,18 +1,68 @@
 \section[Tổng kết]{Tổng kết}
+
 \subsection{6 Kết luận}
 
-% (C) số lớn
-\begin{frame}{Kết quả: kho chạy được từ đầu đến cuối, 136 kiểm thử đạt, bốn dashboard}
+\begin{frame}{Kết quả đạt được: kho chạy từ đầu đến cuối}
 \muc{6 · Kết luận}
 \HangSo[4]{\So{99.441}{đơn hàng}\hfill\So{16}{bảng chiều và fact}\hfill\So{17}{view mart}\hfill\So{136}{kiểm thử đạt}}
 \begin{itemize}
   \item 10 chiều, 6 fact, 17 view mart; GMV 13,49 triệu BRL
 \end{itemize}
-\note{[S111] Tổng kết các con số chính của dự án: 10 chiều, 6 fact, 17 view mart; 99.441 đơn; GMV 13,49 triệu BRL; 136 kiểm thử đạt; bốn dashboard. Sơ đồ chòm sao (constellation) của kho nằm ở slide mở đầu.}
+\note{[S111] Tổng kết các con số chính của dự án: 10 chiều, 6 fact, 17 view mart; 99.441 đơn; GMV 13,49 triệu BRL; 136 kiểm thử đạt; bốn dashboard. Sơ đồ chòm sao (constellation) của kho nằm ở slide mở đầu. Tiêu đề trước đây: Kết quả: kho chạy được từ đầu đến cuối, 136 kiểm thử đạt, bốn dashboard}
 \end{frame}
 
-% (F) gạch đầu dòng
-\begin{frame}{Hạn chế còn lại và ba hướng phát triển: trạng thái đơn, PostGIS, lịch chạy}
+\begin{frame}{Đối chiếu với yêu cầu phân tích}
+\muc{6 · Kết luận}
+\only<1>{%
+\begin{BangTC}{XlX}
+\textbf{Yêu cầu (chủ điểm)} & \textbf{Dashboard} & \textbf{KPI đáp ứng} \\ \midrule
+Bán hàng & DB1 & GMV, Orders, AOV, MoM, YoY, Pareto 80/20 \\
+Xử lý đơn & DB2, DB3 & On-time rate, Avg lead days, Promised vs actual \\
+Thanh toán & DB2 & cơ cấu thanh toán, số kỳ trả góp \\
+\end{BangTC}
+\KetLuan{Sáu chủ điểm ở mục 2.2 đều có dashboard và KPI tương ứng}\canxacnhan}
+\only<2>{%
+\begin{BangTC}{XlX}
+\textbf{Yêu cầu (chủ điểm)} & \textbf{Dashboard} & \textbf{KPI đáp ứng} \\ \midrule
+Trải nghiệm khách & DB2 & Avg review, \% negative, Repeat customer rate \\
+Seller & DB4 & scorecard seller, GMV theo kênh \\
+Thu hút seller & DB4 & MQLs, Won deals, MQL to won rate, Avg days to close \\
+\end{BangTC}
+\KetLuan{Sáu chủ điểm ở mục 2.2 đều có dashboard và KPI tương ứng}\canxacnhan}
+\note{[P12] Đối chiếu từng yêu cầu ở mục 2.2 với dashboard và KPI đáp ứng. Cột đạt hay chưa nhóm xác nhận khi dashboard dựng xong (nhãn xác nhận là chữ giữ chỗ, cờ --final sẽ báo). Giám sát nạp dữ liệu (A11) nay là bảng ở mục 3.3, không còn dashboard.}
+\end{frame}
+
+\begin{frame}{Kiến thức thu được}
+\muc{6 · Kết luận}
+\begin{itemize}
+  \item Thiết kế kho hình sao: grain, fact ba loại, SCD2, bus matrix
+  \item ETL có kiểm thử: làm sạch ở ODS, đối soát số dòng và tổng tiền, chạy lại không đổi kết quả
+  \item BI: mô hình ngữ nghĩa, DAX, drill-through, định dạng có điều kiện
+  \item Mở rộng: lakehouse theo sự kiện và dữ liệu API công khai
+\end{itemize}
+\note{[P12] Kiến thức rút từ các phần 3, 4 và 5 của bài.}
+\end{frame}
+
+\begin{frame}{Bài học kỹ thuật: vấn đề, con số, cách xử lý}
+\muc{6 · Kết luận}
+\begin{BangTC}{XXX}
+\textbf{Vấn đề} & \textbf{Con số} & \textbf{Cách xử lý} \\ \midrule
+Một KPI có hai con số & GMV 13,49 so với 13,59 triệu; 380 so với 379 seller & chọn một định nghĩa, ghi cạnh con số \\
+Điểm review đúng hạn sai & 4,21 rồi sửa thành 4,29 & sửa ở ETL (cột \texttt{is\_delivered}), không sửa ở BI \\
+Khoá thay thế đổi giữa các lần dựng & hai bản dựng lệch khoá & chèn theo \texttt{ORDER BY} khoá tự nhiên \\
+Dòng bị loại & 42 điểm toạ độ ngoài Brazil & ghi \texttt{etl\_log.rejected\_rows}, không xóa âm thầm \\
+\end{BangTC}
+\KetLuan{Đối soát với nguồn bắt được lỗi mà log không thấy}
+\note{[P12] Bài học theo mạch vấn đề, con số, cách xử lý. Nguồn: các slide Giới hạn dữ liệu (2.3), ETL (3.3) và lakehouse (5.1). Mô hình chiều đáng dùng vì nhất quán; tốc độ đến từ materialized view và index.}
+\end{frame}
+
+\begin{frame}{Bài học làm việc nhóm}
+\muc{6 · Kết luận}
+\khungchen[0.3\textheight]{CHÈN: ba bài học làm việc nhóm, phân công, Git, khó khăn thực tế (Người 4 gom)}
+\note{[P12] Khung chờ: Người 4 gom bài học làm việc nhóm từ cả nhóm.}
+\end{frame}
+
+\begin{frame}{Hạn chế và hướng phát triển}
 \muc{6 · Kết luận}
 \begin{itemize}
   \item Hạn chế: mô phỏng cập nhật chỉ thêm bản ghi mới; cơ chế thử lại mồ côi mới được chứng minh bằng test
@@ -20,7 +70,7 @@
   \item Hướng phát triển: PostGIS cho tính toán địa lý
   \item Hướng phát triển: lịch chạy tự động
 \end{itemize}
-\note{[S113] Nhóm nói rõ giới hạn để kết quả đáng tin.}
+\note{[S113] Nhóm nói rõ giới hạn để kết quả đáng tin. Tiêu đề trước đây: Hạn chế còn lại và ba hướng phát triển: trạng thái đơn, PostGIS, lịch chạy}
 \end{frame}
 
 \begin{hustdarkframe}

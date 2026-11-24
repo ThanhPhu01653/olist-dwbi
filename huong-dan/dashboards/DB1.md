@@ -1,6 +1,6 @@
 # DB1 – Tổng quan và doanh thu
 
-*Loại: Theo dòng thời gian, có dự báo. Người dựng: Người 1. Dựng theo `powerbi/model.md` (mục 8); công thức DAX ở `powerbi/measures.md`. Cây phân tích: `huong-dan/05-nghiep-vu-nhap.md` mục 6 (hình `figures/2-3_cay_phan_tich_DB1.png`).*
+*Loại: Theo dòng thời gian, có dự báo. Người dựng: Người 1 (Phú dựng file gốc, tổng hợp và chỉnh sửa). Dựng theo `powerbi/model.md` (mục 8); công thức DAX ở `powerbi/measures.md`. Cây phân tích: `huong-dan/05-nghiep-vu-nhap.md` mục 6 (hình `figures/2-3_cay_phan_tich_DB1.png`).*
 
 ## 1. Mục tiêu
 
@@ -142,15 +142,18 @@ Checklist chung ở [`README.md`](README.md); ma trận mục × dashboard ở �
 | Chuỗi thời gian có dự báo | ✓ | line chart GMV theo tháng có *Forecast* 3 điểm, tin cậy 95% |
 | Thống kê: Key Influencers | – | không áp dụng (Key Influencers ở DB2) |
 | Publish web và mã QR | ✓ | cùng báo cáo với các dashboard khác (`powerbi/model.md` mục 9) |
+| Thanh tiêu đề và icon minh hoạ | ✓ | mỗi trang có thanh tiêu đề và icon minh hoạ |
+| Menu điều hướng giữa các trang | ✓ | nút điều hướng (Page navigator) giữa các trang của dashboard |
+| Tiêu đề mỗi đồ thị | ✓ | mỗi đồ thị có tiêu đề (xem danh sách bên dưới) |
 
 **Định dạng số** (*Measure tools → Format → Custom* hoặc *Display units* của visual):
 
 | Chỉ số | Loại | Định dạng |
 | --- | --- | --- |
-| GMV | tiền | `#,0.0,,"M"` → 13.5M |
-| Orders, Items | số | `#,0.0,"K"` → 98.2K |
+| GMV | tiền | `#,0.0,,"M"` → 13,5 triệu (Display units = Millions) |
+| Orders, Items | số | `#,0.0,"K"` → 98 nghìn (Display units = Thousands) |
 | AOV | tiền | `#,0.0` → 137.4 |
-| On-time rate, Cancel rate, Freight ratio | phần trăm | `0.0%` → 93.2% |
+| On-time rate, Cancel rate, Freight ratio | phần trăm | `0%` (thẻ KPI; dưới 10% hoặc cần phân biệt: `0.0%`) → 93.2% |
 | Avg review | điểm | `0.00` → 4.09 |
 | GMV MoM %, GMV YoY % | phần trăm | `+0.0%;-0.0%` |
 
@@ -216,6 +219,9 @@ Cột **Cửa sổ 2017-01 → 2018-08** là số khi bật bộ lọc trang `In
 - [ ] **Tooltip**: `Tooltip_Thang` và tooltip theo nhóm ngành
 - [ ] **Chuỗi thời gian có dự báo**: line chart GMV theo tháng có *Forecast* 3 điểm, tin cậy 95%
 - [ ] **Publish web và mã QR**: cùng báo cáo với các dashboard khác (`powerbi/model.md` mục 9)
+- [ ] **Thanh tiêu đề và icon minh hoạ**: mỗi trang có thanh tiêu đề và icon minh hoạ
+- [ ] **Menu điều hướng giữa các trang**: nút điều hướng (Page navigator) giữa các trang của dashboard
+- [ ] **Tiêu đề mỗi đồ thị**: mỗi đồ thị có tiêu đề (xem danh sách bên dưới)
 - [ ] **Số liệu khớp bảng giá trị kỳ vọng ở mục 9**: đối chiếu từng card
 - [ ] **Màu theo `powerbi/theme.json`; font Segoe UI; không quá 6–8 visual một trang**
 - [ ] **Ảnh chụp**: đặt tên `4_DB1_<mô-tả>.png` (ví dụ `4_DB1_trang1_tong_quan.png`) vào `figures/`

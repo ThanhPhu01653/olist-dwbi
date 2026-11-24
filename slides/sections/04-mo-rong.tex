@@ -4,15 +4,15 @@
 \subsection{5.1 Data lakehouse}
 
 % (A) kiến trúc
-\begin{frame}{Lakehouse thêm đường thứ hai: từ CDC qua Bronze, Silver đến Gold}
+\begin{frame}{Data lakehouse: kiến trúc CDC, Bronze, Silver, Gold}
 \muc{5.1 · Lakehouse}
 \HinhLon{5-1_kien_truc_lakehouse_sl.png}
 \KetLuan{Gold giữ đúng mô hình sao chương 3; đối soát với kho khớp 16/16 bảng}
-\note{[P10-kiến trúc] Hình: docs/LAKEHOUSE.md mục 3.3. Nguồn vẫn là PostgreSQL; mỗi thay đổi được bắt từ log (CDC), qua Kafka vào Bronze, Silver, Gold trên object storage ở dạng bảng Iceberg (Parquet cộng metadata), truy vấn bằng Trino, dựng Gold bằng dbt. Lakehouse không thay kho chương 3 mà là đường thứ hai; phần kết quả chứng minh hai đường cho cùng số liệu. Sơ đồ chi tiết cũ (cho báo cáo): figures/5-1\_kien\_truc\_lakehouse.png.}
+\note{[P10-kiến trúc] Hình: docs/LAKEHOUSE.md mục 3.3. Nguồn vẫn là PostgreSQL; mỗi thay đổi được bắt từ log (CDC), qua Kafka vào Bronze, Silver, Gold trên object storage ở dạng bảng Iceberg (Parquet cộng metadata), truy vấn bằng Trino, dựng Gold bằng dbt. Lakehouse không thay kho chương 3 mà là đường thứ hai; phần kết quả chứng minh hai đường cho cùng số liệu. Sơ đồ chi tiết cũ (cho báo cáo): figures/5-1\_kien\_truc\_lakehouse.png. Tiêu đề trước đây: Lakehouse thêm đường thứ hai: từ CDC qua Bronze, Silver đến Gold}
 \end{frame}
 
 % (D) bảy dịch vụ
-\begin{frame}{Bảy dịch vụ chạy trong 4 GB RAM, vận hành bằng script, không cần Airflow}
+\begin{frame}{Data lakehouse: bảy dịch vụ trong 4 GB RAM}
 \muc{5.1 · Lakehouse}
 \begin{BangTC}{lXr}
 \textbf{Thành phần} & \textbf{Vai trò} & \textbf{RAM tối đa} \\ \midrule
@@ -24,11 +24,11 @@ Spark 3.5 & luồng Bronze, Silver (MERGE) & 1.536 MiB \\
 Trino 477 & SQL, dbt, đối soát & 1.280 MiB \\
 \end{BangTC}
 \KetLuan{Profile lite: đỉnh đo được khoảng 3,6 GB, dưới trần 4 GB của WSL}
-\note{[P10-profile] Số RAM: docs/LAKEHOUSE.md mục 0 và 3.5 (đỉnh docker stats khi phát lại liên tục). Máy 13,9 GB; WSL giới hạn 4 GB để Windows và PostgreSQL của chương 3 còn 9,9 GB. Vận hành bằng script: docker compose, check\_health, replay\_events, wait\_log (chờ có giới hạn 10 phút). Không dùng Airflow: lịch chạy hằng ngày là một script. Superset thêm ở profile demo.}
+\note{[P10-profile] Số RAM: docs/LAKEHOUSE.md mục 0 và 3.5 (đỉnh docker stats khi phát lại liên tục). Máy 13,9 GB; WSL giới hạn 4 GB để Windows và PostgreSQL của chương 3 còn 9,9 GB. Vận hành bằng script: docker compose, check\_health, replay\_events, wait\_log (chờ có giới hạn 10 phút). Không dùng Airflow: lịch chạy hằng ngày là một script. Superset thêm ở profile demo. Tiêu đề trước đây: Bảy dịch vụ chạy trong 4 GB RAM, vận hành bằng script, không cần Airflow}
 \end{frame}
 
 % (F) CDC làm
-\begin{frame}{CDC: Debezium chụp snapshot 1.273.620 dòng rồi bắt từng thay đổi từ log}
+\begin{frame}{Data lakehouse: CDC bằng Debezium, 1.273.620 dòng snapshot}
 \muc{5.1 · Lakehouse}
 \HangSo[3]{\So{1.273.620}{dòng snapshot}\hfill\So{11}{topic Kafka}\hfill\So{$\approx$35 s}{chụp snapshot}}
 \begin{itemize}
@@ -36,11 +36,11 @@ Trino 477 & SQL, dbt, đối soát & 1.280 MiB \\
   \item Debezium chụp snapshot 11 bảng rồi đọc log của PostgreSQL
   \item Từ 01/01/2018 đến 14/11/2018: dữ liệu phát lại như đến sau
 \end{itemize}
-\note{[P10-bước 2] docs/LAKEHOUSE.md mục 3.6 và 3.8. Kho PostgreSQL của chương 3 không bị đụng tới. Connector olist-source, plugin pgoutput. Mã hoá: timestamp thành micro giây, date thành số ngày, numeric thành chuỗi. Mốc cắt: nạp ban đầu gồm mọi bản ghi đến 31/12/2017; phần phát lại bắt đầu 01/01/2018. Debezium giao ít nhất một lần (at-least-once) nên Silver phải chịu được sự kiện trùng. Mỗi bảng là một topic Kafka olist.<schema>.<bảng>.}
+\note{[P10-bước 2] docs/LAKEHOUSE.md mục 3.6 và 3.8. Kho PostgreSQL của chương 3 không bị đụng tới. Connector olist-source, plugin pgoutput. Mã hoá: timestamp thành micro giây, date thành số ngày, numeric thành chuỗi. Mốc cắt: nạp ban đầu gồm mọi bản ghi đến 31/12/2017; phần phát lại bắt đầu 01/01/2018. Debezium giao ít nhất một lần (at-least-once) nên Silver phải chịu được sự kiện trùng. Mỗi bảng là một topic Kafka olist.<schema>.<bảng>. Tiêu đề trước đây: CDC: Debezium chụp snapshot 1.273.620 dòng rồi bắt từng thay đổi từ log}
 \end{frame}
 
 % (D) CDC minh chứng
-\begin{frame}{Kafka giữ đủ 1.720.555 sự kiện, bằng đúng số dòng Bronze}
+\begin{frame}{Data lakehouse: Kafka = Bronze = 1.720.555 sự kiện}
 \muc{5.1 · Lakehouse}
 \begin{BangTC}{Xrr}
 \textbf{Topic} & \textbf{Snapshot} & \textbf{Sau phát lại} \\ \midrule
@@ -52,11 +52,11 @@ CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
 \DongNhan\textbf{Tổng (= số dòng Bronze)} & \textbf{1.273.620} & \textbf{1.720.555} \\
 \end{BangTC}
 \KetLuan{Không mất, không trùng sự kiện: Kafka = Bronze = 1.720.555}
-\note{[P10-bước 2] Offset đọc bằng kafka-get-offsets trong container; kiểm thử tự động tests/test\_silver\_equals\_source.py::test\_bronze\_equals\_kafka. Bảng đầy đủ 11 topic và cách tách 3.000 sự kiện chạy thử khỏi lần chạy tính giờ: slide dự phòng chương 5.}
+\note{[P10-bước 2] Offset đọc bằng kafka-get-offsets trong container; kiểm thử tự động tests/test\_silver\_equals\_source.py::test\_bronze\_equals\_kafka. Bảng đầy đủ 11 topic và cách tách 3.000 sự kiện chạy thử khỏi lần chạy tính giờ: slide dự phòng chương 5. Tiêu đề trước đây: Kafka giữ đủ 1.720.555 sự kiện, bằng đúng số dòng Bronze}
 \end{frame}
 
 % (F) Bronze + Silver làm
-\begin{frame}{Bronze giữ nguyên văn sự kiện, Silver áp quy tắc ODS bằng MERGE}
+\begin{frame}{Data lakehouse: Bronze và Silver bằng MERGE}
 \muc{5.1 · Lakehouse}
 \HangSo[3]{\So{1,72 triệu}{dòng Bronze = Kafka}\hfill\So{30 s}{micro-batch}\hfill\So{96.338}{phiên bản SCD2 khách}}
 \begin{itemize}
@@ -64,11 +64,11 @@ CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
   \item Silver: MERGE theo khoá, chỉ thay dòng khi \texttt{ts\_ms} không cũ hơn
   \item Đơn đến trước khách vào \texttt{*\_rejected}, thử lại mỗi lô; cuối chạy còn 0
 \end{itemize}
-\note{[P10-bước 3 và 4] lakehouse/spark/stream\_bronze\_silver.py, silver\_batch.py. Bronze: khoá, payload (JSON của Debezium), op, ts\_ms, partition và offset Kafka, ingested\_at; tối đa 100.000 sự kiện mỗi lô để giữ bộ nhớ. Dữ liệu API đi đường khác: tệp JSON lên s3://lakehouse/landing/, Spark tạo bốn bảng bronze.api\_* (73 dòng, chạy lại thêm 0 dòng). Silver áp quy tắc của sql/30\_ods/020\_ods\_procs.sql; silver.order\_status\_history là SCD2 theo trạng thái. Silver địa lý 19.015 zip (42 điểm bị loại, có ghi lý do); Silver API cùng bốn tầng ghép đô thị trùng từng số với P9. SCD2 địa chỉ khách: 96.338 phiên bản, khớp dim\_customer của kho.}
+\note{[P10-bước 3 và 4] lakehouse/spark/stream\_bronze\_silver.py, silver\_batch.py. Bronze: khoá, payload (JSON của Debezium), op, ts\_ms, partition và offset Kafka, ingested\_at; tối đa 100.000 sự kiện mỗi lô để giữ bộ nhớ. Dữ liệu API đi đường khác: tệp JSON lên s3://lakehouse/landing/, Spark tạo bốn bảng bronze.api\_* (73 dòng, chạy lại thêm 0 dòng). Silver áp quy tắc của sql/30\_ods/020\_ods\_procs.sql; silver.order\_status\_history là SCD2 theo trạng thái. Silver địa lý 19.015 zip (42 điểm bị loại, có ghi lý do); Silver API cùng bốn tầng ghép đô thị trùng từng số với P9. SCD2 địa chỉ khách: 96.338 phiên bản, khớp dim\_customer của kho. Tiêu đề trước đây: Bronze giữ nguyên văn sự kiện, Silver áp quy tắc ODS bằng MERGE}
 \end{frame}
 
 % (D) Silver minh chứng
-\begin{frame}{Silver bằng nguồn ở 10/10 bảng: cùng số dòng và cùng checksum khoá}
+\begin{frame}{Data lakehouse: Silver bằng nguồn ở 10/10 bảng}
 \muc{5.1 · Lakehouse}
 \begin{BangTC}{Xrl}
 \textbf{Bảng Silver} & \textbf{Số dòng} & \textbf{So với nguồn} \\ \midrule
@@ -79,11 +79,11 @@ CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
 \texttt{closed\_deals}, \texttt{category\_translation} & 842 / 71 & khớp \\
 \end{BangTC}
 \KetLuan{10/10 bảng khớp; 6 bảng loại (rejected) đều rỗng; kiểm bằng pytest}
-\note{[P10-bước 4] Kiểm thử: lakehouse/tests/test\_silver\_equals\_source.py (16 phép Silver, đều đạt): số dòng và md5 của khoá chính đã sắp xếp, ở PostgreSQL nguồn và ở Trino. Silver địa lý (19.015 zip) bằng ods.geolocation\_zip của kho. Spark UI của luồng: slide dự phòng chương 5.}
+\note{[P10-bước 4] Kiểm thử: lakehouse/tests/test\_silver\_equals\_source.py (16 phép Silver, đều đạt): số dòng và md5 của khoá chính đã sắp xếp, ở PostgreSQL nguồn và ở Trino. Silver địa lý (19.015 zip) bằng ods.geolocation\_zip của kho. Spark UI của luồng: slide dự phòng chương 5. Tiêu đề trước đây: Silver bằng nguồn ở 10/10 bảng: cùng số dòng và cùng checksum khoá}
 \end{frame}
 
 % (F) Gold làm
-\begin{frame}{Gold: dbt dựng 20 model trong 70 giây, giữ nguyên tên bảng và cột của đặc tả}
+\begin{frame}{Data lakehouse: Gold bằng dbt, 20 model trong 70 giây}
 \muc{5.1 · Lakehouse}
 \HangSo[3]{\So{20}{model dbt}\hfill\So{70 s}{dựng toàn bộ}\hfill\So{71}{phép kiểm thử đạt}}
 \begin{itemize}
@@ -91,30 +91,30 @@ CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
   \item Dùng lại seed và lịch \texttt{dim\_date} của chương 3; làm giàu bằng dữ liệu API
   \item Khoá thay thế khác kho, nên đối soát dịch khoá ngoại về giá trị tự nhiên
 \end{itemize}
-\note{[P10-bước 5] lakehouse/dbt (dbt-trino). Bốn bảng mart: mart\_sales\_daily, mart\_sales\_category\_month, mart\_sales\_state\_month, mart\_category\_pareto, cùng cột với mart\_sales của kho. 71 phép kiểm thử dbt: unique, not\_null, relationships, accepted\_values, grain của fact (unique\_combination) và ba phép riêng (Gold = Silver về tiền và số dòng, SCD2 không chồng thời gian).}
+\note{[P10-bước 5] lakehouse/dbt (dbt-trino). Bốn bảng mart: mart\_sales\_daily, mart\_sales\_category\_month, mart\_sales\_state\_month, mart\_category\_pareto, cùng cột với mart\_sales của kho. 71 phép kiểm thử dbt: unique, not\_null, relationships, accepted\_values, grain của fact (unique\_combination) và ba phép riêng (Gold = Silver về tiền và số dòng, SCD2 không chồng thời gian). Tiêu đề trước đây: Gold: dbt dựng 20 model trong 70 giây, giữ nguyên tên bảng và cột của đặc tả}
 \end{frame}
 
 % (A) lineage
-\begin{frame}{Lineage của fact\_order\_item: 13 nguồn Silver qua 5 dimension}
+\begin{frame}{Data lakehouse: lineage của \texttt{fact\_order\_item}}
 \muc{5.1 · Lakehouse}
 % cho-phep: R7 ảnh lineage dùng hết chiều cao khung, không có thanh kết luận; kết quả 71/71 test nằm trong ghi chú và slide dự phòng
 \AnhChup[\dimexpr\VungCao-24pt\relax]{5-1_dbt_lineage_fact_tc.png}
-\note{[P10-bước 5] 71/71 phép kiểm thử dbt đạt, gồm 3 phép riêng về tiền, số dòng và SCD2. Ảnh Phú chụp từ dbt docs (figures/5-1\_dbt\_lineage\_fact.png, đã cắt: 5-1\_dbt\_lineage\_fact\_tc.png): 13 nguồn Silver, 5 dimension nối tới fact\_order\_item. Ảnh chụp trước khi thêm depends\_on nên chưa vẽ dim\_date; fact nối tới dim\_date qua khoá ngày tính từ mốc thời gian, không join. Hình bốn tầng đầy đủ (18 nguồn Silver, 10 dimension, 6 fact, 4 mart) ở slide dự phòng chương 5. Ảnh dbt test: slide dự phòng chương 5.}
+\note{[P10-bước 5] 71/71 phép kiểm thử dbt đạt, gồm 3 phép riêng về tiền, số dòng và SCD2. Ảnh Phú chụp từ dbt docs (figures/5-1\_dbt\_lineage\_fact.png, đã cắt: 5-1\_dbt\_lineage\_fact\_tc.png): 13 nguồn Silver, 5 dimension nối tới fact\_order\_item. Ảnh chụp trước khi thêm depends\_on nên chưa vẽ dim\_date; fact nối tới dim\_date qua khoá ngày tính từ mốc thời gian, không join. Hình bốn tầng đầy đủ (18 nguồn Silver, 10 dimension, 6 fact, 4 mart) ở slide dự phòng chương 5. Ảnh dbt test: slide dự phòng chương 5. Tiêu đề trước đây: Lineage của fact\_order\_item: 13 nguồn Silver qua 5 dimension}
 \end{frame}
 
 % (B) đối soát
-\begin{frame}{Đối soát Gold với kho: 16/16 bảng khớp, GMV bằng nhau đến từng xu}
+\begin{frame}{Data lakehouse: đối soát Gold với kho, 16/16 bảng}
 \muc{5.1 · Lakehouse}
 \begin{AnhKhoanh}{5-1_reconcile_tc.png}
   \khoanh{0.0}{0.065}{0.98}{0.155}
   \nhan{0.45}{0.30}{RESULT: all tables match}
 \end{AnhKhoanh}
 \KetLuan{Cùng câu SQL trên hai hệ thống: 16/16 bảng khớp, 2 zip lệch tên (có giải thích)}
-\note{[P10-đối soát] Ảnh Phú chụp từ python lakehouse/scripts/reconcile.py. Cùng một câu SQL chạy trên PostgreSQL (dw.*) và Trino (gold.*); mỗi bảng so số dòng, tổng các số đo, md5 khoá tự nhiên, md5 nội dung từng dòng (khoá ngoại dịch về giá trị tự nhiên). GMV 13.494.400,74 BRL ở cả hai phía. Nói 16/16 bảng khớp, 2 zip lệch tên thành phố do quy tắc chọn khi hoà điểm (có giải thích); không nói khớp 100\%. Dung sai và ngoại lệ: slide dự phòng chương 5.}
+\note{[P10-đối soát] Ảnh Phú chụp từ python lakehouse/scripts/reconcile.py. Cùng một câu SQL chạy trên PostgreSQL (dw.*) và Trino (gold.*); mỗi bảng so số dòng, tổng các số đo, md5 khoá tự nhiên, md5 nội dung từng dòng (khoá ngoại dịch về giá trị tự nhiên). GMV 13.494.400,74 BRL ở cả hai phía. Nói 16/16 bảng khớp, 2 zip lệch tên thành phố do quy tắc chọn khi hoà điểm (có giải thích); không nói khớp 100\%. Dung sai và ngoại lệ: slide dự phòng chương 5. Tiêu đề trước đây: Đối soát Gold với kho: 16/16 bảng khớp, GMV bằng nhau đến từng xu}
 \end{frame}
 
 % (E) lỗi 1
-\begin{frame}{Lỗi 1: Silver chỉ có 24.765 trên 45.971 đơn, log không báo gì}
+\begin{frame}{Bài học lakehouse: Silver thiếu đơn mà log không báo}
 \muc{5.1 · Lakehouse}
 \TruocSau{Trước khi sửa}{Silver \texttt{orders}: \textbf{24.765}\\ nguồn: 45.971}{Sau khi sửa}{Silver \texttt{orders}: \textbf{45.971}\\ bằng nguồn}
 \vspace{4pt}
@@ -123,11 +123,11 @@ CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
   \item Sửa: \texttt{localCheckpoint()} thay cho \texttt{persist()}
 \end{itemize}
 \KetLuan{Bài học: phải đối soát với nguồn, log chạy xong không có nghĩa là đúng}
-\note{[P10-bài học] Số liệu: docs/LAKEHOUSE.md mục 3.7. Bronze vẫn đủ (1.276.620 sự kiện = tổng offset Kafka) nhưng Silver chỉ có 24.765 đơn. Đơn có thể đến trước khách hàng vài lô nên được giữ ở bảng orders\_rejected để thử lại; sau khi xoá orphan cũ, Spark tính lại DataFrame đã cache và mất đúng phần orphan đang chờ. localCheckpoint() cắt lineage với bảng. Hai lần chạy đầu cùng sai; log từng lô chỉ cho thấy tổng đơn hợp lệ cộng orphan bằng số sự kiện mới, không phải lỗi. Đây là lý do phép so Silver với nguồn là bắt buộc.}
+\note{[P10-bài học] Số liệu: docs/LAKEHOUSE.md mục 3.7. Bronze vẫn đủ (1.276.620 sự kiện = tổng offset Kafka) nhưng Silver chỉ có 24.765 đơn. Đơn có thể đến trước khách hàng vài lô nên được giữ ở bảng orders\_rejected để thử lại; sau khi xoá orphan cũ, Spark tính lại DataFrame đã cache và mất đúng phần orphan đang chờ. localCheckpoint() cắt lineage với bảng. Hai lần chạy đầu cùng sai; log từng lô chỉ cho thấy tổng đơn hợp lệ cộng orphan bằng số sự kiện mới, không phải lỗi. Đây là lý do phép so Silver với nguồn là bắt buộc. Tiêu đề trước đây: Lỗi 1: Silver chỉ có 24.765 trên 45.971 đơn, log không báo gì}
 \end{frame}
 
 % (E) lỗi 2
-\begin{frame}{Lỗi 2: trim() của Trino khác PostgreSQL, 18 review bị tính nhầm}
+\begin{frame}{Bài học lakehouse: trim() của Trino khác PostgreSQL}
 \muc{5.1 · Lakehouse}
 \TruocSau{Gold trước khi sửa}{Review có bình luận: \textbf{40.950}\\ kho: 40.968}{Gold sau khi sửa}{Review có bình luận: \textbf{40.968}\\ bằng kho}
 \vspace{4pt}
@@ -136,19 +136,19 @@ CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
   \item Sửa: model chỉ bỏ dấu cách hai đầu (\texttt{regexp\_replace})
 \end{itemize}
 \KetLuan{Cùng câu hỏi, hai engine, khác ngữ nghĩa nhỏ: chỉ so từng giá trị mới thấy}
-\note{[P10-bài học] Lỗi do Gold, không phải kho. fact\_review lệch ở hai cột: has\_comment\_message (40.950 so với 40.968) và comment\_length (tổng 2.800.913 so với 2.804.417); 18 review chỉ có ký tự xuống dòng bị tính là không có bình luận. Hai lỗi nhỏ khác là do cách so sánh (số chữ số 0 cuối, làm tròn số thực), đã sửa phép so. docs/LAKEHOUSE.md mục 3.9.}
+\note{[P10-bài học] Lỗi do Gold, không phải kho. fact\_review lệch ở hai cột: has\_comment\_message (40.950 so với 40.968) và comment\_length (tổng 2.800.913 so với 2.804.417); 18 review chỉ có ký tự xuống dòng bị tính là không có bình luận. Hai lỗi nhỏ khác là do cách so sánh (số chữ số 0 cuối, làm tròn số thực), đã sửa phép so. docs/LAKEHOUSE.md mục 3.9. Tiêu đề trước đây: Lỗi 2: trim() của Trino khác PostgreSQL, 18 review bị tính nhầm}
 \end{frame}
 
 % (A) độ trễ
-\begin{frame}{Độ trễ nguồn đến Silver trung bình 22,6 giây, chủ yếu là chờ micro-batch}
+\begin{frame}{Data lakehouse: độ trễ nguồn đến Silver 22,6 giây}
 \muc{5.1 · Lakehouse}
 \HinhLon{5-1_latency_sl.png}
 \KetLuan{6 lần đo: 10,9 đến 37,8 giây; Debezium chỉ mất dưới 1 giây}
-\note{[P10-đo] handoff/2026-11-19-P10-latency.md; script lakehouse/scripts/latency\_probe.py (hình vẽ lại bằng scripts/p11\_figures.py từ chính 6 lần đo, không đo lại). Trung bình: PostgreSQL sang Kafka 0,5 giây, Kafka sang Bronze 12,1 giây (gồm chờ trigger 30 giây kế tiếp), Bronze sang Silver 10,0 giây; nguồn đến Silver 22,6 giây (10,9 đến 37,8); nguồn đến đọc được qua Trino 29,9 giây (19,8 đến 42,9). Mỗi lần thử đổi một cột của một đơn rồi hoàn nguyên, Silver trở lại bằng nguồn. Thông lượng và RAM: slide dự phòng chương 5.}
+\note{[P10-đo] handoff/2026-11-19-P10-latency.md; script lakehouse/scripts/latency\_probe.py (hình vẽ lại bằng scripts/p11\_figures.py từ chính 6 lần đo, không đo lại). Trung bình: PostgreSQL sang Kafka 0,5 giây, Kafka sang Bronze 12,1 giây (gồm chờ trigger 30 giây kế tiếp), Bronze sang Silver 10,0 giây; nguồn đến Silver 22,6 giây (10,9 đến 37,8); nguồn đến đọc được qua Trino 29,9 giây (19,8 đến 42,9). Mỗi lần thử đổi một cột của một đơn rồi hoàn nguyên, Silver trở lại bằng nguồn. Thông lượng và RAM: slide dự phòng chương 5. Tiêu đề trước đây: Độ trễ nguồn đến Silver trung bình 22,6 giây, chủ yếu là chờ micro-batch}
 \end{frame}
 
 % (E) time travel
-\begin{frame}{Time travel: rollback một thao tác sửa nhầm trong 0,09 giây}
+\begin{frame}{Data lakehouse: time travel và rollback}
 \muc{5.1 · Lakehouse}
 \TruocSau{Sau UPDATE nhầm}{97.103 đơn bị đặt thành \texttt{canceled}}{Sau rollback}{625 đơn \texttt{canceled}, khác bảng gốc 0 dòng}
 \vspace{4pt}
@@ -157,32 +157,32 @@ CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
   \item Đọc phiên bản cũ mất 0,11 đến 0,16 giây
 \end{itemize}
 \KetLuan{Rollback chỉ đổi con trỏ metadata, không chép dữ liệu}
-\note{[P10-time travel] handoff/2026-11-19-P10-timetravel.md, lakehouse/scripts/time\_travel.py. Mọi thay đổi dữ liệu làm trên bản sao ops.orders\_tt; silver.orders không bị đụng. FOR VERSION AS OF và FOR TIMESTAMP AS OF đọc đúng phiên bản. Có thêm truy vấn đơn ở trạng thái nào lúc T trên order\_status\_history; thêm và bớt cột chỉ đổi metadata (Iceberg theo dõi cột bằng ID).}
+\note{[P10-time travel] handoff/2026-11-19-P10-timetravel.md, lakehouse/scripts/time\_travel.py. Mọi thay đổi dữ liệu làm trên bản sao ops.orders\_tt; silver.orders không bị đụng. FOR VERSION AS OF và FOR TIMESTAMP AS OF đọc đúng phiên bản. Có thêm truy vấn đơn ở trạng thái nào lúc T trên order\_status\_history; thêm và bớt cột chỉ đổi metadata (Iceberg theo dõi cột bằng ID). Tiêu đề trước đây: Time travel: rollback một thao tác sửa nhầm trong 0,09 giây}
 \end{frame}
 
 % (B) Superset - khung chờ ảnh
-\begin{frame}{DB1 trên Superset: dashboard đọc từ tầng Gold của lakehouse qua Trino}
+\begin{frame}{Data lakehouse: DB1 trên Superset}
 \muc{5.1 · Lakehouse}
 \AnhChup{5-1_superset_db1_tc.png}
 \KetLuan{GMV 13.494.400,74 BRL bằng kho chương 3, đọc qua bi\_viewer chỉ đọc gold}
-\note{[P10-Superset] Ảnh Phú chụp: figures/5-1\_superset\_db1.png (đã cắt: 5-1\_superset\_db1\_tc.png). Bốn biểu đồ: thẻ GMV tổng, GMV theo tháng (01/2017--08/2018), GMV theo bang, GMV theo 10 danh mục cao nhất; dựng bằng lakehouse/scripts/superset\_setup.py. Mọi truy vấn đi qua Trino bằng user bi\_viewer, chỉ SELECT được iceberg.gold (test: lakehouse/tests/test\_bi\_viewer.py). Thẻ GMV 13.494.400,74 BRL bằng kho chương 3.}
+\note{[P10-Superset] Ảnh Phú chụp: figures/5-1\_superset\_db1.png (đã cắt: 5-1\_superset\_db1\_tc.png). Bốn biểu đồ: thẻ GMV tổng, GMV theo tháng (01/2017--08/2018), GMV theo bang, GMV theo 10 danh mục cao nhất; dựng bằng lakehouse/scripts/superset\_setup.py. Mọi truy vấn đi qua Trino bằng user bi\_viewer, chỉ SELECT được iceberg.gold (test: lakehouse/tests/test\_bi\_viewer.py). Thẻ GMV 13.494.400,74 BRL bằng kho chương 3. Tiêu đề trước đây: DB1 trên Superset: dashboard đọc từ tầng Gold của lakehouse qua Trino}
 \end{frame}
 
 % (C) tổng kết 5.1
-\begin{frame}{Tổng kết 5.1: cùng số liệu với kho chương 3, thêm sự kiện và time travel}
+\begin{frame}{Data lakehouse: tổng kết, cùng số liệu với kho}
 \muc{5.1 · Lakehouse}
 \HangSo[4]{\So{1,72 triệu}{sự kiện qua Kafka}\hfill\So{16/16}{bảng khớp kho}\hfill\So{22,6 s}{độ trễ nguồn $\rightarrow$ Silver}\hfill\So{0,09 s}{rollback sửa nhầm}}
 \begin{itemize}
   \item Hai lỗi chỉ lộ ra nhờ đối soát: thiếu đơn ở Silver, \texttt{trim()} khác nhau ở Gold
   \item Hạn chế: 7 dịch vụ trong 4 GB RAM; vận hành bằng script, chưa có Airflow
 \end{itemize}
-\note{[P10-tổng kết] Không có kết luận lakehouse tốt hơn kho; hai đường cho cùng số liệu, lakehouse thêm khả năng đọc lịch sử và sự kiện gần thời gian thực. Chưa so thời gian truy vấn với kho PostgreSQL ở quy mô này; đối soát chỉ xét tính đúng của số liệu. Spark chạm giới hạn bộ nhớ khi chạy liên tục nhưng không bị kill.}
+\note{[P10-tổng kết] Không có kết luận lakehouse tốt hơn kho; hai đường cho cùng số liệu, lakehouse thêm khả năng đọc lịch sử và sự kiện gần thời gian thực. Chưa so thời gian truy vấn với kho PostgreSQL ở quy mô này; đối soát chỉ xét tính đúng của số liệu. Spark chạm giới hạn bộ nhớ khi chạy liên tục nhưng không bị kill. Tiêu đề trước đây: Tổng kết 5.1: cùng số liệu với kho chương 3, thêm sự kiện và time travel}
 \end{frame}
 
 \subsection{5.2 Thu thập dữ liệu từ API}
 
 % (D) bài toán
-\begin{frame}{Năm câu hỏi mà bán hàng một mình không trả lời được cần dữ liệu công khai}
+\begin{frame}{Thu thập dữ liệu qua API: năm câu hỏi cần dữ liệu ngoài}
 \muc{5.2 · Thu thập từ API}
 \begin{BangTC}{Xlr}
 \textbf{Câu hỏi} & \textbf{Cần thêm} & \textbf{Nguồn API} \\ \midrule
@@ -194,19 +194,19 @@ Ngày lễ có làm giảm đơn không? & ngày lễ quốc gia & BrasilAPI \\
 (Tuỳ chọn) Mưa có làm giao trễ không? & mưa ngày, 27 thủ phủ & Open-Meteo \\
 \end{BangTC}
 \KetLuan{Bốn nguồn API công khai trả lời cả năm câu; mưa là nguồn tuỳ chọn}
-\note{[S118] Bài toán: dữ liệu Olist chỉ có nội bộ và tĩnh. Năm câu hỏi này cần dữ liệu công khai thật của Brazil qua API; trình bày theo kiến trúc, triển khai, kết quả. Bảng chi tiết bốn nguồn (mã bảng, mã chuỗi, tần suất): slide dự phòng chương 5.}
+\note{[S118] Bài toán: dữ liệu Olist chỉ có nội bộ và tĩnh. Năm câu hỏi này cần dữ liệu công khai thật của Brazil qua API; trình bày theo kiến trúc, triển khai, kết quả. Bảng chi tiết bốn nguồn (mã bảng, mã chuỗi, tần suất): slide dự phòng chương 5. Tiêu đề trước đây: Năm câu hỏi mà bán hàng một mình không trả lời được cần dữ liệu công khai}
 \end{frame}
 
 % (A) kiến trúc API
-\begin{frame}{Kiến trúc API: lỗi gọi API không làm hỏng pipeline chính}
+\begin{frame}{Thu thập dữ liệu qua API: kiến trúc collector}
 \muc{5.2 · Thu thập từ API}
 \HinhLon{5-2_kien_truc_api_sl.png}
 \KetLuan{Dựng lại toàn bộ (rebuild) dùng landing zone, không cần mạng}
-\note{[S119] Sơ đồ rút gọn cho máy chiếu; sơ đồ chi tiết (cho báo cáo): figures/5-2\_kien\_truc\_api.png. Lỗi gọi API ghi vào etl\_log; các cột mới của kho giữ NULL và bốn dashboard DB1--DB4 không đổi số. Collector thử lại tối đa 5 lần, landing zone 69 lời gọi, 4,66 MB, 48.016 bản ghi: slide dự phòng chương 5.}
+\note{[S119] Sơ đồ rút gọn cho máy chiếu; sơ đồ chi tiết (cho báo cáo): figures/5-2\_kien\_truc\_api.png. Lỗi gọi API ghi vào etl\_log; các cột mới của kho giữ NULL và bốn dashboard DB1--DB4 không đổi số. Collector thử lại tối đa 5 lần, landing zone 69 lời gọi, 4,66 MB, 48.016 bản ghi: slide dự phòng chương 5. Tiêu đề trước đây: Kiến trúc API: lỗi gọi API không làm hỏng pipeline chính}
 \end{frame}
 
 % (D) ghép bốn tầng
-\begin{frame}{Bốn tầng ghép đô thị gán 96,3\% số zip và 99,5\% GMV}
+\begin{frame}{Thu thập dữ liệu qua API: ghép đô thị bốn tầng}
 \muc{5.2 · Thu thập từ API}
 \begin{BangTC}{Xrrr}
 \textbf{Tầng} & \textbf{Zip gán} & \textbf{Luỹ kế zip (\%)} & \textbf{Luỹ kế GMV (\%)} \\ \midrule
@@ -217,40 +217,40 @@ Ngày lễ có làm giảm đơn không? & ngày lễ quốc gia & BrasilAPI \\
 Không khớp & 719 & -- & 0,5 chưa khớp \\
 \end{BangTC}
 \KetLuan{Hai tầng đầu đã gán 96,1\% zip; phần chưa khớp phần lớn là quận, huyện}
-\note{[S153] Tổng 6.190 cặp (bang, thành phố) và 19.177 zip; số cặp theo tầng 3.124, 2.334, 9, 8 và 715 không khớp; số đơn 51.955, 45.693, 36, 13 và 502. Phần không khớp phần lớn là quận, huyện không phải đô thị. Đây là kết quả chính của việc tích hợp. Ngưỡng fuzzy 95 và biểu đồ tỉ lệ khớp: slide dự phòng chương 5.}
+\note{[S153] Tổng 6.190 cặp (bang, thành phố) và 19.177 zip; số cặp theo tầng 3.124, 2.334, 9, 8 và 715 không khớp; số đơn 51.955, 45.693, 36, 13 và 502. Phần không khớp phần lớn là quận, huyện không phải đô thị. Đây là kết quả chính của việc tích hợp. Ngưỡng fuzzy 95 và biểu đồ tỉ lệ khớp: slide dự phòng chương 5. Tiêu đề trước đây: Bốn tầng ghép đô thị gán 96,3\% số zip và 99,5\% GMV}
 \end{frame}
 
 % (C) kho làm giàu
-\begin{frame}{Kho được làm giàu không đổi khoá; phép kiểm thử tăng từ 136 lên 156}
+\begin{frame}{Thu thập dữ liệu qua API: làm giàu kho, 156 phép kiểm thử}
 \muc{5.2 · Thu thập từ API}
 \HangSo[3]{\So{7}{cột mới ở chiều địa lý}\hfill\So{4}{cột mới ở chiều ngày}\hfill\So{81}{dòng fact bang $\times$ năm}}
 \begin{itemize}
   \item \texttt{fact\_state\_year}: 27 bang $\times$ 3 năm; $\Sigma$ GMV = 13.494.400,74
   \item 20 phép kiểm thử SQL mới đều đạt; DB1--DB4 vẫn đúng số cũ
 \end{itemize}
-\note{[S155 và S156] dim\_geography: mã IBGE, microrregião, mesorregião, dân số 2016--2018, tầng ghép (5.473 đô thị). dim\_date: usd\_brl, ipca\_index, is\_holiday\_official, tên ngày lễ. mart\_market: 7 view cho dashboard D8. Cột mới thêm cuối bảng, cập nhật bằng UPDATE. Test mới nằm trong sql/90\_tests/050\_api\_tests.sql: tỷ giá đủ 1.827 ngày, IPCA đủ 60 tháng trùng IBGE (chênh 0,000), fact\_state\_year khớp GMV, số đơn 98.199 và dân số Brazil 2017 = 207.660.929; pytest 18 test chạy offline. Chi tiết: slide dự phòng chương 5.}
+\note{[S155 và S156] dim\_geography: mã IBGE, microrregião, mesorregião, dân số 2016--2018, tầng ghép (5.473 đô thị). dim\_date: usd\_brl, ipca\_index, is\_holiday\_official, tên ngày lễ. mart\_market: 7 view cho dashboard D8. Cột mới thêm cuối bảng, cập nhật bằng UPDATE. Test mới nằm trong sql/90\_tests/050\_api\_tests.sql: tỷ giá đủ 1.827 ngày, IPCA đủ 60 tháng trùng IBGE (chênh 0,000), fact\_state\_year khớp GMV, số đơn 98.199 và dân số Brazil 2017 = 207.660.929; pytest 18 test chạy offline. Chi tiết: slide dự phòng chương 5. Tiêu đề trước đây: Kho được làm giàu không đổi khoá; phép kiểm thử tăng từ 136 lên 156}
 \end{frame}
 
 % (A/H) theo đầu người
-\begin{frame}{Theo đầu người, Rio de Janeiro dẫn đầu: 53,90 BRL trên 1.000 dân}
+\begin{frame}{Phân tích dữ liệu API: GMV trên 1.000 dân theo bang}
 \muc{5.2 · Thu thập từ API}
 \HinhLon{5-2_gmv_dau_nguoi_theo_bang_sl.png}
 \KetLuan{RJ 53,90 dẫn đầu; DF hạng 9 theo GMV lên hạng 3; MA tụt từ hạng 15 xuống 24}
-\note{[S121] Dân số là ước tính IBGE 2017, GMV theo bang của khách. 2017: RJ 53,90; SP 48,58; DF 43,95; thấp nhất AM 2,58. MA tụt từ hạng 15 xuống 24; PA 13 sang 22; TO lên 23 sang 12. Cả nước 29,42 BRL trên 1.000 dân năm 2017 và 35,21 năm 2018. Distrito Federal: hạng 9 theo GMV, hạng 3 theo đầu người. Maranhão tụt từ hạng 15 xuống 24. Spearman giữa hai thứ hạng: 0,78. Số dưới mã bang trên hình là hạng theo GMV. Hình chỉ vẽ 10 bang cao nhất và 5 bang thấp nhất; đủ 27 bang ở slide dự phòng chương 5.}
+\note{[S121] Dân số là ước tính IBGE 2017, GMV theo bang của khách. 2017: RJ 53,90; SP 48,58; DF 43,95; thấp nhất AM 2,58. MA tụt từ hạng 15 xuống 24; PA 13 sang 22; TO lên 23 sang 12. Cả nước 29,42 BRL trên 1.000 dân năm 2017 và 35,21 năm 2018. Distrito Federal: hạng 9 theo GMV, hạng 3 theo đầu người. Maranhão tụt từ hạng 15 xuống 24. Spearman giữa hai thứ hạng: 0,78. Số dưới mã bang trên hình là hạng theo GMV. Hình chỉ vẽ 10 bang cao nhất và 5 bang thấp nhất; đủ 27 bang ở slide dự phòng chương 5. Tiêu đề trước đây: Theo đầu người, Rio de Janeiro dẫn đầu: 53,90 BRL trên 1.000 dân}
 \end{frame}
 
 % (A) danh nghĩa so với thực
-\begin{frame}{GMV tháng 1--8 tăng 138,3\% danh nghĩa, 130,9\% theo giá thực, 116,7\% theo USD}
+\begin{frame}{Phân tích dữ liệu API: GMV danh nghĩa, thực và USD}
 \muc{5.2 · Thu thập từ API}
 \HinhLon{5-2_danh_nghia_so_voi_thuc_sl.png}
 \KetLuan{Lạm phát và tỷ giá làm giảm mức tăng 7,4 và 21,6 điểm phần trăm}
-\note{[S157] Lạm phát IPCA 08/2017 sang 08/2018: 4,2\%. Tỷ giá bình quân gia quyền theo GMV: 3,17 (01/2017) sang 3,84 (08/2018). GMV thực = GMV chia chỉ số IPCA, giá 01/2016. Mức tăng lớn chủ yếu do dữ liệu 2017 còn đang lớn dần.}
+\note{[S157] Lạm phát IPCA 08/2017 sang 08/2018: 4,2\%. Tỷ giá bình quân gia quyền theo GMV: 3,17 (01/2017) sang 3,84 (08/2018). GMV thực = GMV chia chỉ số IPCA, giá 01/2016. Mức tăng lớn chủ yếu do dữ liệu 2017 còn đang lớn dần. Tiêu đề trước đây: GMV tháng 1--8 tăng 138,3\% danh nghĩa, 130,9\% theo giá thực, 116,7\% theo USD}
 \end{frame}
 
 % (B) D8 - khung chờ ảnh
-\begin{frame}{Dashboard D8 Thị trường Brazil dựng từ dữ liệu API thu thập thực tế}
+\begin{frame}{Dashboard D8: thị trường Brazil từ dữ liệu API}
 \muc{5.2 · Thu thập từ API}
 % cho-phep: R7 khung chờ ảnh, thay bằng \AnhChup khi có ảnh D8
 \khungchen[0.5\textheight]{P9 điền: ảnh chụp D8}
-\note{[S149] Khung: dashboard D8 (P9). Khi có ảnh: thay bằng \texttt{\textbackslash AnhChup} và thêm \texttt{\textbackslash KetLuan}.}
+\note{[S149] Khung: dashboard D8 (P9). Khi có ảnh: thay bằng \texttt{\textbackslash AnhChup} và thêm \texttt{\textbackslash KetLuan}. Tiêu đề trước đây: Dashboard D8 Thị trường Brazil dựng từ dữ liệu API thu thập thực tế}
 \end{frame}

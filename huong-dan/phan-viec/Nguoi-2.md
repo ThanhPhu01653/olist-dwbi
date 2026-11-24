@@ -98,37 +98,45 @@ Hình: `figures/2-4_*.png` (4 hình), `2-5_*.png` (2 hình), `3-1_*.png` (10 hì
 <!-- SLIDES:01b-du-lieu-nguon-erd.tex,02a-kham-pha.tex -->
 | STT | S | Tiêu đề (câu kết luận) | Nội dung chính | Hình / bảng | Trạng thái |
 | ---: | ---: | --- | --- | --- | --- |
-| 1 | 32 | Phạm vi: dữ liệu 01/2017–08/2018 chiếm 99,6% số đơn nên được dùng cho xu hướng |  | – | đã có |
-| 2 | 33 | Hai hệ thống nguồn có 11 bảng, 121 MB và 1.559.764 dòng |  | – | đã có |
-| 3 | 34 | Bảng toạ độ chiếm 64% số dòng nhưng chỉ đại diện 19.015 mã bưu chính | 1.000.163 dòng geolocation | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng nguồn (làm nổi dòng geolocation) |
-| 4 | 37 | Luồng dữ liệu và tần suất cập nhật: nạp ban đầu 45.430 đơn rồi 11 đợt hằng tháng |  | – | đã có |
-| 5 | 127 | Trung bình 163 đơn/ngày, đỉnh 1.176 đơn ngày Black Friday: lô hằng ngày là đủ |  | – | đã có |
-| 6 | 128 | Cây phân loại chia 11 bảng thành 4 nhóm: chủ, giao dịch, tương tác, tham chiếu |  | – | đã có |
-| 7 | 129 | Data flow hiện trạng: mũi tên ghi thông tin truyền, hai nguồn tách rời |  | – | đã có |
-| 8 | 130 | Data flow đề xuất: nguồn, staging, ODS, kho, mart và BI, có nhật ký ETL giám sát |  | – | đã có |
-| 9 | 35 | ERD hệ thống bán hàng: chín bảng nối quanh đơn hàng |  | – | đã có |
-| 10 | 36 | Các cột được gạch chân trên ERD là cột đi sang kho, kèm ghi chú mapping | Ví dụ: order_purchase_timestamp → purchase_date_key, price → price | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: ERD đã gạch chân (vẽ lại) |
-| 11 | 131 | ERD tô màu theo nhóm: 65 trong 71 cột nguồn được gạch chân vì đi sang OLAP |  | – | đã có |
-| 12 | 132 | Luồng OLTP sang OLAP cho thấy bảng nguồn nào nuôi dimension nào và fact nào |  | – | đã có |
-| 13 | 38 | Khám phá dữ liệu đo được 45 loại lỗi cần xử lý ở ODS |  | – | đã có |
-| 14 | 39 | Tỷ lệ ô rỗng cho thấy cột nào cần điền unknown |  | – | đã có |
-| 15 | 40 | Toạ độ bẩn nhất: 93,5% mã bưu chính nhiều toạ độ, 26,2% dòng trùng hoàn toàn |  | – | đã có |
-| 16 | 41 | Phân bố giá, phí vận chuyển và lead time đều lệch phải |  | – | đã có |
-| 17 | 42 | Dữ liệu đơn dùng được là 01/2017–08/2018, hai đầu rất thưa |  | – | đã có |
-| 18 | 43 | 18/74 danh mục (24,3%) tạo 80% GMV, dẫn đầu health_beauty 9,3% |  | – | đã có |
-| 19 | 44 | Seller thì phân tán hơn: 540 seller tạo 80% GMV, 5 seller lớn nhất chỉ 7,7% |  | – | đã có |
-| 20 | 45 | Giao trễ làm điểm review rơi từ 4,29 xuống 1,70 và 79,2% review tiêu cực |  | – | đã có |
-| 21 | 46 | Trễ tập trung ở Bắc và Đông Bắc: Nordeste trễ 12,8%, Norte lead time 22,6 ngày |  | – | đã có |
-| 22 | 47 | Chỉ 380/842 deal (45,1%) có đơn: funnel và bán hàng chỉ giao nhau một phần | 380 là số seller có đơn ở mọi trạng thái; kho chỉ tính đơn không bị huỷ nên có 379 seller (45,0%) | – | đã có |
-| 23 | 48 | Sáu quyết định thiết kế đến từ khám phá dữ liệu |  | – | đã có |
-| 24 | 107 | Haversine SQL thuần tính khoảng cách seller → khách cho 112.650 dòng hàng | 555 dòng (0,49%) thiếu toạ độ vẫn được giữ lại với giá trị trống | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: đoạn SQL dw.haversine_ |
-| 25 | 108 | Từ dưới 100 km lên trên 1.000 km: phí gấp 2,7 lần, lead time gấp 2,9 lần |  | – | đã có |
-| 26 | 109 | Haversine đủ cho khoảng cách điểm–điểm; PostGIS khi cần bán kính hoặc đa giác | GiST chỉ mục không gian; haversine sai số tối đa 0,5% | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng so sánh (report/chapters/3-1-kham-pha |
-| 27 | 133 | Hai phương pháp cùng đánh dấu 24.213 ngoại lai | IQR đánh dấu 45.568, Isolation Forest (contamination 0,05, random_state 42) 26.212; Phí cao đi với hàng nặng (trung vị 5.700 g so với 700 g); 76,9% đơ | – | đã có |
-| 28 | 134 | Cramér's V lớn nhất 0,403 (giao trễ và nhóm review) | V hiệu chỉnh Bergsma cho cặp biến phân loại; cho biến phân loại và biến số; Vùng khách – vùng seller V = 0,072: gần như độc lập | – | đã có |
-| 29 | 135 | STL: xu hướng mạnh 0,73, mùa vụ tuần 0,22 | F = (0, 1 - Var(R)/Var(S+R)); Black Friday 24/11/2017: 1.176 đơn, gấp 6,6 lần trung bình tháng 11 | – | đã có |
+| 1 | 33 | Quy mô dữ liệu: 11 bảng, 121 MB, 1,56 triệu dòng |  | – | đã có |
+| 2 | 34 | Quy mô dữ liệu: bảng toạ độ chiếm 64% số dòng | 1.000.163 dòng geolocation | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: bảng nguồn (làm nổi dòng geolocation) |
+| 3 | 129 | Data flow hiện trạng: hai nguồn tách rời |  | – | đã có |
+| 4 | 130 | Data flow đề xuất: từ nguồn đến BI |  | – | đã có |
+| 5 | 37 | Tần suất cập nhật: nạp đầu 45.430 đơn, 11 đợt tháng |  | – | đã có |
+| 6 | 127 | Tần suất cập nhật: lô hằng ngày là đủ |  | – | đã có |
+| 7 | 128 | Data taxonomy: 11 bảng chia 4 nhóm |  | – | đã có |
+| 8 | 35 | ERD OLTP: chín bảng nối quanh đơn hàng |  | – | đã có |
+| 9 | 36 | ERD OLTP: cột gạch chân đi sang kho | Ví dụ: order_purchase_timestamp → purchase_date_key, price → price | khung chờ | cần ảnh: CHÈN HÌNH / BẢNG: ERD đã gạch chân (vẽ lại) |
+| 10 | 131 | ERD OLTP: 65 trong 71 cột nguồn đi sang OLAP |  | – | đã có |
+| 11 | 132 | OLTP → OLAP: bảng nguồn nuôi dimension và fact |  | – | đã có |
+| 12 | – | Khám phá dữ liệu: năm khối phân tích | Chất lượng dữ liệu Phân bố Thống kê đặc trưng; Tương quan Khuynh hướng và mùa vụ | – | đã có |
+| 13 | – | Chất lượng dữ liệu | Loại lỗi và tỷ lệ ô rỗng; Toạ độ trùng và tên thành phố lệch dấu | – | đã có |
+| 14 | 38 | Chất lượng dữ liệu: 45 loại lỗi cần xử lý ở ODS |  | – | đã có |
+| 15 | 39 | Chất lượng dữ liệu: tỷ lệ ô rỗng theo cột |  | – | đã có |
+| 16 | 40 | Chất lượng dữ liệu: bảng toạ độ bẩn nhất |  | – | đã có |
+| 17 | – | Phân bố | Histogram giá, phí vận chuyển, lead time; Phân bố theo thời gian | – | đã có |
+| 18 | 41 | Phân bố: giá, phí vận chuyển, lead time lệch phải |  | – | đã có |
+| 19 | 32 | Phân bố theo thời gian: 99,6% số đơn trong 01/2017–08/2018 |  | – | đã có |
+| 20 | 42 | Phân bố theo thời gian: hai đầu rất thưa |  | – | đã có |
+| 21 | 43 | Phân bố: 18/74 danh mục tạo 80% GMV (Pareto) |  | – | đã có |
+| 22 | 44 | Phân bố: 540 seller tạo 80% GMV (Pareto) |  | – | đã có |
+| 23 | – | Thống kê đặc trưng | Mean, median, độ lệch, nhọn; Đối chiếu Python với Excel ToolPak | – | đã có |
+| 24 | – | Thống kê đặc trưng: mean, median, độ lệch, nhọn |  | – | đã có |
+| 25 | – | Thống kê đặc trưng (Excel ToolPak): đối chiếu Python |  | khung chờ | cần ảnh: CHÈN ẢNH: Data Analysis → Descriptive Statistics trên export |
+| 26 | 133 | Thống kê đặc trưng: ngoại lai IQR và Isolation Forest | IQR đánh dấu 45.568, Isolation Forest (contamination 0,05, random_state 42) 26.212; Phí cao đi với hàng nặng (trung vị 5.700 g so với 700 g); 76,9% đơ | – | đã có |
+| 27 | – | Tương quan | Fact với fact: khoảng cách, phí vận chuyển, lead time; Dimension với fact: giao trễ, review, vùng | – | đã có |
+| 28 | 108 | Tương quan fact–fact: khoảng cách, phí, lead time |  | – | đã có |
+| 29 | 45 | Tương quan dim–fact: giao trễ và điểm review |  | – | đã có |
+| 30 | 46 | Tương quan dim–fact: vùng và tỷ lệ trễ |  | – | đã có |
+| 31 | 134 | Tương quan dim–dim: Cramér's V lớn nhất 0,403 | V hiệu chỉnh Bergsma cho cặp biến phân loại; cho biến phân loại và biến số; Vùng khách – vùng seller V = 0,072: gần như độc lập | – | đã có |
+| 32 | 47 | Tương quan: funnel và bán hàng giao nhau một phần | 380 là số seller có đơn ở mọi trạng thái; kho chỉ tính đơn không bị huỷ nên có 379 seller (45,0%) | – | đã có |
+| 33 | – | Khuynh hướng và mùa vụ | STL theo ngày và theo tháng; Đỉnh Black Friday | – | đã có |
+| 34 | 135 | Khuynh hướng và mùa vụ: STL số đơn theo ngày | F = (0, 1 - Var(R)/Var(S+R)); Black Friday 24/11/2017: 1.176 đơn, gấp 6,6 lần trung bình tháng 11 | – | đã có |
+| 35 | – | Khuynh hướng và mùa vụ: STL theo tháng |  | – | đã có |
+| 36 | – | Khuynh hướng và mùa vụ: đỉnh Black Friday |  | – | đã có |
+| 37 | 48 | Sáu quyết định thiết kế đến từ khám phá dữ liệu |  | – | đã có |
 
-*29 frame trong `01b-du-lieu-nguon-erd.tex`, `02a-kham-pha.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
+*37 frame trong `01b-du-lieu-nguon-erd.tex`, `02a-kham-pha.tex` (đếm từ mã `.tex`; cột S là số `[Sxx]` trong ghi chú người nói và trong `slides/slide-script.md`).*
 <!-- /SLIDES -->
 
 **Slide cần thêm** (theo `docs/doi-chieu-nhom6.md`):

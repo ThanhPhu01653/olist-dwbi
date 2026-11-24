@@ -1,6 +1,6 @@
 # DB4 – Thu hút và hiệu quả seller
 
-*Loại: Vận hành (funnel). Người dựng: Người 4. Dựng theo `powerbi/model.md` (mục 8); công thức DAX ở `powerbi/measures.md`. Cây phân tích: `huong-dan/05-nghiep-vu-nhap.md` mục 6 (hình `figures/2-3_cay_phan_tich_DB4.png`).*
+*Loại: Vận hành (funnel). Người dựng: Người 4 (Phú dựng file gốc, tổng hợp và chỉnh sửa). Dựng theo `powerbi/model.md` (mục 8); công thức DAX ở `powerbi/measures.md`. Cây phân tích: `huong-dan/05-nghiep-vu-nhap.md` mục 6 (hình `figures/2-3_cay_phan_tich_DB4.png`).*
 
 ## 1. Mục tiêu
 
@@ -124,13 +124,16 @@ Checklist chung ở [`README.md`](README.md); ma trận mục × dashboard ở �
 | Chuỗi thời gian có dự báo | – | không áp dụng (dự báo ở DB1) |
 | Thống kê: Key Influencers | – | không áp dụng (Key Influencers ở DB2) |
 | Publish web và mã QR | ✓ | cùng báo cáo với các dashboard khác |
+| Thanh tiêu đề và icon minh hoạ | ✓ | mỗi trang có thanh tiêu đề và icon minh hoạ |
+| Menu điều hướng giữa các trang | ✓ | nút điều hướng (Page navigator) giữa các trang của dashboard |
+| Tiêu đề mỗi đồ thị | ✓ | mỗi đồ thị có tiêu đề (xem danh sách bên dưới) |
 
 **Định dạng số** (*Measure tools → Format → Custom* hoặc *Display units* của visual):
 
 | Chỉ số | Loại | Định dạng |
 | --- | --- | --- |
 | MQLs, Won deals | số | `#,0` |
-| MQL to won rate, Won to first sale rate, Seller late rate | phần trăm | `0.0%` |
+| MQL to won rate, Won to first sale rate, Seller late rate | phần trăm | `0%` (thẻ KPI; dưới 10% hoặc cần phân biệt: `0.0%`) |
 | Avg days to close, Avg days won to first sale | ngày | `0.0` |
 | Seller GMV (monthly), Seller GMV first 90d | tiền | `#,0.0,"K"` |
 
@@ -181,6 +184,9 @@ Cột **Cửa sổ 2017-01 → 2018-08** là số khi bật bộ lọc trang `In
 - [ ] **Drill-through**: trang *Chi tiết seller* (trường `seller_id`)
 - [ ] **Tooltip**: `Tooltip_Kenh`
 - [ ] **Publish web và mã QR**: cùng báo cáo với các dashboard khác
+- [ ] **Thanh tiêu đề và icon minh hoạ**: mỗi trang có thanh tiêu đề và icon minh hoạ
+- [ ] **Menu điều hướng giữa các trang**: nút điều hướng (Page navigator) giữa các trang của dashboard
+- [ ] **Tiêu đề mỗi đồ thị**: mỗi đồ thị có tiêu đề (xem danh sách bên dưới)
 - [ ] **Số liệu khớp bảng giá trị kỳ vọng ở mục 9**: đối chiếu từng card
 - [ ] **Màu theo `powerbi/theme.json`; font Segoe UI; không quá 6–8 visual một trang**
 - [ ] **Ảnh chụp**: đặt tên `4_DB4_<mô-tả>.png` (ví dụ `4_DB4_trang1_tong_quan.png`) vào `figures/`

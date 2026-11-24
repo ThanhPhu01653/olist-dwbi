@@ -135,8 +135,10 @@ for m in re.finditer(r"^## (\d)\. (DB?\d) – (.+)$", MEAS, flags=re.M):
 SECTION_FOLDER[6] = "Cảnh báo màu"
 ETL_FOLDER = "Giám sát ETL"
 
-KM_MONEY = '[>=1000000]#,0.0,,"M";[>=1000]#,0.0,"K";#,0.00'
-KM_COUNT = '[>=1000000]#,0.0,,"M";[>=1000]#,0.0,"K";#,0'
+# Power BI không hiểu điều kiện kiểu Excel ([>=1000000]...) trong chuỗi định dạng measure: nó in nguyên văn ra thẻ.
+# Dùng số nguyên có dấu phân cách; rút gọn K/M do visual lo (Format → Display units = Auto).
+KM_MONEY = '#,0'
+KM_COUNT = '#,0'
 KM_MONEY_NAMES = {"GMV USD", "GMV real", "GMV USD last year", "GMV real last year", "GMV", "GMV last month", "GMV last year", "GMV YTD", "GMV by shipping limit date", "GMV by seller state", "Freight", "Payment value",
                   "Seller GMV (monthly)", "Seller GMV first 90d"}
 KM_COUNT_NAMES = {"Population", "Orders on official holidays", "Orders", "Items", "Orders placed", "Failed orders", "Delivered orders", "Late orders", "Reviews", "Payments", "Customers", "Repeat customers",

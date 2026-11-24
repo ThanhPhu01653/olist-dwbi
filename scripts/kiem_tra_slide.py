@@ -23,7 +23,7 @@ SECTIONS = ROOT / "slides" / "sections"
 
 IMG = re.compile(r"\\(includegraphics|anh|HinhLon|AnhChup|HinhChu)\b|\\begin\{AnhKhoanh\}")
 SMALL = re.compile(r"\\(scriptsize|tiny|footnotesize)\b")
-TITLE_MAX = 80          # theme cắt tiêu đề ở một dòng; có nhãn mục ở góc phải
+TITLE_MAX = 65          # P12: tiêu đề = tên mục trong checklist của thầy + ": kết luận ngắn"; tối đa 65 ký tự
 KETLUAN_MAX = 85        # thanh kết luận một dòng
 MAX_ITEMS = 5
 MAX_ITEM_CHARS = 110
@@ -90,7 +90,7 @@ def check_frame(title: str, body: str) -> list[tuple[str, str, str]]:
 
     t = visible_text(title)
     if len(t) > TITLE_MAX:
-        add("LỖI", "R1", f"tiêu đề {len(t)} ký tự > {TITLE_MAX}: theme sẽ cắt; viết gọn lại (giữ con số)")
+        add("LỖI", "R1", f"tiêu đề {len(t)} ký tự > {TITLE_MAX}: dùng tên mục + kết luận ngắn, con số chi tiết để ở \\KetLuan")
 
     # R2: số hình nhìn thấy cùng lúc (hình trong \only<n>{...} tính theo từng bước)
     only_imgs: dict[str, int] = {}
@@ -182,6 +182,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("files", nargs="*")
     ap.add_argument("--strict", action="store_true")
+    ap.add_argument("--final", action="store_true", help="ban thuyet trinh cuoi: LOI neu con khung cho, nhan xac nhan, todo, lorem")
     ap.add_argument("--anh", nargs=2, metavar=("PDF", "TRANG"))
     a = ap.parse_args()
     if a.anh:
@@ -193,6 +194,15 @@ def main():
             for level, code, msg in check_frame(title, body):
                 print(f"{f.name}:{line}  {level} {code}  [{visible_text(title)[:60]}]  {msg}")
                 n_err += level == "LỖI"; n_warn += level == "NÊN"
+    if a.final:
+        pat = re.compile(r"\\khungchen|\\canxacnhan|\\todo|TODO|lorem|CHÈN (HÌNH|ẢNH|BẢNG)", re.I)
+        for f in files:
+            for i, ln in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+                if ln.lstrip().startswith("%") or "\\newcommand" in ln:
+                    continue
+                if pat.search(ln):
+                    print(f"{f.name}:{i}  LỖI final  còn chữ giữ chỗ: {ln.strip()[:70]}")
+                    n_err += 1
     print(f"\nTổng: {n_err} LỖI, {n_warn} NÊN")
     if a.strict and n_err:
         sys.exit(1)

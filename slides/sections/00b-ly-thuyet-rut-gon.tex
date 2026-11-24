@@ -1,14 +1,14 @@
-\begin{frame}{Kho dữ liệu là nơi tích hợp dữ liệu hướng chủ đề, biến thiên theo thời gian}
+\begin{frame}{Lý thuyết: kho dữ liệu hướng chủ đề, biến thiên theo thời gian}
 \muc{Mở đầu · lý thuyết rút gọn}
 \begin{itemize}
   \item Bốn đặc tính của Inmon: hướng chủ đề, tích hợp, biến thiên theo thời gian, không biến động
 \end{itemize}
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: sơ đồ 4 ô (vẽ)}
 
-\note{[S04] Ở dự án này chủ đề là quản lý đơn hàng; tích hợp hai nguồn bán hàng và marketing; lịch sử khách được giữ bằng SCD2. Tiêu đề đầy đủ trước khi rút gọn: Kho dữ liệu là nơi tích hợp dữ liệu hướng chủ đề, biến thiên theo thời gian và không bị ghi đè}
+\note{[S04] Ở dự án này chủ đề là quản lý đơn hàng; tích hợp hai nguồn bán hàng và marketing; lịch sử khách được giữ bằng SCD2. Tiêu đề đầy đủ trước khi rút gọn: Kho dữ liệu là nơi tích hợp dữ liệu hướng chủ đề, biến thiên theo thời gian và không bị ghi đè Tiêu đề trước đây: Kho dữ liệu là nơi tích hợp dữ liệu hướng chủ đề, biến thiên theo thời gian}
 \end{frame}
 
-\begin{frame}{OLTP tối ưu ghi từng giao dịch, OLAP tối ưu đọc và tổng hợp}
+\begin{frame}{Lý thuyết: OLTP tối ưu ghi, OLAP tối ưu đọc}
 \muc{Mở đầu · lý thuyết rút gọn}
 \only<1>{%
 \begin{BangTC}{lXX}
@@ -23,5 +23,5 @@ Ví dụ & \texttt{orders}, \texttt{order\_items} & \texttt{fact\_order\_item}, 
 \only<2>{%
 \AnhChup{3-2-4_erd_oltp.png}
 \KetLuan{OLTP: 9 bảng chuẩn hóa (ERD hệ thống bán hàng)}}
-\note{[S05] Cùng một câu hỏi "GMV theo bang theo tháng" cần nối ba bảng ở nguồn nhưng chỉ nối một fact với hai chiều ở kho.}
+\note{[S05] Cùng một câu hỏi "GMV theo bang theo tháng" cần nối ba bảng ở nguồn nhưng chỉ nối một fact với hai chiều ở kho. Tiêu đề trước đây: OLTP tối ưu ghi từng giao dịch, OLAP tối ưu đọc và tổng hợp}
 \end{frame}

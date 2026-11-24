@@ -1,6 +1,6 @@
 # Hướng dẫn dựng dashboard: DB1–DB4 và checklist chung
 
-Bộ dashboard Power BI gồm **4 dashboard** (gộp từ 7 dashboard ở bản trước). Mỗi dashboard thuộc một loại mà môn học yêu cầu và do một thành viên dựng trên cùng một file `.pbix` gốc, sau đó ghép thành bộ chung.
+Bộ dashboard Power BI gồm **4 dashboard** (gộp từ 7 dashboard ở bản trước, quyết định ngày 13/11). Mỗi dashboard thuộc một loại mà môn học yêu cầu và do một thành viên dựng; Phú làm file `.pbix` gốc, tổng hợp và chỉnh sửa.
 
 | Dashboard | Loại | Người dựng | Hướng dẫn |
 | --- | --- | --- | --- |
@@ -17,7 +17,7 @@ Bộ dashboard Power BI gồm **4 dashboard** (gộp từ 7 dashboard ở bản 
 
 | Mục | Yêu cầu | Ví dụ / nơi xem |
 | --- | --- | --- |
-| Định dạng số | mọi số dùng đơn vị rút gọn và dấu phân cách; phần trăm 1 chữ số thập phân | số đơn 12.3K; tiền 13.5M; 12,4% |
+| Định dạng số | con số có nghĩa: phần trăm trên thẻ KPI làm tròn số nguyên, một chữ số thập phân chỉ khi dưới 10% hoặc cần phân biệt; tiền rút gọn | 93%; 3,1%; 13,5 triệu |
 | Tiêu đề dạng câu hỏi | mỗi visual có tiêu đề là câu hỏi mà nó trả lời | "GMV tháng này tăng hay giảm so với tháng trước?" |
 | Màu đỏ chỉ để cảnh báo | đỏ chỉ ở giá trị xấu hoặc vượt ngưỡng; màu dữ liệu của chủ đề không có đỏ | `powerbi/theme.json` |
 | Định dạng có điều kiện | measure DAX trả về màu (`Color …`) cho card, bảng, bản đồ | `powerbi/measures.md` mục 6 |
@@ -28,6 +28,9 @@ Bộ dashboard Power BI gồm **4 dashboard** (gộp từ 7 dashboard ở bản 
 | Chuỗi thời gian có dự báo | line chart theo tháng có đường dự báo (Analytics → Forecast) | DB1: GMV theo tháng |
 | Thống kê: Key Influencers | visual AI cho biết yếu tố nào đi kèm kết quả cần giải thích | DB2: review tiêu cực |
 | Publish web và mã QR | publish công khai (không cần đăng nhập) và mã QR của link | `powerbi/model.md` mục 9 |
+| Thanh tiêu đề và icon minh hoạ | mỗi trang có thanh tiêu đề và icon minh hoạ | theo mẫu trang trong `powerbi/theme.json` |
+| Menu điều hướng giữa các trang | nút điều hướng (Page navigator) chuyển giữa các trang của dashboard | Insert → Buttons → Navigator → Page navigator |
+| Tiêu đề mỗi đồ thị | mỗi đồ thị có tiêu đề (Format → Title) | danh sách tiêu đề ở mục 7 của từng DB*.md |
 
 ## 2. Ma trận đáp ứng (mục checklist × dashboard)
 
@@ -46,12 +49,17 @@ Ký hiệu: **✓** dashboard đáp ứng mục đó; **–** không áp dụng 
 | Chuỗi thời gian có dự báo | ✓ | – | – | – |
 | Thống kê: Key Influencers | – | ✓ | – | – |
 | Publish web và mã QR | ✓ | ✓ | ✓ | ✓ |
+| Thanh tiêu đề và icon minh hoạ | ✓ | ✓ | ✓ | ✓ |
+| Menu điều hướng giữa các trang | ✓ | ✓ | ✓ | ✓ |
+| Tiêu đề mỗi đồ thị | ✓ | ✓ | ✓ | ✓ |
 
 Mỗi mục có ít nhất một dashboard đáp ứng: dự báo ở DB1, Key Influencers ở DB2, OLAP drill-down ở DB3, drill-through ở DB3 và DB4. Định dạng số, tiêu đề câu hỏi, màu đỏ cảnh báo và định dạng có điều kiện áp dụng cho cả bốn dashboard.
 
 ## 3. Hướng dẫn chi tiết
 
-**Định dạng số.** Chọn visual → *Format → Display units* (Thousands, Millions) và *Value decimal places = 1*; với measure dùng *Measure tools → Format → Custom*: `#,0.0,,"M"` (triệu), `#,0.0,"K"` (nghìn), `0.0%` (phần trăm một chữ số thập phân). Dấu phân cách hàng nghìn bật ở *Format → Value*. Luôn ghi đơn vị (BRL, ngày, %) ở tiêu đề hoặc nhãn trục.
+**Định dạng số: con số có nghĩa.** Measure dùng định dạng `#,0` (giá trị thật vẫn đầy đủ); việc rút gọn làm ở visual: *Format → Display units* (Thousands, Millions). Phần trăm trên thẻ KPI làm tròn số nguyên (93%); chỉ giữ một chữ số thập phân khi giá trị dưới 10% hoặc cần phân biệt (3,1%). Tiền rút gọn theo triệu hoặc nghìn (13,5 triệu); ví dụ 12,39% hiển thị 12%. Luôn ghi đơn vị (BRL, ngày, %) ở tiêu đề hoặc nhãn trục.
+
+**Thanh tiêu đề, icon và menu.** Mỗi trang có thanh tiêu đề và icon minh hoạ; thêm *Insert → Buttons → Navigator → Page navigator* để chuyển giữa các trang; mỗi đồ thị có tiêu đề (*Format → Title*). Đây là các mục thầy ghi "chưa" trong checklist.
 
 **Tiêu đề dạng câu hỏi.** Mỗi visual có tiêu đề là câu hỏi nó trả lời (mục 7 của từng DB*.md có danh sách); tiêu đề trang cũng là câu hỏi chính của dashboard.
 
