@@ -1060,3 +1060,34 @@ CRM (\texttt{mql}, \texttt{closed\_deals}) và danh mục & 2.076 & 8.913 \\
 \note{[P12] Khung chờ ảnh đoạn DAX chính; nguồn powerbi/measures.md (Người phụ trách dashboard điền).}
 % khung-cho: KHÔNG BẮT BUỘC (frame đã chuyển sang dự phòng ở P12b)
 \end{frame}
+
+%% ===== P12c: slide dự phòng cho khối Tương quan =====
+\begin{frame}[noprogressbar,noframenumbering]{Tương quan do định nghĩa: ma trận Spearman đã đánh dấu}
+\muc{3.1 · Khám phá dữ liệu · Tương quan}
+\HinhLon{3-1_spearman_slide.png}
+\KetLuan{Vận chuyển -- lead time 0,89 do định nghĩa; tiền hàng -- thanh toán 0,99 đã bỏ}
+\note{[P12c] Ma trận Spearman 8 biến của đơn đã giao, nửa dưới tam giác. Hai cặp tương quan do định nghĩa trong ma trận 12 biến cũ: tiền hàng -- tổng thanh toán 0,99 (thanh toán = tiền hàng + phí vận chuyển, nên chỉ giữ tiền hàng) và ngày vận chuyển -- lead time 0,89 (ngày vận chuyển là một phần của lead time, ô được đánh dấu $\dagger$). Các cặp còn lại là phát hiện: phí -- cân nặng 0,49, trễ -- review $-0{,}18$, lead time -- review $-0{,}23$. Nguồn: scripts/eda/p12c_categorical.py.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{Kiểm định $\chi^2$: bảy cặp biến phân loại mạnh nhất}
+\muc{3.1 · Khám phá dữ liệu · Tương quan}
+\begin{BangTC}{lrrrrr}
+\textbf{Cặp biến} & \textbf{$\chi^2$} & \textbf{p} & \textbf{V} & \textbf{U (hàng | cột)} & \textbf{U (cột | hàng)} \\ \midrule
+Cờ giao trễ -- nhóm review & 15.562 & < 0,001 & 0,403 & 0,222 & 0,083 \\
+Trạng thái đơn -- nhóm review & 9.649 & < 0,001* & 0,221 & 0,187 & 0,047 \\
+Nhóm ngành -- vùng seller & 4.997 & < 0,001 & 0,112 & 0,011 & 0,043 \\
+Vùng khách -- cờ giao trễ & 577 & < 0,001 & 0,077 & 0,003 & 0,010 \\
+Vùng khách -- vùng seller & 2.086 & < 0,001 & 0,072 & 0,009 & 0,016 \\
+Thanh toán -- trạng thái đơn & 940 & < 0,001* & 0,048 & 0,002 & 0,007 \\
+Nhóm ngành -- vùng khách & 865 & < 0,001 & 0,046 & 0,002 & 0,005 \\
+\end{BangTC}
+\KetLuan{19/21 cặp có p < 0,05 nhưng chỉ 3 cặp có V từ 0,1: đọc độ mạnh, không đọc p}
+\note{[P12c] * là p tính bằng Monte Carlo (2.000 lần hoán vị) vì hơn 20\% ô kỳ vọng nhỏ hơn 5; giá trị nhỏ nhất có thể là khoảng 0,0005. U (hàng | cột): biến đầu của cặp là biến cần đoán. Bảng đủ 21 cặp ở handoff/2026-11-25-P12c-tuong-quan.md.}
+\end{frame}
+
+\begin{frame}[noprogressbar,noframenumbering]{MCA: bản đồ giao trễ, review, vùng khách, trạng thái}
+\muc{3.1 · Khám phá dữ liệu · Tương quan}
+\HinhLon{3-1_mca.png}
+\KetLuan{Hai trục giải thích 31,5\%; giao trễ và review tiêu cực cùng phía trục 2}
+\note{[P12c] Phân tích tương ứng nhiều biến (MCA) trên bốn biến, tính bằng SVD trên ma trận chỉ báo của 99.441 đơn (không dùng gói prince). Trục 1 giải thích 19,8\%, trục 2 giải thích 11,7\% quán tính; quán tính thô của MCA thấp là bình thường vì ma trận chỉ báo nhiều chiều, nên chỉ đọc vị trí tương đối, không kết luận hơn. Trục 1 tách đơn chưa giao, hủy, đang xử lý khỏi đơn đã giao; trục 2 đặt giao trễ gần review tiêu cực, cùng chiều với V = 0,40 và odds ratio 16. Giá trị thiếu giữ thành nhóm riêng (chưa giao, chưa có review).}
+\end{frame}
