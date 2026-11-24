@@ -89,7 +89,7 @@ Nội dung đã dựng sẵn để nhóm biết dùng:
 | Sắp xếp theo cột | `month_name` theo `month`; `day_name` theo `day_of_week`; `delay_bucket` theo `delay_bucket_no`; `stage` theo `stage_no`; `Delay bucket` theo `Delay bucket order` |
 | Cột tính toán | `Delay bucket` và `Delay bucket order` trên `fact_order_fulfillment`; 7 cột cho Key Influencers của DB2 trên `fact_review` (`Review type`, `Delay days (order)`, …) |
 | Measure | 76 measure trong `_Measures`, thư mục hiển thị: `D8 Thị trường Brazil`, `DB1 Tổng quan và doanh thu`, `DB2 Giao hàng và trải nghiệm khách`, `DB3 Địa lý và phí vận chuyển`, `DB4 Thu hút và hiệu quả seller` (kèm thư mục con), `Cảnh báo màu`, `Giám sát ETL` |
-| Định dạng measure | tiền `13.5M` / `998.2K`; số đơn `98.2K`; phần trăm `0.0%`; ngày `0.0` (chuỗi `[>=1000000]#,0.0,,"M";[>=1000]#,0.0,"K";…`) |
+| Định dạng measure | tiền và số đếm `#,0` (số nguyên có dấu phân cách); rút gọn `13.5M` / `98.2K` đặt ở visual: Format → Display units = Auto; phần trăm `0.0%`; ngày `0.0` |
 | Cột ẩn | mọi cột `*_key`, `etl_batch_id`, `Delay bucket order` |
 | Báo cáo | 6 trang trống: DB1, DB2, DB3, *DB3 Chi tiết bang* (drill-through theo `dim_geography[state_code]`), DB4, *DB4 Chi tiết seller* (drill-through theo `dim_seller[seller_id]`); theme `powerbi/theme.json` |
 
