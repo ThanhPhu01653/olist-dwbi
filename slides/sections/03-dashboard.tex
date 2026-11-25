@@ -22,7 +22,7 @@ DB4 Thu hút và hiệu quả seller & quản lý seller và đội sales (SDR, 
 \KetLuan{Bốn dashboard, bốn nhóm người dùng, bốn loại câu hỏi}}
 \only<2>{%
 \khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: bảng 4 dashboard (\texttt{huong-dan/dashboards/})}}
-\note{[S89] Mỗi dashboard dùng nhiều loại biểu đồ, slicer và định dạng có điều kiện. Tần suất xem: DB1 hằng tuần, hằng tháng; DB2 hằng ngày đến hằng tuần (vận hành), hằng tuần (chăm sóc khách); DB3 hằng ngày đến hằng tuần (vận hành), hằng tháng (kinh doanh); DB4 hằng tuần, hằng tháng. Câu hỏi mở đầu: DB1 GMV tăng hay giảm so với tháng trước và cùng kỳ năm trước; DB2 ngày hứa giao và ngày giao thực tế chênh nhau bao nhiêu; DB3 seller và khách xa nhau bao nhiêu, ảnh hưởng freight và lead time ra sao; DB4 bao nhiêu phần trăm MQL được chốt theo từng kênh. Bốn trang Tình huống riêng từng dashboard nằm ở dự phòng. Bấm để chuyển giữa bảng và khung chờ.}
+\note{[P12f] Mỗi dashboard một trang; trang drill-through và tooltip (nếu có) là trang ẩn, không tính là trang dashboard. [S89] Mỗi dashboard dùng nhiều loại biểu đồ, slicer và định dạng có điều kiện. Tần suất xem: DB1 hằng tuần, hằng tháng; DB2 hằng ngày đến hằng tuần (vận hành), hằng tuần (chăm sóc khách); DB3 hằng ngày đến hằng tuần (vận hành), hằng tháng (kinh doanh); DB4 hằng tuần, hằng tháng. Câu hỏi mở đầu: DB1 GMV tăng hay giảm so với tháng trước và cùng kỳ năm trước; DB2 ngày hứa giao và ngày giao thực tế chênh nhau bao nhiêu; DB3 seller và khách xa nhau bao nhiêu, ảnh hưởng freight và lead time ra sao; DB4 bao nhiêu phần trăm MQL được chốt theo từng kênh. Bốn trang Tình huống riêng từng dashboard nằm ở dự phòng. Bấm để chuyển giữa bảng và khung chờ.}
 \end{frame}
 
 \begin{frame}{Mô hình Power BI: 16 bảng sao, 32 quan hệ cho DB1–DB4}
@@ -59,44 +59,10 @@ Phần trăm dưới 10\% hoặc cần phân biệt & một chữ số thập ph
 \note{[P12] Checklist của thầy: đơn vị tính trên dashboard, định dạng số, dùng con số có nghĩa (ví dụ 12,39\% thành 12\%). Giá trị thật vẫn đầy đủ trong DAX; đây chỉ là cách hiển thị. Quy chuẩn ghi ở huong-dan/dashboards/README.md.}
 \end{frame}
 
-\begin{frame}{DB1 – Dashboard: trang 1 tổng quan}
+\begin{frame}{DB1 – Dashboard: một trang}
 \muc{4 · DB1 Tổng quan và doanh thu}
-\begin{itemize}
-  \item Thẻ KPI, đường GMV theo tháng, cột MoM, thanh theo vùng, treemap ngành
-\end{itemize}
-\khungchen{CHÈN ẢNH CHỤP DB1 trang 1}
-
-\note{[S93] Trang tổng quan cho lãnh đạo. Tiêu đề trước đây: DB1 trang 1: GMV 13,49 triệu BRL, 98.199 đơn, đúng hạn 93,2\%, review 4,09}
-\end{frame}
-
-\begin{frame}{DB1 – Dashboard: trang 1 xu hướng và dự báo}
-\muc{4 · DB1 Tổng quan và doanh thu}
-\begin{itemize}
-  \item Black Friday 152.654 BRL trong một ngày
-\end{itemize}
-\khungchen{CHÈN ẢNH CHỤP DB1 trang 1}
-
-\note{[S94] Từ 03/2018 GMV đi ngang nhưng cao hơn cùng kỳ (05/2018 +97\%). Tiêu đề đầy đủ trước khi rút gọn: DB1 trang 1: tháng 11/2017 là đỉnh 1,0 triệu BRL, Sudeste 65\% GMV, có đường dự báo Tiêu đề trước đây: DB1 trang 1: đỉnh 11/2017 là 1,0 triệu BRL, Sudeste 65\% GMV, có dự báo}
-\end{frame}
-
-\begin{frame}{DB1 – Dashboard: trang 2 danh mục}
-\muc{4 · DB1 Tổng quan và doanh thu}
-\begin{itemize}
-  \item Treemap, ma trận drill, Pareto, scatter AOV – freight
-\end{itemize}
-\khungchen{CHÈN ẢNH CHỤP DB1 trang 2}
-
-\note{[S95] Drill từ nhóm ngành xuống danh mục. Tiêu đề trước đây: DB1 trang 2: 18 danh mục tạo 80\% GMV; Home \& Furniture dẫn đầu 22,8\%}
-\end{frame}
-
-\begin{frame}{DB1 – Dashboard: trang 2 phí vận chuyển}
-\muc{4 · DB1 Tổng quan và doanh thu}
-\begin{itemize}
-  \item Freight ratio 16,6\% toàn sàn
-\end{itemize}
-\khungchen[0.3\textheight]{CHÈN HÌNH / BẢNG: ảnh chụp DB1 trang 2 (scatter)}
-
-\note{[S96] Danh mục nhẹ giá thấp bị phí vận chuyển ăn vào nhiều nhất. Tiêu đề trước đây: DB1 trang 2: phí vận chuyển nặng ở hàng giá thấp và ở vùng xa}
+\khungchen{CHÈN ẢNH CHỤP DB1 (cả trang)}
+\note{[P12f] DB1 gộp thành một trang dashboard; nhóm tự chọn các biểu đồ quan trọng. Ý từ các trang cũ: [S93] Trang tổng quan cho lãnh đạo. Tiêu đề trước đây: DB1 trang 1: GMV 13,49 triệu BRL, 98.199 đơn, đúng hạn 93,2\%, review 4,09 [S94] Từ 03/2018 GMV đi ngang nhưng cao hơn cùng kỳ (05/2018 +97\%). Tiêu đề đầy đủ trước khi rút gọn: DB1 trang 1: tháng 11/2017 là đỉnh 1,0 triệu BRL, Sudeste 65\% GMV, có đường dự báo Tiêu đề trước đây: DB1 trang 1: đỉnh 11/2017 là 1,0 triệu BRL, Sudeste 65\% GMV, có dự báo [S95] Drill từ nhóm ngành xuống danh mục. Tiêu đề trước đây: DB1 trang 2: 18 danh mục tạo 80\% GMV; Home \& Furniture dẫn đầu 22,8\% [S96] Danh mục nhẹ giá thấp bị phí vận chuyển ăn vào nhiều nhất. Tiêu đề trước đây: DB1 trang 2: phí vận chuyển nặng ở hàng giá thấp và ở vùng xa}
 \end{frame}
 
 \begin{frame}{DB1 – Phát hiện và quyết định}
@@ -123,55 +89,10 @@ Phí vận chuyển nặng ở hàng giá thấp và vùng xa (freight ratio 16,
 \note{[P12b] Một slide DAX chung cho bốn dashboard; bốn slide DAX riêng (khung chờ ảnh đoạn DAX, không bắt buộc) nằm ở dự phòng. Nguồn: powerbi/measures.md; cảnh báo màu của Promised vs actual ở mục định dạng có điều kiện; Freight ratio đỏ khi trên 25\%.}
 \end{frame}
 
-\begin{frame}{DB2 – Dashboard: trang 1 lead time và phễu}
+\begin{frame}{DB2 – Dashboard: một trang}
 \muc{4 · DB2 Giao hàng và trải nghiệm khách}
-\begin{itemize}
-  \item Funnel, cột chồng từng chặng, bản đồ trễ
-\end{itemize}
-\khungchen{CHÈN ẢNH CHỤP DB2 trang 1}
-
-\note{[S97] KPI "hứa so với thực tế" nằm trên đầu trang. Tiêu đề trước đây: DB2 trang 1: lead time 12,6 ngày, phễu trạng thái và tỷ lệ trễ theo bang}
-\end{frame}
-
-\begin{frame}{DB2 – Dashboard: trang 1 hứa so với thực tế}
-\muc{4 · DB2 Giao hàng và trải nghiệm khách}
-\begin{itemize}
-  \item Đúng hạn tụt 87,6\% ở Black Friday 11/2017 và 81,0\% ở 03/2018
-\end{itemize}
-\khungchen{CHÈN ẢNH CHỤP DB2 trang 1}
-
-\note{[S98] Tải cao làm giao chậm dù trung bình vẫn "đúng hạn". Tiêu đề trước đây: DB2 trang 1: Olist hứa 24,4 ngày, giao 12,6 ngày, sớm hơn lời hứa 11,8 ngày}
-\end{frame}
-
-\begin{frame}{DB2 – Dashboard: trang 2 review và khách quay lại}
-\muc{4 · DB2 Giao hàng và trải nghiệm khách}
-\begin{itemize}
-  \item Cột điểm theo nhóm trễ, donut thanh toán, RFM, cohort
-\end{itemize}
-\khungchen{CHÈN ẢNH CHỤP DB2 trang 2}
-
-\note{[S101] Có sáu phân khúc RFM trên 94.983 khách. Tiêu đề trước đây: DB2 trang 2: review 4,09, 14,7\% tiêu cực, chỉ 3,1\% khách quay lại}
-\end{frame}
-
-\begin{frame}{DB2 – Dashboard: trang 2 cơ cấu thanh toán}
-\muc{4 · DB2 Giao hàng và trải nghiệm khách}
-\begin{itemize}
-  \item 66,9\% giao dịch thẻ trả góp nhiều kỳ
-\end{itemize}
-\khungchen{CHÈN ẢNH CHỤP DB2 trang 2}
-
-\note{[S102] Boleto chiếm 17,9\%. Tiêu đề trước đây: DB2 trang 2: thẻ tín dụng 78,3\% giá trị thanh toán, trả góp trung bình 3,5 kỳ}
-\end{frame}
-
-\begin{frame}{DB2 – Dashboard: trang 3 Key Influencers}
-\muc{4 · DB2 Giao hàng và trải nghiệm khách}
-\begin{itemize}
-  \item Kỳ vọng từ khám phá dữ liệu: giao trễ đứng đầu (Cramér's V 0,403; $\eta$ 0,392)
-  \item Mô hình thống kê tự động, không chứng minh nhân quả
-\end{itemize}
-\khungchen[0.3\textheight]{CHÈN ẢNH CHỤP DB2 trang 3 (Key Influencers)}
-
-\note{[S145] Người 2 dựng trang và ghi các yếu tố đứng đầu. Tiêu đề trước đây: DB2 trang 3: Key Influencers cho biết yếu tố nào đi kèm review tiêu cực}
+\khungchen{CHÈN ẢNH CHỤP DB2 (cả trang)}
+\note{[P12f] DB2 gộp thành một trang dashboard; nhóm tự chọn các biểu đồ quan trọng. Ý từ các trang cũ: [S97] KPI "hứa so với thực tế" nằm trên đầu trang. Tiêu đề trước đây: DB2 trang 1: lead time 12,6 ngày, phễu trạng thái và tỷ lệ trễ theo bang [S98] Tải cao làm giao chậm dù trung bình vẫn "đúng hạn". Tiêu đề trước đây: DB2 trang 1: Olist hứa 24,4 ngày, giao 12,6 ngày, sớm hơn lời hứa 11,8 ngày [S101] Có sáu phân khúc RFM trên 94.983 khách. Tiêu đề trước đây: DB2 trang 2: review 4,09, 14,7\% tiêu cực, chỉ 3,1\% khách quay lại [S102] Boleto chiếm 17,9\%. Tiêu đề trước đây: DB2 trang 2: thẻ tín dụng 78,3\% giá trị thanh toán, trả góp trung bình 3,5 kỳ [S145] Người 2 dựng trang và ghi các yếu tố đứng đầu. Tiêu đề trước đây: DB2 trang 3: Key Influencers cho biết yếu tố nào đi kèm review tiêu cực}
 \end{frame}
 
 \begin{frame}{DB2 – Phát hiện và quyết định}
@@ -186,24 +107,10 @@ Review tiêu cực 14,7\%; chỉ 3,1\% khách quay lại & Theo dõi Key Influen
 \note{[P12b] Gộp Phát hiện và Quyết định một trang (câu chữ Quyết định giữ nguyên). Trang Phát hiện cũ (thẻ số) nằm ở dự phòng. Còn lại: review trung bình 4,09; thẻ tín dụng 78,3\% giá trị thanh toán, trả góp trung bình 3,5 kỳ; 66,9\% giao dịch thẻ trả góp nhiều kỳ; boleto 17,9\%.}
 \end{frame}
 
-\begin{frame}{DB3 – Dashboard: trang 1 bản đồ và phí}
+\begin{frame}{DB3 – Dashboard: một trang}
 \muc{4 · DB3 Địa lý và phí vận chuyển}
-\begin{itemize}
-  \item Bản đồ bong bóng, ma trận phân cấp, GMV khách và seller
-\end{itemize}
-\khungchen{CHÈN ẢNH CHỤP DB3 trang 1}
-
-\note{[S99] Dùng \texttt{v\_\allowbreak{}geo\_\allowbreak{}state} và \texttt{v\_\allowbreak{}geo\_\allowbreak{}zip} cho bản đồ. Tiêu đề trước đây: DB3 trang 1: Sudeste 65,4\% GMV, Norte và Nordeste chịu phí vận chuyển 22\%}
-\end{frame}
-
-\begin{frame}{DB3 – Dashboard: trang 1 drill-down vùng đến thành phố}
-\muc{4 · DB3 Địa lý và phí vận chuyển}
-\begin{itemize}
-  \item Khoảng cách TB 598 km
-\end{itemize}
-\khungchen{CHÈN ẢNH CHỤP DB3 trang 1}
-
-\note{[S100] Mô hình vai trò địa lý seller cho phép so sánh hai phía. Tiêu đề đầy đủ trước khi rút gọn: DB3 trang 1: 36\% dòng hàng có seller và khách cùng bang; drill-down vùng đến thành phố Tiêu đề trước đây: DB3 trang 1: 36\% dòng hàng seller và khách cùng bang; drill-down tới thành phố}
+\khungchen{CHÈN ẢNH CHỤP DB3 (cả trang)}
+\note{[P12f] DB3 gộp thành một trang dashboard; nhóm tự chọn các biểu đồ quan trọng. Ý từ các trang cũ: [S99] Dùng \texttt{v\_\allowbreak{}geo\_\allowbreak{}state} và \texttt{v\_\allowbreak{}geo\_\allowbreak{}zip} cho bản đồ. Tiêu đề trước đây: DB3 trang 1: Sudeste 65,4\% GMV, Norte và Nordeste chịu phí vận chuyển 22\% [S100] Mô hình vai trò địa lý seller cho phép so sánh hai phía. Tiêu đề đầy đủ trước khi rút gọn: DB3 trang 1: 36\% dòng hàng có seller và khách cùng bang; drill-down vùng đến thành phố Tiêu đề trước đây: DB3 trang 1: 36\% dòng hàng seller và khách cùng bang; drill-down tới thành phố}
 \end{frame}
 
 \begin{frame}{DB3 – Dashboard: trang 2 drill-through và tooltip}
@@ -228,24 +135,10 @@ Seller cách khách trung bình 598 km; 36\% dòng hàng cùng bang & Cân nhắ
 \note{[P12b] Gộp Phát hiện và Quyết định một trang (câu chữ Quyết định giữ nguyên). Trang Phát hiện cũ (thẻ số) nằm ở dự phòng. Drill-down từ vùng xuống thành phố cho thấy nơi phí cao. Bản đồ dùng v_geo_state và v_geo_zip.}
 \end{frame}
 
-\begin{frame}{DB4 – Dashboard: trang 1 phễu và tỷ lệ chốt}
+\begin{frame}{DB4 – Dashboard: một trang}
 \muc{4 · DB4 Thu hút và hiệu quả seller}
-\begin{itemize}
-  \item Phễu MQL $\rightarrow$ deal $\rightarrow$ seller có đơn; thời gian chốt
-\end{itemize}
-\khungchen{CHÈN ẢNH CHỤP DB4 trang 1 TRANG 1}
-
-\note{[S103] Luôn kèm cỡ mẫu: email chỉ 493 MQL. Tiêu đề trước đây: DB4 trang 1: tỷ lệ chốt theo kênh từ 2,7\% (other) đến 16,7\% (unknown)}
-\end{frame}
-
-\begin{frame}{DB4 – Dashboard: trang 2 scorecard seller}
-\muc{4 · DB4 Thu hút và hiệu quả seller}
-\begin{itemize}
-  \item Scorecard seller, GMV/seller theo kênh
-\end{itemize}
-\khungchen{CHÈN ẢNH CHỤP DB4 trang 2 TRANG 2}
-
-\note{[S104] Email chỉ có 6 seller có đơn nên đánh dấu mẫu nhỏ. Tiêu đề trước đây: DB4 trang 2: seller từ funnel chỉ tạo 4,99\% GMV; kênh nhỏ được cảnh báo mẫu nhỏ}
+\khungchen{CHÈN ẢNH CHỤP DB4 (cả trang)}
+\note{[P12f] DB4 gộp thành một trang dashboard; nhóm tự chọn các biểu đồ quan trọng. Ý từ các trang cũ: [S103] Luôn kèm cỡ mẫu: email chỉ 493 MQL. Tiêu đề trước đây: DB4 trang 1: tỷ lệ chốt theo kênh từ 2,7\% (other) đến 16,7\% (unknown) [S104] Email chỉ có 6 seller có đơn nên đánh dấu mẫu nhỏ. Tiêu đề trước đây: DB4 trang 2: seller từ funnel chỉ tạo 4,99\% GMV; kênh nhỏ được cảnh báo mẫu nhỏ}
 \end{frame}
 
 \begin{frame}{DB4 – Dashboard: trang 3 chi tiết seller}
@@ -286,7 +179,7 @@ Tỷ lệ chốt từ 2,7\% (other) đến 16,7\% (unknown); email chỉ có 493
   \item Số đơn 12.3K, tiền 13.5M, phần trăm một chữ số thập phân
   \item Màu đỏ chỉ để cảnh báo; theme không còn đỏ trong màu dữ liệu
   \item Dự báo ở DB1 (chuỗi 20 tháng nên chỉ để thấy hướng đi); Key Influencers ở DB2
-  \item Ma trận mục checklist theo dashboard ở huong-dan/dashboards/README.md
+  \item Drill-through và tooltip ở trang ẩn; ma trận checklist ở huong-dan/dashboards/README.md
 \end{itemize}
 
 \note{[S143] Checklist rút từ nhận xét mẫu của barem. Tiêu đề đầy đủ trước khi rút gọn: Checklist chung: dự báo ở DB1, Key Influencers ở DB2, OLAP và drill-through ở DB3, DB4 Tiêu đề trước đây: Checklist: dự báo ở DB1, Key Influencers ở DB2, OLAP và drill-through ở DB3, DB4}
