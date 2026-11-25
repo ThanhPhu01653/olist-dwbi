@@ -1,3 +1,4 @@
+% !TeX program = lualatex
 % Bộ slide Beamer – Kho dữ liệu và Kinh doanh thông minh (MI4214). Biên dịch: LuaLaTeX (latexmk -lualatex main.tex).
 % Theme HUST: thư mục hust-theme/ (đường dẫn đặt trong .latexmkrc). Bản có ghi chú người nói: slides-notes.tex.
 \documentclass[aspectratio=169,10pt]{beamer}
@@ -37,6 +38,7 @@
 \newcommand{\anh}[2][0.56\textheight]{\includegraphics[width=\linewidth,height=#1,keepaspectratio]{#2}}
 % nhãn mục barem ở góc phải trên mỗi slide, ví dụ \muc{2.4 · Dữ liệu nguồn}
 \newcommand{\muc}[1]{\begin{tikzpicture}[remember picture,overlay]\node[anchor=south east,inner xsep=0pt,inner ysep=1pt,font=\fontsize{6.5}{7}\selectfont\bfseries,text=white]at ([xshift=-33pt,yshift=-29.5pt]current page.north east){#1};\end{tikzpicture}}
+\ifdefined\NHAP\renewcommand{\muc}[1]{}\fi   % bản nháp: bỏ nhãn mục (tikz overlay) cho nhanh
 \newcommand{\canxacnhan}{\hfill{\scriptsize\color{red!70!black}[nhóm xác nhận]}}
 
 \title[Olist DW \& BI]{{\normalsize KHO DỮ LIỆU VÀ KINH DOANH THÔNG MINH (MI4214)}\\[5pt]{\bfseries Xây dựng kho dữ liệu Quản lý đơn hàng -- Olist}}
@@ -48,6 +50,8 @@
 \begin{document}
 
 \hustsetup{slogantext={}}
+% \NHAP (zip theo người) = bản nháp: bỏ trang tiêu đề, mục lục, trang chuyển phần
+\ifdefined\NHAP\AtBeginSection[]{}\else
 \begin{frame}[plain,noframenumbering]
   \titlepage
 \end{frame}
@@ -55,10 +59,11 @@
 \begin{frame}[noprogressbar]{\husttoctitle}{\husttocsubtitle}
   \tableofcontents[hideallsubsections,split=4]
 \end{frame}
+\fi
 
 % \CHIPHAN (đặt trong thu-mot-phan.tex) = chỉ biên dịch một file trong sections/ để xem thử nhanh; bình thường không đặt.
 \ifdefined\CHIPHAN
-  \input{\CHIPHAN}
+  \makeatletter\@for\@tempa:=\CHIPHAN\do{\input{\@tempa}}\makeatother   % danh sách file, cách nhau bằng dấu phẩy
 \else
 \input{sections/00-mo-dau}
 \input{sections/00b-ly-thuyet-rut-gon}
