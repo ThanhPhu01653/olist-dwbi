@@ -73,3 +73,6 @@ lakehouse/dbt/logs/
 lakehouse/dbt/target/
 lakehouse/dbt/.user.yml
 lakehouse/dbt/dbt_packages/
+
+slides_overleaf_*.zip
+tex-nop/
