@@ -2,6 +2,14 @@
 
 File hướng dẫn cho Claude Code; thành viên nhóm không cần đọc.
 
+## Trạng thái hiện tại (cập nhật 27/11/2026) – đọc đầu tiên
+
+- **Session mới: đọc `handoff/2026-11-27-chuyen-session.md` trước.** Nó ghi trạng thái `main`, các prompt P8–P12g đã chạy, quy ước và lệnh hay dùng.
+- Kho, ETL, lakehouse, API, báo cáo LaTeX, 4 dashboard (thiết kế, PBIP sinh sẵn) đã xong; bộ Beamer (`slides/`) giữ nguyên nhưng không còn dùng để thuyết trình.
+- Slide thuyết trình mới là **pptx** theo `docs/prompts/P13-slide-pptx.md` và `slides-pptx/template/`; P13 chưa chạy, khi chạy dừng sau bước 1 cho Phú duyệt.
+- Đang chờ: nhóm nộp slide vào `slides-pptx/nop/Nguoi-X`; ảnh D8 `4_D8_mot_trang.png`; file ghép Power BI `powerbi/DB_nhom_19_half_done.pbix` (đang làm dở); Publish to web bị tenant HUST chặn.
+- Không commit `.pbix`, `attach/`, `.env`; file Power BI Desktop tự lưu đè trong `powerbi/olist_base/` chỉ commit khi có thay đổi thật (lineageTag, định dạng, đường dẫn thì restore).
+
 ## Dự án là gì
 Xây kho dữ liệu chủ đề **Order Management** trên bộ Olist Brazilian E-Commerce, tích hợp thêm bộ **Olist Marketing Funnel**
 (nối qua `seller_id`). Sản phẩm cuối: PostgreSQL DW chạy được end-to-end, 4 dashboard Power BI, báo cáo LaTeX > 100 trang

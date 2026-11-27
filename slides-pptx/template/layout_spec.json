@@ -1,0 +1,232 @@
+{
+ "kho_slide_inch": [
+  13.333,
+  7.5
+ ],
+ "font": "Arial",
+ "mau": {
+  "tim_pastel_nen": "7E66B8",
+  "tim_chu": "6F55A8",
+  "hop_diem_nhan": "6B57A6",
+  "chu_dam": "3A2C5E",
+  "tim_nhat_nen": "F4F0FB",
+  "tim_vien": "E2D9F3",
+  "vang_pastel": "F2C46D",
+  "fact_cam": "F28E2B",
+  "dim_xanh": "1F6FB2",
+  "chu": "1F2328",
+  "chu_phu": "5F6470",
+  "nen_code": "3B3155",
+  "to_dong_nhan_bang": "FDF0DA"
+ },
+ "co_chu_pt": {
+  "tieu_de": 28,
+  "than_bai_toi_thieu": 18,
+  "bang_toi_thieu": 14,
+  "chu_thich_hinh": 11,
+  "so_tren_the": 44,
+  "code": 14
+ },
+ "vung_tu_do_inch": {
+  "noi_dung": [
+   0.6,
+   1.65,
+   12.133,
+   5.2
+  ],
+  "noi_dung_khi_co_ket_luan": [
+   0.6,
+   1.65,
+   12.133,
+   4.35
+  ],
+  "hinh": [
+   0.6,
+   1.6,
+   12.133,
+   4.95
+  ],
+  "hinh_khi_co_ket_luan": [
+   0.6,
+   1.6,
+   12.133,
+   4.1
+  ],
+  "hai_cot_ben_phai": [
+   5.6,
+   1.65,
+   7.133,
+   4.35
+  ]
+ },
+ "quy_tac_anh": "ảnh raster >= 250 ppi tại kích thước đặt, không phóng to quá cỡ gốc; biểu đồ vẽ lại đúng kích thước vùng; sơ đồ khối dựng bằng shape; bảng là bảng PowerPoint thật",
+ "mau_ve": "xem Olist_Nhom19_giao_dien_mau.pptx: thẻ thành viên, mục lục 5 thẻ, hộp tối điểm nhấn, sơ đồ shape, hình + chú thích, bảng (tiêu đề tím đậm, dòng nhấn vàng nhạt), thẻ số có gạch màu, hộp code DAX, phụ lục",
+ "layouts": {
+  "BIA": [
+   {
+    "ten": "mon_hoc",
+    "idx": 104
+   },
+   {
+    "ten": "tieu_de",
+    "idx": 105
+   },
+   {
+    "ten": "phu_de",
+    "idx": 106
+   },
+   {
+    "ten": "nhom",
+    "idx": 111
+   },
+   {
+    "ten": "giang_vien",
+    "idx": 112
+   }
+  ],
+  "CHUYEN_PHAN": [
+   {
+    "ten": "so_phan",
+    "idx": 106
+   },
+   {
+    "ten": "tieu_de",
+    "idx": 107
+   },
+   {
+    "ten": "noi_dung",
+    "idx": 109
+   }
+  ],
+  "NOI_DUNG": [
+   {
+    "ten": "muc",
+    "idx": 107
+   },
+   {
+    "ten": "tieu_de",
+    "idx": 108
+   },
+   {
+    "ten": "noi_dung",
+    "idx": 109
+   },
+   {
+    "ten": "phan",
+    "idx": 110
+   }
+  ],
+  "NOI_DUNG_KL": [
+   {
+    "ten": "muc",
+    "idx": 109
+   },
+   {
+    "ten": "tieu_de",
+    "idx": 110
+   },
+   {
+    "ten": "noi_dung",
+    "idx": 111
+   },
+   {
+    "ten": "phan",
+    "idx": 112
+   },
+   {
+    "ten": "ket_luan",
+    "idx": 113
+   }
+  ],
+  "HINH": [
+   {
+    "ten": "muc",
+    "idx": 107
+   },
+   {
+    "ten": "tieu_de",
+    "idx": 108
+   },
+   {
+    "ten": "chu_thich",
+    "idx": 109
+   },
+   {
+    "ten": "phan",
+    "idx": 110
+   }
+  ],
+  "HINH_KL": [
+   {
+    "ten": "muc",
+    "idx": 109
+   },
+   {
+    "ten": "tieu_de",
+    "idx": 110
+   },
+   {
+    "ten": "chu_thich",
+    "idx": 111
+   },
+   {
+    "ten": "phan",
+    "idx": 112
+   },
+   {
+    "ten": "ket_luan",
+    "idx": 113
+   }
+  ],
+  "HAI_COT_KL": [
+   {
+    "ten": "muc",
+    "idx": 109
+   },
+   {
+    "ten": "tieu_de",
+    "idx": 110
+   },
+   {
+    "ten": "cot_trai",
+    "idx": 111
+   },
+   {
+    "ten": "phan",
+    "idx": 112
+   },
+   {
+    "ten": "ket_luan",
+    "idx": 113
+   }
+  ],
+  "PHU_LUC": [
+   {
+    "ten": "muc",
+    "idx": 109
+   },
+   {
+    "ten": "tieu_de",
+    "idx": 110
+   },
+   {
+    "ten": "noi_dung",
+    "idx": 111
+   },
+   {
+    "ten": "phan",
+    "idx": 112
+   }
+  ],
+  "CAM_ON": [
+   {
+    "ten": "tieu_de",
+    "idx": 105
+   },
+   {
+    "ten": "noi_dung",
+    "idx": 107
+   }
+  ]
+ }
+}
